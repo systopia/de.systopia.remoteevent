@@ -173,7 +173,7 @@ function remoteevent_civicrm_themes(&$themes)
  * Define custom (Drupal) permissions
  */
 function remoteevent_civicrm_permission(&$permissions) {
-    $permissions['view Remote Events'] = 'RemoteEvents: list events';
+    $permissions['view Remote Events'] = E::ts('RemoteEvent: list events');
 }
 
 
