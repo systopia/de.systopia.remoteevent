@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<menu>
+
+  <item>
+    <path>civicrm/event/manage/remoteregistration</path>
+    <page_callback>CRM_Remoteevent_Form_RegistrationConfig</page_callback>
+    <title>RegistrationConfig</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/remoteevent/config/registration</path>
+    <page_callback>CRM_Remoteevent_Form_RegistrationConfig</page_callback>
+    <title>RegistrationConfig</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>

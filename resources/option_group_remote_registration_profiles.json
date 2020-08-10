@@ -1,0 +1,21 @@
+{
+  "_lookup": ["name"],
+  "_translate": ["title"],
+  "name": "remote_registration_profiles",
+  "title": "Remote Registration Profiles",
+  "is_reserved": "1",
+  "is_active": "1",
+  "_values": [
+    {
+      "_lookup": ["value"],
+      "_translate": ["label"],
+      "name": "Profile3",
+      "label": "Full (name + email + address + phone)",
+      "description": "Email, prefix, title, first name, last name, postal address and phone",
+      "value": "1",
+      "filter": "0",
+      "is_reserved": "1",
+      "is_active": "1"
+    }
+  ]
+}
