@@ -14,15 +14,17 @@
 +--------------------------------------------------------*/
 
 require_once 'remoteevent.civix.php';
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
  * Implements hook_civicrm_config().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/ 
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/
  */
-function remoteevent_civicrm_config(&$config) {
-  _remoteevent_civix_civicrm_config($config);
+function remoteevent_civicrm_config(&$config)
+{
+    _remoteevent_civix_civicrm_config($config);
 }
 
 /**
@@ -30,8 +32,9 @@ function remoteevent_civicrm_config(&$config) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_xmlMenu
  */
-function remoteevent_civicrm_xmlMenu(&$files) {
-  _remoteevent_civix_civicrm_xmlMenu($files);
+function remoteevent_civicrm_xmlMenu(&$files)
+{
+    _remoteevent_civix_civicrm_xmlMenu($files);
 }
 
 /**
@@ -39,8 +42,9 @@ function remoteevent_civicrm_xmlMenu(&$files) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
  */
-function remoteevent_civicrm_install() {
-  _remoteevent_civix_civicrm_install();
+function remoteevent_civicrm_install()
+{
+    _remoteevent_civix_civicrm_install();
 }
 
 /**
@@ -48,8 +52,9 @@ function remoteevent_civicrm_install() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
  */
-function remoteevent_civicrm_postInstall() {
-  _remoteevent_civix_civicrm_postInstall();
+function remoteevent_civicrm_postInstall()
+{
+    _remoteevent_civix_civicrm_postInstall();
 }
 
 /**
@@ -57,8 +62,9 @@ function remoteevent_civicrm_postInstall() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_uninstall
  */
-function remoteevent_civicrm_uninstall() {
-  _remoteevent_civix_civicrm_uninstall();
+function remoteevent_civicrm_uninstall()
+{
+    _remoteevent_civix_civicrm_uninstall();
 }
 
 /**
@@ -66,8 +72,9 @@ function remoteevent_civicrm_uninstall() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
  */
-function remoteevent_civicrm_enable() {
-  _remoteevent_civix_civicrm_enable();
+function remoteevent_civicrm_enable()
+{
+    _remoteevent_civix_civicrm_enable();
 }
 
 /**
@@ -75,8 +82,9 @@ function remoteevent_civicrm_enable() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_disable
  */
-function remoteevent_civicrm_disable() {
-  _remoteevent_civix_civicrm_disable();
+function remoteevent_civicrm_disable()
+{
+    _remoteevent_civix_civicrm_disable();
 }
 
 /**
@@ -84,8 +92,9 @@ function remoteevent_civicrm_disable() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_upgrade
  */
-function remoteevent_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _remoteevent_civix_civicrm_upgrade($op, $queue);
+function remoteevent_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
+{
+    return _remoteevent_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -96,8 +105,9 @@ function remoteevent_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
  */
-function remoteevent_civicrm_managed(&$entities) {
-  _remoteevent_civix_civicrm_managed($entities);
+function remoteevent_civicrm_managed(&$entities)
+{
+    _remoteevent_civix_civicrm_managed($entities);
 }
 
 /**
@@ -109,8 +119,9 @@ function remoteevent_civicrm_managed(&$entities) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
  */
-function remoteevent_civicrm_caseTypes(&$caseTypes) {
-  _remoteevent_civix_civicrm_caseTypes($caseTypes);
+function remoteevent_civicrm_caseTypes(&$caseTypes)
+{
+    _remoteevent_civix_civicrm_caseTypes($caseTypes);
 }
 
 /**
@@ -123,8 +134,9 @@ function remoteevent_civicrm_caseTypes(&$caseTypes) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
  */
-function remoteevent_civicrm_angularModules(&$angularModules) {
-  _remoteevent_civix_civicrm_angularModules($angularModules);
+function remoteevent_civicrm_angularModules(&$angularModules)
+{
+    _remoteevent_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -132,8 +144,9 @@ function remoteevent_civicrm_angularModules(&$angularModules) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterSettingsFolders
  */
-function remoteevent_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _remoteevent_civix_civicrm_alterSettingsFolders($metaDataFolders);
+function remoteevent_civicrm_alterSettingsFolders(&$metaDataFolders = null)
+{
+    _remoteevent_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**
@@ -143,41 +156,30 @@ function remoteevent_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
  */
-function remoteevent_civicrm_entityTypes(&$entityTypes) {
-  _remoteevent_civix_civicrm_entityTypes($entityTypes);
+function remoteevent_civicrm_entityTypes(&$entityTypes)
+{
+    _remoteevent_civix_civicrm_entityTypes($entityTypes);
 }
 
 /**
  * Implements hook_civicrm_thems().
  */
-function remoteevent_civicrm_themes(&$themes) {
-  _remoteevent_civix_civicrm_themes($themes);
+function remoteevent_civicrm_themes(&$themes)
+{
+    _remoteevent_civix_civicrm_themes($themes);
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
+/**
+ * Define custom (Drupal) permissions
+ */
+function remoteevent_civicrm_permission(&$permissions) {
+    $permissions['view Remote Events'] = 'RemoteEvents: list events';
+}
+
 
 /**
- * Implements hook_civicrm_preProcess().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
- *
-function remoteevent_civicrm_preProcess($formName, &$form) {
-
-} // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- *
-function remoteevent_civicrm_navigationMenu(&$menu) {
-  _remoteevent_civix_insert_navigation_menu($menu, 'Mailings', array(
-    'label' => E::ts('New subliminal message'),
-    'name' => 'mailing_subliminal_message',
-    'url' => 'civicrm/mailing/subliminal',
-    'permission' => 'access CiviMail',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _remoteevent_civix_navigationMenu($menu);
-} // */
+ * Set permissions RemoteEvent API
+ */
+function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+    $permissions['remote_event']['get'] = ['view Remote Events'];
+}
