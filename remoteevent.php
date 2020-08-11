@@ -183,6 +183,7 @@ function remoteevent_civicrm_permission(&$permissions) {
  */
 function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
     $permissions['remote_event']['get'] = ['view public Remote Events', 'view all Remote Events'];
+    $permissions['remote_event']['get_registration_form'] = ['view public Remote Events', 'view all Remote Events'];
 }
 
 function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context) {

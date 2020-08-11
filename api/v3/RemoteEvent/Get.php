@@ -27,7 +27,13 @@ function _civicrm_api3_remote_event_get_spec(&$spec)
     require_once 'api/v3/Event.php';
     _civicrm_api3_event_get_spec($spec);
 
-    // todo: modify fields
+    // add extra fields
+    $spec['locale'] = [
+        'name'         => 'locale',
+        'api.required' => 0,
+        'title'        => E::ts('Locale'),
+        'description'  => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
+    ];
 }
 
 /**
@@ -43,6 +49,8 @@ function civicrm_api3_remote_event_get($params)
 {
     // modify search terms based on user/permission/etc
     $params['is_template'] = 0; // exclude templates
+    $params['check_permissions'] = false; // don't apply other permissions
+
     if (!CRM_Core_Permission::check('view all Remote Events')) {
         // only basic view permissions -> only list public + active
         $params['is_public'] = 1;

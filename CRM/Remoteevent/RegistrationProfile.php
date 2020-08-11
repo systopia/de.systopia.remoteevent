@@ -34,7 +34,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * @return array field specs
      *   format is field_key => [
      *      'type'       => (string, integer, ..) ,
-     *      'validation' => (string, integer, email),
+     *      'validation' => (String, Integer, email, ...),
+     *      'weight'     => int,
+     *      'options'    => [value => label] list
      *   ]
      */
     abstract public function getFields();
@@ -190,8 +192,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getRegistrationProfile($profile_name)
     {
-        $profiles = self::getAvailableRegistrationProfiles();
-        if (isset($profiles[$profile_name])) {
+        $profiles = self::getAvailableRegistrationProfiles('name');
+        if (in_array($profile_name, $profiles)) {
             // get class
             $class_candidate = "CRM_Remoteevent_RegistrationProfile_{$profile_name}";
             if (class_exists($class_candidate)) {
@@ -223,9 +225,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 'OptionValue',
                 'get',
                 [
-                    'option.limit' => 0,
-                    'option_group_id' => 'remote_registration_profiles',
-                    'is_active' => 1
+                    'option.limit'      => 0,
+                    'option_group_id'   => 'remote_registration_profiles',
+                    'is_active'         => 1,
+                    'check_permissions' => false
                 ]
             );
         }

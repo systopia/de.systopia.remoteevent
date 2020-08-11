@@ -13,36 +13,30 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+require_once 'remoteevent.civix.php';
 use CRM_Remoteevent_ExtensionUtil as E;
 
 
-/**
- * Implements profile 'Standard1': Email only
- */
-class CRM_Remoteevent_RegistrationProfile_Standard1 extends  CRM_Remoteevent_RegistrationProfile
-{
-    /**
-     * Get the internal name of the profile represented
-     *
-     * @return string name
-     */
-    public function getName()
-    {
-        return 'Standard1';
-    }
 
-    /**
-     * @see CRM_Remoteevent_RegistrationProfile::getFields()
-     *
-     * @return array
-     */
-    public function getFields() {
-        return [
-            'email' => [
-                'type'       => 'string',
-                'validation' => 'Email',
-                'weight'     => 10,
-            ]
-        ];
-    }
+/*
+ * DOESN'T WORK!! 'getfields' is a special (interenal) action that cannot be overwritten this way!
+ */
+
+
+
+/**
+ * RemoteEvent.get implementation
+ *
+ * @param array $params
+ *   API call parameters
+ *
+ * @return array
+ *   API3 response
+ */
+function civicrm_api3_remote_event_getfields($params)
+{
+    // let's start with the basic event fields
+    $fields = civicrm_api3('Event', 'getfields', $params);
+    // TODO: add RemoteEvent fields
+    return $fields;
 }
