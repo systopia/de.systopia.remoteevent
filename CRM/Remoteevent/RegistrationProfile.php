@@ -208,14 +208,18 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Get a list of all currently available registration profiles
      *
-     * @todo cache?
+     * @param string $name_field
+     *   should the name be the 'label' (default) or the 'name'
+     *
+     * @return array
+     *   profile id => profile name
      */
-    public static function getAvailableRegistrationProfiles()
+    public static function getAvailableRegistrationProfiles($name_field = 'label')
     {
-        static $profiles = null;
-        if ($profiles === null) {
-            $profiles = [];
-            $result   = civicrm_api3(
+        $profile_data = null;
+        if ($profile_data === null) {
+            $profile_data = [];
+            $profile_data = civicrm_api3(
                 'OptionValue',
                 'get',
                 [
@@ -224,9 +228,12 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     'is_active' => 1
                 ]
             );
-            foreach ($result['values'] as $profile) {
-                $profiles[$profile['value']] = $profile['label'];
-            }
+        }
+
+        // compile response
+        $profiles = [];
+        foreach ($profile_data['values'] as $profile) {
+            $profiles[$profile['value']] = $profile[$name_field];
         }
         return $profiles;
     }
