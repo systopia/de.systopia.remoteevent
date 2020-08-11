@@ -21,12 +21,17 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 {
-    protected $event_id = null;
+    /**
+     * Set variables up before form is built.
+     */
+    public function preProcess() {
+        parent::preProcess();
+        $this->setSelectedChild('registrationconfig');
+    }
 
     public function buildQuickForm()
     {
         // gather data
-        $this->event_id = CRM_Utils_Request::retrieve('event_id', 'Integer', $this);
         $available_registration_profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles();
 
         // add form elements
@@ -51,10 +56,15 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
         );
+        $this->add(
+            'checkbox',
+            'remote_invitation_enabled',
+            E::ts("Invitations Enabled")
+        );
         $this->assign('profiles', $available_registration_profiles);
 
         // load and set defaults
-        if ($this->event_id) {
+        if ($this->_id) {
             $field_list = [
                 'event_remote_registration.remote_registration_enabled'         => 'remote_registration_enabled',
                 'event_remote_registration.remote_registration_default_profile' => 'remote_registration_default_profile',
@@ -62,7 +72,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
             $values = civicrm_api3('Event', 'getsingle', [
-                'id'     => $this->event_id,
+                'id'     => $this->_id,
                 'return' => implode(',', array_keys($field_list)),
             ]);
             foreach ($field_list as $custom_key => $form_key) {
@@ -71,13 +81,13 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         }
 
         $this->addButtons(
-            array(
-                array(
+            [
+                [
                     'type'      => 'submit',
                     'name'      => E::ts('Save'),
                     'isDefault' => true,
-                ),
-            )
+                ],
+            ]
         );
 
         parent::buildQuickForm();
@@ -104,8 +114,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 
         // store data
         $event_update = [
-            'id' => $this->event_id,
-            'event_remote_registration.remote_registration_enabled'         => $values['remote_registration_enabled'],
+            'id' => $this->_id,
+            'event_remote_registration.remote_registration_enabled'         => CRM_Utils_Array::value('remote_registration_enabled', $values, 0),
             'event_remote_registration.remote_registration_default_profile' => $values['remote_registration_default_profile'],
             'event_remote_registration.remote_registration_profiles'        => $values['remote_registration_profiles']
         ];
@@ -130,8 +140,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 
         // todo: figure out how to make this work
         $this->_action = CRM_Core_Action::UPDATE;
-        $this->_name = 'remoteregistration';
-        $this->_id = $this->event_id;
+
         parent::endPostProcess();
     }
 }

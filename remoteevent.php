@@ -186,10 +186,15 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
     $permissions['remote_event']['get_registration_form'] = ['view public Remote Events', 'view all Remote Events'];
 }
 
+/**
+ * Add event configuration tabs
+ */
 function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context) {
     if ($tabsetName == 'civicrm/event/manage') {
         if (!empty($context['event_id'])) {
             CRM_Remoteevent_UI::updateEventTabs($context['event_id'], $tabs);
+        } else {
+            CRM_Remoteevent_UI::updateEventTabs(null, $tabs);
         }
     }
 }

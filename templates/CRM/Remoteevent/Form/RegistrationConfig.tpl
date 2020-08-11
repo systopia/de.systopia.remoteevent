@@ -1,34 +1,42 @@
-<div class="remote-registration-switch">
-  <div class="crm-section">
-    <div class="label">{$form.remote_registration_enabled.label}</div>
-    <div class="content">{$form.remote_registration_enabled.html}</div>
-    <div class="clear"></div>
+<div class="crm-block crm-form-block crm-event-manage-eventinfo-form-block">
+  <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
+
+  <div class="remote-registration-switch">
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_enabled.label}</div>
+      <div class="content">{$form.remote_registration_enabled.html}</div>
+      <div class="clear"></div>
+    </div>
+  </div>
+
+  <div class="remote-registration-content">
+    <div class="crm-section">
+      <div class="label">{$form.remote_invitation_enabled.label}</div>
+      <div class="content">{$form.remote_invitation_enabled.html}</div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_default_profile.label}</div>
+      <div class="content">{$form.remote_registration_default_profile.html}</div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_profiles.label}</div>
+      <div class="content">{$form.remote_registration_profiles.html}</div>
+      <div class="clear"></div>
+    </div>
+  </div>
+
+  <div class="crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl" location="bottom"}
+  </div>
+
 </div>
 
-<div class="remote-registration-content">
-  <div class="crm-section">
-    <div class="label">{$form.remote_registration_default_profile.label}</div>
-    <div class="content">{$form.remote_registration_default_profile.html}</div>
-    <div class="clear"></div>
-  </div>
-
-  <div class="crm-section">
-    <div class="label">{$form.remote_registration_profiles.label}</div>
-    <div class="content">{$form.remote_registration_profiles.html}</div>
-    <div class="clear"></div>
-  </div>
-
-  <div class="crm-section">
-    <div class="label">{$form.remote_invitation_enabled.label}</div>
-    <div class="content">{$form.remote_invitation_enabled.html}</div>
-    <div class="clear"></div>
-  </div>
-</div>
-
-<div class="crm-submit-buttons">
-{include file="CRM/common/formButtons.tpl" location="bottom"}
-</div>
 
 {literal}
 <script>
