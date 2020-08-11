@@ -109,6 +109,22 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'event_remote_registration.remote_registration_default_profile' => $values['remote_registration_default_profile'],
             'event_remote_registration.remote_registration_profiles'        => $values['remote_registration_profiles']
         ];
+
+        // make sure the default profile is part of the enabled profiles
+        $enabled_profiles = $values['remote_registration_profiles'];
+        if (!is_array($enabled_profiles)) {
+            if (empty($enabled_profiles)) {
+                $enabled_profiles = [];
+            } else {
+                $enabled_profiles = [$enabled_profiles];
+            }
+        }
+        if (!in_array($values['remote_registration_default_profile'], $enabled_profiles)) {
+            $enabled_profiles[] = $values['remote_registration_default_profile'];
+        }
+        $event_update['event_remote_registration.remote_registration_profiles'] = $enabled_profiles;
+
+        // write out the changes
         CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
         civicrm_api3('Event', 'create', $event_update);
 

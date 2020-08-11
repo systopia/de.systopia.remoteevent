@@ -173,7 +173,8 @@ function remoteevent_civicrm_themes(&$themes)
  * Define custom (Drupal) permissions
  */
 function remoteevent_civicrm_permission(&$permissions) {
-    $permissions['view Remote Events'] = E::ts('RemoteEvent: list events');
+    $permissions['view Remote Events'] = E::ts('RemoteEvent: list public events');
+    $permissions['view all Remote Events'] = E::ts('RemoteEvent: list all events');
 }
 
 
@@ -181,7 +182,7 @@ function remoteevent_civicrm_permission(&$permissions) {
  * Set permissions RemoteEvent API
  */
 function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
-    $permissions['remote_event']['get'] = ['view Remote Events'];
+    $permissions['remote_event']['get'] = ['view public Remote Events', 'view all Remote Events'];
 }
 
 function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context) {
