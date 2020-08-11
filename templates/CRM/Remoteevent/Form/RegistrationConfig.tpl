@@ -18,6 +18,12 @@
     <div class="content">{$form.remote_registration_profiles.html}</div>
     <div class="clear"></div>
   </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.remote_invitation_enabled.label}</div>
+    <div class="content">{$form.remote_invitation_enabled.html}</div>
+    <div class="clear"></div>
+  </div>
 </div>
 
 <div class="crm-submit-buttons">
