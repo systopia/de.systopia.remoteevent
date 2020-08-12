@@ -31,15 +31,24 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Get the list of fields expected by this profile
      *
+     * @param string $locale
+     *   the locale to use, defaults to null none. Use 'default' for current
+     *
      * @return array field specs
      *   format is field_key => [
-     *      'type'       => (string, integer, ..) ,
-     *      'validation' => (String, Integer, email, ...),
-     *      'weight'     => int,
-     *      'options'    => [value => label] list
+     *      'name'        => field_key
+     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox'
+     *      'weight'      => int,
+     *      'options'     => [value => label (localised)] list  (optional)
+     *      'required'    => 0/1
+     *      'label'       => field label (localised)
+     *      'description' => field description (localised)
+     *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
+     *                       NOTE: this is just for the optional 'inline' validation in the form,
+     *                             the main validation will go through the RemoteParticipant.validate function
      *   ]
      */
-    abstract public function getFields();
+    abstract public function getFields($locale = null);
 
 
     /**
@@ -150,7 +159,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     protected function validateFieldValue($field_spec, $value) {
         switch ($field_spec['validation']) {
-            case 'email':
+            case 'Email':
                 return preg_match('#^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$#', $value);
 
             case 'Integer':
@@ -239,5 +248,39 @@ abstract class CRM_Remoteevent_RegistrationProfile
             $profiles[$profile['value']] = $profile[$name_field];
         }
         return $profiles;
+    }
+
+    /**
+     * Get a localised list of option group values for the field keys
+     *
+     * @param string|integer $option_group_id
+     *   identifier for the option group
+     *
+     *
+     */
+    public function getOptions($option_group_id, $locale, $params = [])
+    {
+        $option_list = [];
+        $query = [
+            'option.limit'    => 0,
+            'option_group_id' => $option_group_id,
+            'return'          => 'value,label',
+            'is_active'       => 1,
+            'sort'            => 'weight asc',
+        ];
+
+        // extend/override query
+        foreach ($params as $key => $value) {
+            $query[$key] = $value;
+        }
+
+        // run query + compile result
+        $result = civicrm_api3('OptionValue', 'get', $query);
+        $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+        foreach ($result['values'] as $entry) {
+            $option_list[$entry['value']] = $l10n->localise($entry['label']);
+        }
+
+        return $option_list;
     }
 }

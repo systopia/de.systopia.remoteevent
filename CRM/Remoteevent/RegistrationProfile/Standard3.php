@@ -17,9 +17,9 @@ use CRM_Remoteevent_ExtensionUtil as E;
 
 
 /**
- * Implements profile 'Standard1': Email only
+ * Implements profile 'Standard3': Email, prefix, title, first name, last name, postal address and phone",
  */
-class CRM_Remoteevent_RegistrationProfile_Standard1 extends  CRM_Remoteevent_RegistrationProfile
+class CRM_Remoteevent_RegistrationProfile_Standard3 extends  CRM_Remoteevent_RegistrationProfile_Standard2
 {
     /**
      * Get the internal name of the profile represented
@@ -28,7 +28,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends  CRM_Remoteevent_Reg
      */
     public function getName()
     {
-        return 'Standard1';
+        return 'Standard3';
     }
 
     /**
@@ -41,16 +41,17 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends  CRM_Remoteevent_Reg
      */
     public function getFields($locale = null) {
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
-        return [
-            'email' => [
-                'name'        => 'email',
+        return array_merge(parent::getFields($locale), [
+            'phone' => [
+                'name'        => 'phone',
                 'type'        => 'Text',
-                'validation'  => 'Email',
-                'weight'      => 10,
-                'required'    => 1,
-                'label'       => $l10n->localise('Email'),
-                'description' => $l10n->localise("Participant's email address"),
-            ]
-        ];
+                'validation'  => '',
+                'weight'      => 100,
+                'required'    => 0,
+                'label'       => $l10n->localise('Phone Number'),
+                'description' => $l10n->localise("Participant's Phone Number"),
+            ],
+            // TODO: add postal address
+        ]);
     }
 }

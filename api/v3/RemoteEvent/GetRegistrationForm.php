@@ -99,17 +99,19 @@ function civicrm_api3_remote_event_get_registration_form($params)
         );
     }
 
-    $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
+    // get locale
+    $locale = CRM_Utils_Array::value('locale', $params, CRM_Core_I18n::getLocale());
 
     // compile field list
     $field_list = [];
-
     // add profile fields
-    $field_list = array_merge($field_list, $profile->getFields());
+    $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
+    $field_list = array_merge($field_list, $profile->getFields($locale));
 
-    // add event fields
+    // add more fields: @todo: use symfony events?
     // TODO: add event fields (e.g. role)
 
+    // add default values
     // TODO: add default values if remote_contact_id is given
 
     return civicrm_api3_create_success($field_list);
