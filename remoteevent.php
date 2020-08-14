@@ -25,6 +25,9 @@ use CRM_Remoteevent_ExtensionUtil as E;
 function remoteevent_civicrm_config(&$config)
 {
     _remoteevent_civix_civicrm_config($config);
+
+    // add some event listeners
+    \Civi::dispatcher()->addListener('civi.remoteevent.registration.getform', ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
 }
 
 /**

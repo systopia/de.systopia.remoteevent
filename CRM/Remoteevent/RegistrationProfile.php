@@ -15,6 +15,8 @@
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
+use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
+
 
 /**
  * Abstract base to all registration profile implementations
@@ -219,12 +221,44 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
     /**
+     * Add the profile data to the get_registration_form results
+     *
+     * @param GetRegistrationFormResultsEvent $get_form_results
+     *      event triggered by the RemoteEvent.get_registration_form API call
+     */
+    public static function addProfileData($get_form_results) {
+        $params = $get_form_results->getParams();
+        $event  = $get_form_results->getEvent();
+
+        if (empty($params['profile'])) {
+            // use default profile
+            $params['profile'] = $event['default_profile'];
+        }
+        $allowed_profiles = explode(',', $event['enabled_profiles']);
+        if (!in_array($params['profile'], $allowed_profiles)) {
+            return civicrm_api3_create_error(
+                E::ts("Profile [%2] cannot be used with RemoteEvent [%1].", [
+                    1 => $params['event_id'],
+                    2 => $params['profile']
+                ])
+            );
+        }
+
+        // get locale
+        $locale = CRM_Utils_Array::value('locale', $params, CRM_Core_I18n::getLocale());
+
+        // simply add the fields from the profile
+        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
+        $get_form_results->addFields($profile->getFields($locale));
+    }
+
+        /**
      * Update the profile data in the event info as returned by the API
      * @param array $event
      *    event data, to be manipulated in place
      */
     public static function setProfileDataInEventData(&$event) {
-        $profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles('name');
+        $profiles = self::getAvailableRegistrationProfiles('name');
 
         // set default profile
         if (isset($event['event_remote_registration.remote_registration_default_profile'])) {

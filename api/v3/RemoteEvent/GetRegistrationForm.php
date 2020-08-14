@@ -14,7 +14,9 @@
 +--------------------------------------------------------*/
 
 require_once 'remoteevent.civix.php';
+
 use CRM_Remoteevent_ExtensionUtil as E;
+use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
 
 /**
  * RemoteEvent.get_registration_form specification
@@ -81,35 +83,19 @@ function civicrm_api3_remote_event_get_registration_form($params)
         );
     }
 
+    // create and dispatch event
+    $result = new GetRegistrationFormResultsEvent($params, $event);
+    \Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $result);
+
+    // return the result
+    return civicrm_api3_create_success($result->getResult());
+
+
+
     // 3) is the event still open for registration?
     // todo: how to check that?
 
     // evaluate the profile
-    if (empty($params['profile'])) {
-        // use default profile
-        $params['profile'] = $event['default_profile'];
-    }
-    $allowed_profiles = explode(',', $event['enabled_profiles']);
-    if (!in_array($params['profile'], $allowed_profiles)) {
-        return civicrm_api3_create_error(
-            E::ts("Profile [%2] cannot be used with RemoteEvent [%1].", [
-                1 => $params['event_id'],
-                2 => $params['profile']
-            ])
-        );
-    }
-
-    // get locale
-    $locale = CRM_Utils_Array::value('locale', $params, CRM_Core_I18n::getLocale());
-
-    // compile field list
-    $field_list = [];
-    // add profile fields
-    $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
-    $field_list = array_merge($field_list, $profile->getFields($locale));
-
-    // add more fields: @todo: use symfony events?
-    // TODO: add event fields (e.g. role)
 
     // add default values
     // TODO: add default values if remote_contact_id is given
