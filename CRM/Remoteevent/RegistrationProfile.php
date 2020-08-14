@@ -219,6 +219,43 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
     /**
+     * Update the profile data in the event info as returned by the API
+     * @param array $event
+     *    event data, to be manipulated in place
+     */
+    public static function setProfileDataInEventData(&$event) {
+        $profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles('name');
+
+        // set default profile
+        if (isset($event['event_remote_registration.remote_registration_default_profile'])) {
+            $default_profile_id = (int) $event['event_remote_registration.remote_registration_default_profile'];
+            if (isset($profiles[$default_profile_id])) {
+                $event['default_profile'] = $profiles[$default_profile_id];
+            } else {
+                $event['default_profile'] = '';
+            }
+            unset($event['event_remote_registration.remote_registration_default_profile']);
+        }
+
+        // enabled profiles
+        $enabled_profiles = $event['event_remote_registration.remote_registration_profiles'];
+        $enabled_profile_names = [];
+        if (is_array($enabled_profiles)) {
+            foreach ($enabled_profiles as $profile_id) {
+                if (isset($profiles[$profile_id])) {
+                    $enabled_profile_names[] = $profiles[$profile_id];
+                }
+            }
+        }
+        $event['enabled_profiles'] = implode(',', $enabled_profile_names);
+        unset($event['event_remote_registration.remote_registration_profiles']);
+
+        // also map remote_registration_enabled
+        $event['remote_registration_enabled'] = $event['event_remote_registration.remote_registration_enabled'];
+        unset($event['event_remote_registration.remote_registration_enabled']);
+    }
+
+    /**
      * Get a list of all currently available registration profiles
      *
      * @param string $name_field

@@ -14,7 +14,10 @@
 +--------------------------------------------------------*/
 
 require_once 'remoteevent.civix.php';
+
 use CRM_Remoteevent_ExtensionUtil as E;
+use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
+use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
 
 /**
  * RemoteEvent.get specification
@@ -47,22 +50,29 @@ function _civicrm_api3_remote_event_get_spec(&$spec)
  */
 function civicrm_api3_remote_event_get($params)
 {
+    // create an object for the paramters
+    $get_params = new GetParamsEvent($params);
+
     // modify search terms based on user/permission/etc
-    $params['is_template'] = 0; // exclude templates
-    $params['check_permissions'] = false; // don't apply other permissions
+    $get_params->setParameter('is_template', 0);
+    $get_params->setParameter('check_permissions', false);
 
     if (!CRM_Core_Permission::check('view all Remote Events')) {
         // only basic view permissions -> only list public + active
-        $params['is_public'] = 1;
-        $params['is_active'] = 1;
+        $get_params->setParameter('is_public', 0);
+        $get_params->setParameter('is_active', false);
     }
 
     // todo: only view the ones that are open for registration?
-    $params['event_remote_registration.remote_registration_enabled'] = 1;
+    $get_params->setParameter('event_remote_registration.remote_registration_enabled', 1);
+
+    // dispatch search parameters event
+    \Civi::dispatcher()->dispatch('civi.remoteevent.get.params', $get_params);
 
     // use the basic event API for queries
-    CRM_Remoteevent_CustomData::resolveCustomFields($params);
-    $result = civicrm_api3('Event', 'get', $params);
+    $event_get = $get_params->getParameters();
+    CRM_Remoteevent_CustomData::resolveCustomFields($event_get);
+    $result = civicrm_api3('Event', 'get', $event_get);
     $event_list = $result['values'];
 
     // apply custom field labelling
@@ -70,8 +80,15 @@ function civicrm_api3_remote_event_get($params)
         CRM_Remoteevent_CustomData::labelCustomFields($event);
     }
 
-    // strip some misleading event data
-    $strip_fields = ['is_online_registration','event_full_text','is_map','is_show_location','created_id','created_date'];
+    // strip some private/misleading event data
+    $strip_fields = [
+        'is_online_registration',
+        'event_full_text',
+        'is_map',
+        'is_show_location',
+        'created_id',
+        'created_date'
+    ];
     foreach ($event_list as $key => &$event) {
         foreach ($strip_fields as $field_name) {
             unset($event[$field_name]);
@@ -79,37 +96,14 @@ function civicrm_api3_remote_event_get($params)
     }
 
     // add profile data
-    $profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles('name');
     foreach ($event_list as $key => &$event) {
-        // set default profile
-        if (isset($event['event_remote_registration.remote_registration_default_profile'])) {
-            $default_profile_id = (int) $event['event_remote_registration.remote_registration_default_profile'];
-            if (isset($profiles[$default_profile_id])) {
-                $event['default_profile'] = $profiles[$default_profile_id];
-            } else {
-                $event['default_profile'] = '';
-            }
-            unset($event['event_remote_registration.remote_registration_default_profile']);
-        }
-
-        // enabled profiles
-        $enabled_profiles = $event['event_remote_registration.remote_registration_profiles'];
-        $enabled_profile_names = [];
-        if (is_array($enabled_profiles)) {
-            foreach ($enabled_profiles as $profile_id) {
-                if (isset($profiles[$profile_id])) {
-                    $enabled_profile_names[] = $profiles[$profile_id];
-                }
-            }
-        }
-        $event['enabled_profiles'] = implode(',', $enabled_profile_names);
-        unset($event['event_remote_registration.remote_registration_profiles']);
-
-        // also map remote_registration_enabled
-        $event['remote_registration_enabled'] = $event['event_remote_registration.remote_registration_enabled'];
-        unset($event['event_remote_registration.remote_registration_enabled']);
+        CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
     }
 
+    // dispatch the event in case somebody else wants to add something
+    $result = new GetResultEvent($event_get, $event_list);
+    \Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
 
-    return civicrm_api3_create_success($event_list);
+    // return the result
+    return civicrm_api3_create_success($result->getEventData());
 }
