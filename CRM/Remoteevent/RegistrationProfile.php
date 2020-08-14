@@ -43,6 +43,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'required'    => 0/1
      *      'label'       => field label (localised)
      *      'description' => field description (localised)
+     *      'group_name'  => grouping
+     *      'group_label' => group title (localised)
      *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
      *                       NOTE: this is just for the optional 'inline' validation in the form,
      *                             the main validation will go through the RemoteParticipant.validate function
@@ -256,7 +258,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * @param string|integer $option_group_id
      *   identifier for the option group
      *
-     *
+     * @return array list of key => (localised) label
      */
     public function getOptions($option_group_id, $locale, $params = [])
     {
@@ -282,5 +284,27 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
 
         return $option_list;
+    }
+
+    /**
+     * Get a localised list of (enabled) countries
+     *
+     * @return array list of key => (localised) label
+     */
+    public function getCountries($locale)
+    {
+        $country_list = [];
+        $country_limit = CRM_Core_BAO_Country::countryLimit();
+        $countries = civicrm_api3('Country', 'get', [
+            'iso_code'     => ['IN' => $country_limit],
+            'option.limit' => 0,
+            'return'       => 'id,name',
+        ]);
+        $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+        foreach ($countries['values'] as $country) {
+            $country_list[$country['id']] = $l10n->localise($country['name']);
+        }
+
+        return $country_list;
     }
 }

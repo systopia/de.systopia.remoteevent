@@ -50,6 +50,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'required'    => 1,
                 'label'       => $l10n->localise('Email'),
                 'description' => $l10n->localise("Participant's email address"),
+                'group_name'  => 'contact_base',
+                'group_label' => $l10n->localise("Contact Data"),
             ],
             'prefix_id' => [
                 'name'        => 'prefix_id',
@@ -60,6 +62,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'options'     => $this->getOptions('individual_prefix', $locale),
                 'label'       => $l10n->localise('Prefix'),
                 'description' => $l10n->localise("Participant's Prefix"),
+                'group_name'  => 'contact_base',
+                'group_label' => $l10n->localise("Contact Data"),
             ],
             'formal_title' => [
                 'name'        => 'formal_title',
@@ -69,6 +73,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'required'    => 0,
                 'label'       => $l10n->localise('Title'),
                 'description' => $l10n->localise("Participant's Formal Title"),
+                'group_name'  => 'contact_base',
+                'group_label' => $l10n->localise("Contact Data"),
             ],
             'first_name' => [
                 'name'        => 'first_name',
@@ -78,6 +84,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'required'    => 1,
                 'label'       => $l10n->localise('First Name'),
                 'description' => $l10n->localise("Participant's First Name"),
+                'group_name'  => 'contact_base',
+                'group_label' => $l10n->localise("Contact Data"),
             ],
             'last_name' => [
                 'name'        => 'last_name',
@@ -87,6 +95,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'required'    => 1,
                 'label'       => $l10n->localise('Last Name'),
                 'description' => $l10n->localise("Participant's Last Name"),
+                'group_name'  => 'contact_base',
+                'group_label' => $l10n->localise("Contact Data"),
             ],
         ];
     }

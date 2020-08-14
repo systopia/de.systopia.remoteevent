@@ -50,6 +50,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends  CRM_Remoteevent_Reg
                 'required'    => 1,
                 'label'       => $l10n->localise('Email'),
                 'description' => $l10n->localise("Participant's email address"),
+                'group_name'  => 'contact_base',
+                'group_label' => $l10n->localise("Contact Data"),
             ]
         ];
     }
