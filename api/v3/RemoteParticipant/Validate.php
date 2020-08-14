@@ -14,6 +14,7 @@
 +--------------------------------------------------------*/
 
 require_once 'remoteevent.civix.php';
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -23,13 +24,13 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 function _civicrm_api3_remote_participant_validate_spec(&$spec)
 {
-    $spec['event_id'] = [
+    $spec['event_id']          = [
         'name'         => 'event_id',
         'api.required' => 1,
         'title'        => E::ts('Event ID'),
         'description'  => E::ts('Internal ID of the event the registration form is needed for'),
     ];
-    $spec['profile'] = [
+    $spec['profile']           = [
         'name'         => 'profile',
         'api.required' => 0,
         'title'        => E::ts('Profile Name'),
@@ -39,9 +40,11 @@ function _civicrm_api3_remote_participant_validate_spec(&$spec)
         'name'         => 'remote_contact_id',
         'api.required' => 0,
         'title'        => E::ts('Remote Contact ID'),
-        'description'  => E::ts('You can submit a remote contact, in which case the fields should come with the default data'),
+        'description'  => E::ts(
+            'You can submit a remote contact, in which case the fields should come with the default data'
+        ),
     ];
-    $spec['locale'] = [
+    $spec['locale']            = [
         'name'         => 'locale',
         'api.required' => 0,
         'title'        => E::ts('Locale'),

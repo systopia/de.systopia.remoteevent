@@ -16,6 +16,8 @@
 
 namespace Civi\RemoteEvent\Event;
 
+use Symfony\Component\EventDispatcher\Event;
+
 /**
  * Class GetParamsEvent
  *
@@ -24,7 +26,8 @@ namespace Civi\RemoteEvent\Event;
  * This event will be triggered at the beginning of the
  *  RemoteEvent.get API call, so the search parameters can be manipulated
  */
-class GetRegistrationFormResultsEvent extends \Symfony\Component\EventDispatcher\Event {
+class GetRegistrationFormResultsEvent extends Event
+{
 
     /** @var array holds the original RemoteEvent.get_registration_form parameters */
     protected $params;
@@ -48,7 +51,8 @@ class GetRegistrationFormResultsEvent extends \Symfony\Component\EventDispatcher
      *
      * @return array original parameters
      */
-    public function getParams() {
+    public function getParams()
+    {
         return $this->params;
     }
 
@@ -57,7 +61,8 @@ class GetRegistrationFormResultsEvent extends \Symfony\Component\EventDispatcher
      *
      * @return array original parameters
      */
-    public function getEvent() {
+    public function getEvent()
+    {
         return $this->event;
     }
 
@@ -66,7 +71,8 @@ class GetRegistrationFormResultsEvent extends \Symfony\Component\EventDispatcher
      *
      * @return array original parameters
      */
-    public function getResult() {
+    public function getResult()
+    {
         return $this->result;
     }
 

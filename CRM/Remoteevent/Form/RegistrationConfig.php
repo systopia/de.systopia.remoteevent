@@ -24,7 +24,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     /**
      * Set variables up before form is built.
      */
-    public function preProcess() {
+    public function preProcess()
+    {
         parent::preProcess();
         $this->setSelectedChild('registrationconfig');
     }
@@ -71,10 +72,14 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_profiles'        => 'remote_registration_profiles'
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
-            $values = civicrm_api3('Event', 'getsingle', [
-                'id'     => $this->_id,
-                'return' => implode(',', array_keys($field_list)),
-            ]);
+            $values = civicrm_api3(
+                'Event',
+                'getsingle',
+                [
+                    'id'     => $this->_id,
+                    'return' => implode(',', array_keys($field_list)),
+                ]
+            );
             foreach ($field_list as $custom_key => $form_key) {
                 $this->setDefaults([$form_key => CRM_Utils_Array::value($custom_key, $values, '')]);
             }
@@ -108,14 +113,18 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 
     public function postProcess()
     {
-        $values  = $this->exportValues();
+        $values = $this->exportValues();
 
         // todo: make sure default profile is one of the enabled ones
 
         // store data
         $event_update = [
-            'id' => $this->_id,
-            'event_remote_registration.remote_registration_enabled'         => CRM_Utils_Array::value('remote_registration_enabled', $values, 0),
+            'id'                                                            => $this->_id,
+            'event_remote_registration.remote_registration_enabled'         => CRM_Utils_Array::value(
+                'remote_registration_enabled',
+                $values,
+                0
+            ),
             'event_remote_registration.remote_registration_default_profile' => $values['remote_registration_default_profile'],
             'event_remote_registration.remote_registration_profiles'        => $values['remote_registration_profiles']
         ];

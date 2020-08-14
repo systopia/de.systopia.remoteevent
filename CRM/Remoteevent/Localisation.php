@@ -27,6 +27,11 @@ class CRM_Remoteevent_Localisation
     /** @var string the locale used by this instance */
     protected $locale = null;
 
+    protected function __construct($locale)
+    {
+        $this->locale = $locale;
+    }
+
     /**
      * Get a localisation instance
      *
@@ -49,11 +54,6 @@ class CRM_Remoteevent_Localisation
         return self::$instances[$locale];
     }
 
-    protected function __construct($locale)
-    {
-        $this->locale = $locale;
-    }
-
     /**
      * Localise a given string with this localisation
      *
@@ -68,8 +68,9 @@ class CRM_Remoteevent_Localisation
      *
      * @see CiviCRM's ts() function
      */
-    public function localise($string, $context = []) {
-        if (empty($this->locale))  {
+    public function localise($string, $context = [])
+    {
+        if (empty($this->locale)) {
             // no changes, used for pot extraction
             return $string;
         } else {

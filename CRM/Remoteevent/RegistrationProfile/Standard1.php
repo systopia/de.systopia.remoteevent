@@ -19,7 +19,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 /**
  * Implements profile 'Standard1': Email only
  */
-class CRM_Remoteevent_RegistrationProfile_Standard1 extends  CRM_Remoteevent_RegistrationProfile
+class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_RegistrationProfile
 {
     /**
      * Get the internal name of the profile represented
@@ -32,14 +32,15 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends  CRM_Remoteevent_Reg
     }
 
     /**
-     * @see CRM_Remoteevent_RegistrationProfile::getFields()
-     *
      * @param string $locale
      *   the locale to use, defaults to null (current locale)
      *
      * @return array field specs
+     * @see CRM_Remoteevent_RegistrationProfile::getFields()
+     *
      */
-    public function getFields($locale = null) {
+    public function getFields($locale = null)
+    {
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         return [
             'email' => [

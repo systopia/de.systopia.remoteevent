@@ -1,10 +1,16 @@
 {
-  "_lookup": ["name"],
+  "_lookup": [
+    "name"
+  ],
   "name": "remote_contact_roles",
   "_values": [
     {
-      "_lookup": ["name"],
-      "_translate": ["label"],
+      "_lookup": [
+        "name"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "remote-event-user",
       "label": "RemoteEvent User",
       "description": "Contact is allowed to self-register for remote events",
@@ -13,8 +19,12 @@
       "is_active": "1"
     },
     {
-      "_lookup": ["name"],
-      "_translate": ["label"],
+      "_lookup": [
+        "name"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "remote-event-participant",
       "label": "RemoteEvent Participant",
       "description": "Contact is registered to a remote event",
@@ -23,8 +33,12 @@
       "is_active": "1"
     },
     {
-      "_lookup": ["name"],
-      "_translate": ["label"],
+      "_lookup": [
+        "name"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "remote-event-coordinator",
       "label": "RemoteEvent Coordinator",
       "description": "Contact is a remote event coordinator",
@@ -33,8 +47,12 @@
       "is_active": "1"
     },
     {
-      "_lookup": ["name"],
-      "_translate": ["label"],
+      "_lookup": [
+        "name"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "remote-event-participant-coordinator",
       "label": "RemoteEvent Participant Coordinator",
       "description": "Contact can edit other participant's registration data",

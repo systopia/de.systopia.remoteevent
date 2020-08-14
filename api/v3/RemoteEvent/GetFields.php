@@ -14,14 +14,13 @@
 +--------------------------------------------------------*/
 
 require_once 'remoteevent.civix.php';
-use CRM_Remoteevent_ExtensionUtil as E;
 
+use CRM_Remoteevent_ExtensionUtil as E;
 
 
 /*
  * DOESN'T WORK!! 'getfields' is a special (interenal) action that cannot be overwritten this way!
  */
-
 
 
 /**

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <menu>
-  <item>
-    <path>civicrm/event/manage/registrationconfig</path>
-    <page_callback>CRM_Remoteevent_Form_RegistrationConfig</page_callback>
-    <title>Registration Configuration</title>
-    <access_arguments>edit all events</access_arguments>
-  </item>
+    <item>
+        <path>civicrm/event/manage/registrationconfig</path>
+        <page_callback>CRM_Remoteevent_Form_RegistrationConfig</page_callback>
+        <title>Registration Configuration</title>
+        <access_arguments>edit all events</access_arguments>
+    </item>
 </menu>

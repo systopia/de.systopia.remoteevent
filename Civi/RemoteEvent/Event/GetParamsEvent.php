@@ -16,6 +16,8 @@
 
 namespace Civi\RemoteEvent\Event;
 
+use Symfony\Component\EventDispatcher\Event;
+
 /**
  * Class GetParamsEvent
  *
@@ -24,7 +26,8 @@ namespace Civi\RemoteEvent\Event;
  * This event will be triggered at the beginning of the
  *  RemoteEvent.get API call, so the search parameters can be manipulated
  */
-class GetParamsEvent extends \Symfony\Component\EventDispatcher\Event {
+class GetParamsEvent extends Event
+{
 
     /** @var array holds the original RemoteEvent.get parameters */
     protected $originalParameters;
@@ -35,7 +38,7 @@ class GetParamsEvent extends \Symfony\Component\EventDispatcher\Event {
 
     public function __construct($params)
     {
-        $this->currentParameters = $params;
+        $this->currentParameters  = $params;
         $this->originalParameters = $params;
     }
 
@@ -57,7 +60,8 @@ class GetParamsEvent extends \Symfony\Component\EventDispatcher\Event {
      *
      * @return array original parameters
      */
-    public function getOriginalParameters() {
+    public function getOriginalParameters()
+    {
         return $this->originalParameters;
     }
 
@@ -66,7 +70,8 @@ class GetParamsEvent extends \Symfony\Component\EventDispatcher\Event {
      *
      * @return array current parameters
      */
-    public function getParameters() {
+    public function getParameters()
+    {
         return $this->currentParameters;
     }
 

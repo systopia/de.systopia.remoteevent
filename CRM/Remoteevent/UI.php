@@ -36,22 +36,25 @@ class CRM_Remoteevent_UI
         if ($event_id) {
             $tabs['registrationconfig'] = [
                 'title'   => E::ts("Remote Online Registration"),
-                'link'    => CRM_Utils_System::url('civicrm/event/manage/registrationconfig', "action=update&reset=1&id={$event_id}"),
+                'link'    => CRM_Utils_System::url(
+                    'civicrm/event/manage/registrationconfig',
+                    "action=update&reset=1&id={$event_id}"
+                ),
                 'valid'   => 1,
                 'active'  => 1,
                 'current' => false,
             ];
         } else {
             $tabs['registrationconfig'] = [
-                'title'   => E::ts("Remote Online Registration"),
-                'url'     => 'civicrm/event/manage/registrationconfig',
+                'title' => E::ts("Remote Online Registration"),
+                'url'   => 'civicrm/event/manage/registrationconfig',
                 //'field'   => '??' set to some trigger field to highlight
             ];
         }
 
         // lastly: rename the registration tab and move to the end
         if (isset($tabs['registration'])) {
-            $classic_registration = $tabs['registration'];
+            $classic_registration          = $tabs['registration'];
             $classic_registration['title'] = E::ts("Online Registration (Internal)");
             unset($tabs['registration']);
 

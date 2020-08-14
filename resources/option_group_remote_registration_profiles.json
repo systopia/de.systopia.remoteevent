@@ -1,14 +1,22 @@
 {
-  "_lookup": ["name"],
-  "_translate": ["title"],
+  "_lookup": [
+    "name"
+  ],
+  "_translate": [
+    "title"
+  ],
   "name": "remote_registration_profiles",
   "title": "Remote Registration Profiles",
   "is_reserved": "1",
   "is_active": "1",
   "_values": [
     {
-      "_lookup": ["value"],
-      "_translate": ["label"],
+      "_lookup": [
+        "value"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "Standard1",
       "label": "Email only",
       "description": "Only email address",
@@ -17,8 +25,12 @@
       "is_active": "1"
     },
     {
-      "_lookup": ["value"],
-      "_translate": ["label"],
+      "_lookup": [
+        "value"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "Standard2",
       "label": "Email and Name",
       "description": "Email, prefix, title, first and last name",
@@ -27,8 +39,12 @@
       "is_active": "1"
     },
     {
-      "_lookup": ["value"],
-      "_translate": ["label"],
+      "_lookup": [
+        "value"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "Standard3",
       "label": "Full (full name/email/address/phone)",
       "description": "Email, prefix, title, first name, last name, postal address and phone",
@@ -37,8 +53,12 @@
       "is_active": "1"
     },
     {
-      "_lookup": ["value"],
-      "_translate": ["label"],
+      "_lookup": [
+        "value"
+      ],
+      "_translate": [
+        "label"
+      ],
       "name": "Standard4",
       "label": "Full + Organisation + Billing",
       "description": "Email, prefix, title, first name, last name, postal address and phone + organisation details + billing address",

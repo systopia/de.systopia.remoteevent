@@ -25,7 +25,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * This will handle all subscriptions
  */
-class Subscriber implements EventSubscriberInterface {
+class Subscriber implements EventSubscriberInterface
+{
     /**
      * Subscribe to the list events, so we can plug the built-in ones
      */

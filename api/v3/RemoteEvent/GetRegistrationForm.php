@@ -25,13 +25,13 @@ use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFo
  */
 function _civicrm_api3_remote_event_get_registration_form_spec(&$spec)
 {
-    $spec['event_id'] = [
+    $spec['event_id']          = [
         'name'         => 'event_id',
         'api.required' => 1,
         'title'        => E::ts('Event ID'),
         'description'  => E::ts('Internal ID of the event the registration form is needed for'),
     ];
-    $spec['profile'] = [
+    $spec['profile']           = [
         'name'         => 'profile',
         'api.required' => 0,
         'title'        => E::ts('Profile Name'),
@@ -41,9 +41,11 @@ function _civicrm_api3_remote_event_get_registration_form_spec(&$spec)
         'name'         => 'remote_contact_id',
         'api.required' => 0,
         'title'        => E::ts('Remote Contact ID'),
-        'description'  => E::ts('You can submit a remote contact, in which case the fields should come with the default data'),
+        'description'  => E::ts(
+            'You can submit a remote contact, in which case the fields should come with the default data'
+        ),
     ];
-    $spec['locale'] = [
+    $spec['locale']            = [
         'name'         => 'locale',
         'api.required' => 0,
         'title'        => E::ts('Locale'),
@@ -85,11 +87,10 @@ function civicrm_api3_remote_event_get_registration_form($params)
 
     // create and dispatch event
     $result = new GetRegistrationFormResultsEvent($params, $event);
-    \Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $result);
+    Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $result);
 
     // return the result
     return civicrm_api3_create_success($result->getResult());
-
 
 
     // 3) is the event still open for registration?

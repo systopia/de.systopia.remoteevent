@@ -19,7 +19,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 /**
  * Implements profile 'Standard2': Email, prefix, title, first and last name
  */
-class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_RegistrationProfile
+class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_RegistrationProfile
 {
     /**
      * Get the internal name of the profile represented
@@ -32,17 +32,18 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
     }
 
     /**
-     * @see CRM_Remoteevent_RegistrationProfile::getFields()
-     *
      * @param string $locale
      *   the locale to use, defaults to null (current locale)
      *
      * @return array field specs
+     * @see CRM_Remoteevent_RegistrationProfile::getFields()
+     *
      */
-    public function getFields($locale = null) {
+    public function getFields($locale = null)
+    {
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         return [
-            'email' => [
+            'email'        => [
                 'name'        => 'email',
                 'type'        => 'Text',
                 'validation'  => 'Email',
@@ -53,7 +54,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'group_name'  => 'contact_base',
                 'group_label' => $l10n->localise("Contact Data"),
             ],
-            'prefix_id' => [
+            'prefix_id'    => [
                 'name'        => 'prefix_id',
                 'type'        => 'Select',
                 'validation'  => '',
@@ -76,7 +77,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'group_name'  => 'contact_base',
                 'group_label' => $l10n->localise("Contact Data"),
             ],
-            'first_name' => [
+            'first_name'   => [
                 'name'        => 'first_name',
                 'type'        => 'Text',
                 'validation'  => '',
@@ -87,7 +88,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends  CRM_Remoteevent_Reg
                 'group_name'  => 'contact_base',
                 'group_label' => $l10n->localise("Contact Data"),
             ],
-            'last_name' => [
+            'last_name'    => [
                 'name'        => 'last_name',
                 'type'        => 'Text',
                 'validation'  => '',

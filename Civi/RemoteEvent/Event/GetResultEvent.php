@@ -16,6 +16,8 @@
 
 namespace Civi\RemoteEvent\Event;
 
+use Symfony\Component\EventDispatcher\Event;
+
 /**
  * Class GetResultEvent
  *
@@ -24,7 +26,8 @@ namespace Civi\RemoteEvent\Event;
  * This event will be triggered to manipulate and extend the
  *   output of RemoteEvent.get
  */
-class GetResultEvent extends \Symfony\Component\EventDispatcher\Event {
+class GetResultEvent extends Event
+{
 
     /** @var array holds the original RemoteEvent.get parameters */
     protected $params;
@@ -42,7 +45,7 @@ class GetResultEvent extends \Symfony\Component\EventDispatcher\Event {
      */
     public function __construct($params, $event_data)
     {
-        $this->params = $params;
+        $this->params     = $params;
         $this->event_data = $event_data;
     }
 
@@ -51,7 +54,8 @@ class GetResultEvent extends \Symfony\Component\EventDispatcher\Event {
      *
      * @return array current parameters
      */
-    public function getEventData() {
+    public function getEventData()
+    {
         return $this->event_data;
     }
 }

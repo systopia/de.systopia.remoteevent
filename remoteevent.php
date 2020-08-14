@@ -27,7 +27,10 @@ function remoteevent_civicrm_config(&$config)
     _remoteevent_civix_civicrm_config($config);
 
     // add some event listeners
-    \Civi::dispatcher()->addListener('civi.remoteevent.registration.getform', ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
+    Civi::dispatcher()->addListener(
+        'civi.remoteevent.registration.getform',
+        ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']
+    );
 }
 
 /**
@@ -175,8 +178,9 @@ function remoteevent_civicrm_themes(&$themes)
 /**
  * Define custom (Drupal) permissions
  */
-function remoteevent_civicrm_permission(&$permissions) {
-    $permissions['view Remote Events'] = E::ts('RemoteEvent: list public events');
+function remoteevent_civicrm_permission(&$permissions)
+{
+    $permissions['view Remote Events']     = E::ts('RemoteEvent: list public events');
     $permissions['view all Remote Events'] = E::ts('RemoteEvent: list all events');
 }
 
@@ -184,15 +188,17 @@ function remoteevent_civicrm_permission(&$permissions) {
 /**
  * Set permissions RemoteEvent API
  */
-function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
-    $permissions['remote_event']['get'] = ['view public Remote Events', 'view all Remote Events'];
+function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions)
+{
+    $permissions['remote_event']['get']                   = ['view public Remote Events', 'view all Remote Events'];
     $permissions['remote_event']['get_registration_form'] = ['view public Remote Events', 'view all Remote Events'];
 }
 
 /**
  * Add event configuration tabs
  */
-function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context) {
+function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context)
+{
     if ($tabsetName == 'civicrm/event/manage') {
         if (!empty($context['event_id'])) {
             CRM_Remoteevent_UI::updateEventTabs($context['event_id'], $tabs);
