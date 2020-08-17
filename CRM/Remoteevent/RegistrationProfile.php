@@ -17,6 +17,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 
 use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
 use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
+use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 
 
 /**
@@ -155,6 +156,34 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
     /**
+     * Create or identify the contact based on the profile data
+     *
+     * @param RegistrationEvent $registration
+     *      event triggered by the RemoteParticipant.submit
+     */
+    public static function createContactXCM($registration)
+    {
+        if ($registration->getContactID()) {
+            // the job's been done already
+            return;
+        }
+
+        // get the profile (has already been validated)
+        $profile_name = $registration->getSubmittedValue('profile');
+        if (empty($profile_name)) {
+            // use default profile
+            $profile_name = $registration->getEvent()['default_profile'];
+        }
+        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($profile_name);
+
+        // identify/create the contact
+        $contact_id = $profile->identifyContact($registration->getSubmission());
+        $registration->setContactID($contact_id);
+    }
+
+
+
+    /**
      * Get a class instance of the given registration profile
      *
      * @param string $profile_name
@@ -273,9 +302,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $contact_identification = [];
         foreach ($this->getFields() as $field_key => $field_spec) {
             if (isset($data[$field_key])) {
-                // todo: validate again?
                 $contact_identification[$field_key] = $data[$field_key];
             }
+        }
+
+        // add contact type
+        if (empty($contact_identification['contact_type'])) {
+            $contact_identification['contact_type'] = 'Individual';
         }
 
         // add xcm profile, if one given
@@ -287,7 +320,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // run through the contact matcher
         try {
             $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
-            return $match['contact_id'];
+            return $match['id'];
         } catch (Exception $ex) {
             $profile_name = $this->getName();
             throw new Exception(

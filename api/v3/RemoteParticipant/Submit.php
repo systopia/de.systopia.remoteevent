@@ -15,6 +15,7 @@
 
 require_once 'remoteevent.civix.php';
 
+use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -61,5 +62,36 @@ function _civicrm_api3_remote_participant_submit_spec(&$spec)
  */
 function civicrm_api3_remote_participant_submit($params)
 {
-    // todo: implement
+    // first: validate (again)
+    try {
+        $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);
+    } catch (Exception $ex) {
+        return civicrm_api3_create_error($ex->getMessage());
+    }
+
+    // create a transaction
+    $registration_transaction = new CRM_Core_Transaction();
+
+    // dispatch to the various handlers
+    $registration_event = new RegistrationEvent($params);
+    try {
+        Civi::dispatcher()->dispatch('civi.remoteevent.registration.submit', $registration_event);
+    } catch (Exception $ex) {
+        $registration_event->addError($ex->getMessage());
+    }
+
+    // evaluate the result
+    if ($registration_event->hasErrors()) {
+        // something went wrong...
+        $registration_transaction->rollback();
+        $reply = civicrm_api3_create_success($registration_event->getErrors());
+        $reply['is_error'] = 1;
+        $reply['error_msg'] = E::ts("Registration data incomplete or invalid");
+        return $reply;
+
+    } else {
+        $registration_transaction->commit();
+        // todo: return parameters?
+        return civicrm_api3_create_success();
+    }
 }
