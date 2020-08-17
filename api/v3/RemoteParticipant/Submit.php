@@ -40,9 +40,7 @@ function _civicrm_api3_remote_participant_submit_spec(&$spec)
         'name'         => 'remote_contact_id',
         'api.required' => 0,
         'title'        => E::ts('Remote Contact ID'),
-        'description'  => E::ts(
-            'You can submit a remote contact, in which case the fields should come with the default data'
-        ),
+        'description'  => E::ts('You can submit a remote contact ID, to determine the CiviCRM contact'),
     ];
     $spec['locale']            = [
         'name'         => 'locale',

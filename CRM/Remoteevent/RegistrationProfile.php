@@ -16,6 +16,7 @@
 use CRM_Remoteevent_ExtensionUtil as E;
 
 use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
+use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 
 
 /**
@@ -24,10 +25,75 @@ use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFo
 abstract class CRM_Remoteevent_RegistrationProfile
 {
     /**
+     * Get the internal name of the profile represented
+     *
+     * @return string name
+     */
+    abstract public function getName();
+
+    /**
+     * Get the list of fields expected by this profile
+     *
+     * @param string $locale
+     *   the locale to use, defaults to null none. Use 'default' for current
+     *
+     * @return array field specs
+     *   format is field_key => [
+     *      'name'        => field_key
+     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox'
+     *      'weight'      => int,
+     *      'options'     => [value => label (localised)] list  (optional)
+     *      'required'    => 0/1
+     *      'label'       => field label (localised)
+     *      'description' => field description (localised)
+     *      'group_name'  => grouping
+     *      'group_label' => group title (localised)
+     *      'value'       => (optional) pre-filled value
+     *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
+     *                       NOTE: this is just for the optional 'inline' validation in the form,
+     *                             the main validation will go through the RemoteParticipant.validate function
+     *   ]
+     */
+    abstract public function getFields($locale = null);
+
+    /**
+     * Validate the profile fields individually.
+     * This only validates the mere data types,
+     *   more complex validation (e.g. over multiple fields)
+     *   have to be performed by the profile implementations
+     *
+     * @param ValidateEvent $validationEvent
+     *      event triggered by the RemoteParticipant.validate or submit API call
+     */
+    public function validateSubmission($validationEvent)
+    {
+        $data = $validationEvent->getSubmission();
+        $fields = $this->getFields();
+        foreach ($fields as $field_name => $field_spec) {
+            $value = CRM_Utils_Array::value($field_name, $data);
+            if (!empty($field_spec['required']) && $value === null) {
+                $validationEvent->addError($field_name, E::ts("Required"));
+            } else {
+                if (!$this->validateFieldValue($field_spec, $value)) {
+                    $validationEvent->addError($field_name, E::ts("Invalid Value"));
+                }
+            }
+        }
+    }
+
+
+    /*************************************************************
+     *                HELPER / INFRASTRUCTURE                   **
+     *************************************************************/
+
+    /**
      * Add the profile data to the get_registration_form results
      *
      * @param GetRegistrationFormResultsEvent $get_form_results
      *      event triggered by the RemoteEvent.get_registration_form API call
+     *
+     * @return array|null
+     *      returns API error if there is an issue
      */
     public static function addProfileData($get_form_results)
     {
@@ -57,6 +123,35 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // simply add the fields from the profile
         $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
         $get_form_results->addFields($profile->getFields($locale));
+    }
+
+    /**
+     * Validate the profile fields
+     *
+     * @param ValidateEvent $validationEvent
+     *      event triggered by the RemoteParticipant.validate or submit API call
+     */
+    public static function validateProfileData($validationEvent)
+    {
+        $event =  $validationEvent->getEvent();
+        $params = $validationEvent->getSubmission();
+
+        // check the profile
+        if (empty($params['profile'])) {
+            // use default profile
+            $params['profile'] = $event['default_profile'];
+        }
+        $allowed_profiles = explode(',', $event['enabled_profiles']);
+        if (!in_array($params['profile'], $allowed_profiles)) {
+            $validationEvent->addError('profile', E::ts("Profile %1 is not available for submission"));
+            return;
+        }
+
+        // simply add the fields from the profile
+        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
+
+        // run the validation
+        $profile->validateSubmission($validationEvent);
     }
 
     /**
@@ -201,29 +296,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
-    /**
-     * Get the list of fields expected by this profile
-     *
-     * @param string $locale
-     *   the locale to use, defaults to null none. Use 'default' for current
-     *
-     * @return array field specs
-     *   format is field_key => [
-     *      'name'        => field_key
-     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox'
-     *      'weight'      => int,
-     *      'options'     => [value => label (localised)] list  (optional)
-     *      'required'    => 0/1
-     *      'label'       => field label (localised)
-     *      'description' => field description (localised)
-     *      'group_name'  => grouping
-     *      'group_label' => group title (localised)
-     *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
-     *                       NOTE: this is just for the optional 'inline' validation in the form,
-     *                             the main validation will go through the RemoteParticipant.validate function
-     *   ]
-     */
-    abstract public function getFields($locale = null);
 
     /**
      * Does this profile have a dedicated XCM profile?
@@ -236,12 +308,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
         return null;
     }
 
-    /**
-     * Get the internal name of the profile represented
-     *
-     * @return string name
-     */
-    abstract public function getName();
 
     /**
      * Validate the data provided to the profile's fields.

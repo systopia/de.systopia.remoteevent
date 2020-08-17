@@ -15,6 +15,7 @@
 
 require_once 'remoteevent.civix.php';
 
+use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -40,9 +41,7 @@ function _civicrm_api3_remote_participant_validate_spec(&$spec)
         'name'         => 'remote_contact_id',
         'api.required' => 0,
         'title'        => E::ts('Remote Contact ID'),
-        'description'  => E::ts(
-            'You can submit a remote contact, in which case the fields should come with the default data'
-        ),
+        'description'  => E::ts('You can submit a remote contact ID, to determine the CiviCRM contact'),
     ];
     $spec['locale']            = [
         'name'         => 'locale',
@@ -61,8 +60,38 @@ function _civicrm_api3_remote_participant_validate_spec(&$spec)
  *
  * @return array
  *   API3 response
+ *
+ * @throws CiviCRM_API3_Exception
  */
 function civicrm_api3_remote_participant_validate($params)
 {
-    // todo: implement
+    $validation = new ValidateEvent($params);
+
+    // identify a given contact ID
+    $contact_id = null;
+    if (!empty($params['remote_contact_id'])) {
+        $contact_id = CRM_Remotetools_Contact::getByKey($params['remote_contact_id']);
+        if (!$contact_id) {
+            $validation->addError('remote_contact_id', E::ts("RemoteContactID is invalid"));
+        }
+    }
+
+    // first: check if registration is enabled
+    $is_enabled = CRM_Remoteevent_Registration::canRegister($params['event_id'], $contact_id);
+    if (!$is_enabled) {
+        $validation->addError('event_id', E::ts("RemoteEvent [%1] does not exist does not accept registrations.", [1 => $params['event_id']]));
+    } else {
+        // dispatch the validation event for other validations to weigh in
+        Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
+    }
+
+    if ($validation->hasErrors()) {
+        $reply = civicrm_api3_create_success($validation->getErrors());
+        // todo: how to return a validation fail? error?
+        $reply['is_error'] = 1;
+        $reply['error_msg'] = E::ts("Registration data incomplete or invalid");
+        return $reply;
+    } else {
+        return civicrm_api3_create_success([]);
+    }
 }
