@@ -168,7 +168,7 @@ function remoteevent_civicrm_entityTypes(&$entityTypes)
 }
 
 /**
- * Implements hook_civicrm_thems().
+ * Implements hook_civicrm_themes().
  */
 function remoteevent_civicrm_themes(&$themes)
 {

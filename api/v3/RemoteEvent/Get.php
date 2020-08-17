@@ -26,9 +26,17 @@ use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
  */
 function _civicrm_api3_remote_event_get_spec(&$spec)
 {
-    // let's start with the basic event specs
-    require_once 'api/v3/Event.php';
-    _civicrm_api3_event_get_spec($spec);
+    // add all general event fields
+    $event_specs = civicrm_api3('Event', 'getfields')['values'];
+    CRM_Remoteevent_CustomData::labelCustomFields($event_specs);
+
+    // TODO: filter?
+
+    // add to spec
+    foreach ($event_specs as $event_spec) {
+        $name = $event_spec['name'];
+        $spec[$name] = $event_spec;
+    }
 
     // add extra fields
     $spec['locale'] = [
