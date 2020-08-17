@@ -45,6 +45,15 @@ function _civicrm_api3_remote_event_get_spec(&$spec)
         'title'        => E::ts('Locale'),
         'description'  => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
     ];
+
+    $spec['remote_contact_id'] = [
+        'name'         => 'remote_contact_id',
+        'api.required' => 0,
+        'title'        => E::ts('Remote Contact ID'),
+        'description'  => E::ts(
+            'You can submit a remote contact, in which case the result will be filtered for the events available to that contact'
+        ),
+    ];
 }
 
 /**
