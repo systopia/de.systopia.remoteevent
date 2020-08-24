@@ -5,17 +5,163 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-08-10 11:13-0500\n"
+"POT-Creation-Date: 2020-08-24 11:09+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: \n"
 "X-Generator: Poedit 2.0.6\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: de_DE\n"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Remote Registration Enabled"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Default Profile"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Allowed Profiles"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Save"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "You must select a default profile"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Required"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Invalid Value"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Profile [%2] cannot be used with RemoteEvent [%1]."
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Profile %1 is not available for submission"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Implementation for profile '%1' not found."
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Registration profile '%1' is not available (any more)."
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Data for profile '%1' not enough to identify/create contact."
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Value '%1' for field %2 is not valid"
+msgstr ""
+
+#: CRM/Remoteevent/UI.php
+msgid "Remote Online Registration"
+msgstr ""
+
+#: CRM/Remoteevent/UI.php
+msgid "Online Registration (CiviCRM)"
+msgstr ""
+
+#: CRM/Remoteevent/Upgrader/Base.php
+msgid "Upgrade %1 to revision %2"
+msgstr ""
+
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Submit.php
+#: api/v3/RemoteParticipant/Validate.php
+msgid "Locale"
+msgstr ""
+
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Submit.php
+#: api/v3/RemoteParticipant/Validate.php
+msgid "Locale of the field labels/etc. NOT IMPLEMENTED YET"
+msgstr ""
+
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Submit.php
+#: api/v3/RemoteParticipant/Validate.php
+msgid "Remote Contact ID"
+msgstr ""
+
+#: api/v3/RemoteEvent/Get.php
+msgid ""
+"You can submit a remote contact, in which case the result will be filtered "
+"for the events available to that contact"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php api/v3/RemoteParticipant/Get.php
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+msgid "Event ID"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php api/v3/RemoteParticipant/Get.php
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+msgid "Internal ID of the event the registration form is needed for"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+msgid "Profile Name"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+msgid "If omitted, the default profile is used"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php api/v3/RemoteParticipant/Get.php
+msgid ""
+"You can submit a remote contact, in which case the fields should come with "
+"the default data"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+msgid "RemoteEvent [%1] does not exist, or not eligible for registration."
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+msgid "RemoteEvent [%1] is ambiguous."
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+msgid "RemoteEvent [%1] has no remote registration enabled."
+msgstr ""
+
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+msgid "You can submit a remote contact ID, to determine the CiviCRM contact"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+msgid "Registration data incomplete or invalid"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Validate.php
+msgid "RemoteContactID is invalid"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Validate.php
+msgid "RemoteEvent [%1] does not exist does not accept registrations."
+msgstr ""
 
 #: remoteevent.php
-msgid "RemoteEvent: list events"
-msgstr "RemoteEvent: Veranstaltungen Auflisten"
+msgid "RemoteEvent: list public events"
+msgstr "RemoteEvent: Öffentliche Events Anzeigen"
+
+#: remoteevent.php
+msgid "RemoteEvent: list all events"
+msgstr "RemoteEvent: Alle Events Anzeigen"
