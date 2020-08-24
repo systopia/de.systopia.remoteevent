@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-08-24 11:09+0200\n"
+"POT-Creation-Date: 2020-08-24 11:20+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -21,10 +21,12 @@ msgid "Remote Registration Enabled"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+#: resources/custom_group_remote_registration.json
 msgid "Default Profile"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+#: resources/custom_group_remote_registration.json
 msgid "Allowed Profiles"
 msgstr ""
 
@@ -165,3 +167,57 @@ msgstr "RemoteEvent: Öffentliche Events Anzeigen"
 #: remoteevent.php
 msgid "RemoteEvent: list all events"
 msgstr "RemoteEvent: Alle Events Anzeigen"
+
+#: resources/custom_group_remote_registration.json
+msgid "Remote Registration"
+msgstr ""
+
+#: resources/custom_group_remote_registration.json
+msgid "Remote Registration Enabled?"
+msgstr ""
+
+#: resources/resources/option_group_remote_contact_roles.json
+msgid "RemoteEvent Participant"
+msgstr "RemoteEvent: Teilnehmer"
+
+#: resources/option_group_remote_contact_roles.json
+msgid "RemoteEvent Coordinator"
+msgstr ""
+
+#: resources/option_group_remote_contact_roles.json
+msgid "RemoteEvent Participant Coordinator"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid "Remote Registration Profiles"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid "Email only"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid "Email and Name"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid "Email, prefix, title, first and last name"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid "Full (full name/email/address/phone)"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid "Email, prefix, title, first name, last name, postal address and phone"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid "Full + Organisation + Billing"
+msgstr ""
+
+#: resources/option_group_remote_contact_profiles.json
+msgid ""
+"Email, prefix, title, first name, last name, postal address and phone + "
+"organisation details + billing address"
+msgstr ""
