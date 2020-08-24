@@ -54,11 +54,11 @@ class CRM_Remoteevent_UI
 
         // lastly: rename the registration tab and move to the end
         if (isset($tabs['registration'])) {
-            $classic_registration          = $tabs['registration'];
-            $classic_registration['title'] = E::ts("Online Registration (Internal)");
-            unset($tabs['registration']);
+            $classic_registration          = &$tabs['registration'];
+            $classic_registration['title'] = E::ts("Online Registration (CiviCRM)");
 
             // todo: setting - do we still want this?
+            //unset($tabs['registration']);
             //$tabs['registration'] = $classic_registration;
         }
     }
