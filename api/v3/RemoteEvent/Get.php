@@ -28,15 +28,17 @@ function _civicrm_api3_remote_event_get_spec(&$spec)
 {
     // add all general event fields
     $event_specs = civicrm_api3('Event', 'getfields')['values'];
-    CRM_Remoteevent_CustomData::labelCustomFields($event_specs);
 
-    // TODO: filter?
-
-    // add to spec
-    foreach ($event_specs as $event_spec) {
-        $name = $event_spec['name'];
-        $spec[$name] = $event_spec;
-    }
+    // TODO: this approach doesn't work... adding custom fields this way crashes something in the bowels of the API code
+    //    CRM_Remoteevent_CustomData::labelCustomFields($event_specs);
+    //
+    //    // add to spec
+    //    foreach ($event_specs as $event_spec) {
+    //        if (!preg_match('/^custom_[0-9]+$/', $event_spec['name'])) {
+    //            $name = $event_spec['name'];
+    //            $spec[$name] = $event_spec;
+    //        }
+    //    }
 
     // add extra fields
     $spec['locale'] = [
