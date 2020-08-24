@@ -12,24 +12,24 @@
   "_values": [
     {
       "_lookup": [
-        "value"
+        "name"
       ],
       "_translate": [
-        "label"
+        "label", "description"
       ],
       "name": "Standard1",
       "label": "Email only",
-      "description": "Only email address",
+      "description": "",
       "filter": "0",
       "is_reserved": "1",
       "is_active": "1"
     },
     {
       "_lookup": [
-        "value"
+        "name"
       ],
       "_translate": [
-        "label"
+        "label", "description"
       ],
       "name": "Standard2",
       "label": "Email and Name",
@@ -40,10 +40,10 @@
     },
     {
       "_lookup": [
-        "value"
+        "name"
       ],
       "_translate": [
-        "label"
+        "label", "description"
       ],
       "name": "Standard3",
       "label": "Full (full name/email/address/phone)",
@@ -54,10 +54,10 @@
     },
     {
       "_lookup": [
-        "value"
+        "name"
       ],
       "_translate": [
-        "label"
+        "label", "description"
       ],
       "name": "Standard4",
       "label": "Full + Organisation + Billing",
