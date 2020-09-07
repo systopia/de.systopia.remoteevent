@@ -21,6 +21,79 @@ use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
  */
 class CRM_Remoteevent_Registration
 {
+    /** @var array list of [contact_id -> list of participant data] */
+    protected static $cached_registration_data = [];
+
+    /** @var array list of event_ids */
+    protected static $cached_registration_event_ids = [];
+
+    /**
+     * Allow the system to cache the registration data for the given contact
+     *   restricted to the event IDs submitted
+     *
+     * @param array $event_ids
+     *    list of event IDs
+     *
+     * @param integer $contact_id
+     *    contact id
+     */
+    public static function cacheRegistrationData($event_ids, $contact_id)
+    {
+        if ($contact_id) {
+            // check if all event IDs are queried
+            if (array_diff($event_ids, self::$cached_registration_event_ids)) {
+                // some of the event_ids aren't cached -> reset
+                self::$cached_registration_event_ids = [];
+            }
+
+            // check if we need to initialise
+            if (count(self::$cached_registration_event_ids) == 0) {
+                // initialise cache
+                self::$cached_registration_event_ids = $event_ids;
+                self::$cached_registration_data = [];
+            }
+
+            $participant_query = civicrm_api3('Participant', 'get', [
+                'contact_id'   => $contact_id,
+                'event_id'     => ['IN' => $event_ids],
+                'option.limit' => 0,
+                'return'       => 'id,event_id,contact_id,role,status', // todo: more?
+                'sequential'   => 1,
+            ]);
+            self::$cached_registration_data[$contact_id] = $participant_query['values'];
+        }
+    }
+
+    /**
+     * Get a list of participant objects
+     *
+     * @param integer $event_id
+     *   the event
+     *
+     * @param integer $contact_id
+     *   the contact
+     *
+     * @return array
+     *    list of participants
+     */
+    public static function getRegistrations($event_id, $contact_id) {
+        // skip bogus calls
+        if (empty($contact_id)) {
+            return [];
+        }
+
+        // make sure this event/contact was cached
+        if (!in_array($event_id, self::$cached_registration_event_ids)) {
+            // this shouldn't happen
+            self::cacheRegistrationData([$event_id], $contact_id);
+        }
+        if (!isset(self::$cached_registration_data[$contact_id])) {
+            self::cacheRegistrationData([$event_id], $contact_id);
+        }
+
+        self::$cached_registration_data[$contact_id];
+    }
+
     /**
      * @param integer $event_id
      *      the event you want to register to
@@ -33,6 +106,7 @@ class CRM_Remoteevent_Registration
      */
     public static function canRegister($event_id, $contact_id = null) {
         // todo: check event status, availability, date, etc.
+
         return true;
     }
 

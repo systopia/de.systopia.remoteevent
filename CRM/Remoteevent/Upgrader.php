@@ -45,4 +45,18 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
         return true;
     }
+
+    /**
+     * Adding instant invitation field
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0002()
+    {
+        $this->ctx->log->info('Adding instant invitation field.');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        return true;
+    }
 }

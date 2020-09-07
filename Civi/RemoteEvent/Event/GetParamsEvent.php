@@ -35,11 +35,14 @@ class GetParamsEvent extends Event
     /** @var array holds the RemoteEvent.get parameters to be applied */
     protected $currentParameters;
 
+    /** @var integer|false|null remote contact ID if this is a personalised query */
+    protected $remote_contact_id;
 
     public function __construct($params)
     {
         $this->currentParameters  = $params;
         $this->originalParameters = $params;
+        $this->remote_contact_id = false; // i.e. not looked up yet
     }
 
     /**
@@ -75,4 +78,23 @@ class GetParamsEvent extends Event
         return $this->currentParameters;
     }
 
+    /**
+     * Get the contact ID of a remote contact, this
+     *   personalised query refers to
+     *
+     * @return integer|null
+     *   contact ID or null if not given or not valid
+     */
+    public function getRemoteContactID()
+    {
+        if ($this->remote_contact_id === false) {
+            // this hasn't been looked up yet
+            if (!empty($this->currentParameters['remote_contact_id'])) {
+                $this->remote_contact_id = \CRM_Remotetools_Contact::getByKey($this->currentParameters['remote_contact_id']);
+            } else {
+                $this->remote_contact_id = null;
+            }
+        }
+        return $this->remote_contact_id;
+    }
 }

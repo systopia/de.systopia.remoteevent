@@ -93,10 +93,12 @@ function civicrm_api3_remote_event_get($params)
     CRM_Remoteevent_CustomData::resolveCustomFields($event_get);
     $result     = civicrm_api3('Event', 'get', $event_get);
     $event_list = $result['values'];
+    $event_ids  = [];
 
     // apply custom field labelling
     foreach ($event_list as $key => &$event) {
         CRM_Remoteevent_CustomData::labelCustomFields($event);
+        $event_ids[] = (int) $event['id'];
     }
 
     // strip some private/misleading event data
@@ -111,6 +113,26 @@ function civicrm_api3_remote_event_get($params)
     foreach ($event_list as $key => &$event) {
         foreach ($strip_fields as $field_name) {
             unset($event[$field_name]);
+        }
+    }
+
+    // add flags (will be overwritten by event handlers)
+    $remote_contact_id = $get_params->getRemoteContactID();
+    foreach ($event_list as $key => &$event) {
+        $event['can_register'] =
+            (int) CRM_Remoteevent_Registration::canRegister($event['id'], $remote_contact_id);
+        $event['can_instant_register'] = (int)
+            ($event['can_register'] && $event['event_remote_registration.remote_instant_registration']);
+    }
+
+    // add personal flags
+    if ($remote_contact_id) {
+        CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $remote_contact_id);
+        foreach ($event_list as $key => &$event) {
+            $event['is_registered'] =
+                count(CRM_Remoteevent_Registration::getRegistrations($event['id'], $remote_contact_id));
+            $event['can_edit_registration'] =
+                (int) CRM_Remotetools_ContactRoles::hasRole($remote_contact_id, 'remote-event-user');
         }
     }
 

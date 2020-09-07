@@ -172,6 +172,10 @@ msgid "Remote Registration"
 msgstr ""
 
 #: resources/custom_group_remote_registration.json
+msgid "Instant Registration Enabled?"
+msgstr ""
+
+#: resources/custom_group_remote_registration.json
 msgid "Remote Registration Enabled?"
 msgstr ""
 

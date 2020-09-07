@@ -57,6 +57,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
         );
+        $this->add(
+            'checkbox',
+            'remote_instant_registration',
+            E::ts("Instant Registration Enabled?")
+        );
 //        $this->add(
 //            'checkbox',
 //            'remote_invitation_enabled',
@@ -69,7 +74,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             $field_list = [
                 'event_remote_registration.remote_registration_enabled'         => 'remote_registration_enabled',
                 'event_remote_registration.remote_registration_default_profile' => 'remote_registration_default_profile',
-                'event_remote_registration.remote_registration_profiles'        => 'remote_registration_profiles'
+                'event_remote_registration.remote_registration_profiles'        => 'remote_registration_profiles',
+                'event_remote_registration.remote_instant_registration'         => 'remote_instant_registration'
                 //'event_remote_registration.remote_invitation_enabled'           => 'remote_invitation_enabled'
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
@@ -128,6 +134,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             ),
             'event_remote_registration.remote_invitation_enabled'           => CRM_Utils_Array::value(
                 'remote_invitation_enabled',
+                $values,
+                0
+            ),
+            'event_remote_registration.remote_instant_registration'           => CRM_Utils_Array::value(
+                'remote_instant_registration',
                 $values,
                 0
             ),
