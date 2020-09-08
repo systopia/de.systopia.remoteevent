@@ -137,7 +137,16 @@ function civicrm_api3_remote_event_get($params)
         }
     }
 
-    // filter for flags
+    // add profile data
+    foreach ($event_list as $key => &$event) {
+        CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
+    }
+
+    // dispatch the event in case somebody else wants to add something
+    $result = new GetResultEvent($event_get, $event_list);
+    Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
+
+    // finally: filter for flags
     $event_ids = null; // this might not be valid after this section
     foreach (['can_register', 'can_instant_register', 'is_registered', 'can_edit_registration'] as $flag) {
         $queried_value = $get_params->getParameter($flag);
@@ -152,15 +161,6 @@ function civicrm_api3_remote_event_get($params)
             }
         }
     }
-
-    // add profile data
-    foreach ($event_list as $key => &$event) {
-        CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
-    }
-
-    // dispatch the event in case somebody else wants to add something
-    $result = new GetResultEvent($event_get, $event_list);
-    Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
 
     // return the result
     return civicrm_api3_create_success($result->getEventData());

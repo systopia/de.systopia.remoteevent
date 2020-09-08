@@ -26,7 +26,7 @@ use Symfony\Component\EventDispatcher\Event;
  * This event will be triggered at the beginning of the
  *  RemoteEvent.get API call, so the search parameters can be manipulated
  */
-class GetParamsEvent extends Event
+class GetParamsEvent extends RemoteEvent
 {
 
     /** @var array holds the original RemoteEvent.get parameters */
@@ -95,19 +95,14 @@ class GetParamsEvent extends Event
      * Get the contact ID of a remote contact, this
      *   personalised query refers to
      *
+     * @param array $data
+     *   the data blob containing the remote_contact_id
+     *
      * @return integer|null
-     *   contact ID or null if not given or not valid
+     *   the contact ID if a valid id was passed
      */
-    public function getRemoteContactID()
+    public function getRemoteContactID($data = [])
     {
-        if ($this->remote_contact_id === false) {
-            // this hasn't been looked up yet
-            if (!empty($this->currentParameters['remote_contact_id'])) {
-                $this->remote_contact_id = \CRM_Remotetools_Contact::getByKey($this->currentParameters['remote_contact_id']);
-            } else {
-                $this->remote_contact_id = null;
-            }
-        }
-        return $this->remote_contact_id;
+        return parent::getRemoteContactID($this->currentParameters);
     }
 }

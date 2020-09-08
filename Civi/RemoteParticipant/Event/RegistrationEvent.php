@@ -16,6 +16,7 @@
 
 namespace Civi\RemoteParticipant\Event;
 
+use Civi\RemoteEvent\Event\RemoteEvent;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -26,7 +27,7 @@ use Symfony\Component\EventDispatcher\Event;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.submit API call, so the various stages can be applied
  */
-class RegistrationEvent extends Event
+class RegistrationEvent extends RemoteEvent
 {
     const STAGE1_CONTACT_IDENTIFICATION = 500;
     const STAGE2_PARTICIPANT_CREATION   = 0;

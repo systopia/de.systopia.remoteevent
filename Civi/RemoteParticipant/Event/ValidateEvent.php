@@ -16,6 +16,7 @@
 
 namespace Civi\RemoteParticipant\Event;
 
+use Civi\RemoteEvent\Event\RemoteEvent;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -26,7 +27,7 @@ use Symfony\Component\EventDispatcher\Event;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.validate API call, so the search parameters can be manipulated
  */
-class ValidateEvent extends Event
+class ValidateEvent extends RemoteEvent
 {
     /** @var array holds the original RemoteParticipant.validate submission */
     protected $submission;
@@ -107,5 +108,21 @@ class ValidateEvent extends Event
     public function getErrors()
     {
         return $this->error_list;
+    }
+
+
+    /**
+     * Get the contact ID of a remote contact, this
+     *   personalised query refers to
+     *
+     * @param array $data
+     *   the data blob containing the remote_contact_id
+     *
+     * @return integer|null
+     *   the contact ID if a valid id was passed
+     */
+    public function getRemoteContactID($data = [])
+    {
+        return parent::getRemoteContactID($this->submission);
     }
 }

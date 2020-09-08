@@ -26,7 +26,7 @@ use Symfony\Component\EventDispatcher\Event;
  * This event will be triggered at the beginning of the
  *  RemoteEvent.get API call, so the search parameters can be manipulated
  */
-class GetRegistrationFormResultsEvent extends Event
+class GetRegistrationFormResultsEvent extends RemoteEvent
 {
 
     /** @var array holds the original RemoteEvent.get_registration_form parameters */
@@ -87,6 +87,21 @@ class GetRegistrationFormResultsEvent extends Event
         foreach ($field_list as $key => $field_spec) {
             $this->result[$key] = $field_spec;
         }
+    }
+
+    /**
+     * Get the contact ID of a remote contact, this
+     *   personalised query refers to
+     *
+     * @param array $data
+     *   the data blob containing the remote_contact_id
+     *
+     * @return integer|null
+     *   the contact ID if a valid id was passed
+     */
+    public function getRemoteContactID($data = [])
+    {
+        return parent::getRemoteContactID($this->params);
     }
 
 }

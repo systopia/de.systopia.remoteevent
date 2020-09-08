@@ -26,7 +26,7 @@ use Symfony\Component\EventDispatcher\Event;
  * This event will be triggered to manipulate and extend the
  *   output of RemoteEvent.get
  */
-class GetResultEvent extends Event
+class GetResultEvent extends RemoteEvent
 {
 
     /** @var array holds the original RemoteEvent.get parameters */
@@ -50,12 +50,37 @@ class GetResultEvent extends Event
     }
 
     /**
-     * Returns the current (manipulated) parameters to be submitted to Event.get
+     * Returns the current event data to be returned to the caller
      *
-     * @return array current parameters
+     * @return array event data (list)
      */
-    public function getEventData()
+    public function &getEventData()
     {
         return $this->event_data;
+    }
+
+    /**
+     * Returns the current (manipulated) parameters to be submitted to Event.get
+     *
+     * @return array parameters used in the selection
+     */
+    public function getSelectionParameters()
+    {
+        return $this->params;
+    }
+
+    /**
+     * Get the contact ID of a remote contact, this
+     *   personalised query refers to
+     *
+     * @param array $data
+     *   the data blob containing the remote_contact_id
+     *
+     * @return integer|null
+     *   the contact ID if a valid id was passed
+     */
+    public function getRemoteContactID($data = [])
+    {
+        return parent::getRemoteContactID($this->params);
     }
 }
