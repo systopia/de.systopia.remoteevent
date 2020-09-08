@@ -21,6 +21,11 @@ use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
  */
 class CRM_Remoteevent_Registration
 {
+    const STAGE1_CONTACT_IDENTIFICATION = 500;
+    const STAGE2_PARTICIPANT_CREATION   = 0;
+    const STAGE3_POSTPROCESSING         = -500;
+    const STAGE4_COMMUNICATION          = -1000;
+
     /** @var array list of [contact_id -> list of participant data] */
     protected static $cached_registration_data = [];
 

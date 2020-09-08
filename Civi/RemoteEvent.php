@@ -14,7 +14,7 @@
 +--------------------------------------------------------*/
 
 
-namespace Civi\RemoteEvent\Event;
+namespace Civi;
 
 use Symfony\Component\EventDispatcher\Event;
 

@@ -26,24 +26,26 @@ function remoteevent_civicrm_config(&$config)
 {
     _remoteevent_civix_civicrm_config($config);
 
-    // add some event listeners
+    // EVENT REGISTRATION.GETFORM
     Civi::dispatcher()->addListener(
         'civi.remoteevent.registration.getform',
             ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
 
+    // EVENT REGISTRATION.VALIDATE
     Civi::dispatcher()->addListener(
         'civi.remoteevent.registration.validate',
             ['CRM_Remoteevent_RegistrationProfile', 'validateProfileData']);
 
+    // EVENT REGISTRATION.SUBMIT
     Civi::dispatcher()->addListener(
         'civi.remoteevent.registration.submit',
-        ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], \Civi\RemoteParticipant\Event\RegistrationEvent::STAGE1_CONTACT_IDENTIFICATION);
+        ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
     Civi::dispatcher()->addListener(
         'civi.remoteevent.registration.submit',
-        ['CRM_Remoteevent_RegistrationProfile', 'createContactXCM'], \Civi\RemoteParticipant\Event\RegistrationEvent::STAGE1_CONTACT_IDENTIFICATION);
+        ['CRM_Remoteevent_RegistrationProfile', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
     Civi::dispatcher()->addListener(
         'civi.remoteevent.registration.submit',
-        ['CRM_Remoteevent_Registration', 'createParticipant'], \Civi\RemoteParticipant\Event\RegistrationEvent::STAGE2_PARTICIPANT_CREATION);
+        ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
 }
 
 /**

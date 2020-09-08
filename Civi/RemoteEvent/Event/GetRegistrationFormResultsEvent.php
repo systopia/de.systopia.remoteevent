@@ -15,8 +15,7 @@
 
 
 namespace Civi\RemoteEvent\Event;
-
-use Symfony\Component\EventDispatcher\Event;
+use Civi\RemoteEvent;
 
 /**
  * Class GetParamsEvent

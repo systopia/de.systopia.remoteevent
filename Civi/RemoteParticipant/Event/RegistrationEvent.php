@@ -15,9 +15,7 @@
 
 
 namespace Civi\RemoteParticipant\Event;
-
-use Civi\RemoteEvent\Event\RemoteEvent;
-use Symfony\Component\EventDispatcher\Event;
+use Civi\RemoteEvent;
 
 /**
  * Class ValidateEvent
@@ -29,11 +27,6 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class RegistrationEvent extends RemoteEvent
 {
-    const STAGE1_CONTACT_IDENTIFICATION = 500;
-    const STAGE2_PARTICIPANT_CREATION   = 0;
-    const STAGE3_POSTPROCESSING         = -500;
-    const STAGE4_COMMUNICATION          = -1000;
-
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
 

@@ -15,9 +15,7 @@
 
 
 namespace Civi\RemoteParticipant\Event;
-
-use Civi\RemoteEvent\Event\RemoteEvent;
-use Symfony\Component\EventDispatcher\Event;
+use Civi\RemoteEvent;
 
 /**
  * Class ValidateEvent
