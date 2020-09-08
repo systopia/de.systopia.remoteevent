@@ -91,7 +91,7 @@ class CRM_Remoteevent_Registration
             self::cacheRegistrationData([$event_id], $contact_id);
         }
 
-        self::$cached_registration_data[$contact_id];
+        return self::$cached_registration_data[$contact_id];
     }
 
     /**

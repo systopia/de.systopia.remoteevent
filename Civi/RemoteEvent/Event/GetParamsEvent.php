@@ -79,6 +79,19 @@ class GetParamsEvent extends Event
     }
 
     /**
+     * Returns the current (manipulated) parameter
+     *
+     * @param string $key
+     *   the parameter key
+     *
+     * @return mixed|null
+     */
+    public function getParameter($key)
+    {
+        return \CRM_Utils_Array::value($key, $this->currentParameters, null);
+    }
+
+    /**
      * Get the contact ID of a remote contact, this
      *   personalised query refers to
      *

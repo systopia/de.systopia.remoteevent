@@ -129,10 +129,27 @@ function civicrm_api3_remote_event_get($params)
     if ($remote_contact_id) {
         CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $remote_contact_id);
         foreach ($event_list as $key => &$event) {
-            $event['is_registered'] =
+            $event['registration_count'] =
                 count(CRM_Remoteevent_Registration::getRegistrations($event['id'], $remote_contact_id));
             $event['can_edit_registration'] =
                 (int) CRM_Remotetools_ContactRoles::hasRole($remote_contact_id, 'remote-event-user');
+            $event['is_registered'] = $event['registration_count'] > 0 ? 1 : 0;
+        }
+    }
+
+    // filter for flags
+    $event_ids = null; // this might not be valid after this section
+    foreach (['can_register', 'can_instant_register', 'is_registered', 'can_edit_registration'] as $flag) {
+        $queried_value = $get_params->getParameter($flag);
+        if ($queried_value != null) {
+            $queried_value = (int) $queried_value;
+            foreach (array_keys($event_list) as $event_key => $event) {
+                $event_value = (int) CRM_Utils_Array::value($flag, $event, -1);
+                if ($event_value !== $queried_value) {
+                    // filter this event
+                    unset($event_list[$event_key]);
+                }
+            }
         }
     }
 
