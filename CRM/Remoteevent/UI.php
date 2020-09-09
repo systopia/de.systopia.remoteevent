@@ -52,14 +52,20 @@ class CRM_Remoteevent_UI
             ];
         }
 
-        // lastly: rename the registration tab and move to the end
+        // lastly: remove the native registration tab
         if (isset($tabs['registration'])) {
-            $classic_registration          = &$tabs['registration'];
-            $classic_registration['title'] = E::ts("Online Registration (CiviCRM)");
-
-            // todo: setting - do we still want this?
-            //unset($tabs['registration']);
-            //$tabs['registration'] = $classic_registration;
+            $event_id = (int) $event_id;
+            if ($event_id) {
+                $native_registration_disabled = CRM_Core_DAO::singleValueQuery("
+                    SELECT disable_civicrm_registration 
+                    FROM civicrm_value_remote_registration 
+                    WHERE entity_id = {$event_id}");
+                if ($native_registration_disabled) {
+                    unset($tabs['registration']);
+                } else {
+                    $tabs['registration']['title'] = E::ts("Online Registration (CiviCRM)");
+                }
+            }
         }
     }
 }

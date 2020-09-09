@@ -18,8 +18,18 @@
       <div class="clear"></div>
     </div>
     <div class="crm-section">
-      <div class="label">{$form.remote_instant_registration.label}</div>
-      <div class="content">{$form.remote_instant_registration.html}</div>
+      <div class="label">{$form.remote_participant_needs_confirmation.label}</div>
+      <div class="content">{$form.remote_participant_needs_confirmation.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_disable_civicrm_registration.label}</div>
+      <div class="content">{$form.remote_disable_civicrm_registration.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_use_custom_event_location.label}</div>
+      <div class="content">{$form.remote_use_custom_event_location.html}</div>
       <div class="clear"></div>
     </div>
     <div class="crm-section">

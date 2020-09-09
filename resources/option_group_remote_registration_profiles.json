@@ -31,6 +31,20 @@
       "_translate": [
         "label", "description"
       ],
+      "name": "OneClick",
+      "label": "One-Click",
+      "description": "Requires the contact to be identified via remote_contact_id rather than provide contact data",
+      "filter": "0",
+      "is_reserved": "1",
+      "is_active": "1"
+    },
+    {
+      "_lookup": [
+        "name"
+      ],
+      "_translate": [
+        "label", "description"
+      ],
       "name": "Standard2",
       "label": "Email and Name",
       "description": "Email, prefix, title, first and last name",
