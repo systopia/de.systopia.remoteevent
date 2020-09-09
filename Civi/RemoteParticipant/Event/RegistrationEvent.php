@@ -179,4 +179,15 @@ class RegistrationEvent extends RemoteEvent
     {
         return $this->error_list;
     }
+
+    /**
+     * Get the parameters of the original query
+     *
+     * @return array
+     *   parameters of the query
+     */
+    public function getQueryParameters()
+    {
+        return $this->submission;
+    }
 }

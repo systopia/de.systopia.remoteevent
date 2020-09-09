@@ -28,6 +28,14 @@ use Symfony\Component\EventDispatcher\Event;
 abstract class RemoteEvent extends Event
 {
     /**
+     * Get the parameters of the original query
+     *
+     * @return array
+     *   parameters of the query
+     */
+    public abstract function getQueryParameters();
+
+    /**
      * Add a debug message to the event, so it's easier to find out what happened
      *
      * @param string $message
@@ -51,19 +59,14 @@ abstract class RemoteEvent extends Event
      *
      * Warning: this function is cached
      *
-     * This function needs to be overridden by the event implementations subclasses,
-     *   so the right data blob can be passed
-     *
-     * @param array $data
-     *   the data blob containing the remote_contact_id
-     *
      * @return integer|null
      *   the contact ID if a valid id was passed
      */
-    public function getRemoteContactID($data = [])
+    public function getRemoteContactID()
     {
         static $remote_contact_id = false;
         if ($remote_contact_id === false) {
+            $data = $this->getQueryParameters();
             if (empty($data['remote_contact_id'])) {
                 $remote_contact_id = null;
             } else {
@@ -71,5 +74,21 @@ abstract class RemoteEvent extends Event
             }
         }
         return $remote_contact_id;
+    }
+
+    /**
+     * Get the currently used locale
+     *
+     * @return \CRM_Remoteevent_Localisation
+     *   the currently used localisation object
+     */
+    public function getLocalisation()
+    {
+        $data = $this->getQueryParameters();
+        if (empty($data['locale'])) {
+            return \CRM_Remoteevent_Localisation::getLocalisation('default');
+        } else {
+            return \CRM_Remoteevent_Localisation::getLocalisation($data['locale']);
+        }
     }
 }

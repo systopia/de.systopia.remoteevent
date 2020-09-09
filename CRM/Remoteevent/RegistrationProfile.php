@@ -70,13 +70,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
     {
         $data = $validationEvent->getSubmission();
         $fields = $this->getFields();
+        $l10n = $validationEvent->getLocalisation();
         foreach ($fields as $field_name => $field_spec) {
             $value = CRM_Utils_Array::value($field_name, $data);
             if (!empty($field_spec['required']) && $value === null) {
-                $validationEvent->addError($field_name, E::ts("Required"));
+                $validationEvent->addError($field_name, $l10n->localise("Required"));
             } else {
                 if (!$this->validateFieldValue($field_spec, $value)) {
-                    $validationEvent->addError($field_name, E::ts("Invalid Value"));
+                    $validationEvent->addError($field_name, $l10n->localise("Invalid Value"));
                 }
             }
         }

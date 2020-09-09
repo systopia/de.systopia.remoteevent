@@ -89,18 +89,13 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
     }
 
     /**
-     * Get the contact ID of a remote contact, this
-     *   personalised query refers to
+     * Get the parameters of the original query
      *
-     * @param array $data
-     *   the data blob containing the remote_contact_id
-     *
-     * @return integer|null
-     *   the contact ID if a valid id was passed
+     * @return array
+     *   parameters of the query
      */
-    public function getRemoteContactID($data = [])
+    public function getQueryParameters()
     {
-        return parent::getRemoteContactID($this->params);
+        return $this->params;
     }
-
 }
