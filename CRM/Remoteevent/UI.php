@@ -44,7 +44,26 @@ class CRM_Remoteevent_UI
                 'active'  => 1,
                 'current' => false,
             ];
+            if (CRM_Remoteevent_EventFlags::isRemoteRegistrationEnabled($event_id)
+                && CRM_Remoteevent_EventFlags::isAlternativeLocationEnabled($event_id)) {
+                // remove old location
+                unset($tabs['location']);
+
+                // add new location
+                $tabs['alternativelocation'] = [
+                    'title'   => E::ts("Event Location"),
+                    'link'    => CRM_Utils_System::url(
+                        'civicrm/event/manage/alternativelocation',
+                        "action=update&reset=1&id={$event_id}"
+                    ),
+                    'valid'   => 1,
+                    'active'  => 1,
+                    'current' => false,
+                ];
+            }
+
         } else {
+            // these are the fields that apply to *all* events (in the management screen)
             $tabs['registrationconfig'] = [
                 'title' => E::ts("Remote Online Registration"),
                 'url'   => 'civicrm/event/manage/registrationconfig',
@@ -56,10 +75,7 @@ class CRM_Remoteevent_UI
         if (isset($tabs['registration'])) {
             $event_id = (int) $event_id;
             if ($event_id) {
-                $native_registration_disabled = CRM_Core_DAO::singleValueQuery("
-                    SELECT disable_civicrm_registration 
-                    FROM civicrm_value_remote_registration 
-                    WHERE entity_id = {$event_id}");
+                $native_registration_disabled = CRM_Remoteevent_EventFlags::isNativeOnlineRegistrationDisabled($event_id);
                 if ($native_registration_disabled) {
                     unset($tabs['registration']);
                 } else {

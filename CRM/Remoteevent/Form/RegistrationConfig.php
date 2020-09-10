@@ -39,7 +39,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->add(
             'checkbox',
             'remote_registration_enabled',
-            E::ts("Remote Registration Enabled")
+            E::ts("Remote Event Features Enabled?")
         );
         $this->add(
             'select',

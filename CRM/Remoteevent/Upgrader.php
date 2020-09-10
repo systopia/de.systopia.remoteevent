@@ -29,21 +29,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncOptionGroup(E::path('resources/option_group_remote_registration_profiles.json'));
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
-    }
-
-    /**
-     * Adding roles
-     *
-     * @return TRUE on success
-     * @throws Exception
-     */
-    public function upgrade_0001()
-    {
-        $this->ctx->log->info('Adding remote roles.');
-        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-        $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
-        return true;
     }
 
     /**
@@ -52,12 +39,14 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
      * @return TRUE on success
      * @throws Exception
      */
-    public function upgrade_0003()
+    public function upgrade_0004()
     {
-        $this->ctx->log->info('Adding fields and profiles.');
+        $this->ctx->log->info('Updating data structures');
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncOptionGroup(E::path('resources/option_group_remote_registration_profiles.json'));
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
+        $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
         return true;
     }
 }

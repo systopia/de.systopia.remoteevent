@@ -1,0 +1,49 @@
+{
+  "_lookup": ["name"],
+  "_translate": ["title"],
+  "name": "event_alternative_location",
+  "title": "Event Location",
+  "extends": "Event",
+  "collapse_display": "1",
+  "is_active": "1",
+  "is_multiple": "0",
+  "style": "Tab",
+  "table_name": "civicrm_value_event_alternative_location",
+  "collapse_adv_display": "0",
+  "is_reserved": "0",
+  "_fields": [
+    {
+      "_lookup": ["column_name", "custom_group_id"],
+      "_translate": ["label"],
+      "weight": "1",
+      "name": "event_alternativelocation_contact_id",
+      "column_name": "contact_id",
+      "label": "Location Contact",
+      "data_type": "ContactReference",
+      "html_type": "Autocomplete-Select",
+      "is_required": "0",
+      "is_searchable": "1",
+      "is_search_range": "0",
+      "is_active": "1",
+      "is_view": "0",
+      "filter": "action=get&contact_sub_type=Event_Location",
+      "in_selector": "1"
+    },
+    {
+      "_lookup": ["column_name", "custom_group_id"],
+      "_translate": ["label"],
+      "weight": "1",
+      "name": "event_alternativelocation_remark",
+      "column_name": "remark",
+      "label": "Additional Information",
+      "data_type": "Memo",
+      "html_type": "RichTextEditor",
+      "is_required": "0",
+      "is_searchable": "0",
+      "is_search_range": "0",
+      "is_active": "1",
+      "is_view": "0",
+      "in_selector": "1"
+    }
+  ]
+}
