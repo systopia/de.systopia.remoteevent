@@ -26,6 +26,11 @@ function remoteevent_civicrm_config(&$config)
 {
     _remoteevent_civix_civicrm_config($config);
 
+    // EVENT GET
+    Civi::dispatcher()->addListener(
+        'civi.remoteevent.get.result',
+        ['CRM_Remoteevent_EventLocation', 'addLocationData']);
+
     // EVENT REGISTRATION.GETFORM
     Civi::dispatcher()->addListener(
         'civi.remoteevent.registration.getform',

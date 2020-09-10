@@ -14,13 +14,25 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-
+use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
 
 /**
  * Functionality around the EventLocation
  */
 class CRM_Remoteevent_EventLocation
 {
+    const FIELDS = [
+        'location_name',
+        'location_remark',
+        'location_street_address',
+        'location_postal_code',
+        'location_city',
+        'location_country_id',
+        'location_supplemental_address_1',
+        'location_supplemental_address_2',
+        'location_supplemental_address_3',
+    ];
+
     /** @var CRM_Remoteevent_EventLocation the single instance */
     protected static $singleton = null;
 
@@ -83,5 +95,92 @@ class CRM_Remoteevent_EventLocation
             }
         }
         return $this->event_location;
+    }
+
+    /**
+     * Extend the data returned by RemoteEvent.get by the location data
+     *
+     * @param GetResultEvent $result
+     */
+    public static function addLocationData(GetResultEvent $result)
+    {
+        // extract event_ids
+        $events = [];
+        foreach ($result->getEventData() as &$event) {
+            unset($event['event_alternative_location.event_alternativelocation_remark']);
+            unset($event['event_alternative_location.event_alternativelocation_contact_id']);
+            $events[$event['id']] = &$event;
+        }
+        $event_id_list = implode(',', array_keys($events));
+
+        // process all that have an alternative event location
+        $alternative_location_query = "
+            SELECT
+              event.id                                AS event_id,
+              location_contact.organization_name      AS location_name,
+              alt_location.remark                     AS location_remark,
+              location_address.street_address         AS location_street_address,
+              location_address.postal_code            AS location_postal_code,
+              location_address.city                   AS location_city,
+              location_address.country_id             AS location_country_id,
+              location_address.supplemental_address_1 AS location_supplemental_address_1,
+              location_address.supplemental_address_2 AS location_supplemental_address_2,
+              location_address.supplemental_address_3 AS location_supplemental_address_3,
+              location_address.geo_code_1             AS location_geo_code_1,
+              location_address.geo_code_2             AS location_geo_code_2
+            FROM civicrm_event event
+            LEFT JOIN civicrm_value_remote_registration settings
+                   ON settings.entity_id = event.id
+            LEFT JOIN civicrm_value_event_alternative_location alt_location
+                   ON settings.entity_id = event.id
+            LEFT JOIN civicrm_contact location_contact
+                   ON alt_location.contact_id = location_contact.id
+            LEFT JOIN civicrm_address location_address
+                   ON location_address.contact_id = location_contact.id
+                  AND location_address.is_primary = 1
+            WHERE event.id IN ({$event_id_list})
+              AND settings.use_custom_event_location = 1
+            GROUP BY event.id";
+        $query = CRM_Core_DAO::executeQuery($alternative_location_query);
+        while ($query->fetch()) {
+            $event = &$events[$query->event_id];
+            foreach (self::FIELDS as $field_name) {
+                $event[$field_name] = $query->$field_name;
+            }
+            unset($events[$query->event_id]);
+        }
+
+        // for the remaining events, get the default event data
+        $remaining_event_list = implode(',', array_keys($events));
+        if (!empty($remaining_event_list)) {
+            $native_location_query = "
+            SELECT
+              event.id                                AS event_id,
+              event.title                             AS location_name,
+              ''                                      AS location_remark,
+              location_address.street_address         AS location_street_address,
+              location_address.postal_code            AS location_postal_code,
+              location_address.city                   AS location_city,
+              location_address.country_id             AS location_country_id,
+              location_address.supplemental_address_1 AS location_supplemental_address_1,
+              location_address.supplemental_address_2 AS location_supplemental_address_2,
+              location_address.supplemental_address_3 AS location_supplemental_address_3,
+              location_address.geo_code_1             AS location_geo_code_1,
+              location_address.geo_code_2             AS location_geo_code_2
+            FROM civicrm_event event
+            LEFT JOIN civicrm_loc_block location_block
+                   ON location_block.id = event.loc_block_id
+            LEFT JOIN civicrm_address location_address
+                   ON location_address.id = location_block.address_id
+            WHERE event.id IN ({$remaining_event_list})
+            GROUP BY event.id";
+            $query = CRM_Core_DAO::executeQuery($native_location_query);
+            while ($query->fetch()) {
+                $event = &$events[$query->event_id];
+                foreach (self::FIELDS as $field_name) {
+                    $event[$field_name] = $query->$field_name;
+                }
+            }
+        }
     }
 }
