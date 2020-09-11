@@ -31,6 +31,8 @@ class CRM_Remoteevent_EventLocation
         'location_supplemental_address_1',
         'location_supplemental_address_2',
         'location_supplemental_address_3',
+        'location_geo_code_1',
+        'location_geo_code_2',
     ];
 
     /** @var CRM_Remoteevent_EventLocation the single instance */
