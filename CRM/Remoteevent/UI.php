@@ -65,9 +65,9 @@ class CRM_Remoteevent_UI
         } else {
             // these are the fields that apply to *all* events (in the management screen)
             $tabs['registrationconfig'] = [
-                'title' => E::ts("Remote Online Registration"),
-                'url'   => 'civicrm/event/manage/registrationconfig',
-                //'field'   => '??' set to some trigger field to highlight
+                'title'  => E::ts("Remote Online Registration"),
+                'url'    => 'civicrm/event/manage/registrationconfig',
+                'field'  => 'id', // always active
             ];
         }
 
