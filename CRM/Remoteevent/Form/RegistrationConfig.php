@@ -21,6 +21,24 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 {
+    const NATIVE_ATTRIBUTES_USED = [
+        'registration_start_date',
+        'registration_end_date',
+        'requires_approval',
+        'expiration_time',
+        'expiration_time',
+        'allow_selfcancelxfer',
+        'selfcancelxfer_time',
+        'intro_text',
+        'footer_text',
+        'confirm_title',
+        'confirm_text',
+        'confirm_footer_text',
+        'thankyou_title',
+        'thankyou_text',
+        'thankyou_footer_text',
+    ];
+
     /**
      * Set variables up before form is built.
      */
@@ -44,7 +62,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->add(
             'select',
             'remote_registration_default_profile',
-            E::ts("Default Profile"),
+            E::ts("Default Registration Profile"),
             $available_registration_profiles,
             false,
             ['class' => 'crm-select2']
@@ -52,7 +70,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->add(
             'select',
             'remote_registration_profiles',
-            E::ts("Allowed Profiles"),
+            E::ts("Allowed Registration Profiles"),
             $available_registration_profiles,
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
@@ -67,12 +85,28 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'remote_disable_civicrm_registration',
             E::ts("Disable native CiviCRM Online Registration")
         );
-        $this->add(
-            'checkbox',
-            'remote_participant_needs_confirmation',
-            E::ts("Registered Contacts Require Confirmation?")
-        );
         $this->assign('profiles', $available_registration_profiles);
+
+        // add the fields that we share with the core data structure (copied from CRM_Event_Form_ManageEvent_Registration)
+        $this->add('datepicker', 'registration_start_date', ts('Registration Start Date'), [], FALSE, ['time' => TRUE]);
+        $this->add('datepicker', 'registration_end_date', ts('Registration End Date'), [], FALSE, ['time' => TRUE]);
+        $this->addElement('checkbox', 'requires_approval', ts('Require participant approval?'), NULL);
+        $this->add('text', 'expiration_time', ts('Pending participant expiration (hours)'));
+        $this->addRule('expiration_time', ts('Please enter the number of hours (as an integer).'), 'integer');
+        $this->addField('allow_selfcancelxfer', ['label' => ts('Allow self-service cancellation or transfer?'), 'type' => 'advcheckbox']);
+        $this->add('text', 'selfcancelxfer_time', ts('Cancellation or transfer time limit (hours)'));
+        $this->addRule('selfcancelxfer_time', ts('Please enter the number of hours (as an integer).'), 'integer');
+        // add custom texts on the various forms
+        $intro_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'intro_text') + ['class' => 'collapsed', 'preset' => 'civievent'];
+        $event_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event');
+        $this->add('wysiwyg', 'intro_text',E::ts('Event Information'), $intro_attributes);
+        $this->add('wysiwyg', 'footer_text',E::ts('Event Information Footer'), $intro_attributes);
+        $this->add('text', 'confirm_title',E::ts('Registration Confirmation Title'), $event_attributes['confirm_title']);
+        $this->add('wysiwyg', 'confirm_text',E::ts('Registration Confirmation Text'), $event_attributes['confirm_text'] + ['class' => 'collapsed', 'preset' => 'civievent']);
+        $this->add('wysiwyg', 'confirm_footer_text',E::ts('Registration Confirmation Footer'), $event_attributes['confirm_text'] + ['class' => 'collapsed', 'preset' => 'civievent']);
+        $this->add('text', 'thankyou_title',E::ts('Registration Thank You Title'), $event_attributes['thankyou_title']);
+        $this->add('wysiwyg', 'thankyou_text',E::ts('Registration Thank You Text'), $event_attributes['thankyou_text'] + ['class' => 'collapsed', 'preset' => 'civievent']);
+        $this->add('wysiwyg', 'thankyou_footer_text',E::ts('Registration Thank You Footer'), $event_attributes['thankyou_text'] + ['class' => 'collapsed', 'preset' => 'civievent']);
 
         // load and set defaults
         if ($this->_id) {
@@ -82,7 +116,6 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_profiles'          => 'remote_registration_profiles',
                 'event_remote_registration.remote_use_custom_event_location'      => 'remote_use_custom_event_location',
                 'event_remote_registration.remote_disable_civicrm_registration'   => 'remote_disable_civicrm_registration',
-                'event_remote_registration.remote_participant_needs_confirmation' => 'remote_participant_needs_confirmation',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
             $values = civicrm_api3(
@@ -90,7 +123,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'getsingle',
                 [
                     'id'     => $this->_id,
-                    'return' => implode(',', array_keys($field_list)),
+                    'return' => implode(',', array_merge(array_keys($field_list), self::NATIVE_ATTRIBUTES_USED)),
                 ]
             );
             foreach ($field_list as $custom_key => $form_key) {
@@ -153,11 +186,6 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 $values,
                 0
             ),
-            'event_remote_registration.remote_participant_needs_confirmation'    => CRM_Utils_Array::value(
-                'remote_participant_needs_confirmation',
-                $values,
-                0
-            ),
             'event_remote_registration.remote_registration_default_profile' => $values['remote_registration_default_profile'],
             'event_remote_registration.remote_registration_profiles'        => $values['remote_registration_profiles']
         ];
@@ -181,11 +209,18 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         }
         $event_update['event_remote_registration.remote_registration_profiles'] = $enabled_profiles;
 
-        // write out the changes
+        // resolve custom fields
         CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
+
+        // add all the native fields
+        foreach (self::NATIVE_ATTRIBUTES_USED as $field_name) {
+            $event_update[$field_name] = CRM_Utils_Array::value($field_name, $values, '');
+        }
+
+        // write out the changes
         civicrm_api3('Event', 'create', $event_update);
 
-        // todo: figure out how to make this work
+        // this seems to be needed in order to do the right thing
         $this->_action = CRM_Core_Action::UPDATE;
 
         parent::endPostProcess();

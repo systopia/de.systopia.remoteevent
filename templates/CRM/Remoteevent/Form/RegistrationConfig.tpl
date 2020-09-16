@@ -1,3 +1,4 @@
+{crmScope extensionKey='de.systopia.remoteevent'}
 <div class="crm-block crm-form-block crm-event-manage-eventinfo-form-block">
   <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
@@ -15,11 +16,6 @@
     <div class="crm-section">
       <div class="label">{$form.remote_invitation_enabled.label}</div>
       <div class="content">{$form.remote_invitation_enabled.html}</div>
-      <div class="clear"></div>
-    </div>
-    <div class="crm-section">
-      <div class="label">{$form.remote_participant_needs_confirmation.label}</div>
-      <div class="content">{$form.remote_participant_needs_confirmation.html}</div>
       <div class="clear"></div>
     </div>
     <div class="crm-section">
@@ -45,12 +41,94 @@
     </div>
   </div>
 
+<fieldset id="registration" class="crm-collapsible">
+  <legend class="collapsible-title">{ts}Registration Restrictions{/ts}</legend>
+  <div class="remote-registration-restrictions">
+    <div class="crm-section crm-event-manage-registration-form-block-registration_start_date">
+      <div class="label">{$form.registration_start_date.label}</div>
+      <div class="content">{$form.registration_start_date.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
+      <div class="label">{$form.registration_end_date.label}</div>
+      <div class="content">{$form.registration_end_date.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
+      <div class="label">{$form.requires_approval.label}</div>
+      <div class="content">{$form.requires_approval.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
+      <div class="label">{$form.expiration_time.label}</div>
+      <div class="content">{$form.expiration_time.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
+      <div class="label">{$form.allow_selfcancelxfer.label}</div>
+      <div class="content">{$form.allow_selfcancelxfer.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
+      <div class="label">{$form.selfcancelxfer_time.label}</div>
+      <div class="content">{$form.selfcancelxfer_time.html}</div>
+      <div class="clear"></div>
+    </div>
+  </div>
+</fieldset>
+
+<fieldset id="registration" class="crm-collapsible collapsed">
+  <legend class="collapsible-title">{ts}Public Event Text Blocks{/ts}</legend>
+  <div class="remote-registration-texts">
+    <div class="crm-section crm-event-manage-registration-intro_text">
+      <div class="label">{$form.intro_text.label}</div>
+      <div class="content">{$form.intro_text.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-footer_text">
+      <div class="label">{$form.footer_text.label}</div>
+      <div class="content">{$form.footer_text.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-confirm_title">
+      <div class="label">{$form.confirm_title.label}</div>
+      <div class="content">{$form.confirm_title.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-confirm_text">
+      <div class="label">{$form.confirm_text.label}</div>
+      <div class="content">{$form.confirm_text.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-confirm_footer_text">
+      <div class="label">{$form.confirm_footer_text.label}</div>
+      <div class="content">{$form.confirm_footer_text.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-thankyou_title">
+      <div class="label">{$form.thankyou_title.label}</div>
+      <div class="content">{$form.thankyou_title.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-thankyou_text">
+      <div class="label">{$form.thankyou_text.label}</div>
+      <div class="content">{$form.thankyou_text.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-thankyou_footer_text">
+      <div class="label">{$form.thankyou_footer_text.label}</div>
+      <div class="content">{$form.thankyou_footer_text.html}</div>
+      <div class="clear"></div>
+    </div>
+  </div>
+</fieldset>
+
+  <br/>
   <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
-
 </div>
-
+{/crmScope}
 
 {literal}
   <script>

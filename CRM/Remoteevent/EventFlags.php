@@ -29,7 +29,7 @@ class CRM_Remoteevent_EventFlags
         'event_remote_registration.remote_registration_enabled'           => 'remote_registration_enabled',
         'event_remote_registration.remote_use_custom_event_location'      => 'remote_use_custom_event_location',
         'event_remote_registration.remote_disable_civicrm_registration'   => 'remote_disable_civicrm_registration',
-        'event_remote_registration.remote_participant_needs_confirmation' => 'remote_participant_needs_confirmation',
+        'requires_approval'                                               => 'requires_approval',
     ];
 
     /**
