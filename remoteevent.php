@@ -200,7 +200,7 @@ function remoteevent_civicrm_themes(&$themes)
  */
 function remoteevent_civicrm_permission(&$permissions)
 {
-    $permissions['view Remote Events']     = E::ts('RemoteEvent: list public events');
+    $permissions['view public Remote Events']     = E::ts('RemoteEvent: list public events');
     $permissions['view all Remote Events'] = E::ts('RemoteEvent: list all events');
 }
 
