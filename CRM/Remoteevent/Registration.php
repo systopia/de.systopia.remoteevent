@@ -100,19 +100,129 @@ class CRM_Remoteevent_Registration
     }
 
     /**
+     * Check if the given contact can register for the given event
+     *
      * @param integer $event_id
      *      the event you want to register to
      *
      * @param integer|null $contact_id
      *      the contact trying to register (in case of restricted registration)
      *
-     * @return boolean
-     *      is the registration allowed
+     * @param array $event_data
+     *      the data known of the event (so we don't have to pull it ourselves)s
+     *
+     * @return false|string
+     *      is the registration not allowed? if not, returns string reason why not
      */
-    public static function canRegister($event_id, $contact_id = null) {
-        // todo: check event status, availability, date, etc.
+    public static function cannotRegister($event_id, $contact_id = null, $event_data = null) {
+        if (empty($event_data)) {
+            $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
+        }
 
-        return true;
+        // event active?
+        if (empty($event_data['is_active'])) {
+            return E::ts("Event is not active");
+        }
+
+        // registration within time frame?
+        if (!empty($event_data['registration_start_date'])) {
+            if (strtotime($event_data['registration_start_date']) > strtotime('now')) {
+                return E::ts("Registration is not yet open.");
+            }
+        }
+        if (!empty($event_data['registration_end_date'])) {
+            if (strtotime($event_data['registration_end_date']) < strtotime('now')) {
+                return E::ts("Registration has closed.");
+            }
+        }
+
+        // check if max_participants set and NO waitlist:
+        if (!empty($event_data['max_participants']) && empty($event_data['has_waitlist'])) {
+            $registered_count = self::getRegistrationCount($event_id);
+            if ($registered_count >= $event_data['max_participants']) {
+                return E::ts("Event is full");
+            }
+        }
+
+        // check if this contact already registered
+        // todo: if this is an invite only event, then we need instead see if there _is_ a pending contribution
+        if ($contact_id) {
+            $registered_count = self::getRegistrationCount($event_id, true, $contact_id);
+            if ($registered_count > 0) {
+                return E::ts("Contact is already registered");
+            }
+        }
+
+        // contact CAN register (can not not register)
+        return false;
+    }
+
+    /**
+     * Check if on-click registration is enabled for the event / the given contact
+     *
+     * @param integer $event_id
+     *      the event you want to register to
+     *
+     * @param array $event_data
+     *      the data known of the event (so we don't have to pull it ourselves)s
+     *
+     * @return true|string
+     *      is the registration allowed? if not, returns reason why not
+     */
+    public static function canOneClickRegister($event_id, $event_data) {
+        if (empty($event_data)) {
+            $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
+        }
+
+        // you can only do this, if the one-click registration is there as a profile
+        if (!empty($event_data['enabled_profiles'])) {
+            $enabled_profiles = explode(',', $event_data['enabled_profiles']);
+            return in_array('OneClick', $enabled_profiles);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get the count of current registrations for the given event
+     *
+     * @param integer $event_id
+     *    event ID
+     *
+     * @param integer $contact_id
+     *    restrict to this contact
+     *
+     * @param boolean $count_pending
+     *    also count pending registrations?
+     *
+     * @return int
+     *    number of registrations (participant objects)
+     */
+    public static function getRegistrationCount($event_id, $count_pending = false, $contact_id = null)
+    {
+        $event_id = (int) $event_id;
+        $contact_id = (int) $contact_id;
+        if ($count_pending) {
+            $REGISTRATION_CLASSES = "('Positive', 'Pending')";
+        } else {
+            $REGISTRATION_CLASSES = "('Positive')";
+        }
+        if ($contact_id) {
+            $AND_CONTACT_RESTRICTION = "participant.contact_id = {$contact_id}";
+        } else {
+            $AND_CONTACT_RESTRICTION = "";
+        }
+
+        $query = "
+            SELECT COUNT(participant.id)
+            FROM civicrm_participant participant
+            LEFT JOIN civicrm_event  event
+                   ON event.id = {$event_id}
+            LEFT JOIN civicrm_participant_status_type status_type
+                   ON status_type.id = participant.status_id
+            WHERE status_type.class IN {$REGISTRATION_CLASSES}
+                  {$AND_CONTACT_RESTRICTION}";
+        return (int) CRM_Core_DAO::singleValueQuery($query);
     }
 
     /**

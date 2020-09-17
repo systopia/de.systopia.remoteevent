@@ -25,7 +25,9 @@ class CRM_Remoteevent_RemoteEvent
     protected static $event_cache = [];
 
     /**
-     * Get the given event data
+     * Get the given event data.
+     *
+     *  Warning: uses RemoteEvent.get, don't cause recursions!
      *
      * @param integer $event_id
      *   event ID

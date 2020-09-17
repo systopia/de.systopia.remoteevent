@@ -116,19 +116,34 @@ function civicrm_api3_remote_event_get($params)
         }
     }
 
+    // add profile data
+    foreach ($event_list as $key => &$event) {
+        CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
+    }
+
+    // create the event
+    $result = new GetResultEvent($event_get, $event_list);
+
     // add flags (will be overwritten by event handlers)
     $remote_contact_id = $get_params->getRemoteContactID();
-    foreach ($event_list as $key => &$event) {
-        $event['can_register'] =
-            (int) CRM_Remoteevent_Registration::canRegister($event['id'], $remote_contact_id);
+    foreach ($result->getEventData() as &$event) {
+        $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($event['id'], $remote_contact_id, $event);
+        if ($cant_register_reason) {
+            $event['can_register'] = 0;
+            $result->logMessage($cant_register_reason);
+        } else {
+            $event['can_register'] = 1;
+        }
+        // can_instant_register only if can_register
         $event['can_instant_register'] = (int)
-            ($event['can_register'] && $event['event_remote_registration.remote_instant_registration']);
+            ($event['can_register']
+                && CRM_Remoteevent_Registration::canOneClickRegister($event['id'], $event));
     }
 
     // add personal flags
     if ($remote_contact_id) {
         CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $remote_contact_id);
-        foreach ($event_list as $key => &$event) {
+        foreach ($result->getEventData() as &$event) {
             $event['registration_count'] =
                 count(CRM_Remoteevent_Registration::getRegistrations($event['id'], $remote_contact_id));
             $event['can_edit_registration'] =
@@ -137,13 +152,8 @@ function civicrm_api3_remote_event_get($params)
         }
     }
 
-    // add profile data
-    foreach ($event_list as $key => &$event) {
-        CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
-    }
 
     // dispatch the event in case somebody else wants to add something
-    $result = new GetResultEvent($event_get, $event_list);
     Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
 
     // finally: filter for flags

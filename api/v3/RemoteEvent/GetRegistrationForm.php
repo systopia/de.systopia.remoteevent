@@ -89,17 +89,5 @@ function civicrm_api3_remote_event_get_registration_form($params)
     $result = new GetRegistrationFormResultsEvent($params, $event);
     Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $result);
 
-    // return the result
     return civicrm_api3_create_success($result->getResult());
-
-
-    // 3) is the event still open for registration?
-    // todo: how to check that?
-
-    // evaluate the profile
-
-    // add default values
-    // TODO: add default values if remote_contact_id is given
-
-    return civicrm_api3_create_success($field_list);
 }
