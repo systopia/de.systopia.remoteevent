@@ -62,7 +62,6 @@ class CRM_Remoteevent_Registration
                 'contact_id'   => $contact_id,
                 'event_id'     => ['IN' => $event_ids],
                 'option.limit' => 0,
-                'return'       => 'id,event_id,contact_id,role,status', // todo: more?
                 'sequential'   => 1,
             ]);
             self::$cached_registration_data[$contact_id] = $participant_query['values'];
@@ -263,4 +262,19 @@ class CRM_Remoteevent_Registration
         $registration->setParticipant($participant);
     }
 
+    /**
+     * Get a (cached version) of ParticipantStatusType.get
+     */
+    public static function getParticipantStatusList()
+    {
+        static $status_list = null;
+        if ($status_list === null) {
+            $status_list = [];
+            $query = civicrm_api3('ParticipantStatusType', 'get', ['option.limit' => 0]);
+            foreach ($query['values'] as $status) {
+                $status_list[$status['id']] = $status;
+            }
+        }
+        return $status_list;
+    }
 }
