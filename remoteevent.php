@@ -202,6 +202,7 @@ function remoteevent_civicrm_permission(&$permissions)
 {
     $permissions['view public Remote Events']     = E::ts('RemoteEvent: list public events');
     $permissions['view all Remote Events'] = E::ts('RemoteEvent: list all events');
+    $permissions['validate Remote Event registrations'] = E::ts('RemoteEvent: Validate event registrations');
 }
 
 
@@ -212,6 +213,7 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
 {
     $permissions['remote_event']['get']                   = ['view public Remote Events', 'view all Remote Events'];
     $permissions['remote_event']['get_registration_form'] = ['view public Remote Events', 'view all Remote Events'];
+    $permissions['remote_participant']['validate'] = ['validate Remote Event registrations'];
 }
 
 /**
