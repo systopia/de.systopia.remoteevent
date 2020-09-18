@@ -208,7 +208,7 @@ class CRM_Remoteevent_Registration
             $REGISTRATION_CLASSES = "('Positive')";
         }
         if ($contact_id) {
-            $AND_CONTACT_RESTRICTION = "participant.contact_id = {$contact_id}";
+            $AND_CONTACT_RESTRICTION = "AND participant.contact_id = {$contact_id}";
         } else {
             $AND_CONTACT_RESTRICTION = "";
         }
