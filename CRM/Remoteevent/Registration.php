@@ -116,7 +116,7 @@ class CRM_Remoteevent_Registration
      */
     public static function cannotRegister($event_id, $contact_id = null, $event_data = null) {
         if (empty($event_data)) {
-            $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
+            $event_data = CRM_Remoteevent_EventCache::getEvent($event_id);
         }
 
         // event active?

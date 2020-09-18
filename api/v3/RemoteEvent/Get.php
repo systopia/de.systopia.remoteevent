@@ -79,7 +79,7 @@ function civicrm_api3_remote_event_get($params)
     if (!CRM_Core_Permission::check('view all Remote Events')) {
         // only basic view permissions -> only list public + active
         $get_params->setParameter('is_public', 0);
-        $get_params->setParameter('is_active', false);
+        $get_params->setParameter('is_active', 0);
     }
 
     // todo: only view the ones that are open for registration?
@@ -91,6 +91,7 @@ function civicrm_api3_remote_event_get($params)
     // use the basic event API for queries
     $event_get = $get_params->getParameters();
     CRM_Remoteevent_CustomData::resolveCustomFields($event_get);
+    unset($event_get['return']); // we need the full event to cache
     $result     = civicrm_api3('Event', 'get', $event_get);
     $event_list = $result['values'];
     $event_ids  = [];
@@ -99,6 +100,7 @@ function civicrm_api3_remote_event_get($params)
     foreach ($event_list as $key => &$event) {
         CRM_Remoteevent_CustomData::labelCustomFields($event);
         $event_ids[] = (int) $event['id'];
+        CRM_Remoteevent_EventCache::cacheEvent($event);
     }
 
     // strip some private/misleading event data
