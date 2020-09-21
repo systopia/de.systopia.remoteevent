@@ -475,17 +475,18 @@ abstract class CRM_Remoteevent_RegistrationProfile
     public function getCountries($locale)
     {
         $country_list  = [];
+        $country_query = [
+            'option.limit' => 0,
+            'return'       => 'id,name',
+        ];
+
+        // apply country limit
         $country_limit = CRM_Core_BAO_Country::countryLimit();
-        $countries     = civicrm_api3(
-            'Country',
-            'get',
-            [
-                'iso_code'     => ['IN' => $country_limit],
-                'option.limit' => 0,
-                'return'       => 'id,name',
-            ]
-        );
-        $l10n          = CRM_Remoteevent_Localisation::getLocalisation($locale);
+        if (!empty($country_limit)) {
+            $country_query['iso_code'] = ['IN' => $country_limit];
+        }
+        $countries = civicrm_api3('Country', 'get', $country_query);
+        $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($countries['values'] as $country) {
             $country_list[$country['id']] = $l10n->localise($country['name']);
         }
