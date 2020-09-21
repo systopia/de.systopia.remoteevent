@@ -1,22 +1,14 @@
 {
-  "_lookup": [
-    "name"
-  ],
-  "_translate": [
-    "title"
-  ],
+  "_lookup": ["name"],
+  "_translate": ["title"],
   "name": "remote_registration_profiles",
   "title": "Remote Registration Profiles",
   "is_reserved": "1",
   "is_active": "1",
   "_values": [
     {
-      "_lookup": [
-        "name"
-      ],
-      "_translate": [
-        "label", "description"
-      ],
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
       "name": "Standard1",
       "label": "Email only",
       "description": "",
@@ -25,12 +17,8 @@
       "is_active": "1"
     },
     {
-      "_lookup": [
-        "name"
-      ],
-      "_translate": [
-        "label", "description"
-      ],
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
       "name": "OneClick",
       "label": "One-Click",
       "description": "Requires the contact to be identified via remote_contact_id rather than provide contact data",
@@ -39,12 +27,8 @@
       "is_active": "1"
     },
     {
-      "_lookup": [
-        "name"
-      ],
-      "_translate": [
-        "label", "description"
-      ],
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
       "name": "Standard2",
       "label": "Email and Name",
       "description": "Email, prefix, title, first and last name",
@@ -53,12 +37,8 @@
       "is_active": "1"
     },
     {
-      "_lookup": [
-        "name"
-      ],
-      "_translate": [
-        "label", "description"
-      ],
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
       "name": "Standard3",
       "label": "Full (full name/email/address/phone)",
       "description": "Email, prefix, title, first name, last name, postal address and phone",
@@ -67,12 +47,8 @@
       "is_active": "1"
     },
     {
-      "_lookup": [
-        "name"
-      ],
-      "_translate": [
-        "label", "description"
-      ],
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
       "name": "Standard4",
       "label": "Full + Organisation + Billing",
       "description": "Email, prefix, title, first name, last name, postal address and phone + organisation details + billing address",
