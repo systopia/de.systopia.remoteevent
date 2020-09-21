@@ -211,9 +211,11 @@ function remoteevent_civicrm_themes(&$themes)
  */
 function remoteevent_civicrm_permission(&$permissions)
 {
-    $permissions['view public Remote Events'] = E::ts('RemoteEvent: list public events');
-    $permissions['view all Remote Events']    = E::ts('RemoteEvent: list all events');
-    $permissions['register to Remote Events'] = E::ts('RemoteEventRegistration: submit,update,cancel');
+    $permissions['view public Remote Events']          = E::ts('RemoteEvent: list public events');
+    $permissions['view all Remote Events']             = E::ts('RemoteEvent: list all events');
+    $permissions['register to Remote Events']          = E::ts('RemoteEventRegistration: register');
+    $permissions['edit Remote Event registrations']    = E::ts('RemoteEventRegistration: edit');
+    $permissions['cancel Remote Events registrations'] = E::ts('RemoteEventRegistration: cancel');
 }
 
 
@@ -227,10 +229,10 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
     $permissions['remote_event']['get_registration_form'] = ['view public Remote Events', 'view all Remote Events'];
 
     // RemoteParticipant entity
-    $permissions['remote_participant']['get']      = ['register to Remote Events'];
+    $permissions['remote_participant']['get']      = ['edit Remote Event registrations'];
     $permissions['remote_participant']['submit']   = ['register to Remote Events'];
     $permissions['remote_participant']['validate'] = ['register to Remote Events'];
-    $permissions['remote_participant']['cancel']   = ['register to Remote Events'];
+    $permissions['remote_participant']['cancel']   = ['cancel Remote Events registrations'];
 }
 
 /**
