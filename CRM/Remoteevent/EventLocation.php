@@ -113,9 +113,13 @@ class CRM_Remoteevent_EventLocation
             unset($event['event_alternative_location.event_alternativelocation_contact_id']);
             $events[$event['id']] = &$event;
         }
-        $event_id_list = implode(',', array_keys($events));
+        if (empty($events)) {
+            // nothing to do
+            return;
+        }
 
         // process all that have an alternative event location
+        $event_id_list = implode(',', array_keys($events));
         $alternative_location_query = "
             SELECT
               event.id                                AS event_id,
