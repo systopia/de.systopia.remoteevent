@@ -146,9 +146,18 @@ class CRM_Remoteevent_Registration
         // check if this contact already registered
         // todo: if this is an invite only event, then we need instead see if there _is_ a pending contribution
         if ($contact_id) {
-            $registered_count = self::getRegistrationCount($event_id, true, $contact_id);
+            $registered_count = self::getRegistrationCount($event_id, $contact_id, ['Positive', 'Pending']);
             if ($registered_count > 0) {
                 return E::ts("Contact is already registered");
+            }
+        }
+
+        // check whether the participant has been rejected, blocking a new registration
+        $blacklist_status_list = Civi::settings()->get('remote_registration_blocking_status_list');
+        if (!empty($blacklist_status_list) && is_array($blacklist_status_list)) {
+            $blacklisted = self::getRegistrationCount($event_id, $contact_id, [], $blacklist_status_list);
+            if ($blacklisted) {
+                return E::ts("Contact already has a registration record and can currently not register.");
             }
         }
 
@@ -191,20 +200,33 @@ class CRM_Remoteevent_Registration
      * @param integer $contact_id
      *    restrict to this contact
      *
-     * @param boolean $count_pending
-     *    also count pending registrations?
+     * @param array $class_list
+     *    list of participant status classes to be included - default is ony positive statuses
+     *
+     * @param array $status_id_list
+     *    list of participant status ids to be included - default is <all>
      *
      * @return int
      *    number of registrations (participant objects)
      */
-    public static function getRegistrationCount($event_id, $count_pending = false, $contact_id = null)
+    public static function getRegistrationCount($event_id, $contact_id = null, $class_list = ['Positive'], $status_id_list = [])
     {
         $event_id = (int) $event_id;
         $contact_id = (int) $contact_id;
-        if ($count_pending) {
-            $REGISTRATION_CLASSES = "('Positive', 'Pending')";
+
+        // compile query
+        $class_list = array_intersect(['Positive', 'Pending', 'Negative'], $class_list);
+        if (empty($class_list)) {
+            $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative')";
         } else {
-            $REGISTRATION_CLASSES = "('Positive')";
+            $REGISTRATION_CLASSES = "('" . implode("','", $class_list) . "')";
+        }
+        if (empty($status_id_list)) {
+            $AND_STATUS_ID_IN_LIST = "";
+        } else {
+            $status_id_list = array_map('intval', $status_id_list);
+            $status_id_list = implode(',', $status_id_list);
+            $AND_STATUS_ID_IN_LIST = "AND participant.status_id IN ({$status_id_list})";
         }
         if ($contact_id) {
             $AND_CONTACT_RESTRICTION = "AND participant.contact_id = {$contact_id}";
@@ -220,6 +242,7 @@ class CRM_Remoteevent_Registration
             LEFT JOIN civicrm_participant_status_type status_type
                    ON status_type.id = participant.status_id
             WHERE status_type.class IN {$REGISTRATION_CLASSES}
+                  {$AND_STATUS_ID_IN_LIST}
                   {$AND_CONTACT_RESTRICTION}";
         return (int) CRM_Core_DAO::singleValueQuery($query);
     }
