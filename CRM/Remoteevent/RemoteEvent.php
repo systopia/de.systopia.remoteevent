@@ -22,6 +22,16 @@ use \Civi\EventMessages\MessageTokenList as MessageTokenList;
  */
 class CRM_Remoteevent_RemoteEvent
 {
+    const STRIP_FIELDS = [
+        'is_online_registration',
+        'event_full_text',
+        'is_map',
+        'is_show_location',
+        'created_id',
+        'created_date'
+    ];
+
+
     /** @var array cached events, indexed by event_id */
     protected static $event_cache = [];
 

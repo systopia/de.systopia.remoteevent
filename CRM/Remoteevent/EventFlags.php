@@ -21,8 +21,13 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_EventFlags
 {
-
-    /** @var string[] list of flags in the event configuration relevant for the UI*/
+    /** @var string[] list of additional event flags added by RemoteEvent */
+    const EVENT_FLAGS = [
+        'can_register',
+        'can_instant_register',
+        'can_edit_registration',
+        'is_registered',
+    ];
 
     /** @var string[] list of flags in the event configuration relevant for the UI (full name => internal name) */
     const EVENT_CONFIG_FLAGS = [

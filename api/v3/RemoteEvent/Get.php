@@ -26,20 +26,6 @@ use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
  */
 function _civicrm_api3_remote_event_get_spec(&$spec)
 {
-    // add all general event fields
-    $event_specs = civicrm_api3('Event', 'getfields')['values'];
-
-    // TODO: this approach doesn't work... adding custom fields this way crashes something in the bowels of the API code
-    //    CRM_Remoteevent_CustomData::labelCustomFields($event_specs);
-    //
-    //    // add to spec
-    //    foreach ($event_specs as $event_spec) {
-    //        if (!preg_match('/^custom_[0-9]+$/', $event_spec['name'])) {
-    //            $name = $event_spec['name'];
-    //            $spec[$name] = $event_spec;
-    //        }
-    //    }
-
     // add extra fields
     $spec['locale'] = [
         'name'         => 'locale',
@@ -104,16 +90,8 @@ function civicrm_api3_remote_event_get($params)
     }
 
     // strip some private/misleading event data
-    $strip_fields = [
-        'is_online_registration',
-        'event_full_text',
-        'is_map',
-        'is_show_location',
-        'created_id',
-        'created_date'
-    ];
     foreach ($event_list as $key => &$event) {
-        foreach ($strip_fields as $field_name) {
+        foreach (CRM_Remoteevent_RemoteEvent::STRIP_FIELDS as $field_name) {
             unset($event[$field_name]);
         }
     }
