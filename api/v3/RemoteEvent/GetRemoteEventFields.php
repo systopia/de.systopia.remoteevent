@@ -22,7 +22,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  *
  * RemoteEvent.getfields implementation using the CRM_Remotetools_GetFieldsWrapper
  */
-function civicrm_api3_remote_event_getfields($params) {
+function civicrm_api3_remote_event_get_remote_event_fields($params) {
     // get event fields
     $fields = civicrm_api3('Event', 'getfields');
 
