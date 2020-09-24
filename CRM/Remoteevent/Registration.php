@@ -21,10 +21,15 @@ use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
  */
 class CRM_Remoteevent_Registration
 {
-    const STAGE1_CONTACT_IDENTIFICATION = 500;
+    const STAGE1_CONTACT_IDENTIFICATION = 5000;
     const STAGE2_PARTICIPANT_CREATION   = 0;
-    const STAGE3_POSTPROCESSING         = -500;
-    const STAGE4_COMMUNICATION          = -1000;
+    const STAGE3_POSTPROCESSING         = -5000;
+    const STAGE4_COMMUNICATION          = -10000;
+
+    const BEFORE_CONTACT_IDENTIFICATION = self::STAGE1_CONTACT_IDENTIFICATION + 50;
+    const AFTER_CONTACT_IDENTIFICATION  = self::STAGE1_CONTACT_IDENTIFICATION - 50;
+    const BEFORE_PARTICIPANT_CREATION   = self::STAGE2_PARTICIPANT_CREATION + 50;
+    const AFTER_PARTICIPANT_CREATION    = self::STAGE2_PARTICIPANT_CREATION - 50;
 
     /** @var array list of [contact_id -> list of participant data] */
     protected static $cached_registration_data = [];
@@ -264,6 +269,23 @@ class CRM_Remoteevent_Registration
     }
 
     /**
+     * Once the contact is identified, make sure that (s)he's personally eligible for registration
+     *
+     * @param RegistrationEvent $registration
+     *   registration event
+     */
+    public static function verifyContactNotRegistered($registration)
+    {
+        // now, after the contact has been identified, make sure (s)he's not already registered
+        $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($registration->getEventID(), $registration->getContactID(), $registration->getEvent());
+        if ($cant_register_reason) {
+            $registration->addError($cant_register_reason);
+        }
+    }
+
+
+
+    /**
      * Will create a simple participant object
      *
      * @param RegistrationEvent $registration
@@ -276,13 +298,16 @@ class CRM_Remoteevent_Registration
             return;
         }
 
-        // create a simple participant
-        $creation = civicrm_api3('Participant', 'create', [
-            'contact_id' => $registration->getContactID(),
-            'event_id'   => $registration->getEventID()
-        ]);
-        $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
-        $registration->setParticipant($participant);
+        if (!$registration->hasErrors()) {
+            // create a simple participant
+            $participant_data = $registration->getParticipant();
+            $participant_data['contact_id'] = $registration->getContactID();
+            CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
+            $creation = civicrm_api3('Participant', 'create', $participant_data);
+            $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
+            CRM_Remoteevent_CustomData::labelCustomFields($participant);
+            $registration->setParticipant($participant);
+        }
     }
 
     /**

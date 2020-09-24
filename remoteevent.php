@@ -51,6 +51,9 @@ function remoteevent_civicrm_config(&$config)
         ['CRM_Remoteevent_RegistrationProfile', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
     $dispatcher->addListener(
         'civi.remoteevent.registration.submit',
+        ['CRM_Remoteevent_Registration', 'verifyContactNotRegistered'], CRM_Remoteevent_Registration::AFTER_CONTACT_IDENTIFICATION);
+    $dispatcher->addListener(
+        'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
 
     // EVENTMESSAGES.TOKENS

@@ -428,7 +428,17 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     return false;
                 }
 
-            default: // no type given
+            default:
+                // check for regex
+                if (substr($field_spec['validation'], 0, 6) == 'regex:') {
+                    if (strlen($value) > 0) {
+                        return preg_match(substr($field_spec['validation'], 6), $value);
+                    } else {
+                        return true;
+                    }
+                }
+
+                // else: no (valid) type given
                 return true;
         }
     }

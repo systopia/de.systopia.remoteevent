@@ -67,8 +67,8 @@ function civicrm_api3_remote_participant_submit($params)
     // first: validate (again)
     try {
         $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);
-    } catch (Exception $ex) {
-        return civicrm_api3_create_error($ex->getMessage());
+    } catch (CiviCRM_API3_Exception $ex) {
+        return civicrm_api3_create_error($ex->getMessage(), ['errors' => $ex->getExtraParams()['values']]);
     }
 
     // create a transaction
@@ -86,10 +86,8 @@ function civicrm_api3_remote_participant_submit($params)
     if ($registration_event->hasErrors()) {
         // something went wrong...
         $registration_transaction->rollback();
-        $reply = civicrm_api3_create_success($registration_event->getErrors());
-        $reply['is_error'] = 1;
-        $reply['error_msg'] = E::ts("Registration data incomplete or invalid");
-        return $reply;
+        $errors = $registration_event->getErrors();
+        return civicrm_api3_create_error(E::ts("Registration data incomplete or invalid"), ['errors' => $errors]);
 
     } else {
         $registration_transaction->commit();

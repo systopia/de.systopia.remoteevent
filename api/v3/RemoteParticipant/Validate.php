@@ -91,7 +91,7 @@ function civicrm_api3_remote_participant_validate($params)
         $reply = civicrm_api3_create_success($validation->getErrors());
         // todo: how to return a validation fail? error?
         $reply['is_error'] = 1;
-        $reply['error_msg'] = E::ts("Registration data incomplete or invalid");
+        $reply['error_message'] = E::ts("Registration data incomplete or invalid");
         return $reply;
     } else {
         return civicrm_api3_create_success([]);

@@ -33,8 +33,11 @@ class RegistrationEvent extends RemoteEvent
     /** @var integer holds the contact ID as soon as it's identified */
     protected $contact_id;
 
-    /** @var array holds the participant object  */
+    /** @var array holds the participant data  */
     protected $participant;
+
+    /** @var integer holds the participant ID as soon as it's created/updated */
+    protected $participant_id;
 
     /** @var array holds a list of (minor) errors */
     protected $error_list;
@@ -45,6 +48,21 @@ class RegistrationEvent extends RemoteEvent
         $this->contact_id = null;
         $this->participant_id = null;
         $this->error_list = [];
+
+        // create participant data based on submission
+        $this->participant = $submission_data;
+        unset($this->participant['profile'], $this->participant['remote_contact_id'], $this->participant['locale']);
+
+        // resolve custom fields
+        \CRM_Remoteevent_CustomData::resolveCustomFields($this->participant);
+
+        // set some defaults
+        if (empty($this->participant['status_id'])) {
+            $this->participant['status_id'] = 'Registered';
+        }
+        if (empty($this->participant['role_id'])) {
+            $this->participant['role_id'] = 1; // Attendee
+        }
     }
 
     /**
@@ -98,11 +116,18 @@ class RegistrationEvent extends RemoteEvent
      */
     public function setParticipant($participant)
     {
-        if ($this->participant) {
-            throw new \Exception("Participant creation conflict");
-        } else {
-            $this->participant = $participant;
-        }
+        $this->participant = $participant;
+    }
+
+    /**
+     * Set the participant object
+     *
+     * @return array $participant
+     *    participant data
+     */
+    public function &getParticipant()
+    {
+        return $this->participant;
     }
 
 
@@ -111,6 +136,9 @@ class RegistrationEvent extends RemoteEvent
      *
      * @return integer
      *    contact ID
+     *
+     * @throws \Exception
+     *    if another contact ID has already been set
      */
     public function setContactID($contact_id)
     {
