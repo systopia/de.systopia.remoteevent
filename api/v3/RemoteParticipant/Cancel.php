@@ -62,6 +62,8 @@ function _civicrm_api3_remote_participant_cancel_spec(&$spec)
  */
 function civicrm_api3_remote_participant_cancel($params)
 {
+    unset($params['check_permissions']);
+
     // there is two options here to identify the participant object
     // 1) event_id and remote_contact_id
     $participants = [];

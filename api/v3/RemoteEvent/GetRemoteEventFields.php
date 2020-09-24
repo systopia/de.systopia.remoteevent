@@ -24,6 +24,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 function civicrm_api3_remote_event_get_remote_event_fields($params) {
     // get event fields
+    unset($params['check_permissions']);
     $fields = civicrm_api3('Event', 'getfields');
 
     // strip some fields

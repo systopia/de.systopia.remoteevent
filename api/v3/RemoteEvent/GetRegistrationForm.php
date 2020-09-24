@@ -64,6 +64,8 @@ function _civicrm_api3_remote_event_get_registration_form_spec(&$spec)
  */
 function civicrm_api3_remote_event_get_registration_form($params)
 {
+    unset($params['check_permissions']);
+
     // first: sanity checks
     // 1) does the event exist?
     $event_query = civicrm_api3('RemoteEvent', 'get', ['id' => $params['event_id']]);

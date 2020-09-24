@@ -62,6 +62,8 @@ function _civicrm_api3_remote_participant_submit_spec(&$spec)
  */
 function civicrm_api3_remote_participant_submit($params)
 {
+    unset($params['check_permissions']);
+
     // first: validate (again)
     try {
         $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);

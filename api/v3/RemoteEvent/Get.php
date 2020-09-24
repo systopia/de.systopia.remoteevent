@@ -55,6 +55,8 @@ function _civicrm_api3_remote_event_get_spec(&$spec)
  */
 function civicrm_api3_remote_event_get($params)
 {
+    unset($params['check_permissions']);
+
     // create an object for the paramters
     $get_params = new GetParamsEvent($params);
 

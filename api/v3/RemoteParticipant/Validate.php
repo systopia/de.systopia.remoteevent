@@ -65,6 +65,7 @@ function _civicrm_api3_remote_participant_validate_spec(&$spec)
  */
 function civicrm_api3_remote_participant_validate($params)
 {
+    unset($params['check_permissions']);
     $validation = new ValidateEvent($params);
 
     // identify a given contact ID
