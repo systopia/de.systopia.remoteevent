@@ -1,15 +1,23 @@
 <?xml version="1.0"?>
 <menu>
-    <item>
-        <path>civicrm/event/manage/registrationconfig</path>
-        <page_callback>CRM_Remoteevent_Form_RegistrationConfig</page_callback>
-        <title>Registration Configuration</title>
-        <access_arguments>edit all events</access_arguments>
-    </item>
+  <item>
+    <path>civicrm/event/manage/registrationconfig</path>
+    <page_callback>CRM_Remoteevent_Form_RegistrationConfig</page_callback>
+    <title>Registration Configuration</title>
+    <access_arguments>edit all events</access_arguments>
+  </item>
   <item>
     <path>civicrm/event/manage/alternativelocation</path>
     <page_callback>CRM_Remoteevent_Form_EventLocation</page_callback>
     <title>Event Location</title>
     <access_arguments>edit all events</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/admin/remoteevent/settings</path>
+    <page_callback>CRM_Remoteevent_Form_Settings</page_callback>
+    <title>Remote Events - General Configuration</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+    <desc>General configuration for RemoteEvents. However, most options would be defined with each individual event.</desc>
+    <adminGroup>CiviEvent</adminGroup>
   </item>
 </menu>

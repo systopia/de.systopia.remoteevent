@@ -79,8 +79,12 @@ class CRM_Remoteevent_RemoteEvent
                     $participant['id']
                 );
                 $messageTokens->setToken('cancellation_token', $cancellation_token);
-                // todo: how to generate url?
-                $messageTokens->setToken('cancellation_link', "https://www.systopia.de/events/cancel?token={$cancellation_token}");
+
+                // add URL
+                $url = Civi::settings()->get('remote_registration_cancel_link');
+                if ($url) {
+                    $messageTokens->setToken('cancellation_link', "{$url}?token={$cancellation_token}");
+                }
             }
         }
     }
@@ -91,8 +95,8 @@ class CRM_Remoteevent_RemoteEvent
      */
     public static function listTokens($tokenList)
     {
-        $tokenList->addToken('$cancellation_token', "Cancellation Token valid for one-click cancellation");
-        $tokenList->addToken('$cancellation_link', "URL for one-click cancellation");
+        $tokenList->addToken('$cancellation_token', E::ts("Cancellation Token valid for one-click cancellation, if available."));
+        $tokenList->addToken('$cancellation_link', E::ts("URL for one-click cancellation, if available. This also requires the base url to set in the RemoteEvent general settings."));
     }
 
 
