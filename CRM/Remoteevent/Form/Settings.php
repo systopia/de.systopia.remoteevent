@@ -27,6 +27,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         'remote_registration_link',
         'remote_registration_modify_link',
         'remote_registration_cancel_link',
+        'remote_registration_xcm_profile',
     ];
 
     public function buildQuickForm()
@@ -40,6 +41,14 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             $this->getNegativeStatusList(),
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+
+        $this->add(
+            'select',
+            'remote_registration_xcm_profile',
+            E::ts("Default Matcher Profile (XCM)"),
+            CRM_Xcm_Configuration::getProfileList(),
+            false
         );
 
         $this->add(
