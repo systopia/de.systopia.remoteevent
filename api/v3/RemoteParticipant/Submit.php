@@ -87,7 +87,7 @@ function civicrm_api3_remote_participant_submit($params)
         // something went wrong...
         $registration_transaction->rollback();
         $errors = $registration_event->getErrors();
-        return civicrm_api3_create_error(E::ts("Registration data incomplete or invalid"), ['errors' => $errors]);
+        return civicrm_api3_create_error(E::ts("Registration Failed"), ['errors' => $errors]);
 
     } else {
         $registration_transaction->commit();

@@ -41,7 +41,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * @return array field specs
      *   format is field_key => [
      *      'name'        => field_key
-     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox'
+     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date'
      *      'weight'      => int,
      *      'options'     => [value => label (localised)] list  (optional)
      *      'required'    => 0/1
