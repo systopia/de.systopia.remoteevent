@@ -30,6 +30,9 @@ class RegistrationEvent extends RemoteEvent
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
 
+    /** @var array holds the participant data  */
+    protected $contact_data;
+
     /** @var integer holds the contact ID as soon as it's identified */
     protected $contact_id;
 
@@ -47,6 +50,7 @@ class RegistrationEvent extends RemoteEvent
         $this->submission  = $submission_data;
         $this->contact_id = null;
         $this->participant_id = null;
+        $this->contact_data = [];
         $this->error_list = [];
 
         // create participant data based on submission
@@ -128,6 +132,30 @@ class RegistrationEvent extends RemoteEvent
     public function &getParticipant()
     {
         return $this->participant;
+    }
+
+    /**
+     * Set the contact_data object, which is used for
+     *   contact identification / creation
+     *
+     * @param array $contact_data
+     *    contact_data data
+     */
+    public function setContactData($contact_data)
+    {
+        $this->contact_data = $contact_data;
+    }
+
+    /**
+     * Get the contact_data object, which is used for
+     *   contact identification / creation
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function &getContactData()
+    {
+        return $this->contact_data;
     }
 
 

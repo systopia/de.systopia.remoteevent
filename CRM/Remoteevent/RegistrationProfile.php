@@ -97,7 +97,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * @return array|null
      *      returns API error if there is an issue
      */
-    public static function addProfileData($get_form_results)
+    public static function addPraddProfileData($get_form_results)
     {
         $params = $get_form_results->getParams();
         $event  = $get_form_results->getEvent();
@@ -155,33 +155,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // run the validation
         $profile->validateSubmission($validationEvent);
     }
-
-    /**
-     * Create or identify the contact based on the profile data
-     *
-     * @param RegistrationEvent $registration
-     *      event triggered by the RemoteParticipant.submit
-     */
-    public static function createContactXCM($registration)
-    {
-        if ($registration->getContactID()) {
-            // the job's been done already
-            return;
-        }
-
-        // get the profile (has already been validated)
-        $profile_name = $registration->getSubmittedValue('profile');
-        if (empty($profile_name)) {
-            // use default profile
-            $profile_name = $registration->getEvent()['default_profile'];
-        }
-        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($profile_name);
-
-        // identify/create the contact
-        $contact_id = $profile->identifyContact($registration->getSubmission());
-        $registration->setContactID($contact_id);
-    }
-
 
 
     /**
@@ -291,43 +264,34 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * @param array $data
      *      Input data
      *
+     * @param RegistrationEvent $registration
+     *      registration data
+     *
      * @return integer
      *      CiviCRM contact ID
      *
      * @throws Exception
      *      If not enough information is provided
      */
-    public function identifyContact($data)
+    public static function addProfileContactData($registration)
     {
-        // base implementation simply pushes all data into XCM:
-        $contact_identification = [];
-        foreach ($this->getFields() as $field_key => $field_spec) {
-            if (isset($data[$field_key])) {
-                $contact_identification[$field_key] = $data[$field_key];
+        // get the profile (has already been validated)
+        $profile_name = $registration->getSubmittedValue('profile');
+        if (empty($profile_name)) {
+            // use default profile
+            $profile_name = $registration->getEvent()['default_profile'];
+        }
+        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($profile_name);
+
+        // then simply add all fields from the profile
+        $contact_data = $registration->getContactData();
+        $submission_data = $registration->getSubmission();
+        foreach ($profile->getFields() as $field_key => $field_spec) {
+            if (isset($submission_data[$field_key])) {
+                $contact_data[$field_key] = $submission_data[$field_key];
             }
         }
-
-        // add contact type
-        if (empty($contact_identification['contact_type'])) {
-            $contact_identification['contact_type'] = 'Individual';
-        }
-
-        // add xcm profile, if one given
-        $xcm_profile = $this->getXCMProfile();
-        if ($xcm_profile) {
-            $contact_identification['xcm_profile'] = $xcm_profile;
-        }
-
-        // run through the contact matcher
-        try {
-            $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
-            return $match['id'];
-        } catch (Exception $ex) {
-            $profile_name = $this->getName();
-            throw new Exception(
-                E::ts("Data for profile '%1' not enough to identify/create contact.", [1 => $profile_name])
-            );
-        }
+        $registration->setContactData($contact_data);
     }
 
 

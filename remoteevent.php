@@ -45,10 +45,13 @@ function remoteevent_civicrm_config(&$config)
     // EVENT REGISTRATION.SUBMIT
     $dispatcher->addListener(
         'civi.remoteevent.registration.submit',
+        ['CRM_Remoteevent_RegistrationProfile', 'addProfileContactData'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
+    $dispatcher->addListener(
+        'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
     $dispatcher->addListener(
         'civi.remoteevent.registration.submit',
-        ['CRM_Remoteevent_RegistrationProfile', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
+        ['CRM_Remoteevent_Registration', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
     $dispatcher->addListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'verifyContactNotRegistered'], CRM_Remoteevent_Registration::AFTER_CONTACT_IDENTIFICATION);
