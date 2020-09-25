@@ -97,7 +97,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * @return array|null
      *      returns API error if there is an issue
      */
-    public static function addPraddProfileData($get_form_results)
+    public static function addProfileData($get_form_results)
     {
         $params = $get_form_results->getParams();
         $event  = $get_form_results->getEvent();
