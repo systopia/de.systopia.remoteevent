@@ -41,7 +41,7 @@
     </div>
   </div>
 
-<fieldset id="registration" class="crm-collapsible">
+<fieldset id="registration" class="crm-collapsible remote-registration-content">
   <legend class="collapsible-title">{ts}Registration Restrictions{/ts}</legend>
   <div class="remote-registration-restrictions">
     <div class="crm-section crm-event-manage-registration-form-block-registration_start_date">
@@ -60,11 +60,6 @@
       <div class="clear"></div>
     </div>
     <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
-      <div class="label">{$form.expiration_time.label}</div>
-      <div class="content">{$form.expiration_time.html}</div>
-      <div class="clear"></div>
-    </div>
-    <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
       <div class="label">{$form.allow_selfcancelxfer.label}</div>
       <div class="content">{$form.allow_selfcancelxfer.html}</div>
       <div class="clear"></div>
@@ -77,7 +72,7 @@
   </div>
 </fieldset>
 
-<fieldset id="registration" class="crm-collapsible collapsed">
+<fieldset id="registration" class="crm-collapsible collapsed remote-registration-content">
   <legend class="collapsible-title">{ts}Public Event Text Blocks{/ts}</legend>
   <div class="remote-registration-texts">
     <div class="crm-section crm-event-manage-registration-intro_text">
@@ -139,9 +134,9 @@
        */
       function show_hide_content() {
         if (cj("input[name=remote_registration_enabled]").prop('checked')) {
-          cj("div.remote-registration-content").show(100);
+          cj(".remote-registration-content").show(100);
         } else {
-          cj("div.remote-registration-content").hide(100);
+          cj(".remote-registration-content").hide(100);
         }
       }
 
