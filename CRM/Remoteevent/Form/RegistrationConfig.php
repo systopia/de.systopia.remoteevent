@@ -25,8 +25,6 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         'registration_start_date',
         'registration_end_date',
         'requires_approval',
-        'expiration_time',
-        'expiration_time',
         'allow_selfcancelxfer',
         'selfcancelxfer_time',
         'intro_text',
@@ -91,8 +89,6 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->add('datepicker', 'registration_start_date', ts('Registration Start Date'), [], FALSE, ['time' => TRUE]);
         $this->add('datepicker', 'registration_end_date', ts('Registration End Date'), [], FALSE, ['time' => TRUE]);
         $this->addElement('checkbox', 'requires_approval', ts('Require participant approval?'), NULL);
-        $this->add('text', 'expiration_time', ts('Pending participant expiration (hours)'));
-        $this->addRule('expiration_time', ts('Please enter the number of hours (as an integer).'), 'integer');
         $this->addField('allow_selfcancelxfer', ['label' => ts('Allow self-service cancellation or transfer?'), 'type' => 'advcheckbox']);
         $this->add('text', 'selfcancelxfer_time', ts('Cancellation or transfer time limit (hours)'));
         $this->addRule('selfcancelxfer_time', ts('Please enter the number of hours (as an integer).'), 'integer');
