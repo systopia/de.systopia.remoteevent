@@ -14,6 +14,7 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
+use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
 
 
 /**
@@ -125,5 +126,41 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                 ],
             ]
         );
+    }
+
+    /**
+     * Add the default values to the form data, so people using this profile
+     *  don't have to enter everything themselves
+     *
+     * @param GetRegistrationFormResultsEvent $resultsEvent
+     *   the locale to use, defaults to null none. Use 'default' for current
+     *
+     */
+    public function addDefaultValues(GetRegistrationFormResultsEvent $resultsEvent)
+    {
+        // add contact data
+        $this->addDefaultContactValues($resultsEvent, ['prefix_id', 'email', 'formal_title', 'first_name', 'last_name', 'phone']);
+
+        // add address data (primary?)
+        $contact_id = $resultsEvent->getContactID();
+        if ($contact_id) {
+            $address_fields = ['street_address', 'supplemental_address_1', 'supplemental_address_2', 'postal_code', 'city', 'country_id'];
+            try {
+                $address = civicrm_api3(
+                    'Address',
+                    'getsingle',
+                    [
+                        'contact_id' => $contact_id,
+                        'is_primary' => 1,
+                        'return' => implode(',', $address_fields)
+                    ]
+                );
+                foreach ($address_fields as $address_field) {
+                    $resultsEvent->setPrefillValue($address_field, $address[$address_field]);
+                }
+            } catch (CiviCRM_API3_Exception $ex) {
+                // probably no primary address set
+            }
+        }
     }
 }

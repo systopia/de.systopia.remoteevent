@@ -45,6 +45,14 @@ function _civicrm_api3_remote_event_get_registration_form_spec(&$spec)
             'You can submit a remote contact, in which case the fields should come with the default data'
         ),
     ];
+    $spec['invite_token'] = [
+        'name'         => 'invite_token',
+        'api.required' => 0,
+        'title'        => E::ts('Invite Token'),
+        'description'  => E::ts(
+            'You can submit an invite token that can be used to identify the contact, in which case the fields should come with the default data. This takes preference over the remote_contact_id'
+        ),
+    ];
     $spec['locale']            = [
         'name'         => 'locale',
         'api.required' => 0,

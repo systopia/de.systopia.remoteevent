@@ -14,6 +14,7 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
+use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
 
 
 /**
@@ -55,5 +56,29 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
                 'group_label' => $l10n->localise("Contact Data"),
             ]
         ];
+    }
+
+    /**
+     * Add the default values to the form data, so people using this profile
+     *  don't have to enter everything themselves
+     *
+     * @param GetRegistrationFormResultsEvent $resultsEvent
+     *   the locale to use, defaults to null none. Use 'default' for current
+     *
+     */
+    public function addDefaultValues(GetRegistrationFormResultsEvent $resultsEvent)
+    {
+        $contact_id = $resultsEvent->getContactID();
+        if ($contact_id) {
+            try {
+                $primary_email = civicrm_api3('Email', 'getsingle', [
+                    'contact_id' => $contact_id,
+                    'is_primary' => 1
+                ]);
+                $resultsEvent->setPrefillValue('email', $primary_email['email']);
+            } catch (CiviCRM_API3_Exception $ex) {
+                // there is no (unique) primary email
+            }
+        }
     }
 }

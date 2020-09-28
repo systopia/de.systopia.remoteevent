@@ -49,13 +49,23 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'description' => field description (localised)
      *      'group_name'  => grouping
      *      'group_label' => group title (localised)
-     *      'value'       => (optional) pre-filled value
+     *      'value'       => (optional) pre-filled value, typically set in a second pass (addDefaultValues, see below)
      *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
      *                       NOTE: this is just for the optional 'inline' validation in the form,
      *                             the main validation will go through the RemoteParticipant.validate function
      *   ]
      */
     abstract public function getFields($locale = null);
+
+    /**
+     * Add the default values to the form data, so people using this profile
+     *  don't have to enter everything themselves
+     *
+     * @param GetRegistrationFormResultsEvent $resultsEvent
+     *   the locale to use, defaults to null none. Use 'default' for current
+     *
+     */
+    abstract public function addDefaultValues(GetRegistrationFormResultsEvent $resultsEvent);
 
     /**
      * Validate the profile fields individually.
@@ -125,6 +135,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // simply add the fields from the profile
         $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
         $get_form_results->addFields($profile->getFields($locale));
+
+        // add default values
+        $profile->addDefaultValues($get_form_results);
     }
 
     /**
@@ -466,5 +479,42 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
 
         return $country_list;
+    }
+
+    /**
+     * Will set the default values for the given contact fields
+     *
+     * @param GetRegistrationFormResultsEvent $resultsEvent
+     *   the locale to use, defaults to null none. Use 'default' for current
+     *
+     * @param array $contact_fields
+     *   list of contact fields
+     *
+     * @param array $attribute_mapping
+     *   maps the contact fields to the profile fields
+     *
+     */
+    public function addDefaultContactValues(GetRegistrationFormResultsEvent $resultsEvent, $contact_fields, $attribute_mapping = [])
+    {
+        $contact_id = $resultsEvent->getContactID();
+        if ($contact_id) {
+            // set contact data
+            try {
+                $contact_data = civicrm_api3('Contact', 'getsingle', [
+                    'contact_id' => $contact_id,
+                    'return'     => implode(',', $contact_fields),
+                ]);
+                foreach ($contact_fields as $contact_field) {
+                    if (isset($attribute_mapping[$contact_field])) {
+                        $profile_field = $attribute_mapping[$contact_field];
+                    } else {
+                        $profile_field = $contact_field;
+                    }
+                    $resultsEvent->setPrefillValue($profile_field, $contact_data[$contact_field]);
+                }
+            } catch (CiviCRM_API3_Exception $ex) {
+                // there is no (unique) primary email
+            }
+        }
     }
 }

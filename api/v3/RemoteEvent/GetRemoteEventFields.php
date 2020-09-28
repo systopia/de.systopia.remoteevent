@@ -61,7 +61,7 @@ function civicrm_api3_remote_event_get_remote_event_fields($params) {
         'is_core_field' => false,
     ];
 
-    // todo: use symfony event to add fields
+    // todo: use symfony event to add fields??
 
     return $fields;
 }
