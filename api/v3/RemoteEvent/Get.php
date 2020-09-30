@@ -139,14 +139,16 @@ function civicrm_api3_remote_event_get($params)
     Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
 
     // finally: filter for flags
+    $event_list = &$result->getEventData();
     $event_ids = null; // this might not be valid after this section
+    $query_values = $result->getQueryParameters();
     foreach (['can_register', 'can_instant_register', 'is_registered', 'can_edit_registration'] as $flag) {
-        $queried_value = $get_params->getParameter($flag);
-        if ($queried_value != null) {
-            $queried_value = (int) $queried_value;
-            foreach (array_keys($event_list) as $event_key => $event) {
+        if (isset($query_values[$flag])) {
+            $queried_value = empty($query_values[$flag]) ? 0 : 1;
+            foreach (array_keys($event_list) as $event_key) {
+                $event = $event_list[$event_key];
                 $event_value = (int) CRM_Utils_Array::value($flag, $event, -1);
-                if ($event_value !== $queried_value) {
+                if ($event_value != $queried_value) {
                     // filter this event
                     unset($event_list[$event_key]);
                 }
