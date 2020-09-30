@@ -63,12 +63,15 @@ class CRM_Remoteevent_Registration
                 self::$cached_registration_data = [];
             }
 
-            $participant_query = civicrm_api3('Participant', 'get', [
+            $participant_params = [
                 'contact_id'   => $contact_id,
-                'event_id'     => ['IN' => $event_ids],
                 'option.limit' => 0,
                 'sequential'   => 1,
-            ]);
+            ];
+            if (!empty($event_ids)) {
+                $participant_params['event_id'] = ['IN' => $event_ids];
+            }
+            $participant_query = civicrm_api3('Participant', 'get', $participant_params);
             self::$cached_registration_data[$contact_id] = $participant_query['values'];
         }
     }
