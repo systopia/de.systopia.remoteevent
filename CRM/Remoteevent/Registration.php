@@ -246,10 +246,11 @@ class CRM_Remoteevent_Registration
             SELECT COUNT(participant.id)
             FROM civicrm_participant participant
             LEFT JOIN civicrm_event  event
-                   ON event.id = {$event_id}
+                   ON event.id = participant.event_id
             LEFT JOIN civicrm_participant_status_type status_type
                    ON status_type.id = participant.status_id
             WHERE status_type.class IN {$REGISTRATION_CLASSES}
+                  AND participant.event_id = {$event_id}
                   {$AND_STATUS_ID_IN_LIST}
                   {$AND_CONTACT_RESTRICTION}";
         return (int) CRM_Core_DAO::singleValueQuery($query);
