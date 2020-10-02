@@ -16,7 +16,7 @@
 require_once 'remoteevent.civix.php';
 
 use CRM_Remoteevent_ExtensionUtil as E;
-
+use Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
 
 /**
  *
@@ -40,28 +40,34 @@ function civicrm_api3_remote_event_get_remote_event_fields($params) {
         }
     }
 
+    // create event to collect more fields
+    $fields_collection = new GetFieldsEvent($fields['values']);
+
     // add artificial fields
     foreach (CRM_Remoteevent_EventFlags::EVENT_FLAGS as $flag_name) {
-        $fields['values'][$flag_name] = [
+        $fields_collection->setFieldSpec($flag_name, [
             'name'          => $flag_name,
             'type'          => CRM_Utils_Type::T_BOOLEAN,
             'title'         => "{$flag_name} flag",
             'localizable'   => 0,
             'is_core_field' => false,
-        ];
+        ]);
     }
 
     // registration_count
-    $fields['values']['registration_count'] = [
+    $fields_collection->setFieldSpec('registration_count', [
         'name'          => 'registration_count',
         'type'          => CRM_Utils_Type::T_INT,
         'title'         => "Registration Count",
         'description'   => "Number of currently registered participants",
         'localizable'   => 0,
         'is_core_field' => false,
-    ];
+    ]);
 
-    // todo: use symfony event to add fields??
+    // dispatch to others
+    Civi::dispatcher()->dispatch('civi.remoteevent.getfields', $fields_collection);
 
+    // set results and return
+    $fields['values'] = $fields_collection->getFieldSpecs();
     return $fields;
 }

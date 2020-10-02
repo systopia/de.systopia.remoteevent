@@ -15,6 +15,7 @@
 
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
+use \Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
 
 /**
  * Functionality around the EventLocation
@@ -188,5 +189,95 @@ class CRM_Remoteevent_EventLocation
                 }
             }
         }
+    }
+
+    /**
+     * Add the fields to the RemoteEvent.get_fields list
+     *
+     * @param GetFieldsEvent $fields_collection
+     */
+    public static function addFieldSpecs($fields_collection)
+    {
+        $fields_collection->setFieldSpec('location_name', [
+            'name'          => 'location_name',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'title'         => "Location Name",
+            'description'   => "Name of the location",
+            'localizable'   => 0,
+            'is_core_field' => false,
+
+        ]);
+        $fields_collection->setFieldSpec('location_remark', [
+            'name'          => 'location_remark',
+            'type'          => CRM_Utils_Type::T_MEDIUMBLOB,
+            'title'         => "Location Remark",
+            'description'   => "Additional information for this location, unique to the event",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_street_address', [
+            'name'          => 'location_street_address',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'title'         => "Street Address",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_postal_code', [
+            'name'          => 'location_postal_code',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'title'         => "Postal Code",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_city', [
+            'name'          => 'location_city',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'title'         => "City",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_country_id', [
+            'name'          => 'location_country_id',
+            'type'          => CRM_Utils_Type::T_INT,
+            'title'         => "Country ID",
+            'localizable'   => 0,
+            'is_core_field' => false,
+
+        ]);
+        $fields_collection->setFieldSpec('location_supplemental_address_1', [
+            'name'          => 'location_supplemental_address_1',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'title'         => "Supplemental Address 1",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_supplemental_address_2', [
+            'name'          => 'location_supplemental_address_2',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'title'         => "Supplemental Address 2",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_supplemental_address_3', [
+            'name'          => 'location_supplemental_address_3',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'title'         => "Supplemental Address 3",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_geo_code_1', [
+            'name'          => 'location_geo_code_1',
+            'type'          => CRM_Utils_Type::T_FLOAT,
+            'title'         => "Geo-Location longitude",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
+        $fields_collection->setFieldSpec('location_geo_code_2', [
+            'name'          => 'location_geo_code_2',
+            'type'          => CRM_Utils_Type::T_FLOAT,
+            'title'         => "Geo-Location latitude",
+            'localizable'   => 0,
+            'is_core_field' => false,
+        ]);
     }
 }

@@ -27,6 +27,11 @@ function remoteevent_civicrm_config(&$config)
     _remoteevent_civix_civicrm_config($config);
     $dispatcher = Civi::dispatcher();
 
+    // EVENT GETFIELDS
+    $dispatcher->addListener(
+        'civi.remoteevent.getfields',
+        ['CRM_Remoteevent_EventLocation', 'addFieldSpecs']);
+
     // EVENT GET
     $dispatcher->addListener(
         'civi.remoteevent.get.result',
