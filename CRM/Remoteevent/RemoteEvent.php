@@ -76,7 +76,9 @@ class CRM_Remoteevent_RemoteEvent
             if (self::shouldAddCancellationLink($participant)) {
                 $cancellation_token = CRM_Remotetools_SecureToken::generateEntityToken(
                     'Participant',
-                    $participant['id']
+                    $participant['id'],
+                    null,
+                    'cancel'
                 );
                 $messageTokens->setToken('cancellation_token', $cancellation_token);
 
