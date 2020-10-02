@@ -61,11 +61,13 @@ class RegistrationEvent extends RemoteEvent
         \CRM_Remoteevent_CustomData::resolveCustomFields($this->participant);
 
         // set some defaults
-        if (empty($this->participant['status_id'])) {
-            $this->participant['status_id'] = 'Registered';
-        }
         if (empty($this->participant['role_id'])) {
-            $this->participant['role_id'] = 1; // Attendee
+            $event = $this->getEvent();
+            if (empty($event['default_role_id'])) {
+                $this->participant['role_id'] =  1; // Attendee
+            } else {
+                $this->participant['role_id'] =  $event['default_role_id'];
+            }
         }
     }
 

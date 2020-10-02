@@ -331,6 +331,49 @@ class CRM_Remoteevent_Registration
 
 
     /**
+     * Will calculate the participant status
+     *
+     * @param RegistrationEvent $registration
+     *   registration event
+     */
+    public static function determineParticipantStatus($registration)
+    {
+        // of there is already an issue, don't waste any more time on this
+        if ($registration->hasErrors()) {
+            return;
+        }
+
+        // default status calculation
+        $participant_data = &$registration->getParticipant();
+        $event_data = $registration->getEvent();
+
+        // check if it registration requires approval
+        if (empty($participant_data['participant_status_id'])) {
+            if (!empty($event_data['requires_approval'])) {
+                // there is an active waiting list, see if need to get on it
+                $participant_data['participant_status_id'] = 'Awaiting approval';
+            }
+        }
+
+        // check if this has a waiting list
+        if (empty($participant_data['participant_status_id'])) {
+            if (!empty($event_data['has_waitlist']) && !empty($event_data['max_participants'])) {
+                // there is an active waiting list, see if we need to get on it
+                $registered_count = self::getRegistrationCount($event_data['id']);
+                if ($registered_count >= $event_data['max_participants']) {
+                    $participant_data['participant_status_id'] = 'On waitlist';
+                }
+            }
+        }
+
+        // finally: the default status is Registered
+        if (empty($participant_data['participant_status_id'])) {
+            $participant_data['participant_status_id'] = 'Registered';
+        }
+    }
+
+
+    /**
      * Will create a simple participant object
      *
      * @param RegistrationEvent $registration
@@ -343,16 +386,19 @@ class CRM_Remoteevent_Registration
             return;
         }
 
-        if (!$registration->hasErrors()) {
-            // create a simple participant
-            $participant_data = $registration->getParticipant();
-            $participant_data['contact_id'] = $registration->getContactID();
-            CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
-            $creation = civicrm_api3('Participant', 'create', $participant_data);
-            $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
-            CRM_Remoteevent_CustomData::labelCustomFields($participant);
-            $registration->setParticipant($participant);
+        // of there is already an issue, don't waste any more time on this
+        if ($registration->hasErrors()) {
+            return;
         }
+
+        // our job: create a simple participant
+        $participant_data = &$registration->getParticipant();
+        $participant_data['contact_id'] = $registration->getContactID();
+        CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
+        $creation = civicrm_api3('Participant', 'create', $participant_data);
+        $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
+        CRM_Remoteevent_CustomData::labelCustomFields($participant);
+        $registration->setParticipant($participant);
     }
 
     /**
