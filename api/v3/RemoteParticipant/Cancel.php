@@ -86,7 +86,9 @@ function civicrm_api3_remote_participant_cancel($params)
     // 2) remote_registration_token
     if (!empty($params['remote_registration_token'])) {
         $participant_id = CRM_Remotetools_SecureToken::decodeEntityToken(
-            'Participant', $params['remote_registration_token']);
+            'Participant',
+            $params['remote_registration_token'],
+            'cancel');
         if (!$participant_id) {
             return civicrm_api3_create_error('Invalid Token!');
         } else {
