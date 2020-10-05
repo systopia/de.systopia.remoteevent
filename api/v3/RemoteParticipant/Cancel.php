@@ -100,7 +100,7 @@ function civicrm_api3_remote_participant_cancel($params)
     }
 
     // check if execute_cancellation is NOT set
-    if (!empty($params['probe_only'])) {
+    if (!empty($params['probe'])) {
         // this is the 'probe' mode: get information, don't cancel anything yet
         $null = null;
         return civicrm_api3_create_success($participants, $params, 'RemoteParticipant', 'cancel', $null, ['event_id' => $event_id]);
