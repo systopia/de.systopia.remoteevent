@@ -129,7 +129,10 @@ function civicrm_api3_remote_event_get($params)
             $event['registration_count'] =
                 count(CRM_Remoteevent_Registration::getRegistrations($event['id'], $remote_contact_id));
             $event['can_edit_registration'] =
-                (int) CRM_Remotetools_ContactRoles::hasRole($remote_contact_id, 'remote-event-user');
+                (int)(
+                    $event['registration_count'] > 0
+                    && CRM_Remotetools_ContactRoles::hasRole($remote_contact_id, 'remote-event-user')
+                );
             $event['is_registered'] = $event['registration_count'] > 0 ? 1 : 0;
         }
     }
