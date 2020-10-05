@@ -218,28 +218,28 @@ class CRM_Remoteevent_EventLocation
         $fields_collection->setFieldSpec('location_street_address', [
             'name'          => 'location_street_address',
             'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Street Address",
+            'title'         => "Location Street Address",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
         $fields_collection->setFieldSpec('location_postal_code', [
             'name'          => 'location_postal_code',
             'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Postal Code",
+            'title'         => "Location Postal Code",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
         $fields_collection->setFieldSpec('location_city', [
             'name'          => 'location_city',
             'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "City",
+            'title'         => "Location City",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
         $fields_collection->setFieldSpec('location_country_id', [
             'name'          => 'location_country_id',
             'type'          => CRM_Utils_Type::T_INT,
-            'title'         => "Country ID",
+            'title'         => "Location Country ID",
             'localizable'   => 0,
             'is_core_field' => false,
 
@@ -247,35 +247,35 @@ class CRM_Remoteevent_EventLocation
         $fields_collection->setFieldSpec('location_supplemental_address_1', [
             'name'          => 'location_supplemental_address_1',
             'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Supplemental Address 1",
+            'title'         => "Location Supplemental Address 1",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
         $fields_collection->setFieldSpec('location_supplemental_address_2', [
             'name'          => 'location_supplemental_address_2',
             'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Supplemental Address 2",
+            'title'         => "Location Supplemental Address 2",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
         $fields_collection->setFieldSpec('location_supplemental_address_3', [
             'name'          => 'location_supplemental_address_3',
             'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Supplemental Address 3",
+            'title'         => "Location Supplemental Address 3",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
         $fields_collection->setFieldSpec('location_geo_code_1', [
             'name'          => 'location_geo_code_1',
             'type'          => CRM_Utils_Type::T_FLOAT,
-            'title'         => "Geo-Location longitude",
+            'title'         => "Location Geo-Code longitude",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
         $fields_collection->setFieldSpec('location_geo_code_2', [
             'name'          => 'location_geo_code_2',
             'type'          => CRM_Utils_Type::T_FLOAT,
-            'title'         => "Geo-Location latitude",
+            'title'         => "Location Geo-Code latitude",
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
