@@ -126,17 +126,22 @@ function civicrm_api3_remote_event_get($params)
     if ($remote_contact_id) {
         CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $remote_contact_id);
         foreach ($result->getEventData() as &$event) {
-            $event['registration_count'] =
-                count(CRM_Remoteevent_Registration::getRegistrations($event['id'], $remote_contact_id));
+            $event['participant_registration_count'] = (int)
+                CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $remote_contact_id, ['Positive', 'Pending']);
             $event['can_edit_registration'] =
                 (int)(
-                    $event['registration_count'] > 0
-                    && CRM_Remotetools_ContactRoles::hasRole($remote_contact_id, 'remote-event-user')
+                    $event['participant_registration_count'] > 0
+                        && CRM_Remotetools_ContactRoles::hasRole($remote_contact_id, 'remote-event-user')
                 );
-            $event['is_registered'] = $event['registration_count'] > 0 ? 1 : 0;
+            $event['is_registered'] = $event['participant_registration_count'] > 0 ? 1 : 0;
         }
     }
 
+    // add other info
+    foreach ($result->getEventData() as &$event) {
+        $event['registration_count'] =
+            count(CRM_Remoteevent_Registration::getRegistrations($event['id']));
+    }
 
     // dispatch the event in case somebody else wants to add something
     Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);

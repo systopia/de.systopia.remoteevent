@@ -53,13 +53,17 @@ function civicrm_api3_remote_event_get_remote_event_fields($params) {
             'is_core_field' => false,
         ]);
     }
-
-    // registration_count
     $fields_collection->setFieldSpec('registration_count', [
         'name'          => 'registration_count',
         'type'          => CRM_Utils_Type::T_INT,
-        'title'         => "Registration Count",
-        'description'   => "Number of currently registered participants",
+        'title'         => "Number of (positive) registrations",
+        'localizable'   => 0,
+        'is_core_field' => false,
+    ]);
+    $fields_collection->setFieldSpec('participant_registration_count', [
+        'name'          => 'participant_registration_count',
+        'type'          => CRM_Utils_Type::T_INT,
+        'title'         => "Number of (positive/pending) registrations for the given contact (if given)",
         'localizable'   => 0,
         'is_core_field' => false,
     ]);
