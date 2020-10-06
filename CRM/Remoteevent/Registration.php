@@ -147,7 +147,11 @@ class CRM_Remoteevent_Registration
         if (!empty($event_data['max_participants']) && empty($event_data['has_waitlist'])) {
             $registered_count = self::getRegistrationCount($event_id);
             if ($registered_count >= $event_data['max_participants']) {
-                return E::ts("Event is full");
+                if (empty($event_data['waitlist_text'])) {
+                    return E::ts("Event is booked out");
+                } else {
+                    return $event_data['waitlist_text'];
+                }
             }
         }
 
@@ -415,5 +419,21 @@ class CRM_Remoteevent_Registration
             }
         }
         return $status_list;
+    }
+
+    /**
+     * Get a the class of the given status ID
+     *
+     * @param integer $participant_status_id
+     *   the status id
+     *
+     * @return string
+     *   class name: 'Positive', 'Negative', 'Pending'...
+     */
+    public static function getParticipantStatusClass($participant_status_id)
+    {
+        $status_list = self::getParticipantStatusList();
+        $status = $status_list[$participant_status_id];
+        return $status['class'];
     }
 }

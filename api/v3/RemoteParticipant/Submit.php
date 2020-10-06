@@ -87,11 +87,18 @@ function civicrm_api3_remote_participant_submit($params)
         // something went wrong...
         $registration_transaction->rollback();
         $errors = $registration_event->getErrors();
-        return civicrm_api3_create_error(E::ts("Registration Failed"), ['errors' => $errors]);
+        return civicrm_api3_create_error($errors[0], ['errors' => $errors]);
 
     } else {
         $registration_transaction->commit();
-        // todo: return parameters?
-        return civicrm_api3_create_success();
+        $participant = $registration_event->getParticipant();
+        $null = null;
+        return civicrm_api3_create_success(1, $params, 'RemoteParticipant', 'submit', $null, [
+            'event_id'           => $participant['event_id'],
+            'participant_id'     => $participant['id'],
+            'participant_role'   => $participant['participant_role'],
+            'participant_status' => $participant['participant_status'],
+            'participant_class'  => CRM_Remoteevent_Registration::getParticipantStatusClass($participant['participant_status_id'])
+        ]);
     }
 }
