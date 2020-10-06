@@ -51,6 +51,7 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
     {
         parent::setUp();
         $this->transaction = new CRM_Core_Transaction();
+        $this->setUpXCMProfile('default');
     }
 
     public function tearDown()
@@ -67,7 +68,7 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
      *
      * @param array $event_details
      */
-    public function createRemoteEvent($event_details)
+    public function createRemoteEvent($event_details = [])
     {
         // prepare event
         $event_data = [
@@ -84,6 +85,12 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
         foreach ($event_details as $key => $value) {
             $event_data[$key] = $value;
         }
+        // sanity check: default profile should be enabled
+        $default_profile = $event_data['event_remote_registration.remote_registration_default_profile'];
+        if (!in_array($default_profile, $event_data['event_remote_registration.remote_registration_profiles'])) {
+            $event_data['event_remote_registration.remote_registration_profiles'][] = $default_profile;
+        }
+        // resolve custom fields
         CRM_Remoteevent_CustomData::resolveCustomFields($event_data);
 
         // create event and reload
@@ -92,5 +99,103 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
         CRM_Remoteevent_CustomData::labelCustomFields($event);
 
         return $event;
+    }
+
+    /**
+     * Register the given contact to the given event
+     *
+     * @param integer $contact_id
+     * @param integer $event_id
+     * @param array $participant_details
+     */
+    public function registerRemote($event_id, $participant_details = [])
+    {
+        $participant_data = [
+            'event_id'   => $event_id,
+        ];
+        foreach ($participant_details as $key => $value) {
+            $participant_data[$key] = $value;
+        }
+
+        // register via our API
+        try {
+            return civicrm_api3('RemoteParticipant', 'submit', $participant_data);
+        } catch (CiviCRM_API3_Exception $ex) {
+            return civicrm_api3_create_error($ex->getMessage(), ['errors' => $ex->getExtraParams()['errors']]);
+        }
+    }
+
+    /**
+     * Create a new contact
+     *
+     * @param array $contact_details
+     *   overrides the default values
+     *
+     * @return array
+     *  contact data
+     */
+    public function createContact($contact_details = [])
+    {
+        // prepare event
+        $contact_data = [
+            'contact_type' => 'Individual',
+            'first_name'   => $this->randomString(10),
+            'last_name'    => $this->randomString(10),
+            'email'        => $this->randomString(10) . '@' . $this->randomString(10) . '.org',
+        ];
+        foreach ($contact_details as $key => $value) {
+            $contact_data[$key] = $value;
+        }
+        CRM_Remoteevent_CustomData::resolveCustomFields($contact_data);
+
+        // create contact
+        $result = $this->traitCallAPISuccess('Contact', 'create', $contact_data);
+        $contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $result['id']]);
+        CRM_Remoteevent_CustomData::labelCustomFields($contact);
+        return $contact;
+    }
+
+    /**
+     * Generate a random string, and make sure we don't collide
+     *
+     * @param int $length
+     *   length of the string
+     *
+     * @return string
+     *   random string
+     */
+    public function randomString($length = 32)
+    {
+        static $generated_strings = [];
+        $candidate = substr(sha1(random_bytes(32)), 0, $length);
+        if (isset($generated_strings[$candidate])) {
+            // simply try again (recursively). Is this dangerous? Yes, but veeeery unlikely... :)
+            return $this->randomString($length);
+        }
+        // mark as 'generated':
+        $generated_strings[$candidate] = 1;
+        return $candidate;
+    }
+
+    /**
+     * Make sure the given profile exists, and has
+     *   a basic amount of matching options
+     *
+     * @param string $profile_name
+     */
+    public function setUpXCMProfile($profile_name)
+    {
+        $profile = CRM_Xcm_Configuration::getConfigProfile($profile_name);
+
+        // add basic rules
+        $needed_rules = ['CRM_Xcm_Matcher_EmailMatcher', 'CRM_Xcm_Matcher_FirstNameAddressMatcher'];
+        $rules = $profile->getRules();
+        foreach ($needed_rules as $needed_rule) {
+            if (!in_array($needed_rule, $rules)) {
+                $rules[] = $needed_rule;
+            }
+        }
+        $profile->setRules($rules);
+        $profile->store();
     }
 }
