@@ -15,7 +15,7 @@
 
 require_once 'remoteevent.civix.php';
 
-use\Civi\RemoteParticipant\Event\CancelEvent as CancelEvent;
+use \Civi\RemoteParticipant\Event\CancelEvent as CancelEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**

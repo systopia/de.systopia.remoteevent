@@ -140,7 +140,7 @@ function civicrm_api3_remote_event_get($params)
     // add other info
     foreach ($result->getEventData() as &$event) {
         $event['registration_count'] =
-            count(CRM_Remoteevent_Registration::getRegistrations($event['id']));
+            CRM_Remoteevent_Registration::getRegistrationCount($event['id']);
     }
 
     // dispatch the event in case somebody else wants to add something
