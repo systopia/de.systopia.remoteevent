@@ -75,10 +75,10 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
     {
         // create an event
         $event = $this->createRemoteEvent([
-                                              'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-                                              'has_waitlist' => 1,
-                                              'max_participants' => 1,
-                                          ]);
+              'event_remote_registration.remote_registration_default_profile' => 'Standard1',
+              'has_waitlist' => 1,
+              'max_participants' => 1,
+          ]);
 
         // register one contact
         $contactA = $this->createContact();
@@ -89,7 +89,7 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         $contactB = $this->createContact();
         $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
         $this->assertEmpty($registration1['is_error'], "Second Registration Failed, despite waitlist");
-        
+
 
     }
 }
