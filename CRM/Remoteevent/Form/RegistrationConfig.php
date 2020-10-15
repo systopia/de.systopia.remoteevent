@@ -113,7 +113,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_use_custom_event_location'      => 'remote_use_custom_event_location',
                 'event_remote_registration.remote_disable_civicrm_registration'   => 'remote_disable_civicrm_registration',
             ];
-            CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
+            CRM_Remoteevent_CustomData::resolveCustomFields($field_list,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
             $values = civicrm_api3(
                 'Event',
                 'getsingle',
@@ -206,7 +206,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $event_update['event_remote_registration.remote_registration_profiles'] = $enabled_profiles;
 
         // resolve custom fields
-        CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
+        CRM_Remoteevent_CustomData::resolveCustomFields($event_update,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
 
         // add all the native fields
         foreach (self::NATIVE_ATTRIBUTES_USED as $field_name) {

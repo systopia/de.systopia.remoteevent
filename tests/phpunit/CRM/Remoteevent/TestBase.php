@@ -91,12 +91,12 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
             $event_data['event_remote_registration.remote_registration_profiles'][] = $default_profile;
         }
         // resolve custom fields
-        CRM_Remoteevent_CustomData::resolveCustomFields($event_data);
+        CRM_Remoteevent_CustomData::resolveCustomFields($event_data,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
 
         // create event and reload
         $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
         $event = $result = $this->traitCallAPISuccess('Event', 'getsingle', ['id' => $result['id']]);
-        CRM_Remoteevent_CustomData::labelCustomFields($event);
+        CRM_Remoteevent_CustomData::labelCustomFields($event, 1, CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
 
         return $event;
     }
@@ -146,12 +146,12 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
         foreach ($contact_details as $key => $value) {
             $contact_data[$key] = $value;
         }
-        CRM_Remoteevent_CustomData::resolveCustomFields($contact_data);
+        CRM_Remoteevent_CustomData::resolveCustomFields($contact_data,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
 
         // create contact
         $result = $this->traitCallAPISuccess('Contact', 'create', $contact_data);
         $contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $result['id']]);
-        CRM_Remoteevent_CustomData::labelCustomFields($contact);
+        CRM_Remoteevent_CustomData::labelCustomFields($contact, 1, CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
         return $contact;
     }
 

@@ -291,7 +291,7 @@ class CRM_Remoteevent_Registration
 
         // run through the contact matcher
         try {
-            CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
+            CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
             $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
             $registration->setContactID($match['id']);
         } catch (Exception $ex) {
@@ -398,10 +398,10 @@ class CRM_Remoteevent_Registration
         // our job: create a simple participant
         $participant_data = &$registration->getParticipant();
         $participant_data['contact_id'] = $registration->getContactID();
-        CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
+        CRM_Remoteevent_CustomData::resolveCustomFields($participant_data,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
         $creation = civicrm_api3('Participant', 'create', $participant_data);
         $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
-        CRM_Remoteevent_CustomData::labelCustomFields($participant);
+        CRM_Remoteevent_CustomData::labelCustomFields($participant, 1, CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
         $registration->setParticipant($participant);
     }
 

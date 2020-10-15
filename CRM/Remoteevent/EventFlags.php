@@ -53,12 +53,12 @@ class CRM_Remoteevent_EventFlags
             // todo: have a common pool for cached events?
             // load event data
             $flag_fields = self::EVENT_CONFIG_FLAGS;
-            CRM_Remoteevent_CustomData::resolveCustomFields($flag_fields);
+            CRM_Remoteevent_CustomData::resolveCustomFields($flag_fields,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
             $event_data = civicrm_api3('Event', 'getsingle', [
                 'id'     => $event_id,
                 'return' => implode(',', array_keys($flag_fields))
             ]);
-            CRM_Remoteevent_CustomData::labelCustomFields($event_data);
+            CRM_Remoteevent_CustomData::labelCustomFields($event_data, 1, CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
 
             // fill up missing fields (i.e. flag is false)
             foreach (array_keys(self::EVENT_CONFIG_FLAGS) as $field_name) {

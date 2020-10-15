@@ -78,7 +78,7 @@ function civicrm_api3_remote_event_get($params)
 
     // use the basic event API for queries
     $event_get = $get_params->getParameters();
-    CRM_Remoteevent_CustomData::resolveCustomFields($event_get);
+    CRM_Remoteevent_CustomData::resolveCustomFields($event_get,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
     unset($event_get['return']); // we need the full event to cache
     $result     = civicrm_api3('Event', 'get', $event_get);
     $event_list = $result['values'];
@@ -86,7 +86,7 @@ function civicrm_api3_remote_event_get($params)
 
     // apply custom field labelling
     foreach ($event_list as $key => &$event) {
-        CRM_Remoteevent_CustomData::labelCustomFields($event);
+        CRM_Remoteevent_CustomData::labelCustomFields($event, 1, CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
         $event_ids[] = (int) $event['id'];
         CRM_Remoteevent_EventCache::cacheEvent($event);
     }

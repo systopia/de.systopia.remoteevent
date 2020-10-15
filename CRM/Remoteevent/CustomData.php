@@ -15,7 +15,7 @@
 +--------------------------------------------------------*/
 
 class CRM_Remoteevent_CustomData {
-  const CUSTOM_DATA_HELPER_VERSION   = 0.7;
+  const CUSTOM_DATA_HELPER_VERSION   = '0.7.1';
   const CUSTOM_DATA_HELPER_LOG_LEVEL = 0;
   const CUSTOM_DATA_HELPER_LOG_DEBUG = 1;
   const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
@@ -332,10 +332,14 @@ class CRM_Remoteevent_CustomData {
    * function to replace custom_XX notation with the more
    * stable "<custom_group_name>.<custom_field_name>" format
    *
-   * @param $data   array  key=>value data, keys will be changed
-   * @param $depth  int    recursively follow arrays
+   * @param $data array
+   *    key=>value data, keys will be changed
+   * @param $depth int
+   *    recursively follow arrays
+   * @param $separator string
+   *    which character/string should be used to separate group_name from field_name. Default is '.'
    */
-  public static function labelCustomFields(&$data, $depth=1) {
+  public static function labelCustomFields(&$data, $depth=1, $separator = '.') {
     if ($depth == 0) return;
 
     $custom_fields_used = array();
@@ -351,19 +355,31 @@ class CRM_Remoteevent_CustomData {
     // replace names
     foreach ($data as $key => &$value) {
       if (preg_match('#^custom_(?P<field_id>\d+)$#', $key, $match)) {
-        $new_key = self::getFieldIdentifier($match['field_id']);
+        $new_key = self::getFieldIdentifier($match['field_id'], $separator);
         $data[$new_key] = $value;
         unset($data[$key]);
       }
 
       // recursively look into that array
       if (is_array($value) && $depth > 0) {
-        self::labelCustomFields($value, $depth-1);
+        self::labelCustomFields($value, $depth-1, $separator = '.');
       }
     }
   }
 
-  public static function getFieldIdentifier($field_id) {
+    /**
+     * Get a unique identifier referring to this field
+     *
+     * @param integer $field_id
+     *  custom field id
+     *
+     * @param string $separator
+     *   which character/string should be used to separate group_name from field_name. Default is '.'
+     *
+     * @return string
+     *   generated field identifier
+     */
+  public static function getFieldIdentifier($field_id, $separator = '.') {
     // just to be on the safe side
     self::cacheCustomFields(array($field_id));
 
@@ -371,7 +387,7 @@ class CRM_Remoteevent_CustomData {
     $custom_field = self::$custom_field_cache[$field_id];
     if ($custom_field) {
       $group_name = self::getGroupName($custom_field['custom_group_id']);
-      return "{$group_name}.{$custom_field['name']}";
+      return "{$group_name}{$separator}{$custom_field['name']}";
     } else {
       return 'FIELD_NOT_FOUND_' . $field_id;
     }
@@ -414,20 +430,31 @@ class CRM_Remoteevent_CustomData {
     }
   }
 
-
   /**
    * internal function to replace "<custom_group_name>.<custom_field_name>"
-   * in the data array with the custom_XX notation.
+   *   in the data array with the custom_XX notation.
    *
-   * @param $data          array  key=>value data, keys will be changed
-   * @param $customgroups  array  if given, restrict to those groups
-   *
+   * @param array $data
+   *   key=>value data, keys will be changed
+   * @param array $customgroups
+   *   array  if given, restrict to those groups
+   * @param string $separator
+   *   which character/string should be used to separate group_name from field_name. Default is '.'
    */
-  public static function resolveCustomFields(&$data, $customgroups = NULL) {
+  public static function resolveCustomFields(&$data, $customgroups = NULL, $separator = '.') {
     // first: find out which ones to cache
     $customgroups_used = array();
+
+    // build pattern
+    $pattern = '/^(?P<group_name>\w+)';
+    foreach (str_split($separator) as $separator_character) {
+      $pattern .= '\\' . $separator_character;
+    }
+    $pattern .= '(?P<field_name>\w+)$/';
+
+    // apply to all
     foreach ($data as $key => $value) {
-      if (preg_match('/^(?P<group_name>\w+)[.](?P<field_name>\w+)$/', $key, $match)) {
+      if (preg_match($pattern, $key, $match)) {
         if ($match['group_name'] == 'option' || $match['group_name'] == 'options') {
           // exclude API options
           continue;
@@ -444,7 +471,7 @@ class CRM_Remoteevent_CustomData {
 
     // now: replace stuff
     foreach (array_keys($data) as $key) {
-      if (preg_match('/^(?P<group_name>\w+)[.](?P<field_name>\w+)$/', $key, $match)) {
+      if (preg_match($pattern, $key, $match)) {
         if (empty($customgroups) || in_array($match['group_name'], $customgroups)) {
           if (isset(self::$custom_group_cache[$match['group_name']][$match['field_name']])) {
             $custom_field = self::$custom_group_cache[$match['group_name']][$match['field_name']];
@@ -617,10 +644,14 @@ class CRM_Remoteevent_CustomData {
    *
    * @todo make it more efficient?
    *
-   * @param array $params      the parameter array as used by the API
-   * @param array $group_names list of group names to process. Default is: all
+   * @param array $params
+   *   the parameter array as used by the API
+   * @param array $group_names
+   *   list of group names to process. Default is: all
+   * @param string $separator
+   *   which character/string should be used to separate group_name from field_name. Default is '.'
    */
-  public static function unREST(&$params, $group_names = NULL) {
+  public static function unREST(&$params, $group_names = NULL, $separator = '.') {
     if ($group_names == NULL || !is_array($group_names)) {
       $groups = self::getGroup2Name();
       $group_names = array_values($groups);
@@ -629,7 +660,7 @@ class CRM_Remoteevent_CustomData {
     // look for all group names in all variables
     foreach ($group_names as $group_name) {
       foreach (array_keys($params) as $key) {
-        $new_key = preg_replace("#^{$group_name}_#", "{$group_name}.", $key);
+        $new_key = preg_replace("#^{$group_name}_#", "{$group_name}{$separator}", $key);
         if ($new_key != $key) {
           $params[$new_key] = $params[$key];
         }

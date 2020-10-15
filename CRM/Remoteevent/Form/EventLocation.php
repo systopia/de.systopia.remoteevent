@@ -69,7 +69,7 @@ class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent
 
         // prepare some variables
         $current_values = civicrm_api3('Event', 'getsingle', ['id' => $this->_id]);
-        CRM_Remoteevent_CustomData::labelCustomFields($current_values);
+        CRM_Remoteevent_CustomData::labelCustomFields($current_values, 1, CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
         $prefix = 'event_alternative_location.';
         $contact_field = CRM_Remoteevent_CustomData::getCustomFieldKey('event_alternative_location', 'event_alternativelocation_contact_id');
         $defaults = [
@@ -94,7 +94,7 @@ class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent
             'event_alternative_location.event_alternativelocation_remark'
                     => CRM_Utils_Array::value('event_alternativelocation_remark', $values),
         ];
-        CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
+        CRM_Remoteevent_CustomData::resolveCustomFields($event_update,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
         civicrm_api3('Event', 'create', $event_update);
 
         $this->_action = CRM_Core_Action::UPDATE;

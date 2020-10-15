@@ -58,7 +58,7 @@ class RegistrationEvent extends RemoteEvent
         unset($this->participant['profile'], $this->participant['remote_contact_id'], $this->participant['locale']);
 
         // resolve custom fields
-        \CRM_Remoteevent_CustomData::resolveCustomFields($this->participant);
+        \CRM_Remoteevent_CustomData::resolveCustomFields($this->participant,NULL,CRM_Remoteevent_RemoteEvent::API_SEPARATOR);
 
         // set some defaults
         if (empty($this->participant['role_id'])) {
