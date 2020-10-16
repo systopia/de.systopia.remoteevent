@@ -80,8 +80,7 @@ function civicrm_api3_remote_participant_validate($params)
     // first: check if registration is enabled
     $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($params['event_id'], $contact_id);
     if ($cant_register_reason) {
-        $validation->addError('event_id', E::ts("RemoteEvent [%1] does not accept registrations: %2", [
-            1 => $params['event_id'], 2 => $cant_register_reason]));
+        $validation->addError('event_id', $cant_register_reason);
     } else {
         // dispatch the validation event for other validations to weigh in
         Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);

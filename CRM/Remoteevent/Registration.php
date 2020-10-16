@@ -147,10 +147,10 @@ class CRM_Remoteevent_Registration
         if (!empty($event_data['max_participants']) && empty($event_data['has_waitlist'])) {
             $registered_count = self::getRegistrationCount($event_id);
             if ($registered_count >= $event_data['max_participants']) {
-                if (empty($event_data['waitlist_text'])) {
+                if (empty($event_data['event_full_text'])) {
                     return E::ts("Event is booked out");
                 } else {
-                    return $event_data['waitlist_text'];
+                    return $event_data['event_full_text'];
                 }
             }
         }
@@ -366,6 +366,11 @@ class CRM_Remoteevent_Registration
                 $registered_count = self::getRegistrationCount($event_data['id']);
                 if ($registered_count >= $event_data['max_participants']) {
                     $participant_data['participant_status_id'] = 'On waitlist';
+                }
+                if (empty($event_data['waitlist_text'])) {
+                    $registration->addError($event_data['waitlist_text']);
+                } else {
+                    $registration->addError(E::ts("You have been added to the waitlist."));
                 }
             }
         }
