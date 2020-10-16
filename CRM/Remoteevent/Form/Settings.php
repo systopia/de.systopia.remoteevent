@@ -1,9 +1,8 @@
 <?php
 /*-------------------------------------------------------+
-| SYSTOPIA CUSTOM DATA HELPER                            |
-| Copyright (C) 2018 SYSTOPIA                            |
+| SYSTOPIA Remote Event Extension                        |
+| Copyright (C) 2020 SYSTOPIA                            |
 | Author: B. Endres (endres@systopia.de)                 |
-| Source: https://github.com/systopia/Custom-Data-Helper |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
 | Affero GPL license. You can redistribute it and/or     |
@@ -24,6 +23,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
 {
     const SETTINGS = [
         'remote_registration_blocking_status_list',
+        'remote_registration_speaker_roles',
         'remote_registration_link',
         'remote_registration_modify_link',
         'remote_registration_cancel_link',
@@ -39,6 +39,15 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             'remote_registration_blocking_status_list',
             E::ts("Statuses blocking (re)registration"),
             $this->getNegativeStatusList(),
+            false,
+            ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+
+        $this->add(
+            'select',
+            'remote_registration_speaker_roles',
+            E::ts("Speaker Roles"),
+            CRM_Remoteevent_EventCache::getRoles(),
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
         );

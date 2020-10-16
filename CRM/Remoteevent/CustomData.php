@@ -21,6 +21,9 @@ class CRM_Remoteevent_CustomData {
   const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
   const CUSTOM_DATA_HELPER_LOG_ERROR = 5;
 
+  /** @var int API TYPE indicating json_encoded value */
+  const T_JSON = 314;
+
   /** caches custom field data, indexed by group name */
   protected static $custom_group2name       = NULL;
   protected static $custom_group2table_name = NULL;

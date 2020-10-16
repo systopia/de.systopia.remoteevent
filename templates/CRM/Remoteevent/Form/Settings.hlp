@@ -1,0 +1,21 @@
+{*-------------------------------------------------------+
+| SYSTOPIA Remote Event Extension                        |
+| Copyright (C) 2020 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{htxt id='id-blocking-status'}
+  <p>{ts domain="de.systopia.remoteevent"}List of statuses the will prevent a contact from registering again.{/ts}</p>
+{/htxt}
+
+{htxt id='id-speaker-roles'}
+  <p>{ts domain="de.systopia.remoteevent"}Any roles you select here will cause all participants with this role to be publicly listed as speakers at the event.{/ts}</p>
+{/htxt}

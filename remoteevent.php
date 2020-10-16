@@ -31,11 +31,17 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addListener(
         'civi.remoteevent.getfields',
         ['CRM_Remoteevent_EventLocation', 'addFieldSpecs']);
+    $dispatcher->addListener(
+        'civi.remoteevent.getfields',
+        ['CRM_Remoteevent_Speaker', 'addFieldSpecs']);
 
     // EVENT GET
     $dispatcher->addListener(
         'civi.remoteevent.get.result',
         ['CRM_Remoteevent_EventLocation', 'addLocationData']);
+    $dispatcher->addListener(
+        'civi.remoteevent.get.result',
+        ['CRM_Remoteevent_EventSpeaker', 'addSpeakerData']);
 
     // EVENT REGISTRATION.GETFORM
     $dispatcher->addListener(
