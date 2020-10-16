@@ -209,7 +209,7 @@ class CRM_Remoteevent_EventLocation
         ]);
         $fields_collection->setFieldSpec('location_remark', [
             'name'          => 'location_remark',
-            'type'          => CRM_Utils_Type::T_MEDIUMBLOB,
+            'type'          => CRM_Utils_Type::T_LONGTEXT,
             'title'         => "Location Remark",
             'description'   => "Additional information for this location, unique to the event",
             'localizable'   => 0,
