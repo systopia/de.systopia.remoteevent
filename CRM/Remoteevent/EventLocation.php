@@ -198,6 +198,11 @@ class CRM_Remoteevent_EventLocation
      */
     public static function addFieldSpecs($fields_collection)
     {
+        // remove the custom fields from the list, we're adding the unified fields below
+        $fields_collection->removeFieldSpec('event_alternative_location.event_alternativelocation_remark');
+        $fields_collection->removeFieldSpec('event_alternative_location.event_alternativelocation_contact_id');
+
+        // add unified location fields (used by native and alternative location)
         $fields_collection->setFieldSpec('location_name', [
             'name'          => 'location_name',
             'type'          => CRM_Utils_Type::T_STRING,

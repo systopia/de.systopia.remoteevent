@@ -59,6 +59,17 @@ class GetFieldsEvent extends RemoteEvent
     }
 
     /**
+     * Remove a particular field spec
+     *
+     * @param string $field_name
+     *   the field name
+     */
+    public function removeFieldSpec($field_name)
+    {
+        unset($this->field_specs[$field_name]);
+    }
+
+    /**
      * Get the parameters of the original query
      *
      * @return array
