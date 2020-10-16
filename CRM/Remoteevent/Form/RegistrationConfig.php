@@ -1,9 +1,8 @@
 <?php
 /*-------------------------------------------------------+
-| SYSTOPIA CUSTOM DATA HELPER                            |
-| Copyright (C) 2018 SYSTOPIA                            |
+| SYSTOPIA Remote Event Extension                        |
+| Copyright (C) 2020 SYSTOPIA                            |
 | Author: B. Endres (endres@systopia.de)                 |
-| Source: https://github.com/systopia/Custom-Data-Helper |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
 | Affero GPL license. You can redistribute it and/or     |

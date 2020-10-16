@@ -61,4 +61,26 @@ class CRM_Remoteevent_EventCache
             self::$event_cache[$event_data['id']] = $event_data;
         }
     }
+
+    /**
+     * Get a list of all participant roles
+     *
+     * @return array
+     *   role id => role label
+     */
+    public static function getRoles() {
+        static $list = null;
+        if ($list === null) {
+            $list = [];
+            $query = civicrm_api3('OptionValue', 'get', [
+                'option.limit'    => 0,
+                'option_group_id' => 'participant_role',
+                'return'          => 'value,label'
+            ]);
+            foreach ($query['values'] as $role) {
+                $list[$role['value']] = $role['label'];
+            }
+        }
+        return $list;
+    }
 }
