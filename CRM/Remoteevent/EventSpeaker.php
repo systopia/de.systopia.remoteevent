@@ -99,8 +99,12 @@ class CRM_Remoteevent_EventSpeaker
         $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
         foreach ($role_ids as $role_id) {
             $role_id = (int) $role_id;
-            $role_conditions[] = "participant.role_id = '{$role_id}'";
-            $role_conditions[] = "participant.role_id LIKE '%{$value_separator}{$role_id}{$value_separator}%'";
+            // remark: unlike other padded fields, this one drops the padding in the front or back
+            $role_conditions[] = "participant.role_id REGEXP '(^|{$value_separator}){$role_id}($|{$value_separator})'";
+//            $role_conditions[] = "participant.role_id = '{$role_id}'";
+//            $role_conditions[] = "participant.role_id LIKE '%{$value_separator}{$role_id}{$value_separator}%'";
+//            $role_conditions[] = "participant.role_id LIKE '{$role_id}{$value_separator}%'";
+//            $role_conditions[] = "participant.role_id LIKE '%{$value_separator}{$role_id}'";
         }
         $ROLE_CONDITION = implode(' OR ', $role_conditions);
 
@@ -109,6 +113,7 @@ class CRM_Remoteevent_EventSpeaker
         SELECT
             participant.event_id              AS event_id,
             contact.display_name              AS name,
+            contact.id                        AS contact_id,
             contact.first_name                AS first_name,
             contact.last_name                 AS last_name,
             GROUP_CONCAT(participant.role_id) AS roles
@@ -127,6 +132,7 @@ class CRM_Remoteevent_EventSpeaker
         while ($speaker->fetch()) {
             $speakers[$speaker->event_id][] = [
                 'name'       => $speaker->name,
+                'contact_id' => $speaker->contact_id,
                 'first_name' => $speaker->first_name,
                 'last_name'  => $speaker->last_name,
                 'roles'      => self::translateRoles($speaker->roles, $role_ids),

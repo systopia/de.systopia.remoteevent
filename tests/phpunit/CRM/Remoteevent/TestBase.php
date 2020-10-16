@@ -102,6 +102,25 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
     }
 
     /**
+     * Create a number of events with the same setup,
+     *   using the createRemoteEvent function
+     *
+     * @param integer $count
+     * @param array $event_details
+     *
+     * @return array [event_id => $event_data]
+     */
+    public function createRemoteEvents($count, $event_details = [])
+    {
+        $result = [];
+        for ($i = 0; $i < $count; $i++) {
+            $event = $this->createRemoteEvent($event_details);
+            $result[$event['id']] = $event;
+        }
+        return $result;
+    }
+
+    /**
      * Register the given contact to the given event
      *
      * @param integer $contact_id
@@ -156,6 +175,26 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
     }
 
     /**
+     * Create a number of new contacts
+     *  using the createContact function above
+     *
+     * @param integer $count
+     * @param array $contact_details
+     *
+     * @return array [event_id => $event_data]
+     */
+    public function createContacts($count, $contact_details = [])
+    {
+        $result = [];
+        for ($i = 0; $i < $count; $i++) {
+            $contact = $this->createContact($contact_details);
+            $result[$contact['id']] = $contact;
+        }
+        return $result;
+
+    }
+
+    /**
      * Generate a random string, and make sure we don't collide
      *
      * @param int $length
@@ -197,5 +236,73 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
         }
         $profile->setRules($rules);
         $profile->store();
+    }
+
+    /**
+     * Set a value for the speaker roles
+     *
+     * @param array $value
+     *   a list of role_ids or empty for disabled
+     */
+    public function setSpeakerRoles($value)
+    {
+        Civi::settings()->set('remote_registration_speaker_roles', $value);
+    }
+
+    /**
+     * Use the RemoteEvent.get API to event information
+     *
+     * @param array $event_ids
+     *   list of event_ids
+     */
+    public function getRemoteEvents($event_ids)
+    {
+        $result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
+            'id'         => ['IN' => $event_ids],
+            'sequential' => 0
+        ]);
+        return $result['values'];
+    }
+
+    /**
+     * Use the RemoteEvent.get API to event information
+     *
+     * @param integer $event_id
+     *   event id
+     */
+    public function getRemoteEvent($event_id)
+    {
+        return $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $event_id]);
+    }
+
+    /**
+     * Get a random value subset of the array
+     *
+     * @param array $array
+     *   the array to pick the values
+     *
+     * @param integer $count
+     *   number of elements to pick, will be randomised if not given
+     *
+     * @return array
+     *   subset (keys not retained)
+     */
+    public function randomSubset($array, $count = null)
+    {
+        if ($count === null) {
+            $count = mt_rand(1, count($array) - 1);
+        }
+
+        $random_keys = array_rand($array, $count);
+        if (!is_array($random_keys)) {
+            $random_keys = [$random_keys];
+        }
+
+        // create result array
+        $result = [];
+        foreach ($random_keys as $random_key) {
+            $result[] = $array[$random_key];
+        }
+        return $result;
     }
 }

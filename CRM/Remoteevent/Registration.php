@@ -107,6 +107,26 @@ class CRM_Remoteevent_Registration
     }
 
     /**
+     * Get a list of participant objects
+     *
+     * @param integer $event_id
+     *   the event
+     *
+     * @param integer $contact_id
+     *   the contact
+     */
+    public static function invalidateRegistrationCache($contact_id, $event_id) {
+        // unset the registration data
+        unset(self::$cached_registration_data[$contact_id]);
+
+        // update the indicator
+        $event_cached_key = array_search($event_id, self::$cached_registration_event_ids);
+        if ($event_cached_key !== false) {
+            unset(self::$cached_registration_event_ids[$event_cached_key]);
+        }
+    }
+
+    /**
      * Check if the given contact can register for the given event
      *
      * @param integer $event_id
@@ -409,6 +429,10 @@ class CRM_Remoteevent_Registration
         $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
         CRM_Remoteevent_CustomData::labelCustomFields($participant);
         $registration->setParticipant($participant);
+
+        // invalidate caches
+        self::invalidateRegistrationCache($participant_data['contact_id'], $participant_data['event_id']);
+        CRM_Remoteevent_RemoteEvent::invalidateRemoteEvent($registration->getEventID());
     }
 
     /**

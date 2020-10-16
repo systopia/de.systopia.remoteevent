@@ -62,6 +62,18 @@ class CRM_Remoteevent_RemoteEvent
     }
 
     /**
+     * Invalidate some event, e.g. drop from the cache
+     *
+     * @param integer $event_id
+     *   event ID to drop
+     */
+    public static function invalidateRemoteEvent($event_id)
+    {
+        unset(self::$event_cache[$event_id]);
+        CRM_Remoteevent_EventCache::invalidateEvent($event_id);
+    }
+
+    /**
      * Add some tokens to an event message:
      *  - cancellation token
      *
