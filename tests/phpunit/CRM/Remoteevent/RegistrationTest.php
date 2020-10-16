@@ -63,8 +63,8 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
         $this->assertNotEmpty($registration2['is_error'],
                               "Second Validation should have failed, max_participants exceeded.");
-        $this->assertTrue((boolean) strstr($registration2['errors']['event_id'], 'Event is full'),
-                          "The reason should have been 'Event is full'");
+        $this->assertTrue((boolean) strstr($registration2['errors']['event_id'], 'Event is booked out'),
+                          "The reason should have been 'Event booked out'");
 
     }
 
