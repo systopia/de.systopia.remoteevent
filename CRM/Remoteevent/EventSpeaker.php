@@ -71,9 +71,10 @@ class CRM_Remoteevent_EventSpeaker
      */
     public static function addFieldSpecs($fields_collection)
     {
-        $fields_collection->setFieldSpec('location_name', [
+        $fields_collection->setFieldSpec('speakers', [
             'name'          => 'speakers',
-            'type'          => CRM_Remoteevent_CustomData::T_JSON,
+            'type'          => CRM_Utils_Type::T_STRING,
+            'format'        => 'json',
             'title'         => "Speaker List",
             'description'   => "List of speakers of the event (json encoded)",
             'localizable'   => 1,
@@ -108,7 +109,7 @@ class CRM_Remoteevent_EventSpeaker
         SELECT
             participant.event_id              AS event_id,
             contact.display_name              AS name,
-            contact.first_name                AS first_name, 
+            contact.first_name                AS first_name,
             contact.last_name                 AS last_name,
             GROUP_CONCAT(participant.role_id) AS roles
         FROM civicrm_participant participant
