@@ -95,7 +95,7 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
 
         // create event and reload
         $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
-        $event = $result = $this->traitCallAPISuccess('Event', 'getsingle', ['id' => $result['id']]);
+        $event = $result = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
         CRM_Remoteevent_CustomData::labelCustomFields($event);
 
         return $event;
@@ -269,10 +269,14 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
      *
      * @param integer $event_id
      *   event id
+     *
+     * @param array $params
+     *   additional parameters
      */
-    public function getRemoteEvent($event_id)
+    public function getRemoteEvent($event_id, $params = [])
     {
-        return $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $event_id]);
+        $params['id'] = $event_id;
+        return $this->traitCallAPISuccess('RemoteEvent', 'getsingle', $params);
     }
 
     /**
@@ -304,5 +308,37 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
             $result[] = $array[$random_key];
         }
         return $result;
+    }
+
+    /**
+     * Get a remote contact key for the given contact.
+     *  if no such key exists, create one
+     *
+     * @param integer $contact_id
+     *
+     * @return string
+     *   contact key
+     */
+    public function getRemoteContactKey($contact_id)
+    {
+        $contact_id = (int) $contact_id;
+        $key = CRM_Core_DAO::singleValueQuery("
+            SELECT identifier
+            FROM civicrm_value_contact_id_history
+            WHERE identifier_type = 'remote_contact'
+              AND entity_id = {$contact_id}
+            LIMIT 1
+        ");
+        if (!$key) {
+            $key = $this->randomString();
+            CRM_Core_DAO::executeQuery("
+                INSERT INTO civicrm_value_contact_id_history (entity_id, identifier, identifier_type, used_since)
+                VALUES ({$contact_id}, '{$key}', 'remote_contact', NOW())
+            ");
+        }
+
+        $verify_contact_id = CRM_Remotetools_Contact::getByKey($key);
+        $this->assertEquals($contact_id, $verify_contact_id, "Couldn't generate remote contact key.");
+        return $key;
     }
 }

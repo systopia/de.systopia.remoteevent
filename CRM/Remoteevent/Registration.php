@@ -198,6 +198,117 @@ class CRM_Remoteevent_Registration
     }
 
     /**
+     * Check if the given contact can edit a event registration
+     *
+     * @param integer $event_id
+     *      the event you want to edit a registration for
+     *
+     * @param integer|null $contact_id
+     *      the contact trying to edit the registration (in case of restricted registration)
+     *
+     * @param array $event_data
+     *      the data known of the event (so we don't have to pull it ourselves)s
+     *
+     * @return false|string
+     *      is the registration not allowed? if not, returns string reason why not
+     */
+    public static function cannotEditRegistration($event_id, $contact_id = null, $event_data = null) {
+        if (empty($event_data)) {
+            $event_data = CRM_Remoteevent_EventCache::getEvent($event_id);
+        }
+
+        // event active?
+        if (empty($event_data['is_active'])) {
+            return E::ts("Event is not active");
+        }
+
+        // todo: check if event has already started/ended?
+
+        // is this allowed?
+        if (empty($event_data['allow_selfcancelxfer'])) {
+            return E::ts("Editing/cancelling registrations is not allowed for this event");
+        }
+
+        if ($contact_id) {
+            // personalised stuff
+            $active_registration = self::getActiveRegistration($event_id, $contact_id);
+            if (empty($active_registration)) {
+                return E::ts("No eligible registration for modification found.");
+            }
+
+            // check the timeframe
+            if (!empty($event_data['selfcancelxfer_time'])) {
+                $max_seconds_since_registration = 60 * 60 * (int) $event_data['selfcancelxfer_time'];
+                $seconds_since_registration = strtotime($active_registration['register_date']);
+                if ($seconds_since_registration > $max_seconds_since_registration) {
+                    return E::ts("The window for registration changes has passed.");
+                }
+            }
+        }
+
+        // contact CAN edit registration (can not not edit)
+        return false;
+    }
+
+    /**
+     * Get the one participant object that is currently active/relevant
+     *
+     * @param integer $event_id
+     * @param integer $contact_id
+     *
+     * @return array
+     *   participant data
+     */
+    public static function getActiveRegistration($event_id, $contact_id)
+    {
+        // todo: cache/optimise?
+        $event_id = (int) $event_id;
+        $contact_id = (int) $contact_id;
+
+        $candidates = [];
+        $candidateQuery = "
+            SELECT
+             registration.contact_id       AS contact_id,
+             registration.event_id         AS event_id,
+             registration.id               AS registration_id,
+             registration.register_date    AS register_date,
+             registration.status_id        AS status_id,
+             status.class                  AS status_class,
+             registration.registered_by_id AS registered_by_id
+            FROM civicrm_participant registration
+            LEFT JOIN civicrm_participant_status_type status
+                   ON status.id = registration.status_id
+            WHERE registration.contact_id = {$contact_id}
+              AND registration.event_id = {$event_id}
+              AND (registration.is_test IS NULL OR registration.is_test = 0)
+            ORDER BY registration.register_date DESC
+        ";
+        $candidateData = CRM_Core_DAO::executeQuery($candidateQuery);
+        while ($candidateData->fetch()) {
+            $candidates[] = [
+                'contact_id'       => $candidateData->contact_id,
+                'event_id'         => $candidateData->event_id,
+                'registration_id'  => $candidateData->registration_id,
+                'register_date'    => $candidateData->register_date,
+                'status_id'        => $candidateData->status_id,
+                'status_class'     => $candidateData->status_class,
+                'registered_by_id' => $candidateData->registered_by_id,
+            ];
+        }
+
+        // pick the most suitable one by class (and most recent registration)
+        $search_order = ['Positive', 'Waiting', 'Pending'];
+        foreach ($search_order as $status_class) {
+            foreach ($candidates as $candidate) {
+                if ($candidate['status_class'] == $status_class) {
+                    return $candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check if on-click registration is enabled for the event / the given contact
      *
      * @param integer $event_id

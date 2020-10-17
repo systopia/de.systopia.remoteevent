@@ -21,7 +21,7 @@ use Civi\Test\TransactionalInterface;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
- * Some very basic tests
+ * Some very basic tests around RemoteEvents
  *
  * @group headless
  */

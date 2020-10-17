@@ -64,16 +64,18 @@ abstract class RemoteEvent extends Event
      */
     public function getRemoteContactID()
     {
-        static $remote_contact_id = false;
-        if ($remote_contact_id === false) {
-            $data = $this->getQueryParameters();
-            if (empty($data['remote_contact_id'])) {
-                $remote_contact_id = null;
-            } else {
-                $remote_contact_id = \CRM_Remotetools_Contact::getByKey($data['remote_contact_id']);
+        static $remote_contact_lookup_cache = [];
+        $data = $this->getQueryParameters();
+        if (empty($data['remote_contact_id'])) {
+            return null;
+        } else {
+            $remote_contact_key = $data['remote_contact_id'];
+            if (!array_key_exists($remote_contact_key, $remote_contact_lookup_cache)) {
+                // do the lookup
+                $remote_contact_lookup_cache[$remote_contact_key] = \CRM_Remotetools_Contact::getByKey($data['remote_contact_id']);
             }
+            return $remote_contact_lookup_cache[$remote_contact_key];
         }
-        return $remote_contact_id;
     }
 
     /**

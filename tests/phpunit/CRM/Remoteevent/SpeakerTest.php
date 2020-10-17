@@ -21,7 +21,7 @@ use Civi\Test\TransactionalInterface;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
- * Some very basic tests
+ * Tests regarding speaker delivery on RemoteEvent.get
  *
  * @group headless
  */
