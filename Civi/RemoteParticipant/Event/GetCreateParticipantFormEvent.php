@@ -26,13 +26,13 @@ use Civi\RemoteEvent;
 class GetCreateParticipantFormEvent extends RemoteEvent
 {
 
-    /** @var array holds the original RemoteEvent.get_registration_form parameters */
+    /** @var array holds the original RemoteParticipant.get_form parameters */
     protected $params;
 
     /** @var array holds the event data of the event involved */
     protected $event;
 
-    /** @var array holds the RemoteEvent.get_registration_form result to be modified/extended */
+    /** @var array holds the RemoteParticipant.get_form result to be modified/extended */
     protected $result;
 
     /** @var integer will hold the contact ID once/if identified via remote_contact_id or token */

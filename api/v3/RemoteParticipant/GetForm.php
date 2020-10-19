@@ -144,24 +144,28 @@ function civicrm_api3_remote_participant_get_form($params)
     }
 
     // then see what action the user wants
-    $result = null;
-    switch ($params['action']) {
-        case 'create':
-            $result = new GetCreateParticipantFormEvent($params, $event);
-            Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $result);
-            break;
+    $fields = null;
+    try {
+        switch ($params['action']) {
+            case 'create':
+                $fields = new GetCreateParticipantFormEvent($params, $event);
+                Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $fields);
+                break;
 
-        case 'cancel':
-            $result = new GetCancelParticipantFormEvent($params, $event);
-            Civi::dispatcher()->dispatch('civi.remoteevent.cancellation.getform', $result);
-            break;
+            case 'cancel':
+                $fields = new GetCancelParticipantFormEvent($params, $event);
+                Civi::dispatcher()->dispatch('civi.remoteevent.cancellation.getform', $fields);
+                break;
 
-        case 'update':
-            $result = new GetUpdateParticipantFormEvent($params, $event);
-            Civi::dispatcher()->dispatch('civi.remoteevent.registration_update.getform', $result);
-            break;
+            case 'update':
+                $fields = new GetUpdateParticipantFormEvent($params, $event);
+                Civi::dispatcher()->dispatch('civi.remoteevent.registration_update.getform', $fields);
+                break;
+        }
+    } catch (Exception $error) {
+        return civicrm_api3_create_error($error->getMessage());
     }
 
     // finally: return the result
-    return civicrm_api3_create_success($result->getResult());
+    return civicrm_api3_create_success($fields->getResult());
 }

@@ -99,10 +99,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *************************************************************/
 
     /**
-     * Add the profile data to the get_registration_form results
+     * Add the profile data to the get_form results
      *
      * @param GetCreateParticipantFormEvent $get_form_results
-     *      event triggered by the RemoteEvent.get_registration_form API call
+     *      event triggered by the RemoteParticipant.get_form API call
      *
      * @return array|null
      *      returns API error if there is an issue
@@ -118,14 +118,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
         $allowed_profiles = explode(',', $event['enabled_profiles']);
         if (!in_array($params['profile'], $allowed_profiles)) {
-            return civicrm_api3_create_error(
-                E::ts(
-                    "Profile [%2] cannot be used with RemoteEvent [%1].",
-                    [
-                        1 => $params['event_id'],
-                        2 => $params['profile']
-                    ]
-                )
+            throw new CiviCRM_API3_Exception(
+                E::ts("Profile [%2] cannot be used with RemoteEvent [%1].", [
+                  1 => $params['event_id'],
+                  2 => $params['profile']])
             );
         }
 
