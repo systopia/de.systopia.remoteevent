@@ -18,12 +18,14 @@ namespace Civi\RemoteParticipant\Event;
 use Civi\RemoteEvent;
 
 /**
- * Class GetCreateParticipantFormEvent
+ * Class GetCancelParticipantFormEvent
  *
  * This event will be triggered to define the form of a new registration via
- *   RemoteParticipant.get_form API with action=create
+ *   RemoteParticipant.get_form API with action=cancel
+ *
+ * @todo: implement, this is just copied from GetCreateParticipantFormEvent
  */
-class GetCreateParticipantFormEvent extends RemoteEvent
+class GetCancelParticipantFormEvent extends RemoteEvent
 {
 
     /** @var array holds the original RemoteEvent.get_registration_form parameters */

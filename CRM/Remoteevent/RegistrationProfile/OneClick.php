@@ -15,7 +15,7 @@
 
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
-use \Civi\RemoteEvent\Event\GetCreateFormResultsEvent as GetCreateFormResultsEvent;
+use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
 
 /**
  * Implements profile 'Standard1': Email only
@@ -49,11 +49,11 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      * Add the default values to the form data, so people using this profile
      *  don't have to enter everything themselves
      *
-     * @param GetCreateFormResultsEvent $resultsEvent
+     * @param GetCreateParticipantFormEvent $resultsEvent
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    public function addDefaultValues(GetCreateFormResultsEvent $resultsEvent)
+    public function addDefaultValues(GetCreateParticipantFormEvent $resultsEvent)
     {
         // nothing to do here
     }
