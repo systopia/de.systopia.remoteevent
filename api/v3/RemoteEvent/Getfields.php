@@ -20,9 +20,14 @@ use Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
 
 /**
  *
- * RemoteEvent.getfields implementation using the CRM_Remotetools_GetFieldsWrapper
+ * RemoteEvent.getfields
  */
-function civicrm_api3_remote_event_get_remote_event_fields($params) {
+function civicrm_api3_remote_event_getfields($params) {
+    // we only support 'get' actions
+    if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'getsingle') {
+        return civicrm_api3_create_error('Only RemoteEvent.get action is implemented.');
+    }
+
     // get event fields
     unset($params['check_permissions']);
     $fields = civicrm_api3('Event', 'getfields');

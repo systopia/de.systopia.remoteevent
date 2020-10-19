@@ -19,11 +19,11 @@ use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
 
 /**
- * RemoteEvent.get_registration_form specification
+ * RemoteEvent.get_form specification
  * @param array $spec
  *   API specification blob
  */
-function _civicrm_api3_remote_event_get_registration_form_spec(&$spec)
+function _civicrm_api3_remote_event_get_form_spec(&$spec)
 {
     $spec['event_id']          = [
         'name'         => 'event_id',
@@ -62,7 +62,7 @@ function _civicrm_api3_remote_event_get_registration_form_spec(&$spec)
 }
 
 /**
- * RemoteEvent.get_registration_form implementation
+ * RemoteEvent.get_form implementation
  *
  * @param array $params
  *   API call parameters
@@ -70,7 +70,7 @@ function _civicrm_api3_remote_event_get_registration_form_spec(&$spec)
  * @return array
  *   API3 response
  */
-function civicrm_api3_remote_event_get_registration_form($params)
+function civicrm_api3_remote_event_get_form($params)
 {
     unset($params['check_permissions']);
 
