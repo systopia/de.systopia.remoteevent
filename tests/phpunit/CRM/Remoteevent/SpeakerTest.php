@@ -59,8 +59,8 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase
 
         // get the event data
         $remote_event = $this->getRemoteEvent($event['id']);
-        $this->assertArrayNotHasKey('speakers', $remote_event,
-                                    "When speakers are disabled, the 'speakers' key should not be there");
+        $this->assertEquals('false', $remote_event['speakers'],
+                                    "When speakers are disabled, the 'speakers' key should be set to 'false'");
     }
 
     /**
