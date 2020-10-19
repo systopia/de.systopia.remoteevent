@@ -38,6 +38,12 @@ function _civicrm_api3_remote_participant_get_spec(&$spec)
             'You can submit a remote contact, in which case the fields should come with the default data'
         ),
     ];
+    $spec['token'] = [
+        'name'         => 'token',
+        'api.required' => 0,
+        'title'        => E::ts('Remote Registration Token'),
+        'description'  => E::ts('Token to view your registration'),
+    ];
     $spec['locale']            = [
         'name'         => 'locale',
         'api.required' => 0,

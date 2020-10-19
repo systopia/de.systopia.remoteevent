@@ -19,11 +19,11 @@ use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
- * RemoteParticipant.validate specification
+ * RemoteParticipant.update specification
  * @param array $spec
  *   API specification blob
  */
-function _civicrm_api3_remote_participant_validate_spec(&$spec)
+function _civicrm_api3_remote_participant_update_spec(&$spec)
 {
     $spec['event_id']          = [
         'name'         => 'event_id',
@@ -69,7 +69,7 @@ function _civicrm_api3_remote_participant_validate_spec(&$spec)
  *
  * @throws CiviCRM_API3_Exception
  */
-function civicrm_api3_remote_participant_validate($params)
+function civicrm_api3_remote_participant_update($params)
 {
     unset($params['check_permissions']);
     $validation = new ValidateEvent($params);

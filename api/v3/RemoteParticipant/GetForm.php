@@ -16,18 +16,27 @@
 require_once 'remoteevent.civix.php';
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use \Civi\RemoteEvent\Event\GetRegistrationFormResultsEvent as GetRegistrationFormResultsEvent;
+use \Civi\RemoteEvent\Event\GetCreateFormResultsEvent as GetCreateFormResultsEvent;
 
 /**
  * RemoteEvent.get_form specification
+ *   will provide the full data (fields, default values) for any
+ *   of the three actions: create cancel update
+ *
  * @param array $spec
  *   API specification blob
  */
-function _civicrm_api3_remote_event_get_form_spec(&$spec)
+function _civicrm_api3_remote_participant_get_form_spec(&$spec)
 {
+    $spec['action']          = [
+        'name'         => 'action',
+        'api.default'  => 'create',
+        'title'        => E::ts('Action'),
+        'description'  => E::ts('Which action is the form for (create/cancel/update)'),
+    ];
     $spec['event_id']          = [
         'name'         => 'event_id',
-        'api.required' => 1,
+        'api.required' => 0,
         'title'        => E::ts('Event ID'),
         'description'  => E::ts('Internal ID of the event the registration form is needed for'),
     ];
@@ -45,10 +54,10 @@ function _civicrm_api3_remote_event_get_form_spec(&$spec)
             'You can submit a remote contact, in which case the fields should come with the default data'
         ),
     ];
-    $spec['invite_token'] = [
-        'name'         => 'invite_token',
+    $spec['token'] = [
+        'name'         => 'token',
         'api.required' => 0,
-        'title'        => E::ts('Invite Token'),
+        'title'        => E::ts('Token'),
         'description'  => E::ts(
             'You can submit an invite token that can be used to identify the contact, in which case the fields should come with the default data. This takes preference over the remote_contact_id'
         ),
@@ -70,12 +79,49 @@ function _civicrm_api3_remote_event_get_form_spec(&$spec)
  * @return array
  *   API3 response
  */
-function civicrm_api3_remote_event_get_form($params)
+function civicrm_api3_remote_participant_get_form($params)
 {
     unset($params['check_permissions']);
+    $params['action'] = strtolower($params['action']);
+    if (!in_array($params['action'], ['create', 'cancel', 'update'])) {
+        return civicrm_api3_create_error(E::ts("Invalid action '%1'", [1 => $params['action']]));
+    }
 
-    // first: sanity checks
-    // 1) does the event exist?
+    // FIRSTLY: evaluate TOKEN
+    $participant = null;
+    if (!empty($params['token'])) {
+        // identify event via participant
+        $usage_map = [
+                'create' => 'invite',
+                'cancel' => 'cancel',
+                'update' => 'update'];
+
+        $participant_id = CRM_Remotetools_SecureToken::decodeEntityToken('Participant', trim($params['token']), $usage_map[$params['action']]);
+        if (empty($participant_id)) {
+            // token is invalid
+            if (empty($params['event_id'])) {
+                // we can't do anything without event ID
+                return civicrm_api3_create_error(E::ts("Invalid token '%1'", [1 => $params['token']]));
+            } else {
+                // otherwise we'll use just ignore the token and press on anonymously ...
+            }
+        } else {
+            // token checks out, get the event_id
+            try {
+                $participant = civicrm_api3('Participant', 'getsingle', ['id' => $participant_id, 'return' => 'event_id']);
+            } catch (CiviCRM_API3_Exception $ex) {
+                // token is valid, but the participant doesn't exist (any more)
+                return civicrm_api3_create_error(E::ts("Broken token '%1'", [1 => $params['token']]));
+            }
+
+            // verify the event_id
+            if ($participant['event_id'] != $params['event_id']) {
+                return civicrm_api3_create_error(E::ts("Token refers to another event '%1'", [1 => $params['token']]));
+            }
+        }
+    }
+
+    // SECONDLY: do some sanity checks on the event
     $event_query = civicrm_api3('RemoteEvent', 'get', ['id' => $params['event_id']]);
     if ($event_query['count'] < 1) {
         return civicrm_api3_create_error(
@@ -88,16 +134,30 @@ function civicrm_api3_remote_event_get_form($params)
     }
     $event = reset($event_query['values']);
 
-    // 2) is remote registration enabled for this event?
+    // is remote registration enabled for this event?
     if (empty($event['remote_registration_enabled'])) {
         return civicrm_api3_create_error(
             E::ts("RemoteEvent [%1] has no remote registration enabled.", [1 => $params['event_id']])
         );
     }
 
-    // create and dispatch event
-    $result = new GetRegistrationFormResultsEvent($params, $event);
-    Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $result);
+    // then see what action the user wants
+    switch ($params['action']) {
+        case 'create':
+            $result = new GetCreateFormResultsEvent($params, $event);
+            Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $result);
+            return civicrm_api3_create_success($result->getResult());
 
-    return civicrm_api3_create_success($result->getResult());
+        case 'cancel':
+
+        case 'update':
+
+        default:
+    }
+
+
+    // first: sanity checks
+    // 1) does the event exist?
+
+    // create and dispatch event
 }

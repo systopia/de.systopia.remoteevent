@@ -14,7 +14,7 @@
 +--------------------------------------------------------*/
 
 
-namespace Civi\RemoteEvent\Event;
+namespace Civi\RemoteParticipant\Event;
 use Civi\RemoteEvent;
 
 /**
@@ -25,7 +25,7 @@ use Civi\RemoteEvent;
  * This event will be triggered at the beginning of the
  *  RemoteEvent.get API call, so the search parameters can be manipulated
  */
-class GetRegistrationFormResultsEvent extends RemoteEvent
+class GetCreateParticipantFormEvent extends RemoteEvent
 {
 
     /** @var array holds the original RemoteEvent.get_registration_form parameters */
@@ -43,11 +43,11 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
     /** @var integer will hold the participant ID once/if identified via token */
     protected $participant_id;
 
-    public function __construct($params, $event, $result = [])
+    public function __construct($params, $event)
     {
         $this->params = $params;
         $this->event  = $event;
-        $this->result = $result;
+        $this->result = [];
         $this->contact_id = null;
         $this->participant_id = null;
     }
@@ -71,11 +71,11 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
     public function getParticipantID()
     {
         if ($this->participant_id === null) {
-            if (!empty($this->params['invite_token'])) {
+            if (!empty($this->params['token'])) {
                 // there is a token, see if it complies with the known formats
                 $participant_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
                     'Participant',
-                    $this->params['invite_token'],
+                    $this->params['token'],
                     'invite'
                 );
                 if ($participant_id) {
@@ -99,7 +99,7 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
     {
         if ($this->contact_id === null) {
             // do some lookups
-            if (!empty($this->params['invite_token'])) {
+            if (!empty($this->params['token'])) {
                 // there is a token, see if it complies with the known formats
 
                 // if there is a participant token, use its contact
@@ -116,7 +116,7 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
                     // see if there is contact token, use that
                     $contact_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
                         'Contact',
-                        $this->params['invite_token'],
+                        $this->params['token'],
                         'invite'
                     );
                     if ($contact_id) {

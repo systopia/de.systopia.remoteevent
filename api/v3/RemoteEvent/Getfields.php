@@ -23,6 +23,8 @@ use Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
  * RemoteEvent.getfields
  */
 function civicrm_api3_remote_event_getfields($params) {
+    unset($params['check_permissions']);
+
     // we only support 'get' actions
     if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'getsingle') {
         return civicrm_api3_create_error('Only RemoteEvent.get action is implemented.');
