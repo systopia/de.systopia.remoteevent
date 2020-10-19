@@ -42,7 +42,9 @@ class CRM_Remoteevent_EventSpeaker
         // see if speakers are turned on
         $speaker_roles = Civi::settings()->get('remote_registration_speaker_roles');
         if (empty($speaker_roles) || !is_array($speaker_roles)) {
-            // not configured, or not wanted
+            foreach ($result->getEventData() as &$event) {
+                $event['speakers'] = 'false'; // mark as disabled
+            }
             return;
         }
 
