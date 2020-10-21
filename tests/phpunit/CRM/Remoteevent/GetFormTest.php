@@ -42,7 +42,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
     }
 
     /**
-     * Test API anonymously
+     * Test RemoteParticipant.get_form action=create API anonymously
      */
     public function testCreateAnonymous()
     {
@@ -87,6 +87,31 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
             $error_message = $ex->getMessage();
             $this->assertRegExp('/cannot be used/', $error_message, "This seems to be the wrong kind of exception");
         }
+    }
+
+    /**
+     * Test RemoteParticipant.get_form action=cancel API anonymously
+     */
+    public function testCancel()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([
+              'event_remote_registration.remote_registration_default_profile' => 'Standard1',
+              'event_remote_registration.remote_registration_profiles'        => ['Standard2','Standard1','OneClick'],
+        ]);
+
+        // register one participant
+        $contact = $this->createContact();
+        $this->registerRemote($event['id'], ['email' => $contact['email']]);
+
+        // check cancellation with default profile
+        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+            'action'   => 'cancel',
+            'event_id' => $event['id'],
+        ])['values'];
+
+        // todo: i don't know what we're expecting here, I don't think cancellation has any fields
+
     }
 
 }

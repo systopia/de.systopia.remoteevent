@@ -24,10 +24,15 @@ namespace Civi\RemoteParticipant\Event;
  *
  * @todo: same as GetCreateParticipantFormEvent?
  */
-class GetUpdateParticipantFormEvent extends GetCreateParticipantFormEvent
+class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase
 {
-    public function __construct($params, $event)
+    /**
+     * Get the token usage key for this event type
+     *
+     * @return string
+     */
+    protected function getTokenUsage()
     {
-        parent::__construct($params, $event);
+        return 'update';
     }
 }

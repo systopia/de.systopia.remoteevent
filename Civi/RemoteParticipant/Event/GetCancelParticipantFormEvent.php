@@ -25,80 +25,15 @@ use CRM_Remoteevent_ExtensionUtil as E;
  *
  * @todo: implement, this is just copied from GetCreateParticipantFormEvent
  */
-class GetCancelParticipantFormEvent extends RemoteEvent
+class GetCancelParticipantFormEvent extends GetParticipantFormEventBase
 {
-    /** @var array holds the original RemoteParticipant.get_form parameters */
-    protected $params;
-
-    /** @var array holds the original RemoteParticipant.get_form parameters */
-    protected $result;
-
-    public function __construct($params, $event)
-    {
-        $this->params = $params;
-        $this->result = [];
-
-        // todo: allow profiles? which ones?
-        if (!empty($params['profile']) && $params['profile'] != 'OneClick') {
-            throw new \Exception(E::ts("Only the OneClick profile is allowed for cancellation"));
-        }
-    }
-
     /**
-     * Returns the original parameters that were submitted to RemoteEvent.get
+     * Get the token usage key for this event type
      *
-     * @return array original parameters
+     * @return string
      */
-    public function getParams()
+    protected function getTokenUsage()
     {
-        return $this->params;
-    }
-
-    /**
-     * Returns the original parameters that were submitted to RemoteEvent.get
-     *
-     * @return array original parameters
-     */
-    public function &getResult()
-    {
-        return $this->result;
-    }
-
-    /**
-     * Add a number of field specs to the result
-     *
-     * @param array $field_list
-     *   fields to add
-     */
-    public function addFields($field_list)
-    {
-        foreach ($field_list as $key => $field_spec) {
-            $this->result[$key] = $field_spec;
-        }
-    }
-
-    /**
-     * Add a current/default value to the given field
-     *
-     * @param string $field_name
-     *   field name / key
-     *
-     * @param string $value
-     *  default/current value to be submitted for form prefill
-     */
-    public function setPrefillValue($field_name, $value)
-    {
-        $this->result[$field_name]['value'] = $value;
-    }
-
-    /**
-     * Get the parameters of the original query
-     *
-     * @return array
-     *   parameters of the query
-     */
-    public function getQueryParameters()
-    {
-        return $this->params;
+        return 'cancel';
     }
 }
