@@ -2,47 +2,198 @@
 # This file is distributed under the same license as the CiviCRM package.
 # If you contribute heavily to a translation and deem your work copyrightable,
 # make sure you license it to CiviCRM LLC under Academic Free License 3.0.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-08-24 11:20+0200\n"
+"POT-Creation-Date: 2020-10-22 16:07+0200\n"
 "Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"X-Generator: Poedit 2.0.6\n"
 
-#: CRM/Remoteevent/Form/RegistrationConfig.php
-msgid "Remote Registration Enabled"
+#: CRM/Remoteevent/EventLocation.php
+msgid "Multiple matching EventLocation contact types found!"
 msgstr ""
 
-#: CRM/Remoteevent/Form/RegistrationConfig.php
-#: resources/custom_group_remote_registration.json
-msgid "Default Profile"
+#: CRM/Remoteevent/EventLocation.php CRM/Remoteevent/Form/EventLocation.php
+#: CRM/Remoteevent/UI.php
+msgid "Event Location"
 msgstr ""
 
-#: CRM/Remoteevent/Form/RegistrationConfig.php
-#: resources/custom_group_remote_registration.json
-msgid "Allowed Profiles"
+#: CRM/Remoteevent/EventLocation.php
+msgid ""
+"These contacts can be used as event locations by the RemoteEvents extension"
 msgstr ""
 
+#: CRM/Remoteevent/Form/EventLocation.php
+msgid "Additional Information for this Event"
+msgstr ""
+
+#: CRM/Remoteevent/Form/EventLocation.php
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+#: CRM/Remoteevent/Form/Settings.php
 msgid "Save"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Remote Event Features Enabled?"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Default Registration Profile"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Allowed Registration Profiles"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Use Custom Event Location?"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Disable native CiviCRM Online Registration"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Start Date"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration End Date"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Require participant approval?"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Allow self-service cancellation or transfer?"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Cancellation or transfer time limit (hours)"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Please enter the number of hours (as an integer)."
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Event Information"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Event Information Footer"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Confirmation Title"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Confirmation Text"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Confirmation Footer"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Thank You Title"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Thank You Text"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Thank You Footer"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "You must select a default profile"
 msgstr ""
 
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "Required"
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Remote Events - General Configuration"
 msgstr ""
 
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "Invalid Value"
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Statuses blocking (re)registration"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Speaker Roles"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Default Matcher Profile (XCM)"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Registration Link"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Please enter a valid URL"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Registration Modification Link"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Registration Cancellation Link"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Configuration Updated"
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "Event is not active"
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "Registration is not yet open."
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "Registration has closed."
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "Event is booked out"
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "Contact is already registered"
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid ""
+"Contact already has a registration record and can currently not register."
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "Editing/cancelling registrations is not allowed for this event"
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "No eligible registration for modification found."
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "The window for registration changes has passed."
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "Not enough contact data to identify/create contact."
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "You have been added to the waitlist."
 msgstr ""
 
 #: CRM/Remoteevent/RegistrationProfile.php
@@ -62,11 +213,27 @@ msgid "Registration profile '%1' is not available (any more)."
 msgstr ""
 
 #: CRM/Remoteevent/RegistrationProfile.php
-msgid "Data for profile '%1' not enough to identify/create contact."
+msgid "Value '%1' for field %2 is not valid"
 msgstr ""
 
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "Value '%1' for field %2 is not valid"
+#: CRM/Remoteevent/RemoteEvent.php
+msgid "Cancellation Token valid for one-click cancellation, if available."
+msgstr ""
+
+#: CRM/Remoteevent/RemoteEvent.php
+msgid ""
+"URL for one-click cancellation, if available. This also requires the base "
+"url to set in the RemoteEvent general settings."
+msgstr ""
+
+#: CRM/Remoteevent/RemoteEvent.php
+msgid "Token to edit/update participant's registration."
+msgstr ""
+
+#: CRM/Remoteevent/RemoteEvent.php
+msgid ""
+"Link to a form to edit/update participant's registration. This also requires "
+"the base url to set in the RemoteEvent general settings."
 msgstr ""
 
 #: CRM/Remoteevent/UI.php
@@ -82,20 +249,20 @@ msgid "Upgrade %1 to revision %2"
 msgstr ""
 
 #: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Submit.php
-#: api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
 msgid "Locale"
 msgstr ""
 
 #: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Submit.php
-#: api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
 msgid "Locale of the field labels/etc. NOT IMPLEMENTED YET"
 msgstr ""
 
 #: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Submit.php
-#: api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
+#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
 msgid "Remote Contact ID"
 msgstr ""
 
@@ -105,12 +272,14 @@ msgid ""
 "for the events available to that contact"
 msgstr ""
 
-#: api/v3/RemoteEvent/GetRegistrationForm.php api/v3/RemoteParticipant/Get.php
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
 #: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
 msgid "Event ID"
 msgstr ""
 
-#: api/v3/RemoteEvent/GetRegistrationForm.php api/v3/RemoteParticipant/Get.php
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
 #: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
 msgid "Internal ID of the event the registration form is needed for"
 msgstr ""
@@ -132,6 +301,17 @@ msgid ""
 msgstr ""
 
 #: api/v3/RemoteEvent/GetRegistrationForm.php
+msgid "Invite Token"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php
+msgid ""
+"You can submit an invite token that can be used to identify the contact, in "
+"which case the fields should come with the default data. This takes "
+"preference over the remote_contact_id"
+msgstr ""
+
+#: api/v3/RemoteEvent/GetRegistrationForm.php
 msgid "RemoteEvent [%1] does not exist, or not eligible for registration."
 msgstr ""
 
@@ -143,12 +323,31 @@ msgstr ""
 msgid "RemoteEvent [%1] has no remote registration enabled."
 msgstr ""
 
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
-msgid "You can submit a remote contact ID, to determine the CiviCRM contact"
+#: api/v3/RemoteParticipant/Cancel.php
+msgid ""
+"You can cancel with a remote contact ID, to determine the CiviCRM contact"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
+msgid "Remote Registration Token"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
+msgid "You can cancel with a as generated by emails"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
+msgid "Just check, don't do anything yet"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
+msgid ""
+"This can be used to see if this is still valid, and to get e.g. the event_id "
+"from a registration token"
 msgstr ""
 
 #: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
-msgid "Registration data incomplete or invalid"
+msgid "You can submit a remote contact ID, to determine the CiviCRM contact"
 msgstr ""
 
 #: api/v3/RemoteParticipant/Validate.php
@@ -156,7 +355,7 @@ msgid "RemoteContactID is invalid"
 msgstr ""
 
 #: api/v3/RemoteParticipant/Validate.php
-msgid "RemoteEvent [%1] does not exist does not accept registrations."
+msgid "Validation Failed"
 msgstr ""
 
 #: remoteevent.php
@@ -167,60 +366,32 @@ msgstr ""
 msgid "RemoteEvent: list all events"
 msgstr ""
 
-#: resources/custom_group_remote_registration.json
-msgid "Remote Registration"
+#: remoteevent.php
+msgid "RemoteEventRegistration: register"
 msgstr ""
 
-#: resources/custom_group_remote_registration.json
-msgid "Instant Registration Enabled?"
+#: remoteevent.php
+msgid "RemoteEventRegistration: edit"
 msgstr ""
 
-#: resources/custom_group_remote_registration.json
-msgid "Remote Registration Enabled?"
+#: remoteevent.php
+msgid "RemoteEventRegistration: cancel"
 msgstr ""
 
-#: resources/resources/option_group_remote_contact_roles.json
-msgid "RemoteEvent Participant"
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
+msgid "Registration Restrictions"
 msgstr ""
 
-#: resources/option_group_remote_contact_roles.json
-msgid "RemoteEvent Coordinator"
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
+msgid "Public Event Text Blocks"
 msgstr ""
 
-#: resources/option_group_remote_contact_roles.json
-msgid "RemoteEvent Participant Coordinator"
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid "List of statuses the will prevent a contact from registering again."
 msgstr ""
 
-#: resources/option_group_remote_contact_profiles.json
-msgid "Remote Registration Profiles"
-msgstr ""
-
-#: resources/option_group_remote_contact_profiles.json
-msgid "Email only"
-msgstr ""
-
-#: resources/option_group_remote_contact_profiles.json
-msgid "Email and Name"
-msgstr ""
-
-#: resources/option_group_remote_contact_profiles.json
-msgid "Email, prefix, title, first and last name"
-msgstr ""
-
-#: resources/option_group_remote_contact_profiles.json
-msgid "Full (full name/email/address/phone)"
-msgstr ""
-
-#: resources/option_group_remote_contact_profiles.json
-msgid "Email, prefix, title, first name, last name, postal address and phone"
-msgstr ""
-
-#: resources/option_group_remote_contact_profiles.json
-msgid "Full + Organisation + Billing"
-msgstr ""
-
-#: resources/option_group_remote_contact_profiles.json
+#: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"Email, prefix, title, first name, last name, postal address and phone + "
-"organisation details + billing address"
+"Any roles you select here will cause all participants with this role to be "
+"publicly listed as speakers at the event."
 msgstr ""
