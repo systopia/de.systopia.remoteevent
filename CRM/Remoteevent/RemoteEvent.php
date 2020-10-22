@@ -126,6 +126,8 @@ class CRM_Remoteevent_RemoteEvent
     {
         $tokenList->addToken('$cancellation_token', E::ts("Cancellation Token valid for one-click cancellation, if available."));
         $tokenList->addToken('$cancellation_link', E::ts("URL for one-click cancellation, if available. This also requires the base url to set in the RemoteEvent general settings."));
+        $tokenList->addToken('$update_token', E::ts("Token to edit/update participant's registration."));
+        $tokenList->addToken('$update_link', E::ts("Link to a form to edit/update participant's registration. This also requires the base url to set in the RemoteEvent general settings."));
     }
 
 
