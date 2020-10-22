@@ -100,6 +100,21 @@ class CRM_Remoteevent_RemoteEvent
                     $messageTokens->setToken('cancellation_link', "{$url}?token={$cancellation_token}");
                 }
             }
+            if (self::shouldAddUpdateLink($participant)) {
+                $update_token = CRM_Remotetools_SecureToken::generateEntityToken(
+                    'Participant',
+                    $participant['id'],
+                    null,
+                    'update'
+                );
+                $messageTokens->setToken('update_token', $update_token);
+
+                // add URL
+                $url = Civi::settings()->get('remote_registration_modify_link');
+                if ($url) {
+                    $messageTokens->setToken('update_link', "{$url}?token={$update_token}");
+                }
+            }
         }
     }
 
@@ -151,4 +166,40 @@ class CRM_Remoteevent_RemoteEvent
         return true;
     }
 
+    /**
+     * Should a update/modify link be generated for the given participant?
+     *
+     * @param array $participant
+     *   participant data
+     *
+     * @return bool
+     */
+    public static function shouldAddUpdateLink($participant)
+    {
+        // check if status is not (already) negative
+        $all_statuses = CRM_Remoteevent_Registration::getParticipantStatusList();
+        $participant_status = \CRM_Utils_Array::value($participant['participant_status_id'], $all_statuses);
+        if (empty($participant_status)) {
+            return false;
+        } else {
+            if ($participant_status['class'] == 'Negative') {
+                return false;
+            }
+        }
+
+        // check if cancellation is active
+        $event = CRM_Remoteevent_EventCache::getEvent($participant['event_id']);
+        if (empty($event['allow_selfcancelxfer'])) {
+            return false;
+        }
+
+        // check if there's still time
+        $hours_before_allowed = (int) $event['selfcancelxfer_time'];
+        $hours_before = (strtotime($event['event_start_date']) - strtotime('now')) / 60 / 60;
+        if ($hours_before < $hours_before_allowed) {
+            return false;
+        }
+
+        return true;
+    }
 }
