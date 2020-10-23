@@ -247,6 +247,7 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
 {
     // RemoteEvent entity
     $permissions['remote_event']['get']       = ['view public Remote Events', 'view all Remote Events'];
+    $permissions['remote_event']['getcount']  = ['view public Remote Events', 'view all Remote Events'];
     $permissions['remote_event']['getfields'] = ['view public Remote Events', 'view all Remote Events'];
 
     // RemoteParticipant entity
