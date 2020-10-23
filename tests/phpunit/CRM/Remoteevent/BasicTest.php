@@ -63,7 +63,7 @@ class CRM_Remoteevent_BasicTest extends CRM_Remoteevent_TestBase
         }
 
         // get the registration form and see if the fields are there
-        $registration_form = $this->traitCallAPISuccess('RemoteEvent', 'get_registration_form', ['event_id' => $event['id']]);
+        $registration_form = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', ['event_id' => $event['id']]);
         $expected_fields = ['email', 'prefix_id', 'formal_title', 'last_name'];
         foreach ($expected_fields as $expected_field) {
             $this->assertTrue(array_key_exists($expected_field, $registration_form['values']), "Field {$expected_field} not in registration form");

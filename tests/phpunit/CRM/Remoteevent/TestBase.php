@@ -138,7 +138,7 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
 
         // register via our API
         try {
-            return civicrm_api3('RemoteParticipant', 'submit', $participant_data);
+            return civicrm_api3('RemoteParticipant', 'create', $participant_data);
         } catch (CiviCRM_API3_Exception $ex) {
             return civicrm_api3_create_error($ex->getMessage(), ['errors' => $ex->getExtraParams()['errors']]);
         }

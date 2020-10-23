@@ -14,27 +14,24 @@
 +--------------------------------------------------------*/
 
 
-namespace Civi\RemoteEvent\Event;
+namespace Civi\RemoteParticipant\Event;
 use Civi\RemoteEvent;
 
 /**
- * Class GetParamsEvent
+ * Class GetParticipantFormEventBase
  *
- * @package Civi\RemoteEvent\Event
- *
- * This event will be triggered at the beginning of the
- *  RemoteEvent.get API call, so the search parameters can be manipulated
+ * This is the base event for the three GetParticipantFormEvents
  */
-class GetRegistrationFormResultsEvent extends RemoteEvent
+abstract class GetParticipantFormEventBase extends RemoteEvent
 {
 
-    /** @var array holds the original RemoteEvent.get_registration_form parameters */
+    /** @var array holds the original RemoteParticipant.get_form parameters */
     protected $params;
 
     /** @var array holds the event data of the event involved */
     protected $event;
 
-    /** @var array holds the RemoteEvent.get_registration_form result to be modified/extended */
+    /** @var array holds the RemoteParticipant.get_form result to be modified/extended */
     protected $result;
 
     /** @var integer will hold the contact ID once/if identified via remote_contact_id or token */
@@ -43,14 +40,21 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
     /** @var integer will hold the participant ID once/if identified via token */
     protected $participant_id;
 
-    public function __construct($params, $event, $result = [])
+    public function __construct($params, $event)
     {
         $this->params = $params;
         $this->event  = $event;
-        $this->result = $result;
+        $this->result = [];
         $this->contact_id = null;
         $this->participant_id = null;
     }
+
+    /**
+     * Get the token usage key for this event type
+     *
+     * @return string
+     */
+    abstract protected function getTokenUsage();
 
     /**
      * Returns the original parameters that were submitted to RemoteEvent.get
@@ -71,11 +75,11 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
     public function getParticipantID()
     {
         if ($this->participant_id === null) {
-            if (!empty($this->params['invite_token'])) {
+            if (!empty($this->params['token'])) {
                 // there is a token, see if it complies with the known formats
                 $participant_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
                     'Participant',
-                    $this->params['invite_token'],
+                    $this->params['token'],
                     'invite'
                 );
                 if ($participant_id) {
@@ -99,7 +103,7 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
     {
         if ($this->contact_id === null) {
             // do some lookups
-            if (!empty($this->params['invite_token'])) {
+            if (!empty($this->params['token'])) {
                 // there is a token, see if it complies with the known formats
 
                 // if there is a participant token, use its contact
@@ -116,7 +120,7 @@ class GetRegistrationFormResultsEvent extends RemoteEvent
                     // see if there is contact token, use that
                     $contact_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
                         'Contact',
-                        $this->params['invite_token'],
+                        $this->params['token'],
                         'invite'
                     );
                     if ($contact_id) {
