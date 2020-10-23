@@ -1,7 +1,7 @@
 {
   "_lookup": ["name"],
   "name": "session_type",
-  "label": "Session Type",
+  "title": "Session Type",
   "description": "Defines the type of the session",
   "_values": [
     {
