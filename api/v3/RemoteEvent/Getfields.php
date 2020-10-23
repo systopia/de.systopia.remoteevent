@@ -27,7 +27,7 @@ function civicrm_api3_remote_event_getfields($params) {
 
     // we only support 'get' actions
     if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'getsingle') {
-        return civicrm_api3_create_error('Only RemoteEvent.get action is implemented.');
+        return civicrm_api3('Event', 'getfields', $params);
     }
 
     // get event fields
