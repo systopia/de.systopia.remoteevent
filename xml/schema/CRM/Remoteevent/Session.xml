@@ -53,6 +53,7 @@
       <formatType>activityDateTime</formatType>
     </html>
   </field>
+
   <field>
     <name>end_date</name>
     <type>datetime</type>
