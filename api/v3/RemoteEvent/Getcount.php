@@ -61,5 +61,5 @@ function civicrm_api3_remote_event_getcount($params)
     $events = civicrm_api3('RemoteEvent', 'get', $params);
 
     return civicrm_api3_create_success([], $params, 'RemoteEvent', 'getcount', $null,
-                                       ['count' => $events['count']]);
+                                       ['result' => $events['count']]);
 }
