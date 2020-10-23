@@ -216,6 +216,11 @@ function remoteevent_civicrm_alterSettingsFolders(&$metaDataFolders = null)
  */
 function remoteevent_civicrm_entityTypes(&$entityTypes)
 {
+    $entityTypes['CRM_Remoteevent_DAO_Session'] = [
+        'name' => 'Session',
+        'class' => 'CRM_Remoteevent_DAO_Session',
+        'table' => 'civicrm_session'
+    ];
     _remoteevent_civix_civicrm_entityTypes($entityTypes);
 }
 
