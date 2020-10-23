@@ -32,3 +32,12 @@ CREATE TABLE IF NOT EXISTS `civicrm_session` (
      CONSTRAINT FK_civicrm_session_event_id     FOREIGN KEY (`event_id`)     REFERENCES `civicrm_event`(`id`)   ON DELETE CASCADE,
      CONSTRAINT FK_civicrm_session_presenter_id FOREIGN KEY (`presenter_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL
 );
+
+CREATE TABLE IF NOT EXISTS `civicrm_participant_session` (
+     `id`               int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique ID',
+     `session_id`       int unsigned                          COMMENT 'FK to Session',
+     `participant_id`   int unsigned                          COMMENT 'FK to Participant',
+     PRIMARY KEY (`id`),
+     CONSTRAINT FK_civicrm_participant_session_session_id     FOREIGN KEY (`session_id`)     REFERENCES `civicrm_session`(`id`)     ON DELETE CASCADE,
+     CONSTRAINT FK_civicrm_participant_session_participant_id FOREIGN KEY (`participant_id`) REFERENCES `civicrm_participant`(`id`) ON DELETE CASCADE
+);
