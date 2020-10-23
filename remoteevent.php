@@ -276,3 +276,26 @@ function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context)
         }
     }
 }
+
+/**
+ * Implementation of hook_civicrm_copy
+ */
+function remoteevent_civicrm_copy($objectName, &$object)
+{
+    if ($objectName == 'Event') {
+        // we have the new event ID...
+        $new_event_id = $object->id;
+
+        // ...unfortunately, we have to dig up the original event ID:
+        $callstack = debug_backtrace();
+        foreach ($callstack as $call) {
+            if (isset($call['class']) && isset($call['function'])) {
+                if ($call['class'] == 'CRM_Event_BAO_Event' && $call['function'] == 'copy') {
+                    // this should be it:
+                    $original_event_id = $call['args'][0];
+                    CRM_Remoteevent_BAO_Session::copySessions($original_event_id, $new_event_id);
+                }
+            }
+        }
+    }
+}
