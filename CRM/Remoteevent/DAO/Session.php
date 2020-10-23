@@ -257,7 +257,7 @@ class CRM_Remoteevent_DAO_Session extends CRM_Core_DAO {
         'session_category_id' => [
           'name' => 'category_id',
           'type' => CRM_Utils_Type::T_INT,
-          'title' => CRM_Remoteevent_ExtensionUtil::ts('Session Slot'),
+          'title' => CRM_Remoteevent_ExtensionUtil::ts('Session Category'),
           'where' => 'civicrm_session.category_id',
           'default' => '0',
           'table_name' => 'civicrm_session',
@@ -276,7 +276,7 @@ class CRM_Remoteevent_DAO_Session extends CRM_Core_DAO {
         'session_type_id' => [
           'name' => 'type_id',
           'type' => CRM_Utils_Type::T_INT,
-          'title' => CRM_Remoteevent_ExtensionUtil::ts('Session Slot'),
+          'title' => CRM_Remoteevent_ExtensionUtil::ts('Session Type'),
           'where' => 'civicrm_session.type_id',
           'default' => '0',
           'table_name' => 'civicrm_session',

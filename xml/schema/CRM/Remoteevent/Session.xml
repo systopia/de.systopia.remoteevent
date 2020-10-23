@@ -85,7 +85,7 @@
     <name>category_id</name>
     <type>int unsigned</type>
     <uniqueName>session_category_id</uniqueName>
-    <title>Session Slot</title>
+    <title>Session Category</title>
     <default>0</default>
     <pseudoconstant>
       <optionGroupName>session_category</optionGroupName>
@@ -99,7 +99,7 @@
     <name>type_id</name>
     <type>int unsigned</type>
     <uniqueName>session_type_id</uniqueName>
-    <title>Session Slot</title>
+    <title>Session Type</title>
     <default>0</default>
     <pseudoconstant>
       <optionGroupName>session_type</optionGroupName>
