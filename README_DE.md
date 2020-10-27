@@ -1,4 +1,4 @@
-# SYSTOPIAs Remote-Ereignis-Erweiterung
+# SYSTOPIAs Remote-Event-Erweiterung
 
 ## Ziele und Funktionsumfang
 
