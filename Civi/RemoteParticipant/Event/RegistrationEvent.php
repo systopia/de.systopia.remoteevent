@@ -100,6 +100,15 @@ class RegistrationEvent extends RemoteEvent
      */
     public function getContactID()
     {
+        if (empty($this->contact_id)) {
+            // check if there is a participant
+            $participant_id = $this->getParticipantID();
+            if ($participant_id) {
+                $this->contact_id = civicrm_api('Participant', 'getvalue', [
+                    'id' => $participant_id,
+                    'return' => 'contact_id']);
+            }
+        }
         return (int) $this->contact_id;
     }
 
@@ -111,7 +120,15 @@ class RegistrationEvent extends RemoteEvent
      */
     public function getParticipantID()
     {
-        return (int) \CRM_Utils_Array::value('id', $this->participant);
+        if (empty($this->participant['id'])) {
+            $participant_id = parent::getParticipantID();
+            if ($participant_id) {
+                $this->participant['id'] = $participant_id;
+            }
+            return $participant_id;
+        } else {
+            return (int) $this->participant['id'];
+        }
     }
 
     /**
@@ -122,6 +139,7 @@ class RegistrationEvent extends RemoteEvent
      */
     public function setParticipant($participant)
     {
+        $this->participant_id = $participant['id'];
         $this->participant = $participant;
     }
 

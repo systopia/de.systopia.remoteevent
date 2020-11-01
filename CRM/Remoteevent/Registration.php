@@ -456,10 +456,42 @@ class CRM_Remoteevent_Registration
      */
     public static function verifyContactNotRegistered($registration)
     {
+        if ($registration->getParticipantID()) {
+            // there is already a registration identified
+            return;
+        }
+
         // now, after the contact has been identified, make sure (s)he's not already registered
         $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($registration->getEventID(), $registration->getContactID(), $registration->getEvent());
         if ($cant_register_reason) {
             $registration->addError($cant_register_reason);
+        }
+    }
+
+    /**
+     * If there is already an existing participant,
+     *  process the confirmation
+     *
+     * @param RegistrationEvent $registration
+     *   registration event
+     */
+    public static function confirmExistingParticipant($registration)
+    {
+        // of there is already an issue, don't waste any more time on this
+        if ($registration->hasErrors()) {
+            return;
+        }
+
+        $participant_id = $registration->getParticipantID();
+        $submission = $registration->getSubmission();
+        if ($participant_id && isset($submission['confirm'])) {
+            // there is already a (pre-existing) participant
+            //   ... and the 'confirm' flag has been submitted
+            //   then: update the participant right away
+            civicrm_api3('Participant', 'create', [
+                'id'        => $participant_id,
+                'status_id' => empty($submission['confirm']) ? 'Cancelled' : 'Registered'
+            ]);
         }
     }
 
@@ -475,6 +507,11 @@ class CRM_Remoteevent_Registration
     {
         // of there is already an issue, don't waste any more time on this
         if ($registration->hasErrors()) {
+            return;
+        }
+
+        if ($registration->getParticipantID()) {
+            // there is already a registration identified
             return;
         }
 

@@ -27,6 +27,13 @@ use Symfony\Component\EventDispatcher\Event;
  */
 abstract class RemoteEvent extends Event
 {
+    /** @var integer participant ID */
+    protected $participant_id = null;
+
+    /** @var array accepted usage for tokes */
+    protected $token_usages = ['invite'];
+
+
     /**
      * Get the parameters of the original query
      *
@@ -53,6 +60,36 @@ abstract class RemoteEvent extends Event
         // todo: collect? return?
         \Civi::log()->debug("RemoteEvent({$origin}): {$message}");
     }
+
+    /**
+     * Get the participant associated with this validation
+     *  (if any)
+     */
+    public function getParticipantID()
+    {
+        if ($this->participant_id === null) {
+            $query = $this->getQueryParameters();
+            if (!empty($query['token'])) {
+                // there is a token, see if it complies with the known formats
+                foreach ($this->token_usages as $token_usage) {
+                    $participant_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
+                        'Participant',
+                        $query['token'],
+                        $token_usage
+                    );
+                    if ($participant_id) {
+                        $this->participant_id = $participant_id;
+                        break;
+                    } else {
+                        $this->participant_id = 0; // don't look it up again
+                    }
+                }
+            }
+        }
+
+        return $this->participant_id;
+    }
+
 
     /**
      * Get the contact ID if a valid remote_contact_id is involved with this event

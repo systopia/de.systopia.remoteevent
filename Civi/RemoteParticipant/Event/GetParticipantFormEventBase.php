@@ -47,6 +47,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
         $this->result = [];
         $this->contact_id = null;
         $this->participant_id = null;
+        $this->token_usages = [$this->getTokenUsage()];
     }
 
     /**
@@ -67,33 +68,6 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
     }
 
     /**
-     * Get the participant ID, usually based on the invite_token
-     *
-     * @return integer
-     *    the participant identified to have issued the request
-     */
-    public function getParticipantID()
-    {
-        if ($this->participant_id === null) {
-            if (!empty($this->params['token'])) {
-                // there is a token, see if it complies with the known formats
-                $participant_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
-                    'Participant',
-                    $this->params['token'],
-                    'invite'
-                );
-                if ($participant_id) {
-                    $this->participant_id = $participant_id;
-                } else {
-                    $this->participant_id = 0; // don't look it up again
-                }
-            }
-        }
-
-        return $this->participant_id;
-    }
-
-    /**
      * Get the contact ID, usually based on the remote_contact_id or invite_token
      *
      * @return integer
@@ -103,6 +77,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
     {
         if ($this->contact_id === null) {
             // do some lookups
+
             if (!empty($this->params['token'])) {
                 // there is a token, see if it complies with the known formats
 
@@ -121,7 +96,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
                     $contact_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
                         'Contact',
                         $this->params['token'],
-                        'invite'
+                        $this->getTokenUsage()
                     );
                     if ($contact_id) {
                         $this->setContactID($contact_id);

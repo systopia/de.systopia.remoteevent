@@ -30,6 +30,9 @@ class ValidateEvent extends RemoteEvent
     /** @var array holds the original RemoteParticipant.validate submission */
     protected $submission;
 
+    /** @var integer holds the participant_id if any is associated with the submission */
+    protected $participant_id;
+
     /** @var array holds the  */
     protected $error_list;
 
@@ -37,6 +40,7 @@ class ValidateEvent extends RemoteEvent
     {
         $this->submission  = $submission_data;
         $this->error_list = $error_list;
+        $this->token_usages = ['invite'];
     }
 
     /**

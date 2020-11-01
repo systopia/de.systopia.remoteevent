@@ -341,4 +341,88 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
         $this->assertEquals($contact_id, $verify_contact_id, "Couldn't generate remote contact key.");
         return $key;
     }
+
+    /**
+     * Get the ID of the 'Invited' participant status, as used by the eventinvitation extension
+     *
+     * @return integer participant status ID
+     */
+    public function getParticipantInvitedStatus()
+    {
+        // code copied from de.systopia.eventinvitation/CRM/Eventinvitation/Upgrader.php
+        $apiResult = civicrm_api3(
+            'ParticipantStatusType',
+            'get',
+            [
+                'name' => 'Invited'
+            ]
+        );
+
+        if ($apiResult['count'] === 0) {
+            $max_weight = (int) CRM_Core_DAO::singleValueQuery("SELECT MAX(weight) FROM civicrm_participant_status_type");
+            $apiResult = civicrm_api3(
+                'ParticipantStatusType',
+                'create',
+                [
+                    'name' => 'Invited',
+                    'label' => 'Invited in your language',
+                    'visibility_id' => 'public',
+                    'class' => 'Waiting',
+                    'is_active' => 1,
+                    'weight' => $max_weight + 1,
+                    'is_reserved' => 1,
+                    'is_counted' => 0,
+                ]
+            );
+        }
+        return $apiResult['id'];
+    }
+
+    /**
+     * Get the ID of the given participant status
+     *
+     * @param string $status_name
+     *   name of the status
+     * @param boolean $reset_cache
+     *   reset the internal cache
+     */
+    public function getParticipantStatusId($status_name, $reset_cache = false)
+    {
+        static $participant_statuses = null;
+        if ($reset_cache) {
+            $participant_statuses = null;
+        }
+        if ($participant_statuses === null) {
+            $participant_statuses = [];
+            $query = civicrm_api3('ParticipantStatusType', 'get', [
+                'option.limit' => 0,
+            ]);
+            foreach ($query['values'] as $status) {
+                $participant_statuses[$status['name']] = $status['id'];
+            }
+        }
+
+        $this->assertArrayHasKey($status_name, $participant_statuses, "Participant status '{$status_name} doesn't exist.");
+        return $participant_statuses[$status_name];
+    }
+
+    /**
+     * Verify that the participant object has the right status
+     *
+     * @param integer $participant_id
+     *   the participant ID
+     * @param integer|string $participant_status
+     *   the expected participant status
+     * @param string $failure_msg
+     *   message to log in case of failure
+     */
+    public function assertParticipantStatus($participant_id, $participant_status, $failure_msg)
+    {
+        $participant = $this->traitCallAPISuccess('Participant', 'get', ['id' => $participant_id]);
+        $this->assertGreaterThan(0, $participant['count'], $failure_msg . " (doesn't exist)");
+        $this->assertLessThan(2, $participant['count'], $failure_msg . " (ambiguous)");
+        $participant = reset($participant['values']);
+
+        $this->assertEquals($this->getParticipantStatusId($participant_status), $participant['participant_status_id'], $failure_msg);
+    }
 }

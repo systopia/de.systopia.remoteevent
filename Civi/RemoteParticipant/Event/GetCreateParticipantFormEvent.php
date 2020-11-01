@@ -26,6 +26,34 @@ use Civi\RemoteEvent;
 class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
 {
     /**
+     * GetCreateParticipantFormEvent constructor.
+     */
+    public function __construct($params, $event)
+    {
+        parent::__construct($params, $event);
+
+        // add 'confirm' field if there already is a participant
+        if ($this->getParticipantID()) {
+            $l10n = $this->getLocalisation();
+            $this->addFields([
+                'confirm' => [
+                     'name'        => 'confirm',
+                     'type'        => 'Select',
+                     'options'     => [1 => $l10n->localise('Confirm'), 0 => $l10n->localise('Decline')],
+                     'validation'  => '',
+                     'weight'      => 10,
+                     'required'    => 0,
+                     'label'       => $l10n->localise('Confirm Invitation'),
+                     'description' => $l10n->localise('Do you accept the invitation?'),
+                     'group_name'  => 'confirmation',
+                     'group_label' => $l10n->localise("Event Invitation"),
+                 ],
+            ]);
+        }
+    }
+
+
+    /**
      * Get the token usage key for this event type
      *
      * @return string

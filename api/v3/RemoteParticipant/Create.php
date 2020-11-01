@@ -100,7 +100,7 @@ function civicrm_api3_remote_participant_create($params)
 
     } else {
         $registration_transaction->commit();
-        $participant = $registration_event->getParticipant();
+        $participant = civicrm_api3('Participant', 'getsingle', ['id' => $registration_event->getParticipantID()]);
         $null = null;
         return civicrm_api3_create_success(1, $params, 'RemoteParticipant', 'create', $null, [
             'event_id'           => $participant['event_id'],
