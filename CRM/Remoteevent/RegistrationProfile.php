@@ -134,6 +134,15 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         // add default values
         $profile->addDefaultValues($get_form_results);
+
+        // add profile "field"
+        $get_form_results->addFields([
+             'profile' => [
+                 'name' => 'profile',
+                 'type' => 'Value',
+                 'value' => $profile->getName(),
+             ]
+        ]);
     }
 
     /**

@@ -425,4 +425,29 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
 
         $this->assertEquals($this->getParticipantStatusId($participant_status), $participant['participant_status_id'], $failure_msg);
     }
+
+    /**
+     * Verify that the RemoteContact.get_form standard 'fields' are there
+     *
+     * @param array $fields
+     *   the fields reported by the get_form
+     * @param boolean $strip_fields
+     *   if true, the standard fields are removed from the $fields array
+     */
+    public function assertGetFormStandardFields(&$fields, $strip_fields = false)
+    {
+        // todo: check more?
+        $this->assertArrayHasKey('event_id', $fields, "RemoteContact.get_form should contain 'event_id' field");
+        $field_spec = $fields['event_id'];
+        $this->assertArrayHasKey('profile', $fields, "RemoteContact.get_form should contain 'profile' field");
+        $field_spec = $fields['profile'];
+        $this->assertArrayHasKey('remote_contact_id', $fields, "RemoteContact.get_form should contain 'remote_contact_id' field");
+        $field_spec = $fields['remote_contact_id'];
+
+        if ($strip_fields) {
+            unset($fields['event_id']);
+            unset($fields['profile']);
+            unset($fields['remote_contact_id']);
+        }
+    }
 }

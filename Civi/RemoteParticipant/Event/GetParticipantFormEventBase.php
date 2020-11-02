@@ -184,4 +184,37 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
     {
         return $this->params;
     }
+
+    /**
+     * Add some standard/default fields
+     */
+    public function addStandardFields()
+    {
+        $query = $this->getQueryParameters();
+
+        // add event_id field
+        $this->addFields([
+            'event_id' => [
+                'name' => 'event_id',
+                'type' => 'Value',
+                'value' => $this->getEventID(),
+            ],
+            'remote_contact_id' => [
+                 'name' => 'remote_contact_id',
+                 'type' => 'Value',
+                 'value' => isset($query['remote_contact_id']) ? $query['remote_contact_id'] : ''
+            ],
+        ]);
+
+        // todo: implement for cancel/update
+        if (empty($this->result['profile'])) {
+            $this->addFields([
+                 'profile' => [
+                     'name' => 'profile',
+                     'type' => 'Value',
+                     'value' => '',
+                 ],
+            ]);
+        }
+    }
 }

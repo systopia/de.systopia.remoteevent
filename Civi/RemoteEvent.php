@@ -33,6 +33,9 @@ abstract class RemoteEvent extends Event
     /** @var integer contact ID */
     protected $contact_id = null;
 
+    /** @var integer event ID */
+    protected $event_id = null;
+
     /** @var array accepted usage for tokes */
     protected $token_usages = ['invite'];
 
@@ -135,6 +138,32 @@ abstract class RemoteEvent extends Event
         return $this->contact_id;
     }
 
+    /**
+     * Get the ID of the event involved
+     */
+    public function getEventID() {
+        if ($this->event_id === null) {
+            $this->event_id = 0; // don't look up again
+
+            $params = $this->getQueryParameters();
+            if (!empty($params['event_id'])) {
+                $this->event_id = (int) $params['event_id'];
+            }
+
+            if (!$this->event_id) {
+                // event ID not given, try via participant
+                $participant_id = $this->getParticipantID();
+                if ($participant_id) {
+                    $this->event_id = civicrm_api3('Participant', 'getvalue', [
+                        'id'     => $participant_id,
+                        'return' => 'event_id'
+                    ]);
+                }
+            }
+        }
+
+        return $this->event_id;
+    }
 
     /**
      * Get the contact ID if a valid remote_contact_id is involved with this event

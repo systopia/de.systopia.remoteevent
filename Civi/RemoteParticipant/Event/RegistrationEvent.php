@@ -76,17 +76,6 @@ class RegistrationEvent extends RemoteEvent
     }
 
     /**
-     * Get the event ID
-     *
-     * @return integer
-     *    event ID
-     */
-    public function getEventID()
-    {
-        return (int) $this->submission['event_id'];
-    }
-
-    /**
      * Get the participant ID
      *
      * @return integer

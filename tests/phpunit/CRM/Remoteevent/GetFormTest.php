@@ -56,6 +56,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
         $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
             'event_id' => $event['id'],
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
         $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
         $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
         $this->assertTrue(empty($fields['email']['value']), "Field 'email' shouldn't come with a value in an anonymous call");
@@ -65,6 +66,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
             'event_id' => $event['id'],
             'profile'  => 'Standard1'
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
         $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
         $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
         $this->assertTrue(empty($fields['email']['value']), "Field 'email' shouldn't come with a value in an anonymous call");
@@ -74,6 +76,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
             'event_id' => $event['id'],
             'profile'  => 'OneClick'
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
         $this->assertEmpty($fields, "OneClick Profile should not list any fields");
 
         // check illegal profile
@@ -109,6 +112,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
             'action'   => 'cancel',
             'event_id' => $event['id'],
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
 
         // todo: i don't know what we're expecting here, I don't think cancellation has any fields
 

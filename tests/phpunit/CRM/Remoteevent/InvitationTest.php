@@ -79,6 +79,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
             'profile'  => 'OneClick',
             'token'    => $token,
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
@@ -109,6 +110,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
             'profile'  => 'OneClick',
             'token'    => $token,
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
@@ -150,6 +152,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
             'profile'  => 'OneClick',
             'token'    => $token,
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
@@ -175,6 +178,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
             'profile'  => 'OneClick',
             'token'    => $token,
         ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
