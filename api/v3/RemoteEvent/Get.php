@@ -124,7 +124,7 @@ function civicrm_api3_remote_event_get($params)
         $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($event['id'], $contact_id, $event);
         if ($cant_register_reason) {
             $event['can_register'] = 0;
-            $result->logMessage($cant_register_reason);
+            //$result->logMessage($cant_register_reason);
         } else {
             $event['can_register'] = 1;
         }
