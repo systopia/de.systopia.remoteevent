@@ -25,9 +25,15 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 function _civicrm_api3_remote_participant_validate_spec(&$spec)
 {
+    $spec['action']          = [
+        'name'         => 'action',
+        'api.default'  => 'create',
+        'title'        => E::ts('Action'),
+        'description'  => E::ts('Which action is the form for (create/cancel/update)'),
+    ];
     $spec['event_id']          = [
         'name'         => 'event_id',
-        'api.required' => 1,
+        'api.required' => 0,
         'title'        => E::ts('Event ID'),
         'description'  => E::ts('Internal ID of the event the registration form is needed for'),
     ];
@@ -81,6 +87,11 @@ function civicrm_api3_remote_participant_validate($params)
         if (!$contact_id) {
             $validation->addError('remote_contact_id', E::ts("RemoteContactID is invalid"));
         }
+    }
+
+    // todo: implement other modes (update/cancel)
+    if ($params['action'] != 'create') {
+        $validation->addError('action', E::ts("Action '%1' not implemented.", [1 => $params['action']]));
     }
 
     // first: check if registration is enabled
