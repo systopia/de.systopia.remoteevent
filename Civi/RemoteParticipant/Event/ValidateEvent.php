@@ -30,9 +30,6 @@ class ValidateEvent extends RemoteEvent
     /** @var array holds the original RemoteParticipant.validate submission */
     protected $submission;
 
-    /** @var integer holds the participant_id if any is associated with the submission */
-    protected $participant_id;
-
     /** @var array holds the  */
     protected $error_list;
 

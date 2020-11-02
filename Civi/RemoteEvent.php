@@ -30,6 +30,9 @@ abstract class RemoteEvent extends Event
     /** @var integer participant ID */
     protected $participant_id = null;
 
+    /** @var integer contact ID */
+    protected $contact_id = null;
+
     /** @var array accepted usage for tokes */
     protected $token_usages = ['invite'];
 
@@ -84,10 +87,52 @@ abstract class RemoteEvent extends Event
                         $this->participant_id = 0; // don't look it up again
                     }
                 }
+
+                // also check for Contact Tokens
+                $contact_id = $this->getContactID();
+
             }
         }
 
         return $this->participant_id;
+    }
+
+    public function getContactID()
+    {
+        if ($this->contact_id === null) {
+            $this->contact_id = 0; // don't look up again
+
+            $query = $this->getQueryParameters();
+            if (!empty($query['token'])) {
+                // there is a token, see if it complies with the known formats
+                foreach ($this->token_usages as $token_usage) {
+                    $contact_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
+                        'Contact',
+                        $query['token'],
+                        $token_usage
+                    );
+                    if ($contact_id) {
+                        $this->contact_id = $contact_id;
+                        break;
+                    }
+                }
+            }
+
+            // check if there is a participant
+            $participant_id = $this->getParticipantID();
+            if ($participant_id) {
+                $this->contact_id = civicrm_api3('Participant', 'getvalue', [
+                    'id'     => $participant_id,
+                    'return' => 'contact_id']);
+            }
+
+            // last resort (tokens take precedence): via remote_contact_id
+            if (empty($this->contact_id)) {
+                $this->contact_id = $this->getRemoteContactID();
+            }
+        }
+
+        return $this->contact_id;
     }
 
 

@@ -33,14 +33,8 @@ class RegistrationEvent extends RemoteEvent
     /** @var array holds the participant data  */
     protected $contact_data;
 
-    /** @var integer holds the contact ID as soon as it's identified */
-    protected $contact_id;
-
     /** @var array holds the participant data  */
     protected $participant;
-
-    /** @var integer holds the participant ID as soon as it's created/updated */
-    protected $participant_id;
 
     /** @var array holds a list of (minor) errors */
     protected $error_list;
@@ -90,26 +84,6 @@ class RegistrationEvent extends RemoteEvent
     public function getEventID()
     {
         return (int) $this->submission['event_id'];
-    }
-
-    /**
-     * Get the contact ID
-     *
-     * @return integer
-     *    contact ID
-     */
-    public function getContactID()
-    {
-        if (empty($this->contact_id)) {
-            // check if there is a participant
-            $participant_id = $this->getParticipantID();
-            if ($participant_id) {
-                $this->contact_id = civicrm_api('Participant', 'getvalue', [
-                    'id' => $participant_id,
-                    'return' => 'contact_id']);
-            }
-        }
-        return (int) $this->contact_id;
     }
 
     /**

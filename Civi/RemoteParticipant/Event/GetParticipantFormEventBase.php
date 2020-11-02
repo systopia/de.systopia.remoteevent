@@ -34,12 +34,6 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
     /** @var array holds the RemoteParticipant.get_form result to be modified/extended */
     protected $result;
 
-    /** @var integer will hold the contact ID once/if identified via remote_contact_id or token */
-    protected $contact_id;
-
-    /** @var integer will hold the participant ID once/if identified via token */
-    protected $participant_id;
-
     public function __construct($params, $event)
     {
         $this->params = $params;

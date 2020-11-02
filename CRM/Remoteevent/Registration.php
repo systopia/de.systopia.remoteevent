@@ -440,11 +440,9 @@ class CRM_Remoteevent_Registration
      */
     public static function identifyRemoteContact($registration)
     {
-        if (!$registration->getContactID() && !empty($registration->getSubmittedValue('remote_contact_id'))) {
-            $contact_id = CRM_Remotetools_Contact::getByKey($registration->getSubmittedValue('remote_contact_id'));
-            if ($contact_id) {
-                $registration->setContactID($contact_id);
-            }
+        $contact_id = $registration->getContactID();
+        if ($contact_id) {
+            $registration->setContactID($contact_id);
         }
     }
 
@@ -484,14 +482,20 @@ class CRM_Remoteevent_Registration
 
         $participant_id = $registration->getParticipantID();
         $submission = $registration->getSubmission();
-        if ($participant_id && isset($submission['confirm'])) {
-            // there is already a (pre-existing) participant
-            //   ... and the 'confirm' flag has been submitted
-            //   then: update the participant right away
-            civicrm_api3('Participant', 'create', [
-                'id'        => $participant_id,
-                'status_id' => empty($submission['confirm']) ? 'Cancelled' : 'Registered'
-            ]);
+        if (isset($submission['confirm'])) {
+            if ($participant_id) {
+                // there is already a (pre-existing) participant
+                //   ... and the 'confirm' flag has been submitted
+                //   then: update the participant right away
+                civicrm_api3('Participant', 'create', [
+                    'id'        => $participant_id,
+                    'status_id' => empty($submission['confirm']) ? 'Cancelled' : 'Registered'
+                ]);
+            } else {
+                // there is no pre-existing participant, just add to the general to-be-created one
+                $participant = &$registration->getParticipant();
+                $participant['status_id'] = empty($submission['confirm']) ? 'Cancelled' : 'Registered';
+            }
         }
     }
 

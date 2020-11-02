@@ -120,4 +120,74 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         ]);
         $this->assertParticipantStatus($participant2_id, 'Cancelled', "Participant status should be 'Cancelled'");
     }
+
+    /**
+     * Test not invited (without participant) with OneClick form.
+     *
+     * Expected results:
+     *  - participant is in status 'Invited'
+     *  - get_form has field option: accept/decline invitation
+     *  - "accept" -> participant in status 'Registered'
+     *  - "declined" -> participant in status 'Cancelled'
+     */
+    public function testInvitedNoParticipantOneClick()
+    {
+        // create an event
+        $event = $this->createRemoteEvent(
+            [
+                'event_remote_registration.remote_registration_default_profile' => 'OneClick',
+                'event_remote_registration.remote_registration_profiles'        => ['Standard2', 'OneClick'],
+            ]
+        );
+
+        // create invite participant
+        $contact = $this->createContact();
+
+        // generate token
+        $token = CRM_Remotetools_SecureToken::generateEntityToken('Contact', $contact['id'], null, 'invite');
+
+        // check OneClick Profile: it should have a field 'confirmation'
+        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+            'event_id' => $event['id'],
+            'profile'  => 'OneClick',
+            'token'    => $token,
+        ])['values'];
+        $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+
+        // CONFIRM the registration
+        $this->registerRemote($event['id'], [
+            'token'   => $token,
+            'confirm' => 1
+        ]);
+        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
+            'event_id'   => $event['id'],
+            'contact_id' => $contact['id'],
+        ]);
+        $this->assertParticipantStatus($participant['id'], 'Registered', "Participant status should be 'Registered'");
+
+
+
+        // NOW do the same with DECLINED
+        $contact2 = $this->createContact();
+        $token = CRM_Remotetools_SecureToken::generateEntityToken('Contact', $contact2['id'], null, 'invite');
+
+        // check OneClick Profile: it should have a field 'confirmation'
+        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+            'event_id' => $event['id'],
+            'profile'  => 'OneClick',
+            'token'    => $token,
+        ])['values'];
+        $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+
+        // CONFIRM the registration
+        $this->registerRemote($event['id'], [
+            'token'   => $token,
+            'confirm' => 0
+        ]);
+        $participant2 = $this->traitCallAPISuccess('Participant', 'getsingle', [
+            'event_id'   => $event['id'],
+            'contact_id' => $contact2['id'],
+        ]);
+        $this->assertParticipantStatus($participant2['id'], 'Cancelled', "Participant status should be 'Cancelled'");
+    }
 }

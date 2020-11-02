@@ -107,9 +107,9 @@ function civicrm_api3_remote_event_get($params)
     $result = new GetResultEvent($event_get, $event_list);
 
     // check if this is a personalised request
-    $remote_contact_id = $get_params->getRemoteContactID();
-    if ($remote_contact_id) {
-        CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $remote_contact_id);
+    $contact_id = $get_params->getContactID();
+    if ($contact_id) {
+        CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
     }
 
     // add flags (might be overwritten by later event handlers)
@@ -121,7 +121,7 @@ function civicrm_api3_remote_event_get($params)
         $event['is_registered'] = 0;  // might be overwritten below
 
         // NOW: get can_register/can_instant_register flags
-        $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($event['id'], $remote_contact_id, $event);
+        $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($event['id'], $contact_id, $event);
         if ($cant_register_reason) {
             $event['can_register'] = 0;
             $result->logMessage($cant_register_reason);
@@ -134,14 +134,14 @@ function civicrm_api3_remote_event_get($params)
                 && CRM_Remoteevent_Registration::canOneClickRegister($event['id'], $event));
 
         // add generic can_edit_registration/can_cancel_registration (might be overridden below)
-        $cant_edit_reason = CRM_Remoteevent_Registration::cannotEditRegistration($event['id'], $remote_contact_id, $event);
+        $cant_edit_reason = CRM_Remoteevent_Registration::cannotEditRegistration($event['id'], $contact_id, $event);
         $event['can_edit_registration'] = (int) empty($cant_edit_reason);
         $event['can_cancel_registration'] = (int) empty($cant_edit_reason);
 
-        if ($remote_contact_id) {
+        if ($contact_id) {
             // PERSONALISED OVERRIDES
             $event['participant_registration_count'] = (int)
-                CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $remote_contact_id, ['Positive', 'Pending']);
+                CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
             $event['is_registered'] = (int) ($event['participant_registration_count'] > 0);
             $event['can_edit_registration'] = (int) ($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
             $event['can_cancel_registration'] = (int) ($event['can_cancel_registration'] && ($event['participant_registration_count'] > 0));
@@ -149,11 +149,11 @@ function civicrm_api3_remote_event_get($params)
     }
 
     // add personal flags
-    if ($remote_contact_id) {
-        CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $remote_contact_id);
+    if ($contact_id) {
+        CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
         foreach ($result->getEventData() as &$event) {
             $event['participant_registration_count'] = (int)
-                CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $remote_contact_id, ['Positive', 'Pending']);
+                CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
             $event['can_edit_registration'] = (int)
                 ($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
             $event['is_registered'] = $event['participant_registration_count'] > 0 ? 1 : 0;
