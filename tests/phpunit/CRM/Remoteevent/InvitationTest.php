@@ -76,7 +76,6 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
 
         // check OneClick Profile: it should have a field 'confirmation'
         $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
             'profile'  => 'OneClick',
             'token'    => $token,
         ])['values'];
@@ -107,7 +106,6 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
 
         // check OneClick Profile: it should have a field 'confirmation'
         $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
             'profile'  => 'OneClick',
             'token'    => $token,
         ])['values'];

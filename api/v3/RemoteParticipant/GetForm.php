@@ -117,8 +117,12 @@ function civicrm_api3_remote_participant_get_form($params)
             }
 
             // verify the event_id
-            if ($participant['event_id'] != $params['event_id']) {
-                return civicrm_api3_create_error(E::ts("Token refers to another event '%1'", [1 => $params['token']]));
+            if (isset($params['event_id'])) {
+                if ($participant['event_id'] != $params['event_id']) {
+                    return civicrm_api3_create_error(E::ts("Token refers to another event '%1'", [1 => $params['token']]));
+                }
+            } else {
+                $params['event_id'] = $participant['event_id'];
             }
         }
     }
