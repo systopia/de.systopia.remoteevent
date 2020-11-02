@@ -423,7 +423,7 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
         $this->assertLessThan(2, $participant['count'], $failure_msg . " (ambiguous)");
         $participant = reset($participant['values']);
 
-        $this->assertEquals($this->getParticipantStatusId($participant_status), $participant['participant_status_id'], $failure_msg);
+        $this->assertEquals($this->getParticipantStatusId($participant_status, true), $participant['participant_status_id'], $failure_msg);
     }
 
     /**
