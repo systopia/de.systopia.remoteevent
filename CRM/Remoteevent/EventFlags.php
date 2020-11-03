@@ -26,6 +26,7 @@ class CRM_Remoteevent_EventFlags
         'can_register',
         'can_instant_register',
         'can_edit_registration',
+        'can_cancel_registration',
         'is_registered',
     ];
 
