@@ -97,7 +97,8 @@ class CRM_Remoteevent_RemoteEvent
                 // add URL
                 $url = Civi::settings()->get('remote_registration_cancel_link');
                 if ($url) {
-                    $messageTokens->setToken('cancellation_link', "{$url}?token={$cancellation_token}");
+                    $link = preg_replace('/\{token\}/', $cancellation_token, $url);
+                    $messageTokens->setToken('cancellation_link', $link);
                 }
             }
             if (self::shouldAddUpdateLink($participant)) {
@@ -112,7 +113,8 @@ class CRM_Remoteevent_RemoteEvent
                 // add URL
                 $url = Civi::settings()->get('remote_registration_modify_link');
                 if ($url) {
-                    $messageTokens->setToken('update_link', "{$url}?token={$update_token}");
+                    $link = preg_replace('/\{token\}/', $update_token, $url);
+                    $messageTokens->setToken('update_link', $link);
                 }
             }
         }

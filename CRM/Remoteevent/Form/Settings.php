@@ -60,13 +60,13 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             false
         );
 
-        $this->add(
-            'text',
-            'remote_registration_link',
-            E::ts("Registration Link"),
-            ['class' => 'huge']
-        );
-        $this->addRule('remote_registration_link', E::ts("Please enter a valid URL"), 'url');
+//        $this->add(
+//            'text',
+//            'remote_registration_link',
+//            E::ts("Registration Link"),
+//            ['class' => 'huge']
+//        );
+//        $this->addRule('remote_registration_link', E::ts("Please enter a valid URL"), 'url');
 
         $this->add(
             'text',
@@ -75,6 +75,12 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             ['class' => 'huge']
         );
         $this->addRule('remote_registration_modify_link', E::ts("Please enter a valid URL"), 'url');
+        $this->addRule(
+            'remote_registration_modify_link',
+            E::ts('The link must include the placeholder <code>{token}</code>.'),
+            'regex',
+            '/\{token\}/'
+        );
 
         $this->add(
             'text',
@@ -83,6 +89,12 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             ['class' => 'huge']
         );
         $this->addRule('remote_registration_cancel_link', E::ts("Please enter a valid URL"), 'url');
+        $this->addRule(
+            'remote_registration_modify_link',
+            E::ts('The link must include the placeholder <code>{token}</code>.'),
+            'regex',
+            '/\{token\}/'
+        );
 
         $this->addButtons(
             [
