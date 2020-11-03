@@ -91,9 +91,21 @@ abstract class RemoteEvent extends Event
                     }
                 }
 
-                // also check for Contact Tokens
+                // if the contact is known: check if can find a partipant
                 $contact_id = $this->getContactID();
-
+                if ($contact_id) {
+                    // todo: how to select the relevant
+                    $participant_query = civicrm_api3('Participant', 'get', [
+                        'contact_id'   => $contact_id,
+                        'event_id'     => $this->getEventID(),
+                        'option.sort'  => 'id desc',
+                        'option.limit' => 1,
+                        'return'       => 'id',
+                    ]);
+                    if (!empty($participant_query['id'])) {
+                        $this->participant_id = $participant_query['id'];
+                    }
+                }
             }
         }
 

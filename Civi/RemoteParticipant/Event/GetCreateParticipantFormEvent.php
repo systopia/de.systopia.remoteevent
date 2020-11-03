@@ -33,7 +33,7 @@ class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
         parent::__construct($params, $event);
 
         // add 'confirm' field if there already is a participant
-        if ($this->getParticipantID() || $this->getContactID()) {
+        if ($this->getParticipantID()) {
             $l10n = $this->getLocalisation();
             $this->addFields([
                 'confirm' => [
