@@ -168,9 +168,16 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
      *
      * @param string $value
      *  default/current value to be submitted for form prefill
+     *
+     * @param boolean $auto_format
+     *  try to automatically form the value
      */
-    public function setPrefillValue($field_name, $value)
+    public function setPrefillValue($field_name, $value, $auto_format = true)
     {
+        if ($auto_format) {
+            $field = $this->result[$field_name];
+            $value = \CRM_Remoteevent_RegistrationProfile::formatFieldValue($field, $value);
+        }
         $this->result[$field_name]['value'] = $value;
     }
 

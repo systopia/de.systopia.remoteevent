@@ -372,7 +372,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
     /**
-     * Validation the given
+     * Validation the given value
      *
      * @param array $field_spec
      *    specs, see getFields()
@@ -423,6 +423,61 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 // else: no (valid) type given
                 return true;
         }
+    }
+
+    /**
+     * Format the given field value
+     *
+     * @param array $field_spec
+     *    specs, see getFields()
+     *
+     * @param string $value
+     *    field value
+     *
+     * @return string
+     *   the formatted value
+     *
+     */
+    public static function formatFieldValue($field_spec, $value) {
+        switch ($field_spec['validation']) {
+            case 'Integer':
+            case 'Int':
+            case 'Positive':
+                $value = (int) $value;
+                break;
+
+            case 'Date':
+                if ($value) {
+                    $value = date('Ymd', strtotime($value));
+                }
+                break;
+
+            case 'Timestamp':
+                if ($value) {
+                    $value = date('YmdHiS', strtotime($value));
+                }
+                break;
+
+            case 'Boolean':
+                $value = empty($value) ? 0 : 1;
+                break;
+
+            case 'Float':
+                $value = (float) $value;
+                break;
+
+            default:
+            case 'CommaSeparatedIntegers':
+            case 'Text':
+            case 'String':
+            case 'Link':
+            case 'Json':
+            case 'Email':
+            case 'Alphanumeric':
+                // no formatting
+                break;
+        }
+        return $value;
     }
 
     /**
