@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-10-22 16:07+0200\n"
+"POT-Creation-Date: 2020-11-03 17:06+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -207,7 +207,7 @@ msgstr "Profil [%2] kann für  RemoteEvent [%1] nicht verwendet werden."
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Profile %1 is not available for submission"
-msgstr ""
+msgstr "Profil %1 ist nicht für die Registrierung freigeschaltet"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Implementation for profile '%1' not found."
@@ -231,11 +231,11 @@ msgid ""
 "url to set in the RemoteEvent general settings."
 msgstr ""
 "Link für One-Click Abmeldung. Hierfür muss die Basis-URL für Abmeldungen in "
-"den RemoteEvent Einstellungen gesetzt sein. "
+"den RemoteEvent Einstellungen gesetzt sein."
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid "Token to edit/update participant's registration."
-msgstr "Token für das Bearbeiten einer bestehenden Anmeldung"
+msgstr "Token für das Bearbeiten einer bestehenden Anmeldung."
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid ""
@@ -243,7 +243,7 @@ msgid ""
 "the base url to set in the RemoteEvent general settings."
 msgstr ""
 "Link für das Bearbeiten einer Anmeldung. Hierfür muss die Basis-URL für das "
-"Barbeiten von Anmeldungen in den RemoteEvent Einstellungen gesetzt sein. "
+"Barbeiten von Anmeldungen in den RemoteEvent Einstellungen gesetzt sein."
 
 #: CRM/Remoteevent/UI.php
 msgid "Remote Online Registration"
@@ -257,79 +257,43 @@ msgstr ""
 msgid "Upgrade %1 to revision %2"
 msgstr ""
 
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Locale"
 msgstr ""
 
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Locale of the field labels/etc. NOT IMPLEMENTED YET"
 msgstr ""
 
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Remote Contact ID"
 msgstr ""
 
-#: api/v3/RemoteEvent/Get.php
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
 msgid ""
 "You can submit a remote contact, in which case the result will be filtered "
 "for the events available to that contact"
 msgstr ""
 
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Event ID"
 msgstr ""
 
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Get.php
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Internal ID of the event the registration form is needed for"
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
-msgid "Profile Name"
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
-msgid "If omitted, the default profile is used"
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php api/v3/RemoteParticipant/Get.php
-msgid ""
-"You can submit a remote contact, in which case the fields should come with "
-"the default data"
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-msgid "Invite Token"
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-msgid ""
-"You can submit an invite token that can be used to identify the contact, in "
-"which case the fields should come with the default data. This takes "
-"preference over the remote_contact_id"
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-msgid "RemoteEvent [%1] does not exist, or not eligible for registration."
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-msgid "RemoteEvent [%1] is ambiguous."
-msgstr ""
-
-#: api/v3/RemoteEvent/GetRegistrationForm.php
-msgid "RemoteEvent [%1] has no remote registration enabled."
 msgstr ""
 
 #: api/v3/RemoteParticipant/Cancel.php
@@ -337,34 +301,99 @@ msgid ""
 "You can cancel with a remote contact ID, to determine the CiviCRM contact"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Update.php
+#: api/v3/RemoteParticipant/Validate.php
 msgid "Remote Registration Token"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "You can cancel with a as generated by emails"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
-msgid "Just check, don't do anything yet"
+#: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+msgid "Profile Name"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Submit.php
-msgid ""
-"This can be used to see if this is still valid, and to get e.g. the event_id "
-"from a registration token"
+#: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+msgid "If omitted, the default profile is used"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Submit.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Update.php
+#: api/v3/RemoteParticipant/Validate.php
 msgid "You can submit a remote contact ID, to determine the CiviCRM contact"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+msgid ""
+"You can submit a remote contact, in which case the fields should come with "
+"the default data"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Get.php
+msgid "Token to view your registration"
+msgstr "Token für das Bearbeiten Ihrer Anmeldung"
+
+#: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
+msgid "Action"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
+msgid "Which action is the form for (create/cancel/update)"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "Token"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid ""
+"You can submit an invite token that can be used to identify the contact, in "
+"which case the fields should come with the default data. This takes "
+"preference over the remote_contact_id"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "Invalid action '%1'"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "Invalid token '%1'"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "Broken token '%1'"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "Token refers to another event '%1'"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "RemoteEvent [%1] does not exist, or not eligible for registration."
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "RemoteEvent [%1] is ambiguous."
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "RemoteEvent [%1] has no remote registration enabled."
+msgstr ""
+
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "RemoteContactID is invalid"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Validation Failed"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Validate.php
+msgid "Action '%1' not implemented."
 msgstr ""
 
 #: remoteevent.php
@@ -408,3 +437,127 @@ msgid ""
 msgstr ""
 "Alle Teilnehmer mit den hier ausgewählten Rollen werden bei den "
 "Eventinformationen als Vortragende gelistet."
+
+#: from localise()
+msgid "Invalid Value"
+msgstr ""
+
+#: from localise()
+msgid "Phone Number"
+msgstr ""
+
+#: from localise()
+msgid "Participant's Phone Number"
+msgstr ""
+
+#: from localise()
+msgid "Contact Data"
+msgstr "Stammdaten"
+
+#: from localise()
+msgid "Street Address"
+msgstr "Straße und Hausnummer"
+
+#: from localise()
+msgid "Participant's street and house number"
+msgstr "Straße und Hausnummer des Teilnehmers"
+
+#: from localise()
+msgid "Contact Address"
+msgstr "Adresse"
+
+#: from localise()
+msgid "Supplemental Address"
+msgstr "Adresszusatz"
+
+#: from localise()
+msgid "Participant's supplemental address"
+msgstr ""
+
+#: from localise()
+msgid "Supplemental Address 2"
+msgstr "Adresszusatz 2"
+
+#: from localise()
+msgid "Postal Code"
+msgstr "Postleitzahl"
+
+#: from localise()
+msgid "Participant's postal code"
+msgstr ""
+
+#: from localise()
+msgid "City"
+msgstr "Stadt"
+
+#: from localise()
+msgid "Participant's city"
+msgstr ""
+
+#: from localise()
+msgid "Country"
+msgstr "Land"
+
+#: from localise()
+msgid "Participant's country"
+msgstr ""
+
+#: from localise()
+msgid "Email"
+msgstr "E-Mail"
+
+#: from localise()
+msgid "Participant's email address"
+msgstr ""
+
+#: from localise()
+msgid "Prefix"
+msgstr "Anrede"
+
+#: from localise()
+msgid "Participant's Prefix"
+msgstr "Anrede des Teilnehmers"
+
+#: from localise()
+msgid "Title"
+msgstr "Titel"
+
+#: from localise()
+msgid "Participant's Formal Title"
+msgstr "Titel des Teilnehmers"
+
+#: from localise()
+msgid "First Name"
+msgstr "Vorname"
+
+#: from localise()
+msgid "Participant's First Name"
+msgstr "Vorname des Teilnehmers"
+
+#: from localise()
+msgid "Last Name"
+msgstr "Nachname"
+
+#: from localise()
+msgid "Participant's Last Name"
+msgstr "Nachname des Teilnehmers"
+
+#: from localise()
+msgid "User must be identified to use one-click registration"
+msgstr "Für die One-Click Anmeldung muss der Teilnehmer bekannt sein"
+
+#: from localise()
+msgid "Decline"
+msgstr "Ablehnen"
+
+#: from localise()
+msgid "Confirm Invitation"
+msgstr "Einladung Bestätigen"
+
+#: from localise()
+msgid "Do you accept the invitation?"
+msgstr "Möchten Sie die Einladung bestätigen?"
+
+#: from localise()
+msgid "Event Invitation"
+msgstr "Einladung"
