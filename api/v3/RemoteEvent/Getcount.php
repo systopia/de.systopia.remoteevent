@@ -33,7 +33,14 @@ function _civicrm_api3_remote_event_getcount_spec(&$spec)
         'title'        => E::ts('Locale'),
         'description'  => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
     ];
-
+    $spec['token'] = [
+        'name'         => 'token',
+        'api.required' => 0,
+        'title'        => E::ts('Token'),
+        'description'  => E::ts(
+            'You can submit an invite token that can be used to identify the contact, in which case the fields should come with the default data. This takes preference over the remote_contact_id'
+        ),
+    ];
     $spec['remote_contact_id'] = [
         'name'         => 'remote_contact_id',
         'api.required' => 0,
