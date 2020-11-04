@@ -46,6 +46,7 @@ class GetResultEvent extends RemoteEvent
     {
         $this->params     = $params;
         $this->event_data = $event_data;
+        $this->token_usages = ['invite', 'cancel', 'update'];
     }
 
     /**
