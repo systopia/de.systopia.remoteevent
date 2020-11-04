@@ -41,6 +41,7 @@ class GetParamsEvent extends RemoteEvent
         $this->currentParameters  = $params;
         $this->originalParameters = $params;
         $this->remote_contact_id = false; // i.e. not looked up yet
+        $this->token_usages = ['invite', 'cancel', 'update'];
     }
 
     /**
