@@ -30,11 +30,11 @@ use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent as GetCancelParti
  */
 function _civicrm_api3_remote_participant_get_form_spec(&$spec)
 {
-    $spec['action']          = [
-        'name'         => 'action',
+    $spec['context']          = [
+        'name'         => 'context',
         'api.default'  => 'create',
-        'title'        => E::ts('Action'),
-        'description'  => E::ts('Which action is the form for (create/cancel/update)'),
+        'title'        => E::ts('Context'),
+        'description'  => E::ts('Which context/action is the form for (create/cancel/update)'),
     ];
     $spec['event_id']          = [
         'name'         => 'event_id',
@@ -84,9 +84,9 @@ function _civicrm_api3_remote_participant_get_form_spec(&$spec)
 function civicrm_api3_remote_participant_get_form($params)
 {
     unset($params['check_permissions']);
-    $params['action'] = strtolower($params['action']);
-    if (!in_array($params['action'], ['create', 'cancel', 'update'])) {
-        return civicrm_api3_create_error(E::ts("Invalid action '%1'", [1 => $params['action']]));
+    $params['context'] = strtolower($params['context']);
+    if (!in_array($params['context'], ['create', 'cancel', 'update'])) {
+        return civicrm_api3_create_error(E::ts("Invalid context '%1'", [1 => $params['context']]));
     }
 
     // FIRSTLY: evaluate TOKEN
@@ -98,7 +98,7 @@ function civicrm_api3_remote_participant_get_form($params)
                 'cancel' => 'cancel',
                 'update' => 'update'];
 
-        $participant_id = CRM_Remotetools_SecureToken::decodeEntityToken('Participant', trim($params['token']), $usage_map[$params['action']]);
+        $participant_id = CRM_Remotetools_SecureToken::decodeEntityToken('Participant', trim($params['token']), $usage_map[$params['context']]);
         if (empty($participant_id)) {
             // token is invalid
             if (empty($params['event_id'])) {
@@ -150,7 +150,7 @@ function civicrm_api3_remote_participant_get_form($params)
     // then see what action the user wants
     $fields = null;
     try {
-        switch ($params['action']) {
+        switch ($params['context']) {
             case 'create':
                 $fields = new GetCreateParticipantFormEvent($params, $event);
                 Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $fields);

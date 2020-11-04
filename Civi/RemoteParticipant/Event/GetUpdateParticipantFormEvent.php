@@ -20,7 +20,7 @@ namespace Civi\RemoteParticipant\Event;
  * Class GetUpdateParticipantFormEvent
  *
  * This event will be triggered to define the form of a registration update
- *   RemoteParticipant.get_form API with action=update
+ *   RemoteParticipant.get_form API with context=update
  *
  * @todo: same as GetCreateParticipantFormEvent?
  */

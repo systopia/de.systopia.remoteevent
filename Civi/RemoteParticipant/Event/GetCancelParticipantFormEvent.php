@@ -21,7 +21,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Class GetCancelParticipantFormEvent
  *
  * This event will be triggered to define the form of a new registration via
- *   RemoteParticipant.get_form API with action=cancel
+ *   RemoteParticipant.get_form API with context=cancel
  *
  * @todo: implement, this is just copied from GetCreateParticipantFormEvent
  */

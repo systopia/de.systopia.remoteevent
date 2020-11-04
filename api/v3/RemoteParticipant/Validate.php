@@ -25,11 +25,11 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 function _civicrm_api3_remote_participant_validate_spec(&$spec)
 {
-    $spec['action']          = [
-        'name'         => 'action',
+    $spec['context']          = [
+        'name'         => 'context',
         'api.default'  => 'create',
-        'title'        => E::ts('Action'),
-        'description'  => E::ts('Which action is the form for (create/cancel/update)'),
+        'title'        => E::ts('Context'),
+        'description'  => E::ts('Which context/action is the form for (create/cancel/update)'),
     ];
     $spec['event_id']          = [
         'name'         => 'event_id',
@@ -90,8 +90,8 @@ function civicrm_api3_remote_participant_validate($params)
     }
 
     // todo: implement other modes (update/cancel)
-    if ($params['action'] != 'create') {
-        $validation->addError('action', E::ts("Action '%1' not implemented.", [1 => $params['action']]));
+    if ($params['context'] != 'create') {
+        $validation->addError('context', E::ts("Context '%1' not implemented.", [1 => $params['context']]));
     }
 
     // first: check if registration is enabled

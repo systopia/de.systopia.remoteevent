@@ -21,7 +21,7 @@ use Civi\RemoteEvent;
  * Class GetCreateParticipantFormEvent
  *
  * This event will be triggered to define the form of a new registration via
- *   RemoteParticipant.get_form API with action=create
+ *   RemoteParticipant.get_form API with context=create
  */
 class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
 {

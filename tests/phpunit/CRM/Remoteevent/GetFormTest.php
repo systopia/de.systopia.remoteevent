@@ -42,7 +42,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
     }
 
     /**
-     * Test RemoteParticipant.get_form action=create API anonymously
+     * Test RemoteParticipant.get_form context=create API anonymously
      */
     public function testCreateAnonymous()
     {
@@ -93,7 +93,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
     }
 
     /**
-     * Test RemoteParticipant.get_form action=cancel API anonymously
+     * Test RemoteParticipant.get_form context=cancel API anonymously
      */
     public function testCancel()
     {
@@ -109,7 +109,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
 
         // check cancellation with default profile
         $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'action'   => 'cancel',
+            'context'   => 'cancel',
             'event_id' => $event['id'],
         ])['values'];
         $this->assertGetFormStandardFields($fields, true);

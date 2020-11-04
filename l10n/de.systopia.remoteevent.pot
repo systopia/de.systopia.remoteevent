@@ -337,7 +337,7 @@ msgid "Action"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
-msgid "Which action is the form for (create/cancel/update)"
+msgid "Which context is the form for (create/cancel/update)"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php
@@ -352,7 +352,7 @@ msgid ""
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php
-msgid "Invalid action '%1'"
+msgid "Invalid context '%1'"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php

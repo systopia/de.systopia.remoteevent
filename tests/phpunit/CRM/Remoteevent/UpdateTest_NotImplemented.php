@@ -42,7 +42,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase
     }
 
     /**
-     * Test RemoteParticipant.get_form action=create API anonymously
+     * Test RemoteParticipant.get_form context=create API anonymously
      */
     public function testUpdateAnonymously()
     {
@@ -76,7 +76,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase
     }
 
     /**
-     * Test RemoteParticipant.get_form action=create API anonymously
+     * Test RemoteParticipant.get_form context=create API anonymously
      */
     public function testUpdateViaRemoteID()
     {
@@ -105,7 +105,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase
     }
 
     /**
-     * Test RemoteParticipant.get_form action=create API anonymously
+     * Test RemoteParticipant.get_form context=create API anonymously
      */
     public function testUpdateViaToken()
     {
