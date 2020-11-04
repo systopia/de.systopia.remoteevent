@@ -219,7 +219,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
                  'profile' => [
                      'name' => 'profile',
                      'type' => 'Value',
-                     'value' => '',
+                     'value' => 'OneClick',
                  ],
             ]);
         }
