@@ -139,7 +139,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
                 'confirm' => 0
             ]
         );
-        $this->assertParticipantStatus($participant2_id, 'Cancelled', "Participant status should be 'Cancelled'");
+        $this->assertParticipantStatus($participant2_id, 'Rejected', "Participant status should be 'Cancelled'");
     }
 
     /**
@@ -347,7 +347,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
                 'email' => $contact['email'],
             ]
         );
-        $this->assertParticipantStatus($participant2_id, 'Cancelled', "Participant status should be 'Cancelled'");
+        $this->assertParticipantStatus($participant2_id, 'Rejected', "Participant status should be 'Cancelled'");
     }
 
     /**

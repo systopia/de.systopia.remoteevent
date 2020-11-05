@@ -490,7 +490,7 @@ class CRM_Remoteevent_Registration
                 $new_status = '';
                 if (empty($submission['confirm'])) {
                     // participant want's out
-                    $new_status = 'Cancelled';
+                    $new_status = 'Rejected';
                 } else {
                     // participant wants to confirm
                     if (CRM_Remoteevent_RemoteEvent::hasActiveWaitingList(
