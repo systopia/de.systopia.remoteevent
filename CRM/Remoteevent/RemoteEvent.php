@@ -206,4 +206,32 @@ class CRM_Remoteevent_RemoteEvent
 
         return true;
     }
+
+    /**
+     * Does the given event have an active waitlist,
+     *  i.e. a waitlist is enabled and the event is full
+     *
+     * @param integer $event_id
+     *   ID of the event
+     *
+     * @param array $event_data
+     *   if passed, this event data is used, otherwise the data will be loaded
+     *
+     * @return bool
+     *   true if the event does have an active waiting list
+     */
+    public static function hasActiveWaitingList($event_id, $event_data = null)
+    {
+        if (empty($event_data)) {
+            $event_data = self::getRemoteEvent($event_id);
+        }
+
+        if (!empty($event_data['has_waitlist']) && !empty($event_data['max_participants'])) {
+            // there is an active waiting list, see if we need to get on it
+            $registered_count = CRM_Remoteevent_Registration::getRegistrationCount($event_id);
+            return ($registered_count >= $event_data['max_participants']);
+        } else {
+            return false;
+        }
+    }
 }

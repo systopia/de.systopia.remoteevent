@@ -487,14 +487,37 @@ class CRM_Remoteevent_Registration
                 // there is already a (pre-existing) participant
                 //   ... and the 'confirm' flag has been submitted
                 //   then: update the participant right away
-                civicrm_api3('Participant', 'create', [
-                    'id'        => $participant_id,
-                    'status_id' => empty($submission['confirm']) ? 'Cancelled' : 'Registered'
-                ]);
+                $new_status = '';
+                if (empty($submission['confirm'])) {
+                    // participant want's out
+                    $new_status = 'Cancelled';
+                } else {
+                    // participant wants to confirm
+                    if (CRM_Remoteevent_RemoteEvent::hasActiveWaitingList(
+                        $registration->getEventID(),
+                        $registration->getEvent()
+                    )) {
+                        $new_status = 'On waitlist';
+                    } else {
+                        $new_status = 'Registered';
+                    }
+                }
+
+                // update participant right away
+                civicrm_api3(
+                    'Participant',
+                    'create',
+                    [
+                        'id' => $participant_id,
+                        'status_id' => $new_status
+                    ]
+                );
             } else {
                 // there is no pre-existing participant, just add to the general to-be-created one
-                $participant = &$registration->getParticipant();
-                $participant['status_id'] = empty($submission['confirm']) ? 'Cancelled' : 'Registered';
+                if (empty($submission['confirm'])) {
+                    $participant = &$registration->getParticipant();
+                    $participant['status_id'] = 'Cancelled';
+                }
             }
         }
     }
@@ -533,17 +556,13 @@ class CRM_Remoteevent_Registration
 
         // check if this has a waiting list
         if (empty($participant_data['participant_status_id'])) {
-            if (!empty($event_data['has_waitlist']) && !empty($event_data['max_participants'])) {
-                // there is an active waiting list, see if we need to get on it
-                $registered_count = self::getRegistrationCount($event_data['id']);
-                if ($registered_count >= $event_data['max_participants']) {
-                    $participant_data['participant_status_id'] = 'On waitlist';
+            if (CRM_Remoteevent_RemoteEvent::hasActiveWaitingList($event_data['id'], $event_data)) {
+                $participant_data['participant_status_id'] = 'On waitlist';
 
-                    if (!empty($event_data['waitlist_text'])) {
-                        $registration->addError($event_data['waitlist_text']);
-                    } else {
-                        $registration->addError(E::ts("You have been added to the waitlist."));
-                    }
+                if (!empty($event_data['waitlist_text'])) {
+                    $registration->addError($event_data['waitlist_text']);
+                } else {
+                    $registration->addError(E::ts("You have been added to the waitlist."));
                 }
             }
         }

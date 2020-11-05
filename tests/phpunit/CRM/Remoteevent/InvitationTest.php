@@ -529,4 +529,62 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         );
         $this->assertParticipantStatus($participant_id, 'Registered', "Participant status should be 'Registered'");
     }
+
+
+    /**
+     * Test invited (with participant) with OneClick form
+     *   with waiting list and event full
+     *
+     * Expected results:
+     *  - participant is in status 'Invited'
+     *  - event has waiting list
+     *  - event is full
+     */
+    public function testInvitedParticipantOneClickWaitingList()
+    {
+        // create an event
+        $event = $this->createRemoteEvent(
+            [
+                'event_remote_registration.remote_registration_default_profile' => 'OneClick',
+                'event_remote_registration.remote_registration_profiles' => ['Standard2', 'OneClick'],
+                'has_waitlist' => 1,
+                'max_participants' => 1,
+            ]
+        );
+
+        // create invite participant
+        $contact = $this->createContact();
+        $result = $this->traitCallAPISuccess(
+            'Participant',
+            'create',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact['id'],
+                'status_id' => $this->getParticipantInvitedStatus(),
+                'role_id' => 'Attendee'
+            ]
+        );
+        $participant_id = $result['id'];
+        $this->assertParticipantStatus($participant_id, 'Invited', "Participant status should be 'Invited'");
+
+        // register another participant, so the event is full
+        $other_contact = $this->createContact();
+        $this->registerRemote($event['id'],
+            [
+                'remote_contact_id' => $this->getRemoteContactKey($other_contact['id']),
+            ]
+        );
+
+        // now try to confirm the invitation
+        $invitation_token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'invite');
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $invitation_token,
+                'confirm' => 1
+            ]
+        );
+        $this->assertParticipantStatus($participant_id, 'On waitlist', "Participant status should be 'Registered'");
+    }
+
 }
