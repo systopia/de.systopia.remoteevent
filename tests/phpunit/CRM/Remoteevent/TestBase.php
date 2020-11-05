@@ -25,7 +25,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  *
  * @group headless
  */
-class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface,
+abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface,
                                                                             TransactionalInterface
 {
     use Api3TestTrait {
@@ -52,6 +52,8 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
         parent::setUp();
         $this->transaction = new CRM_Core_Transaction();
         $this->setUpXCMProfile('default');
+
+        $profile = CRM_Xcm_Configuration::getConfigProfile('default');
     }
 
     public function tearDown()
@@ -224,18 +226,16 @@ class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements He
      */
     public function setUpXCMProfile($profile_name)
     {
-        $profile = CRM_Xcm_Configuration::getConfigProfile($profile_name);
-
-        // add basic rules
-        $needed_rules = ['CRM_Xcm_Matcher_EmailMatcher', 'CRM_Xcm_Matcher_FirstNameAddressMatcher'];
-        $rules = $profile->getRules();
-        foreach ($needed_rules as $needed_rule) {
-            if (!in_array($needed_rule, $rules)) {
-                $rules[] = $needed_rule;
-            }
+        // load XCM profile data
+        static $profile_data = null;
+        if ($profile_data === null) {
+            $profile_data = json_decode(file_get_contents(E::path('tests/resources/xcm_profile_testing.json')), 1);
         }
-        $profile->setRules($rules);
-        $profile->store();
+
+        // set profile
+        $profiles = Civi::settings()->get('xcm_config_profiles');
+        $profiles[$profile_name] = $profile_data;
+        Civi::settings()->set('xcm_config_profiles', $profiles);
     }
 
     /**
