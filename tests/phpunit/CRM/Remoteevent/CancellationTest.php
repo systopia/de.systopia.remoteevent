@@ -133,4 +133,35 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
         $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
     }
 
+    /**
+     * Test RemoteParticipant.cancel API with remote_contact_id and token
+     */
+    public function testCancelViaRemoteIdAndToken()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([
+              'allow_selfcancelxfer' => 1,
+          ]);
+
+        // register one participant
+        $contact = $this->createContact();
+        $this->registerRemote($event['id'], ['email' => $contact['email']]);
+        $participant_id = $this->traitCallAPISuccess('Participant', 'getvalue', [
+            'contact_id' => $contact['id'],
+            'event_id'   => $event['id'],
+            'return'     => 'id']);
+
+        // cancel
+        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'cancel');
+        $this->traitCallAPISuccess('RemoteParticipant', 'cancel', [
+            'event_id' => $event['id'],
+            'remote_contact_id' => $this->getRemoteContactKey($contact['id']),
+            'token' => $token
+        ]);
+
+        // verify contact is cancelled
+        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
+        $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+    }
+
 }

@@ -56,18 +56,22 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $event = $this->createRemoteEvent(
             [
                 'event_remote_registration.remote_registration_default_profile' => 'OneClick',
-                'event_remote_registration.remote_registration_profiles'        => ['Standard2', 'OneClick'],
+                'event_remote_registration.remote_registration_profiles' => ['Standard2', 'OneClick'],
             ]
         );
 
         // create invite participant
         $contact = $this->createContact();
-        $result = $this->traitCallAPISuccess('Participant', 'create', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact['id'],
-            'status_id'  => $this->getParticipantInvitedStatus(),
-            'role_id'    => 'Attendee'
-        ]);
+        $result = $this->traitCallAPISuccess(
+            'Participant',
+            'create',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact['id'],
+                'status_id' => $this->getParticipantInvitedStatus(),
+                'role_id' => 'Attendee'
+            ]
+        );
         $participant_id = $result['id'];
         $this->assertParticipantStatus($participant_id, 'Invited', "Participant status should be 'Invited'");
 
@@ -75,30 +79,40 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'invite');
 
         // check OneClick Profile: it should have a field 'confirmation'
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'profile'  => 'OneClick',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'profile' => 'OneClick',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'   => $token,
-            'confirm' => 1
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 1
+            ]
+        );
         $this->assertParticipantStatus($participant_id, 'Registered', "Participant status should be 'Registered'");
-
 
 
         // NOW do the same with DECLINED
         $contact2 = $this->createContact();
-        $result = $this->traitCallAPISuccess('Participant', 'create', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact2['id'],
-            'status_id'  => $this->getParticipantInvitedStatus(),
-            'role_id'    => 'Attendee'
-        ]);
+        $result = $this->traitCallAPISuccess(
+            'Participant',
+            'create',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact2['id'],
+                'status_id' => $this->getParticipantInvitedStatus(),
+                'role_id' => 'Attendee'
+            ]
+        );
         $participant2_id = $result['id'];
         $this->assertParticipantStatus($participant2_id, 'Invited', "Participant status should be 'Invited'");
 
@@ -106,18 +120,25 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant2_id, null, 'invite');
 
         // check OneClick Profile: it should have a field 'confirmation'
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'profile'  => 'OneClick',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'profile' => 'OneClick',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'   => $token,
-            'confirm' => 0
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 0
+            ]
+        );
         $this->assertParticipantStatus($participant2_id, 'Cancelled', "Participant status should be 'Cancelled'");
     }
 
@@ -135,7 +156,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $event = $this->createRemoteEvent(
             [
                 'event_remote_registration.remote_registration_default_profile' => 'OneClick',
-                'event_remote_registration.remote_registration_profiles'        => ['Standard2', 'OneClick'],
+                'event_remote_registration.remote_registration_profiles' => ['Standard2', 'OneClick'],
             ]
         );
 
@@ -146,25 +167,35 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Contact', $contact['id'], null, 'invite');
 
         // check OneClick Profile: it should have a field 'confirmation'
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
-            'profile'  => 'OneClick',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'event_id' => $event['id'],
+                'profile' => 'OneClick',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'   => $token,
-            'confirm' => 1
-        ]);
-        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact['id'],
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 1
+            ]
+        );
+        $participant = $this->traitCallAPISuccess(
+            'Participant',
+            'getsingle',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact['id'],
+            ]
+        );
         $this->assertParticipantStatus($participant['id'], 'Registered', "Participant status should be 'Registered'");
-
 
 
         // NOW do the same with DECLINED
@@ -172,23 +203,34 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Contact', $contact2['id'], null, 'invite');
 
         // check OneClick Profile: it should have a field 'confirmation'
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
-            'profile'  => 'OneClick',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'event_id' => $event['id'],
+                'profile' => 'OneClick',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'   => $token,
-            'confirm' => 0
-        ]);
-        $participant2 = $this->traitCallAPISuccess('Participant', 'getsingle', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact2['id'],
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 0
+            ]
+        );
+        $participant2 = $this->traitCallAPISuccess(
+            'Participant',
+            'getsingle',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact2['id'],
+            ]
+        );
         $this->assertParticipantStatus($participant2['id'], 'Cancelled', "Participant status should be 'Cancelled'");
     }
 
@@ -207,18 +249,22 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $event = $this->createRemoteEvent(
             [
                 'event_remote_registration.remote_registration_default_profile' => 'OneClick',
-                'event_remote_registration.remote_registration_profiles'        => ['Standard2', 'OneClick'],
+                'event_remote_registration.remote_registration_profiles' => ['Standard2', 'OneClick'],
             ]
         );
 
         // create invite participant
         $contact = $this->createContact();
-        $result = $this->traitCallAPISuccess('Participant', 'create', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact['id'],
-            'status_id'  => $this->getParticipantInvitedStatus(),
-            'role_id'    => 'Attendee'
-        ]);
+        $result = $this->traitCallAPISuccess(
+            'Participant',
+            'create',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact['id'],
+                'status_id' => $this->getParticipantInvitedStatus(),
+                'role_id' => 'Attendee'
+            ]
+        );
         $participant_id = $result['id'];
         $this->assertParticipantStatus($participant_id, 'Invited', "Participant status should be 'Invited'");
 
@@ -226,38 +272,52 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'invite');
 
         // check Standard2 Profile
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'profile'  => 'Standard2',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'profile' => 'Standard2',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // check if the prefill worked
         foreach (['first_name', 'last_name', 'email'] as $field) {
-            $this->assertEquals($contact[$field], $fields[$field]['value'], "Prefill for field '{$field}' did not work");
+            $this->assertEquals(
+                $contact[$field],
+                $fields[$field]['value'],
+                "Prefill for field '{$field}' did not work"
+            );
         }
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'      => $token,
-            'confirm'    => 1,
-            'first_name' => $contact['first_name'],
-            'last_name'  => $contact['last_name'],
-            'email'      => $contact['email'],
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 1,
+                'first_name' => $contact['first_name'],
+                'last_name' => $contact['last_name'],
+                'email' => $contact['email'],
+            ]
+        );
         $this->assertParticipantStatus($participant_id, 'Registered', "Participant status should be 'Registered'");
-
 
 
         // NOW do the same with DECLINED
         $contact2 = $this->createContact();
-        $result = $this->traitCallAPISuccess('Participant', 'create', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact2['id'],
-            'status_id'  => $this->getParticipantInvitedStatus(),
-            'role_id'    => 'Attendee'
-        ]);
+        $result = $this->traitCallAPISuccess(
+            'Participant',
+            'create',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact2['id'],
+                'status_id' => $this->getParticipantInvitedStatus(),
+                'role_id' => 'Attendee'
+            ]
+        );
         $participant2_id = $result['id'];
         $this->assertParticipantStatus($participant2_id, 'Invited', "Participant status should be 'Invited'");
 
@@ -265,21 +325,28 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant2_id, null, 'invite');
 
         // check Standard2 Profile
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'profile'  => 'Standard2',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'profile' => 'Standard2',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'      => $token,
-            'confirm'    => 0,
-            'first_name' => $contact['first_name'],
-            'last_name'  => $contact['last_name'],
-            'email'      => $contact['email'],
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 0,
+                'first_name' => $contact['first_name'],
+                'last_name' => $contact['last_name'],
+                'email' => $contact['email'],
+            ]
+        );
         $this->assertParticipantStatus($participant2_id, 'Cancelled', "Participant status should be 'Cancelled'");
     }
 
@@ -297,7 +364,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $event = $this->createRemoteEvent(
             [
                 'event_remote_registration.remote_registration_default_profile' => 'OneClick',
-                'event_remote_registration.remote_registration_profiles'        => ['Standard2', 'OneClick'],
+                'event_remote_registration.remote_registration_profiles' => ['Standard2', 'OneClick'],
             ]
         );
 
@@ -308,31 +375,45 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Contact', $contact['id'], null, 'invite');
 
         // check OneClick Profile: it should have a field 'confirmation'
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
-            'profile'  => 'Standard2',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'event_id' => $event['id'],
+                'profile' => 'Standard2',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // check if the prefill worked
         foreach (['first_name', 'last_name', 'email'] as $field) {
-            $this->assertEquals($contact[$field], $fields[$field]['value'], "Prefill for field '{$field}' did not work");
+            $this->assertEquals(
+                $contact[$field],
+                $fields[$field]['value'],
+                "Prefill for field '{$field}' did not work"
+            );
         }
 
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'   => $token,
-            'confirm' => 1
-        ]);
-        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact['id'],
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 1
+            ]
+        );
+        $participant = $this->traitCallAPISuccess(
+            'Participant',
+            'getsingle',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact['id'],
+            ]
+        );
         $this->assertParticipantStatus($participant['id'], 'Registered', "Participant status should be 'Registered'");
-
 
 
         // NOW do the same with DECLINED
@@ -340,27 +421,112 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase
         $token = CRM_Remotetools_SecureToken::generateEntityToken('Contact', $contact2['id'], null, 'invite');
 
         // check Standard2 Profile: it should have a field 'confirmation'
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
-            'profile'  => 'Standard2',
-            'token'    => $token,
-        ])['values'];
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'event_id' => $event['id'],
+                'profile' => 'Standard2',
+                'token' => $token,
+            ]
+        )['values'];
         $this->assertGetFormStandardFields($fields, true);
         //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
         // CONFIRM the registration
-        $this->registerRemote($event['id'], [
-            'token'      => $token,
-            'confirm'    => 0,
-            'first_name' => $contact['first_name'],
-            'last_name'  => $contact['last_name'],
-            'email'      => $contact['email'],
-        ]);
-        $participant2 = $this->traitCallAPISuccess('Participant', 'getsingle', [
-            'event_id'   => $event['id'],
-            'contact_id' => $contact2['id'],
-        ]);
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 0,
+                'first_name' => $contact['first_name'],
+                'last_name' => $contact['last_name'],
+                'email' => $contact['email'],
+            ]
+        );
+        $participant2 = $this->traitCallAPISuccess(
+            'Participant',
+            'getsingle',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact2['id'],
+            ]
+        );
         $this->assertParticipantStatus($participant2['id'], 'Cancelled', "Participant status should be 'Cancelled'");
     }
 
+
+    /**
+     * Test invited (with participant) with Standard2 form
+     *   with TOKEN and remote_contact_id
+     *
+     * Expected results:
+     *  - participant is in status 'Invited'
+     *  - get_form has field option: accept/decline invitation
+     *  - "accept" -> participant in status 'Registered'
+     *  - "declined" -> participant in status 'Cancelled'
+     */
+    public function testInvitedParticipantStandard2TokenAndRemoteID()
+    {
+        // create an event
+        $event = $this->createRemoteEvent(
+            [
+                'event_remote_registration.remote_registration_default_profile' => 'OneClick',
+                'event_remote_registration.remote_registration_profiles' => ['Standard2', 'OneClick'],
+            ]
+        );
+
+        // create invite participant
+        $contact = $this->createContact();
+        $result = $this->traitCallAPISuccess(
+            'Participant',
+            'create',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact['id'],
+                'status_id' => $this->getParticipantInvitedStatus(),
+                'role_id' => 'Attendee'
+            ]
+        );
+        $participant_id = $result['id'];
+        $this->assertParticipantStatus($participant_id, 'Invited', "Participant status should be 'Invited'");
+
+        // generate token
+        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'invite');
+
+        // check Standard2 Profile
+        $fields = $this->traitCallAPISuccess(
+            'RemoteParticipant',
+            'get_form',
+            [
+                'profile' => 'Standard2',
+                'remote_contact_id' => $this->getRemoteContactKey($contact['id']),
+                'token' => $token,
+            ]
+        )['values'];
+        $this->assertGetFormStandardFields($fields, true);
+        $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+
+        // check if the prefill worked
+        foreach (['first_name', 'last_name', 'email'] as $field) {
+            $this->assertEquals(
+                $contact[$field],
+                $fields[$field]['value'],
+                "Prefill for field '{$field}' did not work"
+            );
+        }
+
+        // CONFIRM the registration
+        $this->registerRemote(
+            $event['id'],
+            [
+                'token' => $token,
+                'confirm' => 1,
+                'first_name' => $contact['first_name'],
+                'last_name' => $contact['last_name'],
+                'email' => $contact['email'],
+            ]
+        );
+        $this->assertParticipantStatus($participant_id, 'Registered', "Participant status should be 'Registered'");
+    }
 }
