@@ -31,6 +31,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
         $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
+        $this->addParticipantStatus('Invited', E::ts('Invited'), 'Waiting');
     }
 
     /**
@@ -48,5 +49,54 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
         return true;
+    }
+
+    /**
+     * Adding participant status invited
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0005()
+    {
+        $this->ctx->log->info('Updating data structures');
+        $this->addParticipantStatus('Invited', E::ts('Invited'), 'Waiting');
+        return true;
+    }
+
+
+    /**
+     * Make sure the given participant status exists
+     *
+     * @param string $name
+     *   the name of the status
+     * @param string $label
+     *   localised name/label of the status
+     * @param string $class
+     *   status class
+     *
+     * @throws \CiviCRM_API3_Exception
+     */
+    protected function addParticipantStatus($name, $label, $class)
+    {
+        // check if it's already there
+        $apiResult = civicrm_api3('ParticipantStatusType', 'get', ['name' => $name]);
+        if ($apiResult['count'] == 0) {
+            $max_weight = (int) CRM_Core_DAO::singleValueQuery("SELECT MAX(weight) FROM civicrm_participant_status_type");
+            civicrm_api3(
+                'ParticipantStatusType',
+                'create',
+                [
+                    'name' => $name,
+                    'label' => $label,
+                    'visibility_id' => 'public',
+                    'class' => $class,
+                    'is_active' => 1,
+                    'weight' => $max_weight + 1,
+                    'is_reserved' => 1,
+                    'is_counted' => 0,
+                ]
+            );
+        }
     }
 }
