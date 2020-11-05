@@ -88,8 +88,6 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         // register another contact:
         $contactB = $this->createContact();
         $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
-        $this->assertEmpty($registration1['is_error'], "Second Registration Failed, despite waitlist");
-
-
+        $this->assertNotEmpty($registration2['is_error'], "Second Registration Failed, despite waitlist");
     }
 }
