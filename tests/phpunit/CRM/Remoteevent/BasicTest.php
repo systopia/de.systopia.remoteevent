@@ -71,4 +71,52 @@ class CRM_Remoteevent_BasicTest extends CRM_Remoteevent_TestBase
             $this->assertTrue(array_key_exists($expected_field, $fields), "Field {$expected_field} not in registration form");
         }
     }
+
+    /**
+     * RemoteEvent.get with a
+     */
+    public function testRemoteEventGetWithToken()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([
+              'title' => "Supertestevent",
+              'event_remote_registration.remote_registration_default_profile' => 'OneClick',
+          ]);
+        $other_event = $this->createRemoteEvent([
+              'title' => "Super-other-event",
+              'event_remote_registration.remote_registration_default_profile' => 'OneClick',
+          ]);
+
+        // make sure they're both there
+        $result = $this->traitCallAPISuccess('RemoteEvent','get', []);
+        $this->assertEquals(2, $result['count'], "There should be two events");
+
+        // create an invited contact
+        $contact = $this->createContact();
+        $result = $this->traitCallAPISuccess(
+            'Participant',
+            'create',
+            [
+                'event_id' => $event['id'],
+                'contact_id' => $contact['id'],
+                'status_id' => $this->getParticipantInvitedStatus(),
+                'role_id' => 'Attendee'
+            ]
+        );
+        $participant_id = $result['id'];
+        $this->assertParticipantStatus($participant_id, 'Invited', "Participant status should be 'Invited'");
+        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'invite');
+
+        // now try RemoteEvent.get/single with the token
+        $result = $this->traitCallAPISuccess(
+            'RemoteEvent',
+            'get',
+            ['token' => $token]);
+        $this->assertEquals(1, $result['count'], "This should only return the event linked by token");
+        $this->assertEquals($event['id'], $result['id'], "This should only return the event linked by token");
+        $result = $this->traitCallAPISuccess(
+            'RemoteEvent',
+            'getsingle',
+            ['token' => $token]);
+    }
 }
