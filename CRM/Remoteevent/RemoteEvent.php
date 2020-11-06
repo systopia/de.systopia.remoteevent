@@ -16,6 +16,7 @@
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\EventMessages\MessageTokens as MessageTokens;
 use \Civi\EventMessages\MessageTokenList as MessageTokenList;
+use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
 
 /**
  * Basic function regarding remote events
@@ -205,6 +206,23 @@ class CRM_Remoteevent_RemoteEvent
         }
 
         return true;
+    }
+
+    /**
+     * If there is token, we can set the event_id
+     *
+     * @param GetParamsEvent $get_parameters
+     *
+     */
+    public static function deriveEventID($get_parameters)
+    {
+        $get_event_params = $get_parameters->getOriginalParameters();
+        if (empty($get_event_params['event_id'])) {
+            $event_id = $get_parameters->getEventID();
+            if ($event_id) {
+                $get_parameters->setParameter('event_id', $event_id);
+            }
+        }
     }
 
     /**
