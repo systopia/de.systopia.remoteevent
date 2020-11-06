@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-11-03 17:06+0100\n"
+"POT-Creation-Date: 2020-11-06 13:45+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -134,19 +134,27 @@ msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Default Matcher Profile (XCM)"
+msgstr "Kontakt-Matcher Profil (XCM)"
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Default Update Profile (XCM)"
+msgstr "Kontakt-Update Profil (XCM)"
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "No Updates"
 msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
-msgid "Registration Link"
-msgstr "Anmelde-Link"
+msgid "Registration Modification Link"
+msgstr "Anmeldung Bearbeiten Link"
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Please enter a valid URL"
 msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
-msgid "Registration Modification Link"
-msgstr "Anmeldung Bearbeiten Link"
+msgid "The link must include the placeholder <code>{token}</code>."
+msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Registration Cancellation Link"
@@ -257,6 +265,10 @@ msgstr ""
 msgid "Upgrade %1 to revision %2"
 msgstr ""
 
+#: CRM/Remoteevent/Upgrader.php
+msgid "Invited"
+msgstr ""
+
 #: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
@@ -269,6 +281,19 @@ msgstr ""
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Locale of the field labels/etc. NOT IMPLEMENTED YET"
+msgstr ""
+
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "Token"
+msgstr ""
+
+#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
+#: api/v3/RemoteParticipant/GetForm.php
+msgid ""
+"You can submit an invite token that can be used to identify the contact, in "
+"which case the fields should come with the default data. This takes "
+"preference over the remote_contact_id"
 msgstr ""
 
 #: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
@@ -338,26 +363,15 @@ msgid "Token to view your registration"
 msgstr "Token für das Bearbeiten Ihrer Anmeldung"
 
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
-msgid "Action"
+msgid "Context"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
-msgid "Which action is the form for (create/cancel/update)"
+msgid "Which context/action is the form for (create/cancel/update)"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php
-msgid "Token"
-msgstr ""
-
-#: api/v3/RemoteParticipant/GetForm.php
-msgid ""
-"You can submit an invite token that can be used to identify the contact, in "
-"which case the fields should come with the default data. This takes "
-"preference over the remote_contact_id"
-msgstr ""
-
-#: api/v3/RemoteParticipant/GetForm.php
-msgid "Invalid action '%1'"
+msgid "Invalid context '%1'"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php
@@ -393,7 +407,7 @@ msgid "Validation Failed"
 msgstr ""
 
 #: api/v3/RemoteParticipant/Validate.php
-msgid "Action '%1' not implemented."
+msgid "Context '%1' not implemented."
 msgstr ""
 
 #: remoteevent.php
@@ -438,126 +452,91 @@ msgstr ""
 "Alle Teilnehmer mit den hier ausgewählten Rollen werden bei den "
 "Eventinformationen als Vortragende gelistet."
 
-#: from localise()
-msgid "Invalid Value"
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"You may pick a XCM profile to <i>update</i> contacts that have already been "
+"identified, for example by token or remote user connection."
 msgstr ""
+"Hier können Sie ein XCM Profil einstellen, um Kontakte zu <i>aktualisieren</"
+"i>, falls diese bereits durch ein Token oder eine RemoteContact ID "
+"identifiziert wurden."
 
-#: from localise()
-msgid "Phone Number"
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"It is strongly recommended, that the chosen profile has the \"Match contacts "
+"by contact ID\" option enabled. This way you can avoid creating duplicates."
 msgstr ""
+"Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact ID"
+"\" zu aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
 
-#: from localise()
-msgid "Participant's Phone Number"
-msgstr ""
+#~ msgid "Registration Link"
+#~ msgstr "Anmelde-Link"
 
-#: from localise()
-msgid "Contact Data"
-msgstr "Stammdaten"
+#~ msgid "Contact Data"
+#~ msgstr "Stammdaten"
 
-#: from localise()
-msgid "Street Address"
-msgstr "Straße und Hausnummer"
+#~ msgid "Street Address"
+#~ msgstr "Straße und Hausnummer"
 
-#: from localise()
-msgid "Participant's street and house number"
-msgstr "Straße und Hausnummer des Teilnehmers"
+#~ msgid "Participant's street and house number"
+#~ msgstr "Straße und Hausnummer des Teilnehmers"
 
-#: from localise()
-msgid "Contact Address"
-msgstr "Adresse"
+#~ msgid "Contact Address"
+#~ msgstr "Adresse"
 
-#: from localise()
-msgid "Supplemental Address"
-msgstr "Adresszusatz"
+#~ msgid "Supplemental Address"
+#~ msgstr "Adresszusatz"
 
-#: from localise()
-msgid "Participant's supplemental address"
-msgstr ""
+#~ msgid "Supplemental Address 2"
+#~ msgstr "Adresszusatz 2"
 
-#: from localise()
-msgid "Supplemental Address 2"
-msgstr "Adresszusatz 2"
+#~ msgid "Postal Code"
+#~ msgstr "Postleitzahl"
 
-#: from localise()
-msgid "Postal Code"
-msgstr "Postleitzahl"
+#~ msgid "City"
+#~ msgstr "Stadt"
 
-#: from localise()
-msgid "Participant's postal code"
-msgstr ""
+#~ msgid "Country"
+#~ msgstr "Land"
 
-#: from localise()
-msgid "City"
-msgstr "Stadt"
+#~ msgid "Email"
+#~ msgstr "E-Mail"
 
-#: from localise()
-msgid "Participant's city"
-msgstr ""
+#~ msgid "Prefix"
+#~ msgstr "Anrede"
 
-#: from localise()
-msgid "Country"
-msgstr "Land"
+#~ msgid "Participant's Prefix"
+#~ msgstr "Anrede des Teilnehmers"
 
-#: from localise()
-msgid "Participant's country"
-msgstr ""
+#~ msgid "Title"
+#~ msgstr "Titel"
 
-#: from localise()
-msgid "Email"
-msgstr "E-Mail"
+#~ msgid "Participant's Formal Title"
+#~ msgstr "Titel des Teilnehmers"
 
-#: from localise()
-msgid "Participant's email address"
-msgstr ""
+#~ msgid "First Name"
+#~ msgstr "Vorname"
 
-#: from localise()
-msgid "Prefix"
-msgstr "Anrede"
+#~ msgid "Participant's First Name"
+#~ msgstr "Vorname des Teilnehmers"
 
-#: from localise()
-msgid "Participant's Prefix"
-msgstr "Anrede des Teilnehmers"
+#~ msgid "Last Name"
+#~ msgstr "Nachname"
 
-#: from localise()
-msgid "Title"
-msgstr "Titel"
+#~ msgid "Participant's Last Name"
+#~ msgstr "Nachname des Teilnehmers"
 
-#: from localise()
-msgid "Participant's Formal Title"
-msgstr "Titel des Teilnehmers"
+#~ msgid "User must be identified to use one-click registration"
+#~ msgstr "Für die One-Click Anmeldung muss der Teilnehmer bekannt sein"
 
-#: from localise()
-msgid "First Name"
-msgstr "Vorname"
+#~ msgid "Decline"
+#~ msgstr "Ablehnen"
 
-#: from localise()
-msgid "Participant's First Name"
-msgstr "Vorname des Teilnehmers"
+#~ msgid "Confirm Invitation"
+#~ msgstr "Einladung Bestätigen"
 
-#: from localise()
-msgid "Last Name"
-msgstr "Nachname"
+#~ msgid "Do you accept the invitation?"
+#~ msgstr "Möchten Sie die Einladung bestätigen?"
 
-#: from localise()
-msgid "Participant's Last Name"
-msgstr "Nachname des Teilnehmers"
-
-#: from localise()
-msgid "User must be identified to use one-click registration"
-msgstr "Für die One-Click Anmeldung muss der Teilnehmer bekannt sein"
-
-#: from localise()
-msgid "Decline"
-msgstr "Ablehnen"
-
-#: from localise()
-msgid "Confirm Invitation"
-msgstr "Einladung Bestätigen"
-
-#: from localise()
-msgid "Do you accept the invitation?"
-msgstr "Möchten Sie die Einladung bestätigen?"
-
-#: from localise()
-msgid "Event Invitation"
-msgstr "Einladung"
+#~ msgid "Event Invitation"
+#~ msgstr "Einladung"

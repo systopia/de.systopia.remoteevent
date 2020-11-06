@@ -34,7 +34,7 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.remote_registration_xcm_profile_update.label}</div>
+    <div class="label">{$form.remote_registration_xcm_profile_update.label}&nbsp;{help id="id-update-profile" title=$form.remote_registration_xcm_profile_update.label}</div>
     <div class="content">{$form.remote_registration_xcm_profile_update.html}</div>
     <div class="clear"></div>
   </div>
