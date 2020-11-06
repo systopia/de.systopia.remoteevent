@@ -223,8 +223,11 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
      *   a basic amount of matching options
      *
      * @param string $profile_name
+     *   name of the profile
+     * @param array $profile_data_override
+     *   XCM profile spec that differs from the default
      */
-    public function setUpXCMProfile($profile_name)
+    public function setUpXCMProfile($profile_name, $profile_data_override = null)
     {
         // load XCM profile data
         static $profile_data = null;
@@ -234,7 +237,11 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
 
         // set profile
         $profiles = Civi::settings()->get('xcm_config_profiles');
-        $profiles[$profile_name] = $profile_data;
+        if ($profile_data_override) {
+            $profiles[$profile_name] = $profile_data_override;
+        } else {
+            $profiles[$profile_name] = $profile_data;
+        }
         Civi::settings()->set('xcm_config_profiles', $profiles);
     }
 

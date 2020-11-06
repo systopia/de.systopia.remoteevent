@@ -28,6 +28,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         'remote_registration_modify_link',
         'remote_registration_cancel_link',
         'remote_registration_xcm_profile',
+        'remote_registration_xcm_profile_update',
     ];
 
     public function buildQuickForm()
@@ -60,7 +61,15 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             false
         );
 
-//        $this->add(
+        $this->add(
+            'select',
+            'remote_registration_xcm_profile_update',
+            E::ts("Default Update Profile (XCM)"),
+            CRM_Xcm_Configuration::getProfileList(),
+            false
+        );
+
+        //        $this->add(
 //            'text',
 //            'remote_registration_link',
 //            E::ts("Registration Link"),

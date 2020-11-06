@@ -399,11 +399,6 @@ class CRM_Remoteevent_Registration
      */
     public static function createContactXCM($registration)
     {
-        if ($registration->getContactID()) {
-            // the contact creation job has been done already
-            return;
-        }
-
         // get collected contact data
         $contact_identification = $registration->getContactData();
 
@@ -412,23 +407,37 @@ class CRM_Remoteevent_Registration
             $contact_identification['contact_type'] = 'Individual';
         }
 
-        // add xcm profile, if one given
-        if (empty($contact_identification['xcm_profile'])) {
-            $xcm_profile = Civi::settings()->get('remote_registration_xcm_profile');
+        if ($registration->getContactID()) {
+            // the contact creation job has been done already -> check if want to do an upgrade
+            $xcm_profile = Civi::settings()->get('remote_registration_xcm_profile_update');
             if ($xcm_profile) {
+                // in this case we use the XCM with the update profile with the ID set
                 $contact_identification['xcm_profile'] = $xcm_profile;
+                $contact_identification['id'] = $registration->getContactID();
+                civicrm_api3('Contact', 'getorcreate', $contact_identification);
             }
-        }
 
-        // run through the contact matcher
-        try {
-            CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
-            $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
-            $registration->setContactID($match['id']);
-        } catch (Exception $ex) {
-            throw new Exception(
-                E::ts("Not enough contact data to identify/create contact.")
-            );
+        } else {
+
+            // this is a yet unidentified contact => run 'normal' xcm
+            // add xcm profile, if one given
+            if (empty($contact_identification['xcm_profile'])) {
+                $xcm_profile = Civi::settings()->get('remote_registration_xcm_profile');
+                if ($xcm_profile) {
+                    $contact_identification['xcm_profile'] = $xcm_profile;
+                }
+            }
+
+            // run through the contact matcher
+            try {
+                CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
+                $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
+                $registration->setContactID($match['id']);
+            } catch (Exception $ex) {
+                throw new Exception(
+                    E::ts("Not enough contact data to identify/create contact.")
+                );
+            }
         }
     }
 
