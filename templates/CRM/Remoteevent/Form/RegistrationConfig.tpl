@@ -76,6 +76,11 @@
   <legend class="collapsible-title">{ts}Public Event Text Blocks{/ts}</legend>
   <div class="remote-registration-texts">
     <div class="crm-section crm-event-manage-registration-intro_text">
+      <div class="label">{$form.remote_registration_gtac.label}</div>
+      <div class="content">{$form.remote_registration_gtac.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section crm-event-manage-registration-intro_text">
       <div class="label">{$form.intro_text.label}</div>
       <div class="content">{$form.intro_text.html}</div>
       <div class="clear"></div>
