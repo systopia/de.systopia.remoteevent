@@ -35,7 +35,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
     }
 
     /**
-     * Adding more fileds and a 'OneClick' profile
+     * Adding more fields and a 'OneClick' profile
      *
      * @return TRUE on success
      * @throws Exception
@@ -61,6 +61,20 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
     {
         $this->ctx->log->info('Updating data structures');
         $this->addParticipantStatus('Invited', E::ts('Invited'), 'Waiting');
+        return true;
+    }
+
+    /**
+     * Adding GTAC field
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0006()
+    {
+        $this->ctx->log->info('Updating data structures');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
         return true;
     }
 

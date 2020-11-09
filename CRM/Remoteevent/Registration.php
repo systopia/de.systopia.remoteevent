@@ -15,6 +15,7 @@
 
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
+use \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
 
 /**
  * Class to coordinate event registrations (RemoteParticipant)
@@ -645,5 +646,35 @@ class CRM_Remoteevent_Registration
         $status_list = self::getParticipantStatusList();
         $status = $status_list[$participant_status_id];
         return $status['class'];
+    }
+
+    /**
+     * Add the GTAC data to the get_form results
+     *
+     * @param GetCreateParticipantFormEvent $get_form_results
+     *      event triggered by the RemoteParticipant.get_form API call
+     */
+    public static function addGtacField($get_form_results) {
+        $event = $get_form_results->getEvent();
+        if (!empty($event['event_remote_registration.remote_registration_gtac'])) {
+            $l10n = $get_form_results->getLocalisation();
+            $get_form_results->addFields([
+                'gtac' => [
+                    'name' => 'gtac',
+                    'type' => 'Checkbox',
+                    'validation' => '',
+                    'weight' => 100,
+                    'required' => 1,
+                    'label' => $l10n->localise("I accept the following terms and conditions"),
+                    'description' => $l10n->localise("You have to accept the terms and conditions to participate in this event"),
+                    'group_name' => 'gtac',
+                    'group_label' => $l10n->localise("Terms and Conditions"),
+                    'prefix' => '',
+                    'suffix' => $event['event_remote_registration.remote_registration_gtac'],
+                    'prefix_display' => '',
+                    'suffix_display' => 'inline'
+                ]
+            ]);
+        }
     }
 }
