@@ -52,6 +52,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addListener(
         'civi.remoteevent.registration.getform',
             ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
+    $dispatcher->addListener(
+        'civi.remoteevent.registration.getform',
+        ['CRM_Remoteevent_Registration', 'addGtacField']);
 
     // EVENT REGISTRATION.VALIDATE
     $dispatcher->addListener(

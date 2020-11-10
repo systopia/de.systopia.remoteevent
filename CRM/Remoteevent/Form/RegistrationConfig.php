@@ -49,6 +49,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     {
         // gather data
         $available_registration_profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles();
+        $intro_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'intro_text') + ['class' => 'collapsed', 'preset' => 'civievent'];
+        $event_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event');
 
         // add form elements
         $this->add(
@@ -84,6 +86,9 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         );
         $this->assign('profiles', $available_registration_profiles);
 
+        // add GTAC field
+        $this->add('wysiwyg', 'remote_registration_gtac', E::ts('Terms and Conditions'), $intro_attributes);
+
         // add the fields that we share with the core data structure (copied from CRM_Event_Form_ManageEvent_Registration)
         $this->add('datepicker', 'registration_start_date', ts('Registration Start Date'), [], FALSE, ['time' => TRUE]);
         $this->add('datepicker', 'registration_end_date', ts('Registration End Date'), [], FALSE, ['time' => TRUE]);
@@ -91,9 +96,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->addField('allow_selfcancelxfer', ['label' => ts('Allow self-service cancellation or transfer?'), 'type' => 'advcheckbox']);
         $this->add('text', 'selfcancelxfer_time', ts('Cancellation or transfer time limit (hours)'));
         $this->addRule('selfcancelxfer_time', ts('Please enter the number of hours (as an integer).'), 'integer');
+
         // add custom texts on the various forms
-        $intro_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'intro_text') + ['class' => 'collapsed', 'preset' => 'civievent'];
-        $event_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event');
         $this->add('wysiwyg', 'intro_text',E::ts('Event Information'), $intro_attributes);
         $this->add('wysiwyg', 'footer_text',E::ts('Event Information Footer'), $intro_attributes);
         $this->add('text', 'confirm_title',E::ts('Registration Confirmation Title'), $event_attributes['confirm_title']);
@@ -110,6 +114,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_default_profile'   => 'remote_registration_default_profile',
                 'event_remote_registration.remote_registration_profiles'          => 'remote_registration_profiles',
                 'event_remote_registration.remote_use_custom_event_location'      => 'remote_use_custom_event_location',
+                'event_remote_registration.remote_registration_gtac'              => 'remote_registration_gtac',
                 'event_remote_registration.remote_disable_civicrm_registration'   => 'remote_disable_civicrm_registration',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
@@ -182,7 +187,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 0
             ),
             'event_remote_registration.remote_registration_default_profile' => $values['remote_registration_default_profile'],
-            'event_remote_registration.remote_registration_profiles'        => $values['remote_registration_profiles']
+            'event_remote_registration.remote_registration_profiles'        => $values['remote_registration_profiles'],
+            'event_remote_registration.remote_registration_gtac'            => $values['remote_registration_gtac']
         ];
 
         // disable civicrm native online registration
