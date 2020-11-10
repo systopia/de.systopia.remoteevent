@@ -667,7 +667,7 @@ class CRM_Remoteevent_Registration
                     'required' => 1,
                     'label' => $l10n->localise("I accept the following terms and conditions"),
                     'description' => $l10n->localise("You have to accept the terms and conditions to participate in this event"),
-                    'group_name' => 'gtac',
+                    'group_name' => 'gtacs',
                     'group_label' => $l10n->localise("Terms and Conditions"),
                     'prefix' => '',
                     'suffix' => $event['event_remote_registration.remote_registration_gtac'],
