@@ -12,25 +12,18 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
-<div class="crm-block crm-form-block crm-event-manage-eventinfo-form-block">
-  <div class="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl" location="bottom"}
-  </div>
 
-  <div class="crm-section">
-    <div class="label">{$form.event_alternativelocation_contact_id.label}</div>
-    <div class="content">{$form.event_alternativelocation_contact_id.html}</div>
-    <div class="clear"></div>
-  </div>
+{foreach from=$sessions key=day item=day_sessions}
+<h1>Day {$day}</h1>
+  {foreach from=$day_sessions key=slot item=slot_sessions}
+  <h2>{$slots.$slot}</h2>
+    {if $slot_sessions}
+      {foreach from=$slot_sessions item=session}
+        {$session.title}
+      {/foreach}
+    {else}
+      {ts}No Sessions{/ts}
+    {/if}
+  {/foreach}
+{/foreach}
 
-  <div class="crm-section">
-    <div class="label">{$form.event_alternativelocation_remark.label}</div>
-    <div class="content">{$form.event_alternativelocation_remark.html}</div>
-    <div class="clear"></div>
-  </div>
-
-  <div class="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl" location="bottom"}
-  </div>
-
-</div>

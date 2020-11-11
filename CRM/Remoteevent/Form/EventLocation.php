@@ -60,7 +60,7 @@ class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent
             [
                 [
                     'type'      => 'submit',
-                    'name'      => E::ts('Save'),
+                    'name'      => E::ts('Add Session'),
                     'isDefault' => true,
                 ],
             ]
