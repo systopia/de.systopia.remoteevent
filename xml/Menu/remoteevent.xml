@@ -26,4 +26,10 @@
     <desc>General configuration for RemoteEvents. However, most options would be defined with each individual event.</desc>
     <adminGroup>CiviEvent</adminGroup>
   </item>
+  <item>
+    <path>civicrm/event/session</path>
+    <page_callback>CRM_Remoteevent_Form_Session</page_callback>
+    <title>Session</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

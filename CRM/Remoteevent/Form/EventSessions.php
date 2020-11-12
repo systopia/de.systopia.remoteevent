@@ -114,6 +114,92 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
             $slot = empty($session['slot_id']) ? 'no_slot' : $session['slot_id'];
             $sessions_by_day_and_slot[$session_day][$slot][] = $session;
         }
+//        fa-street-view / fa-map-pin
+//        fa-slideshare
+
+        // beautify / improve list
+        $categories = $this->getCategories();
+        $types = $this->getTypes();
+        // rename days
+        foreach (array_keys($sessions_by_day_and_slot) as $day_index => $day) {
+            $new_key = E::ts("Day %1 (%2)", [
+                1 => $day_index + 1,
+                2 => date('d.m.Y', strtotime($day))]);
+            $sessions_by_day_and_slot[$new_key] = $sessions_by_day_and_slot[$day];
+            unset($sessions_by_day_and_slot[$day]);
+        }
+
+        // enrich data
+        foreach ($sessions_by_day_and_slot as $day => &$day_slots) {
+            foreach ($day_slots as $slot => &$sessions) {
+                foreach ($sessions as &$session) {
+                    $icons = $classes = $actions = [];
+
+                    // format start- and end date
+                    // todo: localise
+                    $start_time = date('H:i', strtotime($session['start_date']));
+                    $end_time = date('H:i', strtotime($session['end_date']));
+                    $session['time'] = E::ts("%1 - %2h", [1 => $start_time, 2 => $end_time]);
+
+                    // resolve type and category
+                    $session['category'] = CRM_Utils_Array::value($session['category_id'], $categories, E::ts('None'));
+                    $session['type'] = CRM_Utils_Array::value($session['type_id'], $types, E::ts('None'));
+
+                    // participant count
+                    // todo: calculate
+                    $session['participant_count'] = 0;
+                    if (!empty($session['max_participants'])) {
+                        $session['participants'] = E::ts("%1 / %2", [
+                            1 => $session['participant_count'],
+                            2 => $session['max_participants']]);
+                        // check if full
+                        if ($session['participant_count'] >= $session['max_participants']) {
+                            $message = E::ts("Session is full");
+                            $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-stop-circle-o\" aria-hidden=\"true\"></i>";
+                            $classes[] = "remote-session-full";
+                        } else {
+                            $message = E::ts("Session restricted to %1 participants", [1 => $session['max_participants']]);
+                            $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-users\" aria-hidden=\"true\"></i>";
+                            $classes[] = "remote-session-max-participants";
+                        }
+                    } else {
+                        $session['participants'] = $session['participant_count'];
+                    }
+
+                    // add presenter icon
+                    if (!empty($session['presenter_id'])) {
+                        $presenter = $this->getPresenterString($session['presenter_id']);
+                        if (empty($session['presenter_title'])) {
+                            $message = E::ts("Given by %1", [1 => $presenter]);
+                        } else {
+                            $message = E::ts("%1 is %2", [1 => $session['presenter_title'], 2 => $presenter]);
+                        }
+                        $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-user\" aria-hidden=\"true\"></i>";
+                    }
+
+                    // add location icon
+                    if (!empty($session['location'])) {
+                        $icons[] = "<i title=\"{$session['location']}\" class=\"crm-i fa-street-view\" aria-hidden=\"true\"></i>";
+                        $classes[] = "remote-session-location";
+                    }
+
+                    // add edit action
+                    $edit_link = CRM_Utils_System::url("civicrm/event/session", "action=edit&id={$session['id']}");
+                    $edit_text = E::ts("edit");
+                    $actions[] = "<a href=\"{$edit_link}\" class=\"action-item crm-hover-button\">{$edit_text}</a>";
+
+                    // add delete action
+                    $delete_link = CRM_Utils_System::url("civicrm/event/session", "action=delete&id={$session['id']}");
+                    $delete_text = E::ts("delete");
+                    $actions[] = "<a href=\"{$delete_link}\" class=\"action-item crm-hover-button\">{$delete_text}</a>";
+
+                    // finally, store UI stuff in the session
+                    $session['icons'] = $icons;
+                    $session['classes'] = $classes;
+                    $session['actions'] = $actions;
+                }
+            }
+        }
 
         return $sessions_by_day_and_slot;
     }
@@ -125,7 +211,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      */
     protected function getSlots()
     {
-        $slots = [];
+        $slots = ['' => E::ts("No Slot")];
         $slot_query = civicrm_api3('OptionValue', 'get', [
             'option_group_id' => 'session_slot',
             'option.limit'    => 0,
@@ -135,5 +221,58 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
             $slots[$slot['value']] = $slot['label'];
         }
         return $slots;
+    }
+
+    /**
+     * Get a list of all available categories
+     * @return array
+     *   list of slot_id -> slot label
+     */
+    protected function getCategories()
+    {
+        $categories = ['' => E::ts("None")];
+        $category_query = civicrm_api3('OptionValue', 'get', [
+            'option_group_id' => 'session_category',
+            'option.limit'    => 0,
+            'return'          => 'value,label'
+        ]);
+        foreach ($category_query['values'] as $category) {
+            $categories[$category['value']] = $category['label'];
+        }
+        return $categories;
+    }
+
+    /**
+     * Get a list of all available types
+     * @return array
+     *   list of type_id -> type label
+     */
+    protected function getTypes()
+    {
+        $types = ['' => E::ts("None")];
+        $type_query = civicrm_api3('OptionValue', 'get', [
+            'option_group_id' => 'session_type',
+            'option.limit'    => 0,
+            'return'          => 'value,label'
+        ]);
+        foreach ($type_query['values'] as $type) {
+            $types[$type['value']] = $type['label'];
+        }
+        return $types;
+    }
+
+    /**
+     * Return string representation of the presenter
+     *
+     * @param integer $contact_id
+     *   contact ID
+     *
+     * @return string to be shown in UI
+     *
+     */
+    protected function getPresenterString($contact_id)
+    {
+        // todo: caching
+        return civicrm_api3('Contact', 'getvalue', ['id' => $contact_id, 'return' => 'display_name']);
     }
 }
