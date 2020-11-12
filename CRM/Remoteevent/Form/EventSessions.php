@@ -46,11 +46,17 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         // load sessions
         $this->assign('sessions', $this->getSessionList($event_days));
 
+        // more stuff
+        $this->assign('add_session_link', CRM_Utils_System::url("civicrm/event/session", "reset=1&event_id={$this->_id}"));
 
         parent::buildQuickForm();
 
         // not that kind of form :)
         $this->addButtons([]);
+
+        // add scripts and styling
+        Civi::resources()->addScriptUrl(E::url('js/event_sessions.js'));
+        Civi::resources()->addStyleUrl(E::url('css/event_sessions.css'));
     }
 
 
@@ -114,8 +120,6 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
             $slot = empty($session['slot_id']) ? 'no_slot' : $session['slot_id'];
             $sessions_by_day_and_slot[$session_day][$slot][] = $session;
         }
-//        fa-street-view / fa-map-pin
-//        fa-slideshare
 
         // beautify / improve list
         $categories = $this->getCategories();
@@ -179,19 +183,19 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
 
                     // add location icon
                     if (!empty($session['location'])) {
-                        $icons[] = "<i title=\"{$session['location']}\" class=\"crm-i fa-street-view\" aria-hidden=\"true\"></i>";
+                        $message = CRM_Utils_String::htmlToText($session['location']);
+                        $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-street-view\" aria-hidden=\"true\"></i>";
                         $classes[] = "remote-session-location";
                     }
 
                     // add edit action
-                    $edit_link = CRM_Utils_System::url("civicrm/event/session", "action=edit&id={$session['id']}");
+                    $edit_link = CRM_Utils_System::url("civicrm/event/session", "session_id={$session['id']}");
                     $edit_text = E::ts("edit");
-                    $actions[] = "<a href=\"{$edit_link}\" class=\"action-item crm-hover-button\">{$edit_text}</a>";
+                    $actions[] = "<a href=\"{$edit_link}\" class=\"action-item crm-popup crm-hover-button\">{$edit_text}</a>";
 
                     // add delete action
-                    $delete_link = CRM_Utils_System::url("civicrm/event/session", "action=delete&id={$session['id']}");
                     $delete_text = E::ts("delete");
-                    $actions[] = "<a href=\"{$delete_link}\" class=\"action-item crm-hover-button\">{$delete_text}</a>";
+                    $actions[] = "<a href=\"#\" onClick=\"remote_session_delete({$session['id']},false);\" class=\"action-item crm-hover-button\">{$delete_text}</a>";
 
                     // finally, store UI stuff in the session
                     $session['icons'] = $icons;
@@ -220,6 +224,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         foreach ($slot_query['values'] as $slot) {
             $slots[$slot['value']] = $slot['label'];
         }
+        $slots['no_slot'] = E::ts('No Slot');
         return $slots;
     }
 

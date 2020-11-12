@@ -20,13 +20,51 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_Form_Session extends CRM_Core_Form
 {
+    const SESSION_PROPERTIES = [
+        'title',
+        'start_date',
+        'end_date',
+        'slot_id',
+        'type_id',
+        'category_id',
+        'description',
+        'location',
+        'max_participants',
+        'presenter_title',
+        'presenter_id',
+    ];
 
-    protected function getSessionID() {
-        return null; // todo
-    }
+    /** @var string session id or null for new one */
+    protected $session_id = null;
+
+    /** @var string session id or null for new one */
+    protected $event_id = null;
 
     public function buildQuickForm()
     {
+        $this->session_id = CRM_Utils_Request::retrieve('session_id', 'String', $this);
+        $this->event_id = CRM_Utils_Request::retrieve('event_id', 'String', $this);
+
+        // set title
+        if ($this->getSessionID()) {
+            $event_title = civicrm_api3('Event', 'getvalue', [
+                'id'     => $this->getEventID(),
+                'return' => 'title']);
+            $this->setTitle(E::ts("Edit Session [%1] for Event '%2'", [
+                1 => $this->getSessionID(),
+                2 => $event_title])
+            );
+        } else {
+            if ($this->getEventID()) {
+                $event_title = civicrm_api3('Event', 'getvalue', [
+                    'id'     => $this->getEventID(),
+                    'return' => 'title']);
+                $this->setTitle(E::ts("Creating new Session for Event '%1", [
+                    1 => $event_title])
+                );
+            }
+        }
+
         $this->add(
             'text',
             'title',
@@ -132,21 +170,58 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
             ]
         );
 
+        // set defaults
+        $session_id = $this->getSessionID();
+        if ($session_id) {
+            try {
+                $defaults = [];
+                $current_values = civicrm_api3('Session', 'getsingle', ['id' => $session_id]);
+                foreach (self::SESSION_PROPERTIES as $property) {
+                    $defaults[$property] = CRM_Utils_Array::value($property, $current_values);
+                }
+                $this->setDefaults($defaults);
+            } catch (CiviCRM_API3_Exception $ex) {
+                throw new CRM_Core_Exception("Session [{$session_id}] does not exist");
+            }
+        } else {
+            $event_id = $this->getEventID();
+            if ($event_id) {
+                $event = civicrm_api3('Event', 'getsingle', ['id' => $this->getEventID()]);
+                $this->setDefaults([
+                    'start_date' => $event['start_date']
+                ]);
+            }
+        }
+
         parent::buildQuickForm();
     }
 
-
     public function postProcess()
     {
+        // simply collect the values and write out
         $values = $this->exportValues();
-        CRM_Core_Session::setStatus(
-            E::ts(
-                'You picked color "%1"',
-                [
-                    1 => $options[$values['favorite_color']],
-                ]
-            )
-        );
+        $update = [];
+        foreach (self::SESSION_PROPERTIES as $property) {
+            $update[$property] = CRM_Utils_Array::value($property, $values);
+        }
+
+        $session_id = $this->getSessionID();
+        if ($session_id) {
+            $update['id'] = $session_id;
+        } else {
+            $update['event_id'] = $this->getEventID();
+        }
+
+        // postprocess some values
+        if (empty($update['presenter_id'])) {
+            unset($update['presenter_id']);
+        }
+        if (empty($update['max_participants'])) {
+            $update['max_participants'] = 0;
+        }
+
+        civicrm_api3('Session', 'create', $update);
+
         parent::postProcess();
     }
 
@@ -170,5 +245,39 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
             $values[$value['value']] = $value['label'];
         }
         return $values;
+    }
+
+    /**
+     * Get the ID of the session we're editing
+     * @return int|null
+     */
+    protected function getSessionID() {
+        $session_id = (int) $this->session_id;
+        if ($session_id) {
+            return $session_id;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get the ID of the session we're editing
+     * @return int|null
+     */
+    protected function getEventID() {
+        $event_id = (int) $this->event_id;
+        if ($event_id) {
+            return $event_id;
+        }
+
+        // not given? maybe by session ID
+
+        $session_id = $this->getSessionID();
+        if ($session_id) {
+            $this->event_id = civicrm_api3('Session', 'getvalue', ['id' => $session_id, 'return' => 'event_id']);
+            return $this->event_id;
+        }
+
+        return null;
     }
 }
