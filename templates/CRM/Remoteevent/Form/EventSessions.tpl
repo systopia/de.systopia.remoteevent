@@ -27,7 +27,7 @@
       <th>{ts}Type{/ts}</th>
       <th>{ts}Time{/ts}</th>
       <th>{ts}Title{/ts}</th>
-      <th>{ts}Registrations{/ts}</th>
+      <th>{ts}Participants{/ts}</th>
       <th>{ts}Info{/ts}</th>
       <th>{ts}Actions{/ts}</th>
     </tr>
@@ -36,7 +36,7 @@
   <tbody>
     {foreach from=$day_sessions key=slot item=slot_sessions name=slot_sessions}
       {foreach from=$slot_sessions item=session name=sessions}
-      <tr class="remote-session remote-session-session {foreach from=$session.classes item=htmlclass}{$htmlclass}{/foreach}">
+      <tr class="remote-session remote-session-session {cycle values="odd-row,even-row"} {foreach from=$session.classes item=htmlclass}{$htmlclass}{/foreach}">
       {if $smarty.foreach.sessions.first}
         <th rowspan="{$slot_sessions|@count}">{$slots.$slot}</th>
       {/if}

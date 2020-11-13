@@ -26,7 +26,7 @@ function remote_session_delete(session_id, confirmed)
       .done(CRM.alert(session_ts("Session [%1] was deleted.", {1:session_id}), session_ts("Session deleted")))
   } else {
     CRM.confirm({
-      message: session_ts("Do you really want to delete session [%1]", {1:session_id}),
+      message: session_ts("Do you really want to delete session [%1]?", {1:session_id}),
     }).on('crmConfirm:yes', function() {
       remote_session_delete(session_id, true);
     });
@@ -36,6 +36,6 @@ function remote_session_delete(session_id, confirmed)
 cj(document).ready(function() {
   // make sure we reload after a popup closes
   cj(document).on('crmPopupClose', function () {
-    location.reload();
+    location.replace(CRM.vars.remoteevent.session_reload);
   });
 });

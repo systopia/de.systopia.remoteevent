@@ -32,6 +32,7 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
         'max_participants',
         'presenter_title',
         'presenter_id',
+        'is_active',
     ];
 
     /** @var string session id or null for new one */
@@ -64,6 +65,13 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
                 );
             }
         }
+
+        $this->add(
+            'checkbox',
+            'is_active',
+            E::ts("Session Active"),
+            []
+        );
 
         $this->add(
             'text',
@@ -188,12 +196,44 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
             if ($event_id) {
                 $event = civicrm_api3('Event', 'getsingle', ['id' => $this->getEventID()]);
                 $this->setDefaults([
-                    'start_date' => $event['start_date']
+                    // set both start/end date to the first day (for now)
+                    // todo: maybe a "day of event" selector at some point?
+                    'start_date' => $event['start_date'],
+                    'end_date'   => $event['start_date'],
                 ]);
             }
         }
 
         parent::buildQuickForm();
+    }
+
+    /**
+     * Do some input validation
+     *
+     * @return bool
+     */
+    public function validate()
+    {
+        parent::validate();
+
+        $event = $this->getEvent();
+
+        // verify the start date is not before the event's start date
+        if (strtotime($this->_submitValues['start_date']) < strtotime($event['start_date'])) {
+            $this->_errors['start_date'] = E::ts("The start date of the session should not be before the start of the event.");
+        }
+
+        // verify the end date is not after the event's end date
+        if (strtotime($this->_submitValues['end_date']) > strtotime($event['end_date'])) {
+            $this->_errors['end_date'] = E::ts("The end date of the session should not be after the end of the event.");
+        }
+
+        // verify the start date is not after the end date
+        if (strtotime($this->_submitValues['start_date']) > strtotime($this->_submitValues['end_date'])) {
+            $this->_errors['end_date'] = E::ts("The end date of the session cannot be after the start date.");
+        }
+
+        return (0 == count($this->_errors));
     }
 
     public function postProcess()
@@ -218,6 +258,9 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
         }
         if (empty($update['max_participants'])) {
             $update['max_participants'] = 0;
+        }
+        if (empty($update['is_active'])) {
+            $update['is_active'] = 0;
         }
 
         civicrm_api3('Session', 'create', $update);
@@ -279,5 +322,24 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
         }
 
         return null;
+    }
+
+    /**
+     * Get the event data
+     *
+     * @return array|null event
+     */
+    protected function getEvent()
+    {
+        $event_id = $this->getEventID();
+        if ($event_id) {
+            static $my_event = null;
+            if ($my_event === null || $my_event['id'] != $event_id) {
+                $my_event = civicrm_api3('Event', 'getsingle', ['id' => $event_id]);
+            }
+            return $my_event;
+        } else {
+            return null;
+        }
     }
 }

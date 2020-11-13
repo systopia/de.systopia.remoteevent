@@ -55,6 +55,10 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         $this->addButtons([]);
 
         // add scripts and styling
+        $reload_link = CRM_Utils_System::url('civicrm/event/manage/sessions', "reset=1&action=update&id={$event['id']}");
+        Civi::resources()->addVars('remoteevent', [
+            'session_reload' => $reload_link
+        ]);
         Civi::resources()->addScriptUrl(E::url('js/event_sessions.js'));
         Civi::resources()->addStyleUrl(E::url('css/event_sessions.css'));
     }
@@ -160,11 +164,11 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                         if ($session['participant_count'] >= $session['max_participants']) {
                             $message = E::ts("Session is full");
                             $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-stop-circle-o\" aria-hidden=\"true\"></i>";
-                            $classes[] = "remote-session-full";
+                            $classes[] = " remote-session-max-participants remote-session-full ";
                         } else {
                             $message = E::ts("Session restricted to %1 participants", [1 => $session['max_participants']]);
                             $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-users\" aria-hidden=\"true\"></i>";
-                            $classes[] = "remote-session-max-participants";
+                            $classes[] = " remote-session-max-participants ";
                         }
                     } else {
                         $session['participants'] = $session['participant_count'];
@@ -181,11 +185,19 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                         $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-user\" aria-hidden=\"true\"></i>";
                     }
 
+                    // add inactive icon
+                    if (empty($session['is_active'])) {
+                        $message = E::ts("This session is disabled");
+                        //$icons[] = "<i title=\"{$message}\" class=\"crm-i fa-toggle-off\" aria-hidden=\"true\"></i>";
+                        $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-times\" aria-hidden=\"true\"></i>";
+                        $classes[] = " remote-session-disabled ";
+                    }
+
                     // add location icon
                     if (!empty($session['location'])) {
                         $message = CRM_Utils_String::htmlToText($session['location']);
                         $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-street-view\" aria-hidden=\"true\"></i>";
-                        $classes[] = "remote-session-location";
+                        $classes[] = " remote-session-location ";
                     }
 
                     // add edit action
