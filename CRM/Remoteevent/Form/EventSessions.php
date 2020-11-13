@@ -145,7 +145,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                     $icons = $classes = $actions = [];
 
                     // format start- and end date
-                    // todo: localise
+                    // todo: localise time format
                     $start_time = date('H:i', strtotime($session['start_date']));
                     $end_time = date('H:i', strtotime($session['end_date']));
                     $session['time'] = E::ts("%1 - %2h", [1 => $start_time, 2 => $end_time]);
