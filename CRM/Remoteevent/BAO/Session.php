@@ -91,8 +91,12 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
      *
      * @param boolean $cached
      *  use a cached result, or reload (and refresh cache)
+     *
+     * @param string $start_date
+     *  event start_date. if empty, will be loaded from the event
+
      */
-    public static function getSessions($event_id, $cached = true)
+    public static function getSessions($event_id, $cached = true, $start_date = null)
     {
         $event_id = (int) $event_id;
         // handle caching
@@ -101,16 +105,18 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
             return $session_cache[$event_id];
         }
 
-        // first: get the start date
-        try {
-            $event_start_date = civicrm_api3('Event', 'getvalue', [
-                'id'     => $event_id,
-                'return' => 'start_date']);
-            $event_start_date = strtotime($event_start_date);
-        } catch (CiviCRM_API3_Exception $ex) {
-            // something's wrong
-            return [];
+        // first: get the start date if it's not passed
+        if (empty($start_date)) {
+            try {
+                $start_date = civicrm_api3('Event', 'getvalue', [
+                    'id'     => $event_id,
+                    'return' => 'start_date']);
+            } catch (CiviCRM_API3_Exception $ex) {
+                // something's wrong
+                return [];
+            }
         }
+        $start_date = strtotime($start_date);
 
         // now load all sessions
         $session_list = [];
@@ -122,7 +128,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
 
         foreach ($sessions_raw as $session) {
             // calculate day of event
-            $session['day'] = 1 + (strtotime($session['start_date']) -  $event_start_date) / (60 * 60 * 24);
+            $session['day'] = 1 + (int) ((strtotime($session['start_date']) - $start_date) / (60 * 60 * 24));
 
             // store
             $session_list[$session['id']] = $session;
@@ -164,4 +170,61 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
         return $participant_counts;
     }
 
+    /**
+     * Get the label of the session category
+     *
+     * @param integer $session_category_id
+     *   the category id
+     *
+     * @return string
+     *   resolved label
+     */
+    public static function getSessionCategoryLabel($session_category_id)
+    {
+        // gather categories
+        static $categories = null;
+        if ($categories === null) {
+            $categories = [];
+            $data = civicrm_api3('OptionValue', 'get', [
+                'option_group_id' => 'session_category',
+                'option.limit'    => 0,
+                'return'          => 'value,label'
+            ]);
+            foreach ($data['values'] as $category) {
+                $categories[$category['value']] = $category['label'];
+            }
+        }
+
+        // resolve
+        return CRM_Utils_Array::value($session_category_id, $categories, '');
+    }
+
+    /**
+     * Get the label of the session category
+     *
+     * @param integer $session_type_id
+     *   the category id
+     *
+     * @return string
+     *   resolved label
+     */
+    public static function getSessionTypeLabel($session_type_id)
+    {
+        // gather types
+        static $types = null;
+        if ($types === null) {
+            $types = [];
+            $data = civicrm_api3('OptionValue', 'get', [
+                'option_group_id' => 'session_type',
+                'option.limit'    => 0,
+                'return'          => 'value,label'
+            ]);
+            foreach ($data['values'] as $type) {
+                $types[$type['value']] = $type['label'];
+            }
+        }
+
+        // resolve
+        return CRM_Utils_Array::value($session_type_id, $types, '');
+    }
 }
