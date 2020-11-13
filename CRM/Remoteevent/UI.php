@@ -51,7 +51,7 @@ class CRM_Remoteevent_UI
                     "action=update&reset=1&id={$event_id}"
                 ),
                 'valid'   => 1,
-                'active'  => CRM_Remoteevent_BAO_Session::eventHasSessions($event_id),
+                'active'  => 1, //CRM_Remoteevent_BAO_Session::eventHasSessions($event_id),
                 'current' => false,
             ];
             if (CRM_Remoteevent_EventFlags::isRemoteRegistrationEnabled($event_id)
