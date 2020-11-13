@@ -42,8 +42,8 @@
       {/if}
         <td class="remote-session remote-session-category">{$session.category}</td>
         <td class="remote-session remote-session-type">{$session.type}</td>
-        <td class="remote-session remote-session-time">{$session.time}</td>
-        <td class="remote-session remote-session-title">{$session.title}</td>
+        <td class="remote-session remote-session-time" title="{$session.duration}">{$session.time}</td>
+        <td class="remote-session remote-session-title" title="{$session.description_text}">{$session.title}</td>
         <td class="remote-session remote-session-participants">{$session.participants}</td>
         <td class="remote-session remote-session-icons">{foreach from=$session.icons item=icon}{$icon} {/foreach}</td>
         <td><span>{foreach from=$session.actions item=action}{$action}{/foreach}</span></td>
