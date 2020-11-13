@@ -199,7 +199,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                         $message = E::ts("This session is disabled");
                         //$icons[] = "<i title=\"{$message}\" class=\"crm-i fa-toggle-off\" aria-hidden=\"true\"></i>";
                         $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-times\" aria-hidden=\"true\"></i>";
-                        $classes[] = " remote-session-disabled ";
+                        $classes[] = " remote-session-disabled disabled ";
                     }
 
                     // add location icon
