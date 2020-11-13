@@ -12,6 +12,8 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+<div class="remote-session remote-session-main-container">
+
 <div class="remote-session remote-button-section">
   <a class="button remote-session remote-session-add crm-popup" href="{$add_session_link}"><span><i class="crm-i fa-plus" aria-hidden="true"></i>&nbsp;{ts}Add Session{/ts}</span></a>
 </div>
@@ -54,3 +56,4 @@
 </table>
 {/if}
 {/foreach}
+</div>

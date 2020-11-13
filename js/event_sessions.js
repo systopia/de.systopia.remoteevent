@@ -35,7 +35,11 @@ function remote_session_delete(session_id, confirmed)
 
 cj(document).ready(function() {
   // make sure we reload after a popup closes
-  cj(document).on('crmPopupClose', function () {
+  cj(document).on('crmPopupFormSuccess', function () {
+    // gray out existing form
+    cj("div.remote-session-main-container").addClass("disabled");
+
+    // trigger reload (how to only reload the tab?)
     location.replace(CRM.vars.remoteevent.session_reload);
   });
 });
