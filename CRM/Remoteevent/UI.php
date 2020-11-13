@@ -44,6 +44,16 @@ class CRM_Remoteevent_UI
                 'active'  => 1,
                 'current' => false,
             ];
+            $tabs['sessions'] = [
+                'title'   => E::ts("Sessions"),
+                'link'    => CRM_Utils_System::url(
+                    'civicrm/event/manage/sessions',
+                    "action=update&reset=1&id={$event_id}"
+                ),
+                'valid'   => 1,
+                'active'  => CRM_Remoteevent_BAO_Session::eventHasSessions($event_id),
+                'current' => false,
+            ];
             if (CRM_Remoteevent_EventFlags::isRemoteRegistrationEnabled($event_id)
                 && CRM_Remoteevent_EventFlags::isAlternativeLocationEnabled($event_id)) {
                 // remove old location
@@ -68,6 +78,10 @@ class CRM_Remoteevent_UI
                 'title'  => E::ts("Remote Online Registration"),
                 'url'    => 'civicrm/event/manage/registrationconfig',
                 'field'  => 'id', // always active
+            ];
+            $tabs['sessions'] = [
+                'title'  => E::ts("Sessions"),
+                'url'    => 'civicrm/event/manage/sessions',
             ];
         }
 

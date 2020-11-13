@@ -1,0 +1,53 @@
+{
+  "_lookup": ["name"],
+  "name": "session_slot",
+  "title": "Slots for event sessions",
+  "description": "Event sessions can be grouped by these slots",
+  "_values": [
+    {
+      "_lookup": ["name"],
+      "_translate": ["label"],
+      "name": "Morning",
+      "label": "Morning Slot",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label"],
+      "name": "Pre-Lunch",
+      "label": "Pre-Lunch Slot",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label"],
+      "name": "Post-Lunch",
+      "label": "Post-Lunch Slot",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label"],
+      "name": "Afternoon",
+      "label": "Afternoon Slot",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label"],
+      "name": "Closing",
+      "label": "Closing Slot",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    }
+  ]
+}

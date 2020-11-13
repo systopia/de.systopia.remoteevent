@@ -26,11 +26,20 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
      */
     public function install()
     {
+        // install remote event stuff
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncOptionGroup(E::path('resources/option_group_remote_registration_profiles.json'));
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
         $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
+
+        // install sessions
+        $this->executeSqlFile('sql/session_install.sql');
+        $customData->syncOptionGroup(E::path('resources/option_group_session_slot.json'));
+        $customData->syncOptionGroup(E::path('resources/option_group_session_type.json'));
+        $customData->syncOptionGroup(E::path('resources/option_group_session_category.json'));
+
+        // add participant status
         $this->addParticipantStatus('Invited', E::ts('Invited'), 'Waiting');
     }
 
@@ -75,6 +84,23 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $this->ctx->log->info('Updating data structures');
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        return true;
+    }
+
+    /**
+     * Added Sessions (Workshops)
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0007()
+    {
+        $this->ctx->log->info('Installing Sessions');
+        $this->executeSqlFile('sql/session_install.sql');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncOptionGroup(E::path('resources/option_group_session_slot.json'));
+        $customData->syncOptionGroup(E::path('resources/option_group_session_type.json'));
+        $customData->syncOptionGroup(E::path('resources/option_group_session_category.json'));
         return true;
     }
 

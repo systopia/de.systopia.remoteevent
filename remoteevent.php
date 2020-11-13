@@ -55,6 +55,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addListener(
         'civi.remoteevent.registration.getform',
         ['CRM_Remoteevent_Registration', 'addGtacField']);
+    $dispatcher->addListener(
+        'civi.remoteevent.registration.getform',
+        ['CRM_Remoteevent_EventSessions', 'addSessionFields']);
 
     // EVENT REGISTRATION.VALIDATE
     $dispatcher->addListener(
@@ -226,6 +229,11 @@ function remoteevent_civicrm_alterSettingsFolders(&$metaDataFolders = null)
  */
 function remoteevent_civicrm_entityTypes(&$entityTypes)
 {
+    $entityTypes['CRM_Remoteevent_DAO_Session'] = [
+        'name' => 'Session',
+        'class' => 'CRM_Remoteevent_DAO_Session',
+        'table' => 'civicrm_session'
+    ];
     _remoteevent_civix_civicrm_entityTypes($entityTypes);
 }
 
@@ -278,6 +286,29 @@ function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context)
             CRM_Remoteevent_UI::updateEventTabs($context['event_id'], $tabs);
         } else {
             CRM_Remoteevent_UI::updateEventTabs(null, $tabs);
+        }
+    }
+}
+
+/**
+ * Implementation of hook_civicrm_copy
+ */
+function remoteevent_civicrm_copy($objectName, &$object)
+{
+    if ($objectName == 'Event') {
+        // we have the new event ID...
+        $new_event_id = $object->id;
+
+        // ...unfortunately, we have to dig up the original event ID:
+        $callstack = debug_backtrace();
+        foreach ($callstack as $call) {
+            if (isset($call['class']) && isset($call['function'])) {
+                if ($call['class'] == 'CRM_Event_BAO_Event' && $call['function'] == 'copy') {
+                    // this should be it:
+                    $original_event_id = $call['args'][0];
+                    CRM_Remoteevent_BAO_Session::copySessions($original_event_id, $new_event_id);
+                }
+            }
         }
     }
 }
