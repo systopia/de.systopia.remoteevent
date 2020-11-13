@@ -138,6 +138,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         }
 
         // enrich data
+        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($this->_id);
         foreach ($sessions_by_day_and_slot as $day => &$day_slots) {
             foreach ($day_slots as $slot => &$sessions) {
                 foreach ($sessions as &$session) {
@@ -155,7 +156,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
 
                     // participant count
                     // todo: calculate
-                    $session['participant_count'] = 0;
+                    $session['participant_count'] = CRM_Utils_Array::value($session['id'], $participant_counts, 0);
                     if (!empty($session['max_participants'])) {
                         $session['participants'] = E::ts("%1 / %2", [
                             1 => $session['participant_count'],

@@ -133,4 +133,35 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
 
         return $session_list;
     }
+
+    /**
+     * Get the participant count for all sessions of the given event
+     *
+     * @param integer $event_id
+     *   event id
+     *
+     * @return array
+     *   [session_id => participant_count]
+     */
+    public static function getParticipantCounts($event_id)
+    {
+        $event_id = (int) $event_id;
+
+        // run this as a sql query
+        $participant_counts = [];
+        $participant_query = CRM_Core_DAO::executeQuery("
+            SELECT
+             session.id            AS session_id,
+             COUNT(participant.id) AS participant_count
+            FROM civicrm_session session
+            LEFT JOIN civicrm_participant_session participant
+                   ON participant.session_id = session.id
+            WHERE session.event_id = {$event_id}
+            GROUP BY session.id");
+        while ($participant_query->fetch()) {
+            $participant_counts[$participant_query->session_id] = $participant_query->participant_count;
+        }
+        return $participant_counts;
+    }
+
 }
