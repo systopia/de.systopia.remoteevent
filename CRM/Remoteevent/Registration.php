@@ -663,7 +663,7 @@ class CRM_Remoteevent_Registration
                     'name' => 'gtac',
                     'type' => 'Checkbox',
                     'validation' => '',
-                    'weight' => 100,
+                    'weight' => 500,
                     'required' => 1,
                     'label' => $l10n->localise("I accept the following terms and conditions"),
                     'description' => $l10n->localise("You have to accept the terms and conditions to participate in this event"),
@@ -672,7 +672,7 @@ class CRM_Remoteevent_Registration
                     'prefix' => '',
                     'suffix' => $event['event_remote_registration.remote_registration_gtac'],
                     'prefix_display' => '',
-                    'suffix_display' => 'inline'
+                    'suffix_display' => 'dialog'
                 ]
             ]);
         }
