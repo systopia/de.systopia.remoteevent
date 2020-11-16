@@ -83,6 +83,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
 
     /**
      * Get a list of sessions as property arrays,
+     *  ordered by start_date,
      *  with additional attributes such as
      *   'day': number of day (1 = first, 2 = second, ...)
      *
@@ -94,7 +95,6 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
      *
      * @param string $start_date
      *  event start_date. if empty, will be loaded from the event
-
      */
     public static function getSessions($event_id, $cached = true, $start_date = null)
     {

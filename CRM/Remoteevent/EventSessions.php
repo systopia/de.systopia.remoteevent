@@ -46,10 +46,12 @@ class CRM_Remoteevent_EventSessions
         }
 
         // start listing fields
+        $weight = 200;
         foreach ($sessions_by_day_and_slot as $day => $slot_sessions) {
             foreach ($slot_sessions as $slot_id => $sessions) {
                 foreach ($sessions as $session) {
                     // enrich the session data
+                    $weight += 1;
                     $session['type'] = CRM_Remoteevent_BAO_Session::getSessionTypeLabel($session['type_id']);
                     $session['category'] = CRM_Remoteevent_BAO_Session::getSessionCategoryLabel($session['category_id']);
 
@@ -59,7 +61,7 @@ class CRM_Remoteevent_EventSessions
                         $get_form_results->addFields(["session{$session['id']}" => [
                             'name'           => "day{$day}slot{$slot_id}",
                             'type'           => 'Radio',
-                            'weight'         => 200,
+                            'weight'         => $weight,
                             'label'          => self::renderSessionLabel($session),
                             'description'    => self::renderSessionDescriptionShort($session),
                             'group_name'     => "day{$day}",
@@ -74,7 +76,7 @@ class CRM_Remoteevent_EventSessions
                         $get_form_results->addFields(["session{$session['id']}" => [
                             'name'           => "session{$session['id']}",
                             'type'           => 'Checkbox',
-                            'weight'         => 200,
+                            'weight'         => $weight,
                             'label'          => self::renderSessionLabel($session),
                             'description'    => self::renderSessionDescriptionShort($session),
                             'group_name'     => "day{$day}",
