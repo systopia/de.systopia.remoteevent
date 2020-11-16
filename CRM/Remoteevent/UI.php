@@ -51,7 +51,7 @@ class CRM_Remoteevent_UI
                     "action=update&reset=1&id={$event_id}"
                 ),
                 'valid'   => 1,
-                'active'  => 1, //CRM_Remoteevent_BAO_Session::eventHasSessions($event_id),
+                'active'  => 1, // needs to be always active for shoreditch
                 'current' => false,
             ];
             if (CRM_Remoteevent_EventFlags::isRemoteRegistrationEnabled($event_id)
@@ -82,6 +82,7 @@ class CRM_Remoteevent_UI
             $tabs['sessions'] = [
                 'title'  => E::ts("Sessions"),
                 'url'    => 'civicrm/event/manage/sessions',
+                'field'  => 'id',  // needs to be always active for shoreditch
             ];
         }
 
