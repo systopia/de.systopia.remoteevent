@@ -45,8 +45,6 @@ class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
                      'required'    => 0,
                      'label'       => $l10n->localise('Confirm Invitation'),
                      'description' => $l10n->localise('Do you accept the invitation?'),
-                     'group_name'  => 'confirmation',
-                     'group_label' => $l10n->localise("Event Invitation"),
                  ],
             ]);
         }

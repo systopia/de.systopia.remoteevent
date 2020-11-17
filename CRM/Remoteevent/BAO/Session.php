@@ -227,4 +227,33 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
         // resolve
         return CRM_Utils_Array::value($session_type_id, $types, '');
     }
+
+    /**
+     * Get the label of the session category
+     *
+     * @param integer $slot_id
+     *   the slot id
+     *
+     * @return string
+     *   resolved label
+     */
+    public static function getSlotLabel($slot_id)
+    {
+        // gather types
+        static $slots = null;
+        if ($slots === null) {
+            $slots = [];
+            $data = civicrm_api3('OptionValue', 'get', [
+                'option_group_id' => 'session_slot',
+                'option.limit'    => 0,
+                'return'          => 'value,label'
+            ]);
+            foreach ($data['values'] as $slot) {
+                $slots[$slot['value']] = $slot['label'];
+            }
+        }
+
+        // resolve
+        return CRM_Utils_Array::value($slot_id, $slots, '');
+    }
 }

@@ -49,6 +49,42 @@ class CRM_Remoteevent_EventSessions
         $weight = 200;
         foreach ($sessions_by_day_and_slot as $day => $slot_sessions) {
             foreach ($slot_sessions as $slot_id => $sessions) {
+                if (empty($sessions)) continue;
+
+                if ($slot_id) {
+                    // add name slot fieldset
+                    $slot_name = CRM_Remoteevent_BAO_Session::getSlotLabel($slot_id);
+                    $group_name = "day{$day}slot{$slot_id}";
+                    $group_label = count($sessions_by_day_and_slot) > 1 ? // i.e. multi-day event
+                        E::ts("Workshops - Day %1 - %2", [1 => $day, 2 => $slot_name]) :
+                        E::ts("Workshops - %1", [1 => $slot_name]);
+
+                    // add group
+                    $get_form_results->addFields([$group_name => [
+                        'type'           => 'fieldset',
+                        'name'           => $group_name,
+                        'label'          => $group_label,
+                        'weight'         => $weight,
+                        'description'    => '',
+                     ]]);
+                } else {
+                    // add open (no slot) fieldset
+                    $group_name = "day{$day}";
+                    $group_label = count($sessions_by_day_and_slot) > 1 ? // i.e. multi-day event
+                        E::ts("Workshops - Day %1", [1 => $day]) :
+                        E::ts("Workshops");
+
+                    // add group
+                    $get_form_results->addFields([$group_name => [
+                        'type'           => 'fieldset',
+                        'name'           => $group_name,
+                        'label'          => $group_label,
+                        'weight'         => $weight,
+                        'description'    => '',
+                    ]]);
+                }
+
+
                 foreach ($sessions as $session) {
                     // enrich the session data
                     $weight += 1;
@@ -58,33 +94,34 @@ class CRM_Remoteevent_EventSessions
                     if ($slot_id) {
                         // if this is a (real) slot
                         //   the session participation is mutually exclusive for the sessions in the slot
-                        $get_form_results->addFields(["session{$session['id']}" => [
-                            'name'           => "day{$day}slot{$slot_id}",
-                            'type'           => 'Radio',
-                            'weight'         => $weight,
-                            'label'          => self::renderSessionLabel($session),
-                            'description'    => self::renderSessionDescriptionShort($session),
-                            'group_name'     => "day{$day}",
-                            'group_label'    => count($sessions_by_day_and_slot) > 1 ?
-                                E::ts("Workshops - Day %1", [1 => $day]) : E::ts("Workshops"),
-                            'suffix'         => self::renderSessionDescriptionLong($session),
-                            'suffix_display' => 'dialog',
-                            'required'       => 0,
-                        ]]);
+
+                        $get_form_results->addFields([
+                            "session{$session['id']}" => [
+                                'name'                => "day{$day}slot{$slot_id}",
+                                'type'                => 'Radio',
+                                'weight'              => $weight,
+                                'label'               => self::renderSessionLabel($session),
+                                'description'         => self::renderSessionDescriptionShort($session),
+                                'parent'              => $group_name,
+                                'suffix'              => self::renderSessionDescriptionLong($session),
+                                'suffix_display'      => 'dialog',
+                                'suffix_dialog_label' => E::ts("Details"),
+                                'required'            => 0,
+                                ]
+                         ]);
                     } else {
                         // no slot assigned
                         $get_form_results->addFields(["session{$session['id']}" => [
-                            'name'           => "session{$session['id']}",
-                            'type'           => 'Checkbox',
-                            'weight'         => $weight,
-                            'label'          => self::renderSessionLabel($session),
-                            'description'    => self::renderSessionDescriptionShort($session),
-                            'group_name'     => "day{$day}",
-                            'group_label'    => count($sessions_by_day_and_slot) > 1 ?
-                                E::ts("Workshops - Day %1", [1 => $day]) : E::ts("Workshops"),
-                            'suffix'         => self::renderSessionDescriptionLong($session),
-                            'suffix_display' => 'dialog',
-                            'required'       => 0,
+                            'name'                => "session{$session['id']}",
+                            'type'                => 'Checkbox',
+                            'weight'              => $weight,
+                            'label'               => self::renderSessionLabel($session),
+                            'description'         => self::renderSessionDescriptionShort($session),
+                            'parent'              => $group_name,
+                            'suffix'              => self::renderSessionDescriptionLong($session),
+                            'suffix_display'      => 'dialog',
+                            'suffix_dialog_label' => E::ts("Details"),
+                            'required'            => 0,
                         ]]);
                     }
                 }

@@ -47,8 +47,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'required'    => 0/1
      *      'label'       => field label (localised)
      *      'description' => field description (localised)
-     *      'group_name'  => grouping
-     *      'group_label' => group title (localised)
+     *      'parent'      => can link to parent element, which should be of type 'fieldset'
      *      'value'       => (optional) pre-filled value, typically set in a second pass (addDefaultValues, see below)
      *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
      *                       NOTE: this is just for the optional 'inline' validation in the form,

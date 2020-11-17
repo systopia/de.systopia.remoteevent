@@ -659,20 +659,25 @@ class CRM_Remoteevent_Registration
         if (!empty($event['event_remote_registration.remote_registration_gtac'])) {
             $l10n = $get_form_results->getLocalisation();
             $get_form_results->addFields([
+                'gtacs' => [
+                    'type'        => 'fieldset',
+                    'name'        => 'gtacs',
+                    'label'       => $l10n->localise("Contact Data"),
+                    'weight'      => 500, // this should be at the end
+                    'description' => $l10n->localise("General Terms and Conditions"),
+                ],
                 'gtac' => [
                     'name' => 'gtac',
                     'type' => 'Checkbox',
                     'validation' => '',
-                    'weight' => 500,
+                    'weight' => 100,
                     'required' => 1,
                     'label' => $l10n->localise("I accept the following terms and conditions"),
                     'description' => $l10n->localise("You have to accept the terms and conditions to participate in this event"),
-                    'group_name' => 'gtacs',
-                    'group_label' => $l10n->localise("Terms and Conditions"),
-                    'prefix' => '',
+                    'parent' => 'gtacs',
                     'suffix' => $event['event_remote_registration.remote_registration_gtac'],
-                    'prefix_display' => '',
-                    'suffix_display' => 'dialog'
+                    'suffix_display' => 'dialog',
+                    'suffix_dialog_label' => $l10n->localise("Details"),
                 ]
             ]);
         }

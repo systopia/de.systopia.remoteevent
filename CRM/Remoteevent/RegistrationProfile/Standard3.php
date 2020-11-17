@@ -46,6 +46,20 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
         return array_merge(
             parent::getFields($locale),
             [
+                'contact_base' => [
+                    'type'        => 'fieldset',
+                    'name'        => 'contact_base',
+                    'label'       => $l10n->localise("Contact Data"),
+                    'weight'      => 10,
+                    'description' => '',
+                ],
+                'contact_address' => [
+                    'type'        => 'fieldset',
+                    'name'        => 'contact_base',
+                    'label'       => $l10n->localise("Contact Address"),
+                    'weight'      => 20,
+                    'description' => '',
+                ],
                 'phone'                  => [
                     'name'        => 'phone',
                     'type'        => 'Text',
@@ -54,9 +68,9 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'required'    => 0,
                     'label'       => $l10n->localise('Phone Number'),
                     'description' => $l10n->localise("Participant's Phone Number"),
-                    'group_name'  => 'contact_base',
-                    'group_label' => $l10n->localise("Contact Data"),
+                    'parent'      => 'contact_base',
                 ],
+
                 'street_address'         => [
                     'name'        => 'street_address',
                     'type'        => 'Text',
@@ -65,8 +79,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'required'    => 0,
                     'label'       => $l10n->localise('Street Address'),
                     'description' => $l10n->localise("Participant's street and house number"),
-                    'group_name'  => 'contact_address',
-                    'group_label' => $l10n->localise("Contact Address"),
+                    'parent'      => 'contact_base',
                 ],
                 'supplemental_address_1' => [
                     'name'        => 'supplemental_address_1',
@@ -76,8 +89,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'required'    => 0,
                     'label'       => $l10n->localise('Supplemental Address'),
                     'description' => $l10n->localise("Participant's supplemental address"),
-                    'group_name'  => 'contact_address',
-                    'group_label' => $l10n->localise("Contact Address"),
+                    'parent'      => 'contact_base',
                 ],
                 'supplemental_address_2' => [
                     'name'        => 'supplemental_address_2',
@@ -87,8 +99,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'required'    => 0,
                     'label'       => $l10n->localise('Supplemental Address 2'),
                     'description' => $l10n->localise("Participant's supplemental address"),
-                    'group_name'  => 'contact_address',
-                    'group_label' => $l10n->localise("Contact Address"),
+                    'parent'      => 'contact_base',
                 ],
                 'postal_code'            => [
                     'name'        => 'postal_code',
@@ -98,8 +109,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'required'    => 0,
                     'label'       => $l10n->localise('Postal Code'),
                     'description' => $l10n->localise("Participant's postal code"),
-                    'group_name'  => 'contact_address',
-                    'group_label' => $l10n->localise("Contact Address"),
+                    'parent'      => 'contact_base',
                 ],
                 'city'                   => [
                     'name'        => 'city',
@@ -109,8 +119,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'required'    => 0,
                     'label'       => $l10n->localise('City'),
                     'description' => $l10n->localise("Participant's city"),
-                    'group_name'  => 'contact_address',
-                    'group_label' => $l10n->localise("Contact Address"),
+                    'parent'      => 'contact_base',
                 ],
                 'country_id'             => [
                     'name'        => 'country_id',
@@ -121,8 +130,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'required'    => 0,
                     'label'       => $l10n->localise('Country'),
                     'description' => $l10n->localise("Participant's country"),
-                    'group_name'  => 'contact_address',
-                    'group_label' => $l10n->localise("Contact Address"),
+                    'parent'      => 'contact_base',
                 ],
             ]
         );

@@ -62,8 +62,7 @@ class CRM_Remoteevent_GtacTest extends CRM_Remoteevent_TestBase
         $this->assertEquals('Checkbox', $gtac_field['type'], "GTAC field should be checkbox");
         $this->assertEquals('1', $gtac_field['required'], "GTAC field should be required");
         $this->assertNotEmpty($gtac_field['label'], "GTAC label should be set");
-        $this->assertNotEmpty($gtac_field['group_name'], "GTAC group_name should be set");
-        $this->assertNotEmpty($gtac_field['group_label'], "GTAC group_label should be set");
+        $this->assertNotEmpty($gtac_field['parent'], "GTAC parent should be set");
         if (empty($gtac_field['prefix']) && empty($gtac_field['suffix'])) {
             $this->fail("GTAC text should be either in prefix or suffix or both");
         }

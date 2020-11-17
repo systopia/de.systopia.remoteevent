@@ -44,6 +44,13 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
     {
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         return [
+            'contact_base' => [
+                'type'        => 'fieldset',
+                'name'        => 'contact_base',
+                'label'       => $l10n->localise("Contact Data"),
+                'weight'      => 10,
+                'description' => '',
+            ],
             'email' => [
                 'name'        => 'email',
                 'type'        => 'Text',
@@ -52,8 +59,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
                 'required'    => 1,
                 'label'       => $l10n->localise('Email'),
                 'description' => $l10n->localise("Participant's email address"),
-                'group_name'  => 'contact_base',
-                'group_label' => $l10n->localise("Contact Data"),
+                'parent'      => 'contact_base',
             ]
         ];
     }
