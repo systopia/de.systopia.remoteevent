@@ -385,7 +385,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     protected function validateFieldValue($field_spec, $value)
     {
-        switch ($field_spec['validation']) {
+        $validation = CRM_Utils_Array::value('validation', $field_spec, '');
+        switch ($validation) {
             case 'Email':
                 return preg_match('#^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$#', $value);
 
@@ -403,7 +404,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
             case 'Json':
             case 'Alphanumeric':
                 try {
-                    CRM_Utils_Type::validate($value, $field_spec['validation']);
+                    CRM_Utils_Type::validate($value, $validation);
                     return true;
                 } catch (Exception $ex) {
                     return false;
@@ -411,9 +412,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
             default:
                 // check for regex
-                if (substr($field_spec['validation'], 0, 6) == 'regex:') {
+                if (substr($validation, 0, 6) == 'regex:') {
                     if (strlen($value) > 0) {
-                        return preg_match(substr($field_spec['validation'], 6), $value);
+                        return preg_match(substr($validation, 6), $value);
                     } else {
                         return true;
                     }
