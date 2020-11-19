@@ -662,7 +662,7 @@ class CRM_Remoteevent_Registration
                 'gtacs' => [
                     'type'        => 'fieldset',
                     'name'        => 'gtacs',
-                    'label'       => $l10n->localise("Contact Data"),
+                    'label'       => $l10n->localise("General Terms and Conditions"),
                     'weight'      => 500, // this should be at the end
                     'description' => $l10n->localise("General Terms and Conditions"),
                 ],

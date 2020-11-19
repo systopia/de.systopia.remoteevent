@@ -47,14 +47,22 @@ class CRM_Remoteevent_EventSessions
 
         // start listing fields
         $weight = 200;
+        $get_form_results->addFields(['sessions' => [
+            'type'           => 'fieldset',
+            'name'           => 'sessions',
+            'label'          => E::ts("Session"),
+            'weight'         => $weight,
+            'description'    => '',
+        ]]);
         foreach ($sessions_by_day_and_slot as $day => $slot_sessions) {
+            $weight = $weight + 1;
             foreach ($slot_sessions as $slot_id => $sessions) {
                 if (empty($sessions)) continue;
 
                 if ($slot_id) {
                     // add name slot fieldset
                     $slot_name = CRM_Remoteevent_BAO_Session::getSlotLabel($slot_id);
-                    $group_name = "day{$day}slot{$slot_id}";
+                    $group_name = "day{$day}slot{$slot_id}_group";
                     $group_label = count($sessions_by_day_and_slot) > 1 ? // i.e. multi-day event
                         E::ts("Workshops - Day %1 - %2", [1 => $day, 2 => $slot_name]) :
                         E::ts("Workshops - %1", [1 => $slot_name]);
@@ -65,11 +73,12 @@ class CRM_Remoteevent_EventSessions
                         'name'           => $group_name,
                         'label'          => $group_label,
                         'weight'         => $weight,
+                        'parent'         => 'sessions',
                         'description'    => '',
                      ]]);
                 } else {
                     // add open (no slot) fieldset
-                    $group_name = "day{$day}";
+                    $group_name = "day{$day}_group";
                     $group_label = count($sessions_by_day_and_slot) > 1 ? // i.e. multi-day event
                         E::ts("Workshops - Day %1", [1 => $day]) :
                         E::ts("Workshops");
@@ -80,6 +89,7 @@ class CRM_Remoteevent_EventSessions
                         'name'           => $group_name,
                         'label'          => $group_label,
                         'weight'         => $weight,
+                        'parent'         => 'sessions',
                         'description'    => '',
                     ]]);
                 }
@@ -102,7 +112,7 @@ class CRM_Remoteevent_EventSessions
                                 'weight'              => $weight,
                                 'label'               => self::renderSessionLabel($session),
                                 'description'         => self::renderSessionDescriptionShort($session),
-                                'parent'              => $group_name,
+                                'parent'              => "day{$day}slot{$slot_id}_group",
                                 'suffix'              => self::renderSessionDescriptionLong($session),
                                 'suffix_display'      => 'dialog',
                                 'suffix_dialog_label' => E::ts("Details"),
@@ -117,7 +127,7 @@ class CRM_Remoteevent_EventSessions
                             'weight'              => $weight,
                             'label'               => self::renderSessionLabel($session),
                             'description'         => self::renderSessionDescriptionShort($session),
-                            'parent'              => $group_name,
+                            'parent'              => "day{$day}_group",
                             'suffix'              => self::renderSessionDescriptionLong($session),
                             'suffix_display'      => 'dialog',
                             'suffix_dialog_label' => E::ts("Details"),
