@@ -676,7 +676,7 @@ class CRM_Remoteevent_Registration
                     'description' => $l10n->localise("You have to accept the terms and conditions to participate in this event"),
                     'parent' => 'gtacs',
                     'suffix' => $event['event_remote_registration.remote_registration_gtac'],
-                    'suffix_display' => 'dialog',
+                    'suffix_display' => 'inline',
                     'suffix_dialog_label' => $l10n->localise("Details"),
                 ]
             ]);
