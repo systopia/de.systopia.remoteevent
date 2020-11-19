@@ -50,7 +50,7 @@ class CRM_Remoteevent_EventSessions
         $get_form_results->addFields(['sessions' => [
             'type'           => 'fieldset',
             'name'           => 'sessions',
-            'label'          => E::ts("Session"),
+            'label'          => E::ts("Workshops"),
             'weight'         => $weight,
             'description'    => '',
         ]]);
