@@ -457,4 +457,18 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             unset($fields['remote_contact_id']);
         }
     }
+
+    /**
+     * Create a new, unique campaign
+     */
+    public function getCampaign() {
+        $campaign_name = $this->randomString();
+        $campaign = $this->traitCallAPISuccess('Campaign', 'create', [
+            'name' => $campaign_name,
+            'title' => $campaign_name,
+            'campaign_type_id' => 1,
+            'status_id' => 1,
+        ]);
+        return $this->traitCallAPISuccess('Campaign', 'getsingle', ['id' => $campaign['id']]);
+    }
 }

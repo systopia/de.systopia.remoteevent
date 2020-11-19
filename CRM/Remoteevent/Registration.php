@@ -595,19 +595,26 @@ class CRM_Remoteevent_Registration
      */
     public static function createParticipant($registration)
     {
-        if ($registration->getParticipantID()) {
-            // someone else has done it
-            return;
-        }
-
         // of there is already an issue, don't waste any more time on this
         if ($registration->hasErrors()) {
             return;
         }
 
-        // our job: create a simple participant
+        // let's look into this
         $participant_data = &$registration->getParticipant();
-        $participant_data['contact_id'] = $registration->getContactID();
+
+        if ($registration->getParticipantID()) {
+            // this is updating an existing participant
+            $participant_data['id'] = $registration->getParticipantID();
+
+        } else {
+            // we're creating an all new participant
+            if (!isset($participant_data['contact_id'])) {
+                $participant_data['contact_id'] = $registration->getContactID();
+            }
+        }
+
+        // run create/update
         CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
         $creation = civicrm_api3('Participant', 'create', $participant_data);
         $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
