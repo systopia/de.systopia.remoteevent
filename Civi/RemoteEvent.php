@@ -377,4 +377,24 @@ abstract class RemoteEvent extends Event
         static $null = null;
         return civicrm_api3_create_success($values, [], $entity, $action, $null, $extraReturnValues);
     }
+
+    /**
+     * Generate a RemoteEvent conform API3 error
+     *
+     * @param $error_message
+     *
+     *
+     */
+    public static function createStaticAPI3Error($error_message)
+    {
+        return civicrm_api3_create_error($error_message, [
+            'status_messages' => [
+                [
+                    'message' => $error_message,
+                    'severity' => 'error',
+                    'reference' => '',
+                ]
+            ]
+        ]);
+    }
 }
