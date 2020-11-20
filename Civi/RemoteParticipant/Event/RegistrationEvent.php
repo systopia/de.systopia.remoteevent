@@ -187,17 +187,6 @@ class RegistrationEvent extends RemoteEvent
     }
 
     /**
-     * Add an error to the given field
-     *
-     * @param string $error
-     *   error message to be displayed to the user
-     */
-    public function addError($error)
-    {
-        $this->error_list[] = $error;
-    }
-
-    /**
      * Get the complete submission
      *
      * @return array

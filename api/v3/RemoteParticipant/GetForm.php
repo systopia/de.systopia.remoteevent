@@ -170,9 +170,13 @@ function civicrm_api3_remote_participant_get_form($params)
                 break;
         }
     } catch (Exception $error) {
-        return civicrm_api3_create_error($error->getMessage());
+        $fields->addError($error->getMessage());
     }
 
-    // finally: return the result
-    return civicrm_api3_create_success($fields->getResult());
+    // return the result
+    if ($fields->hasErrors()) {
+        return $fields->createAPI3Error();
+    } else {
+        return $fields->createAPI3Success('RemoteEvent', 'get', $fields->getResult());
+    }
 }

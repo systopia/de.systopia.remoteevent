@@ -39,6 +39,15 @@ abstract class RemoteEvent extends Event
     /** @var array accepted usage for tokes */
     protected $token_usages = ['invite'];
 
+    /** @var array holds the list of error messages */
+    protected $error_list = [];
+
+    /** @var array holds the list of warning messages */
+    protected $warning_list = [];
+
+    /** @var array holds the list of info/status messages */
+    protected $info_list = [];
+
 
     /**
      * Get the parameters of the original query
@@ -215,5 +224,157 @@ abstract class RemoteEvent extends Event
         } else {
             return \CRM_Remoteevent_Localisation::getLocalisation($data['locale']);
         }
+    }
+
+    // ERROR/WARNING/STATUS MESSAGES
+
+    /**
+     * Check if the submission has errors
+     * @return bool
+     *   true if there is errors
+     */
+    public function hasErrors()
+    {
+        return !empty($this->error_list);
+    }
+
+    /**
+     * Add an error message to the remote event context
+     *
+     * @param string $message
+     *   the error message, localised
+     *
+     * @param string $reference
+     *   a reference, e.g. e a field name
+     */
+    public function addError($message, $reference = '')
+    {
+        $this->error_list[] = [$message, $reference];
+    }
+
+    /**
+     * Get a list of all errors
+     *
+     * @return array
+     *   complete error list
+     */
+    public function getErrors()
+    {
+        return $this->error_list;
+    }
+
+    /**
+     * Check if the submission has errors
+     * @return bool
+     *   true if there is errors
+     */
+    public function hasWarnings()
+    {
+        return !empty($this->warning_list);
+    }
+
+    /**
+     * Add a warning to the remote event context
+     *
+     * @param string $message
+     *   the warning, localised
+     *
+     * @param string $reference
+     *   a reference, e.g. e a field name
+     */
+    public function addWarning($message, $reference = '')
+    {
+        $this->warning_list[] = [$message, $reference];
+    }
+
+    /**
+     * Add a warning to the remote event context
+     *
+     * @param string $message
+     *   status message, localised
+     *
+     * @param string $reference
+     *   a reference, e.g. e a field name
+     */
+    public function addStatus($message, $reference = '')
+    {
+        $this->info_list[] = [$message, $reference];
+    }
+
+    /**
+     * Get a list of status messages in the following form
+     * [
+     *   message: the status message,
+     *   severity: status|warning|error
+     *   reference: (optional) message reference, e.g. field name
+     */
+    public function getStatusMessageList()
+    {
+        $messages = [];
+        foreach ($this->error_list as $error) {
+            $messages[] = [
+                'message' => $error[0],
+                'severity' => 'error',
+                'reference' => $error[1]
+            ];
+        }
+        foreach ($this->warning_list as $warning) {
+            $messages[] = [
+                'message' => $warning[0],
+                'severity' => 'warning',
+                'reference' => $warning[1]
+            ];
+        }
+        foreach ($this->info_list as $info) {
+            $messages[] = [
+                'message' => $info[0],
+                'severity' => 'status',
+                'reference' => $info[1]
+            ];
+        }
+        return $messages;
+    }
+
+    /**
+     * Get in indexed array of all status messages (of the given classes)
+     *   indexed by reference
+     *
+     * @param string[] $classes
+     *   list of classes to consider
+     *
+     * @return array
+     *  [reference => message/error] list
+     */
+    public function getReferencedStatusList($classes = ['error'])
+    {
+        $result = [];
+        foreach ($this->getStatusMessageList() as $message) {
+            if (in_array($message['severity'], $classes) && !empty($message['reference'])) {
+                $result[$message['reference']] = $message['message'];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Generate an API3 error
+     */
+    public function createAPI3Error()
+    {
+        $first_error = reset($this->error_list);
+        return civicrm_api3_create_error($first_error[0], ['status_messages' => $this->getStatusMessageList()]);
+    }
+
+    /**
+     * Generate an API3 error
+     */
+    public function createAPI3Success($entity, $action, $values = [], $extraReturnValues = [])
+    {
+        // add status messages
+        $extraReturnValues['status_messages'] = $this->getStatusMessageList();
+
+        // compile standard result
+        static $null = null;
+        return civicrm_api3_create_success($values, [], $entity, $action, $null, $extraReturnValues);
     }
 }

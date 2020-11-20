@@ -118,5 +118,6 @@ function civicrm_api3_remote_participant_cancel($params)
     foreach ($cancellations as $cancellation) {
         civicrm_api3('Participant', 'create', $cancellation);
     }
-    return civicrm_api3_create_success($cancellations);
+
+    return $cancellation_event->createAPI3Success('RemoteParticipant', 'cancel');
 }

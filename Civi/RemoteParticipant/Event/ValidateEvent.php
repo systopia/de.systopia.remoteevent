@@ -30,24 +30,11 @@ class ValidateEvent extends RemoteEvent
     /** @var array holds the original RemoteParticipant.validate submission */
     protected $submission;
 
-    /** @var array holds the  */
-    protected $error_list;
-
     public function __construct($submission_data, $error_list = [])
     {
         $this->submission  = $submission_data;
         $this->error_list = $error_list;
         $this->token_usages = ['invite'];
-    }
-
-    /**
-     * Check if the submission has errors
-     * @return bool
-     *   true if there is errors
-     */
-    public function hasErrors()
-    {
-        return !empty($this->error_list);
     }
 
     /**
@@ -81,10 +68,10 @@ class ValidateEvent extends RemoteEvent
      * @param string $error
      *   error message to be displayed to the user
      */
-    public function addError($field_name, $error)
+    public function addValidationError($field_name, $error)
     {
-        // todo: what to do if there is already an error
-        $this->error_list[$field_name] = $error;
+        // just pass to the underlying error system
+        $this->addError($error, $field_name);
     }
 
     /**
@@ -96,17 +83,6 @@ class ValidateEvent extends RemoteEvent
     public function getSubmission()
     {
         return $this->submission;
-    }
-
-    /**
-     * Get a list of all errors
-     *
-     * @return array
-     *   complete error list
-     */
-    public function getErrors()
-    {
-        return $this->error_list;
     }
 
     /**

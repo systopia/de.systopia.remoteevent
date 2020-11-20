@@ -83,10 +83,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
         foreach ($fields as $field_name => $field_spec) {
             $value = CRM_Utils_Array::value($field_name, $data);
             if (!empty($field_spec['required']) && $value === null) {
-                $validationEvent->addError($field_name, $l10n->localise("Required"));
+                $validationEvent->addValidationError($field_name, $l10n->localise("Required"));
             } else {
                 if (!$this->validateFieldValue($field_spec, $value)) {
-                    $validationEvent->addError($field_name, $l10n->localise("Invalid Value"));
+                    $validationEvent->addValidationError($field_name, $l10n->localise("Invalid Value"));
                 }
             }
         }
@@ -162,7 +162,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
         $allowed_profiles = explode(',', $event['enabled_profiles']);
         if (!in_array($params['profile'], $allowed_profiles)) {
-            $validationEvent->addError('profile', E::ts("Profile %1 is not available for submission"));
+            $validationEvent->addError(E::ts("Profile %1 is not available for submission"));
             return;
         }
 

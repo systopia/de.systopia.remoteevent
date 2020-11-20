@@ -138,12 +138,42 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             $participant_data[$key] = $value;
         }
 
-        // register via our API
+        return $this->callRemoteEventAPI('RemoteParticipant', 'create', $participant_data);
+    }
+
+    /**
+     * Wrap an API call to fit the status message system
+     *
+     * @param $entity
+     * @param $action
+     * @param $data
+     */
+    protected function callRemoteEventAPI($entity, $action, $data)
+    {
+        // first run
         try {
-            return civicrm_api3('RemoteParticipant', 'create', $participant_data);
+            $result = civicrm_api3($entity, $action, $data);
+            $result['is_error'] = 0;
+            $status_messages = $result['status_messages'];
         } catch (CiviCRM_API3_Exception $ex) {
-            return civicrm_api3_create_error($ex->getMessage(), ['errors' => $ex->getExtraParams()['errors']]);
+            $result = [
+                'is_error'      => 1,
+                'error_message' => $ex->getMessage()
+            ];
+            $status_messages = $ex->getExtraParams()['status_messages'];
         }
+
+        // extract messages
+        $severity2list = [
+            'error'   => 'errors',
+            'warning' => 'warnings',
+            'status'  => 'status'
+        ];
+        foreach ($status_messages as $message) {
+            $result[$severity2list[$message['severity']]][] = $message['message'];
+        }
+
+        return $result;
     }
 
     /**
