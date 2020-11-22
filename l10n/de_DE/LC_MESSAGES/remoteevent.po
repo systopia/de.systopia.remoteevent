@@ -645,7 +645,7 @@ msgstr "Aktionen"
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Registration Restrictions"
-msgstr "Anmeldebeschränkungen"
+msgstr "Einstellungen zur Anmeldung"
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Public Event Text Blocks"
