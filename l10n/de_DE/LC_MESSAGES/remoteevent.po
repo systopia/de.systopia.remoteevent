@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-11-16 10:52+0100\n"
+"POT-Creation-Date: 2020-11-24 12:00+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -35,12 +35,24 @@ msgid ""
 msgstr "Diese Kontakte können als Veranstaltungsorte verwendet werden"
 
 #: CRM/Remoteevent/EventSessions.php
+msgid "Workshops"
+msgstr "Workshops"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Workshops - Day %1 - %2"
+msgstr "Workshops - Tag %1 - %2"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Workshops - %1"
+msgstr "Workshops - %1"
+
+#: CRM/Remoteevent/EventSessions.php
 msgid "Workshops - Day %1"
 msgstr "Workshops - Tag %1"
 
-#: CRM/Remoteevent/EventSessions.php
-msgid "Workshops"
-msgstr "Workshops"
+#: CRM/Remoteevent/EventSessions.php resources/remote_session_description.tpl
+msgid "Details"
+msgstr "Details"
 
 #: CRM/Remoteevent/Form/EventLocation.php
 msgid "Additional Information for this Event"
@@ -102,11 +114,11 @@ msgstr "Der Workshop ist deaktiviert"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "edit"
-msgstr "bearbeiten"
+msgstr ""
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "delete"
-msgstr "löschen"
+msgstr ""
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "No Slot"
@@ -146,11 +158,11 @@ msgstr "Ende Anmeldefenster"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Require participant approval?"
-msgstr "Teilnehmenden Stornierungen und Änderungen gestatten?"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Allow self-service cancellation or transfer?"
-msgstr "Teilnehmenden Stornierungen und Änderungen gestatten?"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Cancellation or transfer time limit (hours)"
@@ -162,35 +174,35 @@ msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Event Information"
-msgstr "Text Anmeldeformular"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Event Information Footer"
-msgstr "Fußbereich Anmeldeseite"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Confirmation Title"
-msgstr "Titel Bestätigungsbereich"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Confirmation Text"
-msgstr "Text Bestätigungsbereich"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Confirmation Footer"
-msgstr "Footer Bestätigungsbereich"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Thank You Title"
-msgstr "Titel Dankeschönbereich"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Thank You Text"
-msgstr "Text Dankeschönbereich"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Thank You Footer"
-msgstr "Footer Dankeschönbereich"
+msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 #: CRM/Remoteevent/Form/Settings.php
@@ -284,7 +296,7 @@ msgstr "Remote Events - Konfiguration"
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Statuses blocking (re)registration"
-msgstr "Status die eine erneute Anmeldung verhindern."
+msgstr "Status die eine erneute Anmeldung verhindern"
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Speaker Roles"
@@ -320,7 +332,7 @@ msgstr "Abmeldelink"
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Configuration Updated"
-msgstr "Konfiguration wurde aktualisiert."
+msgstr "Konfiguration wurde aktualisiert"
 
 #: CRM/Remoteevent/Registration.php
 msgid "Event is not active"
@@ -336,11 +348,11 @@ msgstr "Die Anmeldung wurde bereits geschlossen."
 
 #: CRM/Remoteevent/Registration.php
 msgid "Event is booked out"
-msgstr "Die Veranstaltung ist ausgebucht."
+msgstr "Die Veranstaltung ist ausgebucht"
 
 #: CRM/Remoteevent/Registration.php
 msgid "Contact is already registered"
-msgstr "Sie sind bereits angemeldet."
+msgstr "Sie sind bereits angemeldet"
 
 #: CRM/Remoteevent/Registration.php
 msgid ""
@@ -351,9 +363,7 @@ msgstr ""
 
 #: CRM/Remoteevent/Registration.php
 msgid "Editing/cancelling registrations is not allowed for this event"
-msgstr ""
-"Das Stornieren oder Bearbeiten von Anmledungen ist bei dieser Veranstaltung "
-"nicht erlaubt."
+msgstr "Das An- und Abmelden ist bei dieser Veranstaltung nicht erlaubt"
 
 #: CRM/Remoteevent/Registration.php
 msgid "No eligible registration for modification found."
@@ -419,7 +429,7 @@ msgstr ""
 
 #: CRM/Remoteevent/UI.php
 msgid "Remote Online Registration"
-msgstr "Onlineanmeldung (alternatives System)"
+msgstr ""
 
 #: CRM/Remoteevent/UI.php
 msgid "Online Registration (CiviCRM)"
@@ -504,7 +514,7 @@ msgstr ""
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Profile Name"
-msgstr "Name des Profils"
+msgstr ""
 
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
@@ -566,10 +576,6 @@ msgstr ""
 msgid "RemoteContactID is invalid"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
-msgid "Validation Failed"
-msgstr "Validierung fehlgeschlagen"
-
 #: api/v3/RemoteParticipant/Validate.php
 msgid "Context '%1' not implemented."
 msgstr ""
@@ -577,6 +583,18 @@ msgstr ""
 #: js/event_sessions.js
 msgid "de.systopia.remoteevent"
 msgstr ""
+
+#: js/event_sessions.js
+msgid "Session [%1] was deleted."
+msgstr "Workshop [%1] wurde gelöscht."
+
+#: js/event_sessions.js
+msgid "Session deleted"
+msgstr "Workshop gelöscht"
+
+#: js/event_sessions.js
+msgid "Do you really want to delete session [%1]?"
+msgstr "Möchten Sie Workshop [%1] wirklich löschen?"
 
 #: remoteevent.php
 msgid "RemoteEvent: list public events"
@@ -625,9 +643,31 @@ msgstr "Typ"
 msgid "Location"
 msgstr "Veranstaltungsort"
 
-#: resources/remote_session_description.tpl
-msgid "Details"
-msgstr "Details"
+#: templates/CRM/Remoteevent/Form/EventLocation.hlp
+msgid ""
+"This element defined may be displayed by your remote system during "
+"registration process. It may also be used in confirmation mails. How it is "
+"used may differ on your implementation."
+msgstr ""
+"Dieser Hinweis kann vom System das Ihr Anmeldeformular bereitstellt sowie in "
+"Bestätigungs-E-Mails genutzt werden. Wie die verschiedenen Elemente genau im "
+"Anmeldeprozess genutzt und dargestellt werden hängt von der konkreten "
+"Implementierung ab."
+
+#: templates/CRM/Remoteevent/Form/EventLocation.tpl
+msgid ""
+"CiviCRM contacts of the type event location may be selected here. Your "
+"remote system may display their information (Display Name, Address, Geodata) "
+"as well as the Additional Information for this Event during registration "
+"process. The information may also be used in confirmation mails. How it "
+"isused may differ on your implementation."
+msgstr ""
+"Bereits in CiviCRM als Kontakte angelegte Veranstaltungsorte können hier "
+"ausgewählt werden. Das System das Ihr Anmeldeformular bereitstellt kann "
+"diverse Informationen diese Kontakts (bspw. Name, Adresse, Geodaten) sowie "
+"den speziellen Hinweis unten anzeigen. Wie die verschiedenen Elemente genau "
+"im Anmeldeprozess genutzt und dargestellt werden hängt von der konkreten "
+"Implementierung ab."
 
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 msgid "Time"
@@ -645,13 +685,127 @@ msgstr "Info"
 msgid "Actions"
 msgstr "Aktionen"
 
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If you tick this box, participants may cancel or change their own "
+"registration. Links for changing or canceling a registration may be included "
+"in your event confirmation mail."
+msgstr ""
+"Falls aktiviert können Teilnehmer*innen ihre eigene Anmeldung stornieren "
+"oder ändern. Änderungs- oder Stornolinks sollten in diesem Fall den "
+"Bestätigungs-E-Mails hinzugefügt werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Number of hours before the start of the event that a participant can edit or "
+"cancel it's registration."
+msgstr ""
+"Zeitraum in Stunden vor Beginn des Events in dem eine Teilnehmer*in ihre/"
+"seine Anmeldung bearbeiten oder stornieren kann."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If you tick this box, registrations will be assigned the \"Awaiting approval"
+"\" status and you will need to manually review and approve each "
+"registration. Depending on your remote system's settings and/or your "
+"confirmation mail settings, registrants may be informed about the pending "
+"approval as well."
+msgstr ""
+"Falls aktiviert erhalten Anmeldungen den Status „Bestätigung ausstehend“ und "
+"müssen manuell freigegeben werden. Je nach Einstellung des Systems welches "
+"Ihr Anmeldeformular generiert wobei Ihrer Bestätigungs-E-Mails, können "
+"Teilnehmende über die ausstehende Bestätigung auch informiert werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "This registration profile will be shown by default."
+msgstr "Dieses Anmeldeformular wird standardmäßig angezeigt."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Additional registration profiles that may be used to register for this "
+"event. You will need to enable at least your default profile. You will have "
+"to enable the One-Click-Profile in order ro allow contacts to respond to an "
+"event invitation (feature provided by separate Event Invitations Extension)."
+msgstr ""
+"Weiter zulässige Anmeldeprofile für diese Veranstaltung. Es muss zumindest "
+"das Standardprofil ausgewählt werden. Sie müssen das „Ein-Klick-Profil“ "
+"aktivieren, wenn es Kontakten möglich sein soll eine Einladung anzunehmen "
+"oder abzulehnen (von separater Erweiterung „Event Invitations Extension“ "
+"bereitgestellte Funktion)"
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If checked an alternative approach to handle event locations will be used "
+"and CiviCRM's default tab will be replaced with a custom one. Please refer "
+"to documentation for more information."
+msgstr ""
+"Falls aktiviert wird eine alternative Funktion für die Nutzung des "
+"Veranstaltungsortes aktiviert und der reguläre CiviCRM Reiter mit einem "
+"benutzerdefinierten ersetzt. Weitere Informationen erhalten Sie in der "
+"Dokumentation der Erweiterung."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"All text elements defined in this area may be displayed by your remote "
+"system during registration process. They may also be used in confirmation "
+"mails. How they are used may differ on your implementation."
+msgstr ""
+"Alle in diesem Bereich vorgenommenen Texte und weitere Eingaben können vom "
+"System das Ihr Anmeldeformular bereitstellt genutzt werden. Sie können zudem "
+"in Bestätigungs-E-Mails genutzt werden. Wie die verschiedenen Elemente genau "
+"im Anmeldeprozess genutzt und dargestellt werden hängt von der konkreten "
+"Implementierung ab."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If you enter any information in this area, participants will be displayed "
+"and need to confirm these Generel Terms and Conditions when registering."
+msgstr ""
+"Wenn Sie in diese Feld etwas eintragen wird dies als allgemeine "
+"Anmeldebedingungen im Anmeldeformular angezeigt und muss von den "
+"Teilnehmenden bestätigt werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Can be displayed as an introduction of your registration form."
+msgstr "Kann als Einleitung in Ihrem Anmeldeformular angezeigt."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Can be displayed at the bottom of your registration form close to the submit "
+"bottom."
+msgstr ""
+"Kann im Fußbereich des Eingabeformulars nahe des „Abschicken-Buttons“ "
+"angezeigt werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Can be displayed as the title of your confirmation page."
+msgstr "Kann als Überschrift Ihrer Bestätigungsseite verwendet werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Element / message that can be displayed on top of your confirmation page."
+msgstr ""
+"Hinweistext der oben auf Ihrer Bestätigungsseite angezeigt werden kann."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Can be displayed at the bottom of your confirmation page close to the submit "
+"bottom."
+msgstr ""
+"Kann im Fußbereich der Bestätigungsseite nahe des „Abschicken-Buttons“ "
+"angezeigt werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Element / message that can be displayed on top of your thank you page."
+msgstr "Kann als Überschrift Ihrer Bestätigungsseite verwendet werden."
+
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Registration Restrictions"
 msgstr "Einstellungen zur Anmeldung"
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Public Event Text Blocks"
-msgstr "Textelemente"
+msgstr "Öffentliche Textelemente"
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid "List of statuses the will prevent a contact from registering again."
@@ -683,18 +837,6 @@ msgid ""
 msgstr ""
 "Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact ID"
 "\" zu aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
-
-#: js/event_sessions.js
-msgid "Session [%1] was deleted."
-msgstr "Workshop [%1] wurde gelöscht."
-
-#: js/event_sessions.js
-msgid "Do you really want to delete session [%1]?"
-msgstr "Möchten Sie Workshop [%1] wirklich löschen?"
-
-#: js/event_sessions.js
-msgid "Session deleted"
-msgstr "Workshop gelöscht"
 
 #~ msgid "Contact Data"
 #~ msgstr "Stammdaten"
