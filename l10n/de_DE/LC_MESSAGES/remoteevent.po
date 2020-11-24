@@ -114,11 +114,11 @@ msgstr "Der Workshop ist deaktiviert"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "edit"
-msgstr ""
+msgstr "bearbeiten"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "delete"
-msgstr ""
+msgstr "löschen"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "No Slot"
@@ -162,7 +162,7 @@ msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Allow self-service cancellation or transfer?"
-msgstr ""
+msgstr "Teilnehmenden Stornierungen und Änderungen gestatten?"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Cancellation or transfer time limit (hours)"
@@ -174,35 +174,35 @@ msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Event Information"
-msgstr ""
+msgstr "Text Anmeldeformular"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Event Information Footer"
-msgstr ""
+msgstr "Fußbereich Anmeldeseite"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Confirmation Title"
-msgstr ""
+msgstr "Titel Bestätigungsbereich"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Confirmation Text"
-msgstr ""
+msgstr "Text Bestätigungsbereich"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Confirmation Footer"
-msgstr ""
+msgstr "Footer Bestätigungsbereich"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Thank You Title"
-msgstr ""
+msgstr "Titel Dankeschönbereich"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Thank You Text"
-msgstr ""
+msgstr "Text Dankeschönbereich"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Thank You Footer"
-msgstr ""
+msgstr "Footer Dankeschönbereich"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 #: CRM/Remoteevent/Form/Settings.php
@@ -363,7 +363,9 @@ msgstr ""
 
 #: CRM/Remoteevent/Registration.php
 msgid "Editing/cancelling registrations is not allowed for this event"
-msgstr "Das An- und Abmelden ist bei dieser Veranstaltung nicht erlaubt"
+msgstr ""
+"Das Stornieren oder Bearbeiten von Anmeldungen ist bei dieser Veranstaltung  "
+"nicht erlaubt"
 
 #: CRM/Remoteevent/Registration.php
 msgid "No eligible registration for modification found."
@@ -429,7 +431,7 @@ msgstr ""
 
 #: CRM/Remoteevent/UI.php
 msgid "Remote Online Registration"
-msgstr ""
+msgstr "Onlineanmeldung (alternatives System)"
 
 #: CRM/Remoteevent/UI.php
 msgid "Online Registration (CiviCRM)"
@@ -514,7 +516,7 @@ msgstr ""
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Profile Name"
-msgstr ""
+msgstr "Name des Profils"
 
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
