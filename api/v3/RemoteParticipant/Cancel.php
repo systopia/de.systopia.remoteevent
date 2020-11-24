@@ -15,6 +15,7 @@
 
 require_once 'remoteevent.civix.php';
 
+use Civi\RemoteEvent;
 use \Civi\RemoteParticipant\Event\CancelEvent as CancelEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -72,7 +73,7 @@ function civicrm_api3_remote_participant_cancel($params)
     if ($event_id && $remote_contact_id) {
         $contact_id = CRM_Remotetools_Contact::getByKey($remote_contact_id);
         if (empty($contact_id)) {
-            return civicrm_api3_create_error('Invalid remote_contact_id');
+            return RemoteEvent::createStaticAPI3Error('Invalid remote_contact_id');
         }
         $participants = CRM_Remoteevent_Registration::getRegistrations($event_id, $contact_id);
     }
@@ -84,7 +85,7 @@ function civicrm_api3_remote_participant_cancel($params)
             $params['token'],
             'cancel');
         if (!$participant_id) {
-            return civicrm_api3_create_error('Invalid Token!');
+            return RemoteEvent::createStaticAPI3Error('Invalid Token!');
         } else {
             // load registrations
             $query = civicrm_api3('Participant', 'get', ['id' => $participant_id]);
@@ -111,12 +112,13 @@ function civicrm_api3_remote_participant_cancel($params)
 
     // at this point we should have at least one
     if (empty($cancellations)) {
-        return civicrm_api3_create_error('No participants found to cancel');
+        return RemoteEvent::createStaticAPI3Error('No participants found to cancel');
     }
 
     // execute the cancellations
     foreach ($cancellations as $cancellation) {
         civicrm_api3('Participant', 'create', $cancellation);
     }
-    return civicrm_api3_create_success($cancellations);
+
+    return $cancellation_event->createAPI3Success('RemoteParticipant', 'cancel');
 }

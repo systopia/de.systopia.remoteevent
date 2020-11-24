@@ -16,6 +16,7 @@
 require_once 'remoteevent.civix.php';
 
 use CRM_Remoteevent_ExtensionUtil as E;
+use Civi\RemoteEvent;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent as GetUpdateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent as GetCancelParticipantFormEvent;
@@ -86,7 +87,7 @@ function civicrm_api3_remote_participant_get_form($params)
     unset($params['check_permissions']);
     $params['context'] = strtolower($params['context']);
     if (!in_array($params['context'], ['create', 'cancel', 'update'])) {
-        return civicrm_api3_create_error(E::ts("Invalid context '%1'", [1 => $params['context']]));
+        return RemoteEvent::createStaticAPI3Error(E::ts("Invalid context '%1'", [1 => $params['context']]));
     }
 
     // FIRSTLY: evaluate TOKEN
@@ -103,7 +104,7 @@ function civicrm_api3_remote_participant_get_form($params)
             // token is invalid
             if (empty($params['event_id'])) {
                 // we can't do anything without event ID
-                return civicrm_api3_create_error(E::ts("Invalid token '%1'", [1 => $params['token']]));
+                return RemoteEvent::createStaticAPI3Error(E::ts("Invalid token '%1'", [1 => $params['token']]));
             } else {
                 // otherwise we'll use just ignore the token and press on anonymously ...
             }
@@ -113,13 +114,13 @@ function civicrm_api3_remote_participant_get_form($params)
                 $participant = civicrm_api3('Participant', 'getsingle', ['id' => $participant_id, 'return' => 'event_id']);
             } catch (CiviCRM_API3_Exception $ex) {
                 // token is valid, but the participant doesn't exist (any more)
-                return civicrm_api3_create_error(E::ts("Broken token '%1'", [1 => $params['token']]));
+                return RemoteEvent::createStaticAPI3Error(E::ts("Broken token '%1'", [1 => $params['token']]));
             }
 
             // verify the event_id
             if (isset($params['event_id'])) {
                 if ($participant['event_id'] != $params['event_id']) {
-                    return civicrm_api3_create_error(E::ts("Token refers to another event '%1'", [1 => $params['token']]));
+                    return RemoteEvent::createStaticAPI3Error(E::ts("Token refers to another event '%1'", [1 => $params['token']]));
                 }
             } else {
                 $params['event_id'] = $participant['event_id'];
@@ -130,11 +131,11 @@ function civicrm_api3_remote_participant_get_form($params)
     // SECONDLY: do some sanity checks on the event
     $event_query = civicrm_api3('RemoteEvent', 'get', ['id' => $params['event_id']]);
     if ($event_query['count'] < 1) {
-        return civicrm_api3_create_error(
+        return RemoteEvent::createStaticAPI3Error(
             E::ts("RemoteEvent [%1] does not exist, or not eligible for registration.", [1 => $params['event_id']])
         );
     } elseif ($event_query['count'] > 1) {
-        return civicrm_api3_create_error(
+        return RemoteEvent::createStaticAPI3Error(
             E::ts("RemoteEvent [%1] is ambiguous.", [1 => $params['event_id']])
         );
     }
@@ -142,7 +143,7 @@ function civicrm_api3_remote_participant_get_form($params)
 
     // is remote registration enabled for this event?
     if (empty($event['remote_registration_enabled'])) {
-        return civicrm_api3_create_error(
+        return RemoteEvent::createStaticAPI3Error(
             E::ts("RemoteEvent [%1] has no remote registration enabled.", [1 => $params['event_id']])
         );
     }
@@ -170,9 +171,13 @@ function civicrm_api3_remote_participant_get_form($params)
                 break;
         }
     } catch (Exception $error) {
-        return civicrm_api3_create_error($error->getMessage());
+        $fields->addError($error->getMessage());
     }
 
-    // finally: return the result
-    return civicrm_api3_create_success($fields->getResult());
+    // return the result
+    if ($fields->hasErrors()) {
+        return $fields->createAPI3Error();
+    } else {
+        return $fields->createAPI3Success('RemoteEvent', 'get', $fields->getResult());
+    }
 }

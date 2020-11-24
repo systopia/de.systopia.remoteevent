@@ -85,31 +85,24 @@ function civicrm_api3_remote_participant_validate($params)
     if (!empty($params['remote_contact_id'])) {
         $contact_id = CRM_Remotetools_Contact::getByKey($params['remote_contact_id']);
         if (!$contact_id) {
-            $validation->addError('remote_contact_id', E::ts("RemoteContactID is invalid"));
+            $validation->addError(E::ts("RemoteContactID is invalid"));
         }
     }
 
     // todo: implement other modes (update/cancel)
     if ($params['context'] != 'create') {
-        $validation->addError('context', E::ts("Context '%1' not implemented.", [1 => $params['context']]));
+        $validation->addError(E::ts("Context '%1' not implemented.", [1 => $params['context']]));
     }
 
     // first: check if registration is enabled
     $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($params['event_id'], $contact_id);
     if ($cant_register_reason) {
-        $validation->addError('event_id', $cant_register_reason);
+        $validation->addError($cant_register_reason);
     } else {
         // dispatch the validation event for other validations to weigh in
         Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
     }
 
-    if ($validation->hasErrors()) {
-        $reply = civicrm_api3_create_success($validation->getErrors());
-        // todo: how to return a validation fail? error?
-        $reply['is_error'] = 1;
-        $reply['error_message'] = E::ts("Validation Failed");
-        return $reply;
-    } else {
-        return civicrm_api3_create_success([]);
-    }
+    // return the result
+    return $validation->createAPI3Success('RemoteEvent', 'get', $validation->getReferencedStatusList(['error']));
 }

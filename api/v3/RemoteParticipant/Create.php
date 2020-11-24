@@ -15,6 +15,7 @@
 
 require_once 'remoteevent.civix.php';
 
+use Civi\RemoteEvent;
 use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -77,7 +78,7 @@ function civicrm_api3_remote_participant_create($params)
         $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);
     } catch (CiviCRM_API3_Exception $ex) {
         $errors = $ex->getExtraParams()['values'];
-        return civicrm_api3_create_error(reset($errors), ['errors' => $errors]);
+        return RemoteEvent::createStaticAPI3Error(reset($errors), ['errors' => $errors]);
     }
 
     // create a transaction
@@ -95,14 +96,14 @@ function civicrm_api3_remote_participant_create($params)
     if ($registration_event->hasErrors()) {
         // something went wrong...
         $registration_transaction->rollback();
-        $errors = $registration_event->getErrors();
-        return civicrm_api3_create_error($errors[0], ['errors' => $errors]);
+        return $registration_event->createAPI3Error();
 
     } else {
         $registration_transaction->commit();
         $participant = civicrm_api3('Participant', 'getsingle', ['id' => $registration_event->getParticipantID()]);
         $null = null;
-        return civicrm_api3_create_success(1, $params, 'RemoteParticipant', 'create', $null, [
+
+        return $registration_event->createAPI3Success('RemoteParticipant', 'create', 1, [
             'event_id'           => $participant['event_id'],
             'participant_id'     => $participant['id'],
             'participant_role'   => $participant['participant_role'],

@@ -74,7 +74,7 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
         // just make sure we have the contact
         if (!$validationEvent->getContactID() && !$validationEvent->getParticipantID()) {
             $l10n = $validationEvent->getLocalisation();
-            $validationEvent->addError('remote_contact_id', $l10n->localise("User must be identified to use one-click registration"));
+            $validationEvent->addValidationError('remote_contact_id', $l10n->localise("User must be identified to use one-click registration"));
         }
     }
 

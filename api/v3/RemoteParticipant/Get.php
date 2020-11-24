@@ -64,5 +64,5 @@ function _civicrm_api3_remote_participant_get_spec(&$spec)
 function civicrm_api3_remote_participant_get($params)
 {
     unset($params['check_permissions']);
-    // todo: implement
+    // todo: implement?
 }

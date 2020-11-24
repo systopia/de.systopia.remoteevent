@@ -101,17 +101,6 @@ class CancelEvent extends RemoteEvent
     }
 
     /**
-     * Get a list of all errors
-     *
-     * @param string $error_message
-     *   error message
-     */
-    public function addError($error_message)
-    {
-        $this->error_list[] = $error_message;
-    }
-
-    /**
      * Get the parameters of the original query
      *
      * @return array

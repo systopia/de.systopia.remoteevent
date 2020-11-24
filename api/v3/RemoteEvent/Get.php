@@ -189,5 +189,9 @@ function civicrm_api3_remote_event_get($params)
     }
 
     // return the result
-    return civicrm_api3_create_success($result->getEventData());
+    if ($result->hasErrors()) {
+        return $result->createAPI3Error();
+    } else {
+        return $result->createAPI3Success('RemoteEvent', 'get', $event_list);
+    }
 }
