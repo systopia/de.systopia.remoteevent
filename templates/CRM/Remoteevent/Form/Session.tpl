@@ -12,6 +12,7 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+{crmScope extensionKey='de.systopia.remoteevent'}
 <div class="crm-section">
   <div class="label">{$form.title.label}</div>
   <div class="content">{$form.title.html}</div>
@@ -88,3 +89,4 @@
 <div class="crm-submit-buttons">
 {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
+{/crmScope}

@@ -2,18 +2,14 @@
 # This file is distributed under the same license as the CiviCRM package.
 # If you contribute heavily to a translation and deem your work copyrightable,
 # make sure you license it to CiviCRM LLC under Academic Free License 3.0.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-11-24 11:01+0100\n"
+"POT-Creation-Date: 2020-11-24 12:00+0100\n"
 "Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"X-Generator: Poedit 2.0.6\n"
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/UI.php
 msgid "Sessions"
@@ -34,11 +30,23 @@ msgid ""
 msgstr ""
 
 #: CRM/Remoteevent/EventSessions.php
-msgid "Workshops - Day %1"
+msgid "Workshops"
 msgstr ""
 
 #: CRM/Remoteevent/EventSessions.php
-msgid "Workshops"
+msgid "Workshops - Day %1 - %2"
+msgstr ""
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Workshops - %1"
+msgstr ""
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Workshops - Day %1"
+msgstr ""
+
+#: CRM/Remoteevent/EventSessions.php resources/remote_session_description.tpl
+msgid "Details"
 msgstr ""
 
 #: CRM/Remoteevent/Form/EventLocation.php
@@ -555,10 +563,6 @@ msgstr ""
 msgid "RemoteContactID is invalid"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
-msgid "Validation Failed"
-msgstr ""
-
 #: api/v3/RemoteParticipant/Validate.php
 msgid "Context '%1' not implemented."
 msgstr ""
@@ -600,7 +604,7 @@ msgid "RemoteEventRegistration: cancel"
 msgstr ""
 
 #: resources/remote_session_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl from localise function
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
 msgid "Title"
 msgstr ""
 
@@ -626,8 +630,20 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: resources/remote_session_description.tpl from localise function
-msgid "Details"
+#: templates/CRM/Remoteevent/Form/EventLocation.hlp
+msgid ""
+"This element defined may be displayed by your remote system during "
+"registration process. It may also be used in confirmation mails. How it is "
+"used may differ on your implementation."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/EventLocation.tpl
+msgid ""
+"CiviCRM contacts of the type event location may be selected here. Your "
+"remote system may display their information (Display Name, Address, Geodata) "
+"as well as the Additional Information for this Event during registration "
+"process. The information may also be used in confirmation mails. How it "
+"isused may differ on your implementation."
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
@@ -644,6 +660,89 @@ msgstr ""
 
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 msgid "Actions"
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If you tick this box, participants may cancel or change their own "
+"registration. Links for changing or canceling a registration may be included "
+"in your event confirmation mail."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Number of hours before the start of the event that a participant can edit or "
+"cancel it's registration."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If you tick this box, registrations will be assigned the \"Awaiting approval"
+"\" status and you will need to manually review and approve each "
+"registration. Depending on your remote system's settings and/or your "
+"confirmation mail settings, registrants may be informed about the pending "
+"approval as well."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "This registration profile will be shown by default."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Additional registration profiles that may be used to register for this "
+"event. You will need to enable at least your default profile. You will have "
+"to enable the One-Click-Profile in order ro allow contacts to respond to an "
+"event invitation (feature provided by separate Event Invitations Extension)."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If checked an alternative approach to handle event locations will be used "
+"and CiviCRM's default tab will be replaced with a custom one. Please refer "
+"to documentation for more information."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"All text elements defined in this area may be displayed by your remote "
+"system during registration process. They may also be used in confirmation "
+"mails. How they are used may differ on your implementation."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If you enter any information in this area, participants will be displayed "
+"and need to confirm these Generel Terms and Conditions when registering."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Can be displayed as an introduction of your registration form."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Can be displayed at the bottom of your registration form close to the submit "
+"bottom."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Can be displayed as the title of your confirmation page."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Element / message that can be displayed on top of your confirmation page."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Can be displayed at the bottom of your confirmation page close to the submit "
+"bottom."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Element / message that can be displayed on top of your thank you page."
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
@@ -674,141 +773,4 @@ msgstr ""
 msgid ""
 "It is strongly recommended, that the chosen profile has the \"Match contacts "
 "by contact ID\" option enabled. This way you can avoid creating duplicates."
-msgstr ""
-
-#: from localise function
-msgid "City"
-msgstr ""
-
-#: from localise function
-msgid "Confirm Invitation"
-msgstr ""
-
-#: from localise function
-msgid "Confirm"
-msgstr ""
-
-#: from localise function
-msgid "Contact Address"
-msgstr ""
-
-#: from localise function
-msgid "Contact Data"
-msgstr ""
-
-#: from localise function
-msgid "Country"
-msgstr ""
-
-#: from localise function
-msgid "Decline"
-msgstr ""
-
-#: from localise function
-msgid "Do you accept the invitation?"
-msgstr ""
-
-#: from localise function
-msgid "Email"
-msgstr ""
-
-#: from localise function
-msgid "First Name"
-msgstr ""
-
-#: from localise function
-msgid "General Terms and Conditions"
-msgstr ""
-
-#: from localise function
-msgid "I accept the following terms and conditions"
-msgstr ""
-
-#: from localise function
-msgid "Invalid Value"
-msgstr ""
-
-#: from localise function
-msgid "Last Name"
-msgstr ""
-
-#: from localise function
-msgid "Participant's city"
-msgstr ""
-
-#: from localise function
-msgid "Participant's country"
-msgstr ""
-
-#: from localise function
-msgid "Participant's email address"
-msgstr ""
-
-#: from localise function
-msgid "Participant's First Name"
-msgstr ""
-
-#: from localise function
-msgid "Participant's Formal Title"
-msgstr ""
-
-#: from localise function
-msgid "Participant's Last Name"
-msgstr ""
-
-#: from localise function
-msgid "Participant's Phone Number"
-msgstr ""
-
-#: from localise function
-msgid "Participant's postal code"
-msgstr ""
-
-#: from localise function
-msgid "Participant's Prefix"
-msgstr ""
-
-#: from localise function
-msgid "Participant's street and house number"
-msgstr ""
-
-#: from localise function
-msgid "Participant's supplemental address"
-msgstr ""
-
-#: from localise function
-msgid "Phone Number"
-msgstr ""
-
-#: from localise function
-msgid "Postal Code"
-msgstr ""
-
-#: from localise function
-msgid "Prefix"
-msgstr ""
-
-#: from localise function
-msgid "Required"
-msgstr ""
-
-#: from localise function
-msgid "Street Address"
-msgstr ""
-
-#: from localise function
-msgid "Supplemental Address 2"
-msgstr ""
-
-#: from localise function
-msgid "Supplemental Address"
-msgstr ""
-
-#: from localise function
-msgid "User must be identified to use one-click registration"
-msgstr ""
-
-#: from localise function
-msgid ""
-"You have to accept the terms and conditions to participate in this event"
 msgstr ""

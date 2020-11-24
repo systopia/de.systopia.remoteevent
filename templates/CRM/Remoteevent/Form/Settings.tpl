@@ -12,6 +12,7 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+{crmScope extensionKey='de.systopia.remoteevent'}
 <div class="crm-block crm-form-block crm-event-manage-eventinfo-form-block">
 
   <div class="crm-section">
@@ -64,3 +65,4 @@
   </div>
 
 </div>
+{/crmScope}

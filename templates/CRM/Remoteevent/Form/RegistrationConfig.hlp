@@ -1,0 +1,82 @@
+{*-------------------------------------------------------+
+| SYSTOPIA Remote Event Extension                        |
+| Copyright (C) 2020 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+{crmScope extensionKey='de.systopia.remoteevent'}
+
+{htxt id='id-allow-selfcancelxfer'}
+  <p>{ts}If you tick this box, participants may cancel or change their own registration. Links for changing or canceling a registration may be included in your event confirmation mail.{/ts}</p>
+{/htxt}
+
+{htxt id='id-allow-selfcancelxfer-time'}
+  <p>{ts}Number of hours before the start of the event that a participant can edit or cancel it's registration.{/ts}</p>
+{/htxt}
+
+{htxt id='id-requires-approval'}
+  <p>{ts}If you tick this box, registrations will be assigned the "Awaiting approval" status and you will need to manually review and approve each registration. Depending on your remote system's settings and/or your confirmation mail settings, registrants may be informed about the pending approval as well.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote-registration-default-profile'}
+  <p>{ts}This registration profile will be shown by default.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote-registration-profiles'}
+  <p>{ts}Additional registration profiles that may be used to register for this event. You will need to enable at least your default profile. You will have to enable the One-Click-Profile in order ro allow contacts to respond to an event invitation (feature provided by separate Event Invitations Extension).{/ts}</p>
+{/htxt}
+
+{htxt id='id-use-custom-event-location'}
+  <p>{ts}If checked an alternative approach to handle event locations will be used and CiviCRM's default tab will be replaced with a custom one. Please refer to documentation for more information.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote-registration-texts'}
+  <p>{ts}All text elements defined in this area may be displayed by your remote system during registration process. They may also be used in confirmation mails. How they are used may differ on your implementation.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote-gtac'}
+  <p>{ts}If you enter any information in this area, participants will be displayed and need to confirm these Generel Terms and Conditions when registering.{/ts}</p>
+{/htxt}
+
+{htxt id='id-intro-text'}
+  <p>{ts}Can be displayed as an introduction of your registration form.{/ts}</p>
+{/htxt}
+
+{htxt id='id-footer-text'}
+  <p>{ts}Can be displayed at the bottom of your registration form close to the submit bottom.{/ts}</p>
+{/htxt}
+
+{htxt id='id-confirm-title'}
+  <p>{ts}Can be displayed as the title of your confirmation page.{/ts}</p>
+{/htxt}
+
+{htxt id='id-confirm-text'}
+  <p>{ts}Element / message that can be displayed on top of your confirmation page.{/ts}</p>
+{/htxt}
+
+{htxt id='id-confirm-footer'}
+  <p>{ts}Can be displayed at the bottom of your confirmation page close to the submit bottom.{/ts}</p>
+{/htxt}
+
+{htxt id='id-thankyou-title'}
+  <p>{ts}Can be displayed as the title of your confirmation page.{/ts}</p>
+{/htxt}
+
+{htxt id='id-thankyou-text'}
+  <p>{ts}Element / message that can be displayed on top of your thank you page.{/ts}</p>
+{/htxt}
+
+{htxt id='id-thankyou-footer'}
+  <p>{ts}Can be displayed at the bottom of your registration form close to the submit bottom.{/ts}</p>
+{/htxt}
+
+
+{/crmScope}

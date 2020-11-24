@@ -12,6 +12,7 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+{crmScope extensionKey='de.systopia.remoteevent'}
 <div class="remote-session remote-session-main-container">
 
 <div class="remote-session remote-button-section">
@@ -57,3 +58,4 @@
 {/if}
 {/foreach}
 </div>
+{/crmScope}
