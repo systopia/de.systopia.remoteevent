@@ -797,6 +797,10 @@ msgstr ""
 "Kann im Fußbereich der Bestätigungsseite nahe des „Abschicken-Buttons“ "
 "angezeigt werden."
 
+#: CRM/Remoteevent/EventSessions.php
+msgid "[FULL] "
+msgstr "[AUSGEBUCHT] "
+
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "Element / message that can be displayed on top of your thank you page."
 msgstr "Kann als Überschrift Ihrer Bestätigungsseite verwendet werden."

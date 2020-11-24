@@ -29,12 +29,27 @@ class CRM_Remoteevent_EventSessions
      */
     public static function addSessionFields($get_form_results)
     {
+        $l10n = $get_form_results->getLocalisation();
+        $full_prefix = $l10n->localise("[FULL] ");
+
         $event = $get_form_results->getEvent();
         $session_data = CRM_Remoteevent_BAO_Session::getSessions($event['id'], true, $event['start_date']);
+        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($event['id']);
 
         if (empty($session_data)) {
             // no sessions
             return;
+        }
+
+        // clean up: remove inactive session, add 'full' info
+        foreach (array_keys($session_data) as $session_key) {
+            $session = &$session_data[$session_key];
+            if (empty($session['is_active'])) {
+                unset($session_data[$session_key]);
+            } else {
+                $session['participant_count'] = CRM_Utils_Array::value($session['id'], $participant_counts, 0);
+                $session['is_full'] = ($session['participant_count'] >= $session['max_participants']) ? 1 : 0;
+            }
         }
 
         // sort sessions by day and slot
@@ -110,9 +125,10 @@ class CRM_Remoteevent_EventSessions
                                 'name'                => "day{$day}slot{$slot_id}",
                                 'type'                => 'Radio',
                                 'weight'              => $weight,
-                                'label'               => self::renderSessionLabel($session),
+                                'label'               => self::renderSessionLabel($session, $full_prefix),
                                 'description'         => self::renderSessionDescriptionShort($session),
                                 'parent'              => "day{$day}slot{$slot_id}_group",
+                                'disabled'            => empty($session['is_full']) ? 0 : 1,
                                 'suffix'              => self::renderSessionDescriptionLong($session),
                                 'suffix_display'      => 'dialog',
                                 'suffix_dialog_label' => E::ts("Details"),
@@ -125,9 +141,10 @@ class CRM_Remoteevent_EventSessions
                             'name'                => "session{$session['id']}",
                             'type'                => 'Checkbox',
                             'weight'              => $weight,
-                            'label'               => self::renderSessionLabel($session),
+                            'label'               => self::renderSessionLabel($session, $full_prefix),
                             'description'         => self::renderSessionDescriptionShort($session),
                             'parent'              => "day{$day}_group",
+                            'disabled'            => empty($session['is_full']) ? 0 : 1,
                             'suffix'              => self::renderSessionDescriptionLong($session),
                             'suffix_display'      => 'dialog',
                             'suffix_dialog_label' => E::ts("Details"),
@@ -150,11 +167,12 @@ class CRM_Remoteevent_EventSessions
      * @return string
      *   session label
      */
-    protected static function renderSessionLabel($session)
+    protected static function renderSessionLabel($session, $full_text)
     {
         $start_time = date('H:i', strtotime($session['start_date']));
         $end_time = date('H:i', strtotime($session['end_date']));
-        return "[{$start_time}-{$end_time}] {$session['title']}";
+        $full_marker = empty($session['is_full']) ? '' : $full_text;
+        return "{$full_marker}[{$start_time}-{$end_time}] {$session['title']}";
     }
 
     /**
