@@ -82,7 +82,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $l10n = $validationEvent->getLocalisation();
         foreach ($fields as $field_name => $field_spec) {
             $value = CRM_Utils_Array::value($field_name, $data);
-            if (!empty($field_spec['required']) && $value === null) {
+            if (!empty($field_spec['required']) && ($value === null || $value === '')) {
                 $validationEvent->addValidationError($field_name, $l10n->localise("Required"));
             } else {
                 if (!$this->validateFieldValue($field_spec, $value)) {
