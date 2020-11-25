@@ -25,6 +25,15 @@ use CRM_Remoteevent_ExtensionUtil as E;
 function remoteevent_civicrm_config(&$config)
 {
     _remoteevent_civix_civicrm_config($config);
+
+    // make sure it only runs once
+    static $configured = FALSE;
+    if ($configured) {
+        return;
+    }
+    $configured = TRUE;
+
+    // register events
     $dispatcher = Civi::dispatcher();
 
     // EVENT GETFIELDS
