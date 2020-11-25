@@ -88,10 +88,10 @@ function civicrm_api3_remote_participant_cancel($params)
             return RemoteEvent::createStaticAPI3Error('Invalid Token!');
         } else {
             // load registrations
-            $query = civicrm_api3('Participant', 'get', ['id' => $participant_id]);
+            $query = civicrm_api3('Participant', 'get', ['id' => $participant_id, 'return' => 'event_id']);
             $participants = $query['values'];
             if ($participants) {
-                $event_id = reset($participants)['id'];
+                $event_id = reset($participants)['event_id'];
             }
         }
     }
