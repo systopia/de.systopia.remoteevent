@@ -80,6 +80,10 @@ class CRM_Remoteevent_Registration
                 $participant_data = [];
                 foreach (self::PARTICIPANT_FIELDS as $field_name) {
                     $participant_data[$field_name] = CRM_Utils_Array::value($field_name, $participant_found, '');
+                    // shouldn't be needed
+                    //if (substr($field_name, 0, 12) == 'participant_') {
+                    //    $participant_data[substr($field_name, 12)] = $participant_data[$field_name];
+                    //}
                 }
                 self::$cached_registration_data[$contact_id][] = $participant_data;
             }
