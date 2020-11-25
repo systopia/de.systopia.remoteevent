@@ -32,6 +32,8 @@ class CRM_Remoteevent_Registration
     const BEFORE_PARTICIPANT_CREATION   = self::STAGE2_PARTICIPANT_CREATION + 50;
     const AFTER_PARTICIPANT_CREATION    = self::STAGE2_PARTICIPANT_CREATION - 50;
 
+    const PARTICIPANT_FIELDS = ['contact_id','event_id','id','participant_status_id','participant_role_id'];
+
     /** @var array list of [contact_id -> list of participant data] */
     protected static $cached_registration_data = [];
 
@@ -68,12 +70,17 @@ class CRM_Remoteevent_Registration
                 'contact_id'   => $contact_id,
                 'option.limit' => 0,
                 'sequential'   => 1,
+                'return'       => implode(',', self::PARTICIPANT_FIELDS)
             ];
             if (!empty($event_ids)) {
                 $participant_params['event_id'] = ['IN' => $event_ids];
             }
             $participant_query = civicrm_api3('Participant', 'get', $participant_params);
-            self::$cached_registration_data[$contact_id] = $participant_query['values'];
+            $participant_data = [];
+            foreach (self::PARTICIPANT_FIELDS as $field_name) {
+                $participant_data[$field_name] = CRM_Utils_Array::value($field_name, $participant_query['values'], '');
+            }
+            self::$cached_registration_data[$contact_id] = $participant_data;
         }
     }
 
