@@ -26,82 +26,75 @@ function remoteevent_civicrm_config(&$config)
 {
     _remoteevent_civix_civicrm_config($config);
 
-    // make sure it only runs once
-    static $configured = FALSE;
-    if ($configured) {
-        return;
-    }
-    $configured = TRUE;
-
-    // register events
-    $dispatcher = Civi::dispatcher();
+    // register events (with our own wrapper to avoid duplicate registrations)
+    $dispatcher = new \Civi\RemoteDispatcher();
 
     // EVENT GETFIELDS
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.getfields',
         ['CRM_Remoteevent_EventLocation', 'addFieldSpecs']);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.getfields',
         ['CRM_Remoteevent_EventSpeaker', 'addFieldSpecs']);
 
     // EVENT GET PARAMETERS
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.get.params',
         ['CRM_Remoteevent_RemoteEvent', 'deriveEventID']);
 
     // EVENT GET
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.get.result',
         ['CRM_Remoteevent_EventLocation', 'addLocationData']);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.get.result',
         ['CRM_Remoteevent_EventSpeaker', 'addSpeakerData']);
 
     // EVENT REGISTRATION.GETFORM
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.getform',
             ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.getform',
         ['CRM_Remoteevent_Registration', 'addGtacField']);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.getform',
         ['CRM_Remoteevent_EventSessions', 'addSessionFields']);
 
     // EVENT REGISTRATION.VALIDATE
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.validate',
             ['CRM_Remoteevent_RegistrationProfile', 'validateProfileData']);
 
     // EVENT REGISTRATION.SUBMIT
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_RegistrationProfile', 'addProfileContactData'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'verifyContactNotRegistered'], CRM_Remoteevent_Registration::AFTER_CONTACT_IDENTIFICATION);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'confirmExistingParticipant'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 40);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'determineParticipantStatus'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
 
     // EVENTMESSAGES.TOKENS
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.eventmessages.tokens',
         ['CRM_Remoteevent_RemoteEvent', 'addTokens']
     );
-    $dispatcher->addListener(
+    $dispatcher->addUniqueListener(
         'civi.eventmessages.tokenlist',
         ['CRM_Remoteevent_RemoteEvent', 'listTokens']
     );
