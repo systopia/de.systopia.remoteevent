@@ -616,6 +616,7 @@ class CRM_Remoteevent_Registration
 
         // run create/update
         CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
+        Civi::log()->debug("Participant.create: " . json_encode($participant_data));
         $creation = civicrm_api3('Participant', 'create', $participant_data);
         $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
         CRM_Remoteevent_CustomData::labelCustomFields($participant);
