@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-11-24 12:00+0100\n"
+"POT-Creation-Date: 2020-11-26 11:04+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -714,8 +714,8 @@ msgid ""
 "approval as well."
 msgstr ""
 "Falls aktiviert erhalten Anmeldungen den Status „Bestätigung ausstehend“ und "
-"müssen manuell freigegeben werden. Je nach Einstellung des Systems welches "
-"Ihr Anmeldeformular generiert wobei Ihrer Bestätigungs-E-Mails, können "
+"müssen manuell freigegeben werden. Je nach Einstellung des Systems das Ihr "
+"Anmeldeformular generiert und Ihrer Bestätigungs-E-Mails, können "
 "Teilnehmende über die ausstehende Bestätigung auch informiert werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
@@ -797,13 +797,13 @@ msgstr ""
 "Kann im Fußbereich der Bestätigungsseite nahe des „Abschicken-Buttons“ "
 "angezeigt werden."
 
-#: CRM/Remoteevent/EventSessions.php
-msgid "[FULL] "
-msgstr "[AUSGEBUCHT] "
-
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "Element / message that can be displayed on top of your thank you page."
-msgstr "Kann als Überschrift Ihrer Bestätigungsseite verwendet werden."
+msgstr "Kann als Überschrift Ihrer Dankeschönbereichs verwendet werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Can be displayed at the bottom of your thank you page."
+msgstr "Kann im Fußbereich des Dankeschönbereichs angezeigt werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Registration Restrictions"
@@ -843,6 +843,31 @@ msgid ""
 msgstr ""
 "Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact ID"
 "\" zu aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
+
+#: localisation function
+msgid "I accept the following terms and conditions"
+msgstr "Ich akzeptiere die Teilnahmebedingungen"
+
+#: localisation function
+msgid ""
+"You have to accept the terms and conditions to participate in this event"
+msgstr ""
+"Sie müssen die Teilnahmebedingungen akzeptieren um fortfahren zu können"
+
+#: localisation function
+msgid "Do you accept the invitation?"
+msgstr "Nehmen Sie die Einladung an?"
+
+#: localisation function
+msgid "Confirm Invitation"
+msgstr "Einladung annehmen"
+
+#: localisation function
+msgid "Decline"
+msgstr "Einladung ablehnen"
+
+#~ msgid "[FULL] "
+#~ msgstr "[AUSGEBUCHT] "
 
 #~ msgid "Contact Data"
 #~ msgstr "Stammdaten"
@@ -894,15 +919,6 @@ msgstr ""
 
 #~ msgid "User must be identified to use one-click registration"
 #~ msgstr "Für die One-Click Anmeldung muss der Teilnehmer bekannt sein"
-
-#~ msgid "Decline"
-#~ msgstr "Ablehnen"
-
-#~ msgid "Confirm Invitation"
-#~ msgstr "Einladung Bestätigen"
-
-#~ msgid "Do you accept the invitation?"
-#~ msgstr "Möchten Sie die Einladung bestätigen?"
 
 #~ msgid "Event Invitation"
 #~ msgstr "Einladung"

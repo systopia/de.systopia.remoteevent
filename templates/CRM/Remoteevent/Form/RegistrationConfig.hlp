@@ -75,7 +75,7 @@
 {/htxt}
 
 {htxt id='id-thankyou-footer'}
-  <p>{ts}Can be displayed at the bottom of your registration form close to the submit bottom.{/ts}</p>
+  <p>{ts}Can be displayed at the bottom of your thank you page.{/ts}</p>
 {/htxt}
 
 
