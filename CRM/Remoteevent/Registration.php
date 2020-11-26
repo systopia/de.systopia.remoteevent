@@ -165,6 +165,13 @@ class CRM_Remoteevent_Registration
             return E::ts("Event is not active");
         }
 
+        // event passed?
+        if (!empty($event_data['end_date'])) {
+            if (strtotime($event_data['end_date']) < strtotime('now')) {
+                return E::ts("Event has ended.");
+            }
+        }
+
         // registration within time frame?
         if (!empty($event_data['registration_start_date'])) {
             if (strtotime($event_data['registration_start_date']) > strtotime('now')) {
