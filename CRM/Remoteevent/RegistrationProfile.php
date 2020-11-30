@@ -481,6 +481,47 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
     /**
+     * Will set the default values for the given contact fields
+     *
+     * @param GetCreateParticipantFormEvent $resultsEvent
+     *   the locale to use, defaults to null none. Use 'default' for current
+     *
+     * @param array $contact_fields
+     *   list of contact fields
+     *
+     * @param array $attribute_mapping
+     *   maps the contact fields to the profile fields
+     *
+     */
+    public function addDefaultContactValues(GetCreateParticipantFormEvent $resultsEvent, $contact_fields, $attribute_mapping = [])
+    {
+        $contact_id = $resultsEvent->getContactID();
+        if ($contact_id) {
+            // set contact data
+            try {
+                $contact_data = civicrm_api3('Contact', 'getsingle', [
+                    'contact_id' => $contact_id,
+                    'return'     => implode(',', $contact_fields),
+                ]);
+                foreach ($contact_fields as $contact_field) {
+                    if (isset($attribute_mapping[$contact_field])) {
+                        $profile_field = $attribute_mapping[$contact_field];
+                    } else {
+                        $profile_field = $contact_field;
+                    }
+                    $resultsEvent->setPrefillValue($profile_field, $contact_data[$contact_field]);
+                }
+            } catch (CiviCRM_API3_Exception $ex) {
+                // there is no (unique) primary email
+            }
+        }
+    }
+
+
+    // =============== DATA HELPERS =================
+
+
+    /**
      * Get a localised list of option group values for the field keys
      *
      * @param string|integer $option_group_id
@@ -541,40 +582,34 @@ abstract class CRM_Remoteevent_RegistrationProfile
         return $country_list;
     }
 
+
     /**
-     * Will set the default values for the given contact fields
+     * Get a localised list of (enabled) states/provinces
      *
-     * @param GetCreateParticipantFormEvent $resultsEvent
-     *   the locale to use, defaults to null none. Use 'default' for current
-     *
-     * @param array $contact_fields
-     *   list of contact fields
-     *
-     * @param array $attribute_mapping
-     *   maps the contact fields to the profile fields
-     *
+     * @return array list of key => (localised) label
      */
-    public function addDefaultContactValues(GetCreateParticipantFormEvent $resultsEvent, $contact_fields, $attribute_mapping = [])
+    public function getStateProvinces($locale)
     {
-        $contact_id = $resultsEvent->getContactID();
-        if ($contact_id) {
-            // set contact data
-            try {
-                $contact_data = civicrm_api3('Contact', 'getsingle', [
-                    'contact_id' => $contact_id,
-                    'return'     => implode(',', $contact_fields),
-                ]);
-                foreach ($contact_fields as $contact_field) {
-                    if (isset($attribute_mapping[$contact_field])) {
-                        $profile_field = $attribute_mapping[$contact_field];
-                    } else {
-                        $profile_field = $contact_field;
-                    }
-                    $resultsEvent->setPrefillValue($profile_field, $contact_data[$contact_field]);
-                }
-            } catch (CiviCRM_API3_Exception $ex) {
-                // there is no (unique) primary email
-            }
+        $province_list  = [];
+        $province_query = [
+            'option.limit' => 0,
+            'return'       => 'id,name,country_id',
+        ];
+
+        // apply country limit
+        $province_limit = CRM_Core_BAO_Country::provinceLimit();
+        if (!empty($province_limit)) {
+            $province_query['country_id'] = ['IN' => $province_limit];
         }
+        $provinces = civicrm_api3('StateProvince', 'get', $province_query);
+        $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+        foreach ($provinces['values'] as $province) {
+            $province_key = "{$province['country_id']}-{$province['id']}";
+            $province_list[$province_key] = $l10n->localise($province['name']);
+        }
+
+        return $province_list;
     }
+
+
 }
