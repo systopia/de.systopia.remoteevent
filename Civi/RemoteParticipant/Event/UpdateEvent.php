@@ -31,40 +31,65 @@ class UpdateEvent extends RemoteEvent
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
 
-    /** @var array holds the participant data  */
-    protected $participant;
+    /** @var array holds the current participant data  */
+    protected $participant = null;
 
-    /** @var array holds the contact data  */
-    protected $contact;
+    /** @var array holds the current contact data  */
+    protected $contact = null;
+
+    /** @var array the participant update  */
+    protected $participant_update = [];
+
+    /** @var array the contact update  */
+    protected $contact_update = [];
 
     public function __construct($submission_data)
     {
         $this->submission = $submission_data;
+    }
 
-        // load the current participant
-        $participant_id = $this->getParticipantID();
-        if (empty($participant_id)) {
-            $this->addError(E::ts("Participant not found."));
+    /**
+     * Set the current participant
+     *
+     * @param array $participant_data
+     */
+    public function setParticipant($participant_data)
+    {
+        if ($this->participant === null) {
+            $this->participant = $participant_data;
+            if ($this->participant_id && $this->participant_id != $participant_data['id']) {
+                \Civi::log()->debug("UpdateEvent: Participant ID overruled");
+            }
+            $this->participant_id = $participant_data['id'];
         } else {
-            $this->participant = civicrm_api3('Participant', 'getsingle', ['id' => $participant_id]);
-        }
-
-        // load the contact
-        $contact_id = $this->participant['contact_id'];
-        if (empty($contact_id)) {
-            $this->addError(E::ts("Contact not found."));
-        } else {
-            $this->contact = civicrm_api3('Contact', 'getsingle', ['id' => $participant_id]);
+            $this->addError($this->localise("Participant already loaded."));
         }
     }
 
+    /**
+     * Set the current participant
+     *
+     * @param array $contact_data
+     */
+    public function setContact($contact_data)
+    {
+        if ($this->participant === null) {
+            $this->participant = $contact_data;
+            if ($this->contact_id && $this->contact_id != $contact_data['id']) {
+                \Civi::log()->debug("UpdateEvent: Contact ID overruled");
+            }
+            $this->contact_id = $contact_data['id'];
+        } else {
+            $this->addError($this->localise("Contact already loaded."));
+        }
+    }
     /**
      * Set the participant object
      *
      * @return array $participant
      *    participant data
      */
-    public function &getParticipant()
+    public function getParticipant()
     {
         return $this->participant;
     }
@@ -75,11 +100,58 @@ class UpdateEvent extends RemoteEvent
      * @return array $participant
      *    participant data
      */
-    public function &getContact()
+    public function getContact()
     {
         return $this->contact;
     }
 
+    /**
+     * Get the currently planned updates for
+     *  the contact.
+     * Feel free to add/modify
+     */
+    public function &getContactUpdates()
+    {
+        return $this->contact_update;
+    }
+
+    /**
+     * Add a field that should be updated on the contact
+     *
+     * @param string $field_name
+     *   the contact field to schedule for update
+     *
+     * @param mixed $value
+     *   the requested new value
+     */
+    public function addContactUpdate($field_name, $value)
+    {
+        $this->contact_update[$field_name] = $value;
+    }
+
+    /**
+     * Get the currently planned updates for
+     *  the participant.
+     * Feel free to add/modify
+     */
+    public function &getParticipantUpdates()
+    {
+        return $this->participant_update;
+    }
+
+    /**
+     * Add a field that should be updated on the participant
+     *
+     * @param string $field_name
+     *   the participant field to schedule for update
+     *
+     * @param mixed $value
+     *   the requested new value
+     */
+    public function addParticipantUpdate($field_name, $value)
+    {
+        $this->participant_update[$field_name] = $value;
+    }
 
     public function getQueryParameters()
     {

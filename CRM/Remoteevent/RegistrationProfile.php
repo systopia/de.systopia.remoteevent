@@ -15,7 +15,8 @@
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
-use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
+use Civi\RemoteEvent as RemoteEvent;
+use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 use Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 
@@ -60,11 +61,11 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * Add the default values to the form data, so people using this profile
      *  don't have to enter everything themselves
      *
-     * @param GetCreateParticipantFormEvent $resultsEvent
+     * @param GetParticipantFormEventBase $resultsEvent
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    abstract public function addDefaultValues(GetCreateParticipantFormEvent $resultsEvent);
+    abstract public function addDefaultValues(GetParticipantFormEventBase $resultsEvent);
 
     /**
      * Validate the profile fields individually.
@@ -100,7 +101,56 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Add the profile data to the get_form results
      *
-     * @param GetCreateParticipantFormEvent $get_form_results
+     * @param RemoteEvent $remote_event
+     *      event triggered by the RemoteParticipant.get_form API call
+     *
+     * @return \CRM_Remoteevent_RegistrationProfile
+     *      the profile
+     */
+    public static function getProfile($remote_event)
+    {
+        $params = $remote_event->getQueryParameters();
+        $event  = $remote_event->getEvent();
+
+        // get profile
+        switch ($remote_event->getContext()) {
+            case 'create':
+                if (empty($params['profile'])) {
+                    // use default profile
+                    $params['profile'] = $event['default_profile'];
+                }
+                $allowed_profiles = explode(',', $event['enabled_profiles']);
+                break;
+
+            case 'update':
+                if (empty($params['profile'])) {
+                    // use default profile
+                    $params['profile'] = $event['default_update_profile'];
+                }
+                $allowed_profiles = explode(',', $event['enabled_update_profiles']);
+                break;
+
+            default:
+                $allowed_profiles = [];
+        }
+
+        // check if valid
+        if (!in_array($params['profile'], $allowed_profiles)) {
+            throw new CiviCRM_API3_Exception(
+                E::ts("Profile [%2] cannot be used with RemoteEvent [%1].", [
+                    1 => $event['id'],
+                    2 => $params['profile']])
+            );
+        }
+
+        // simply add the fields from the profile
+        return CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
+    }
+
+    /**
+     * Add the profile data to the get_form results
+     *
+     * @param GetParticipantFormEventBase $get_form_results
      *      event triggered by the RemoteParticipant.get_form API call
      *
      * @return array|null
@@ -108,28 +158,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function addProfileData($get_form_results)
     {
-        $params = $get_form_results->getParams();
-        $event  = $get_form_results->getEvent();
-
-        if (empty($params['profile'])) {
-            // use default profile
-            $params['profile'] = $event['default_profile'];
-        }
-        $allowed_profiles = explode(',', $event['enabled_profiles']);
-        if (!in_array($params['profile'], $allowed_profiles)) {
-            throw new CiviCRM_API3_Exception(
-                E::ts("Profile [%2] cannot be used with RemoteEvent [%1].", [
-                  1 => $params['event_id'],
-                  2 => $params['profile']])
-            );
-        }
-
-        // get locale
-        $locale = CRM_Utils_Array::value('locale', $params, CRM_Core_I18n::getLocale());
-
         // simply add the fields from the profile
-        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
-        $get_form_results->addFields($profile->getFields($locale));
+        $profile = self::getProfile($get_form_results);
+
+        // add the fields
+        $locale = $get_form_results->getLocale();
+        $fields = $profile->getFields($locale);
+        $get_form_results->addFields($fields);
 
         // add default values
         $profile->addDefaultValues($get_form_results);
@@ -152,22 +187,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function validateProfileData($validationEvent)
     {
-        $event =  $validationEvent->getEvent();
-        $params = $validationEvent->getSubmission();
-
-        // check the profile
-        if (empty($params['profile'])) {
-            // use default profile
-            $params['profile'] = $event['default_profile'];
-        }
-        $allowed_profiles = explode(',', $event['enabled_profiles']);
-        if (!in_array($params['profile'], $allowed_profiles)) {
-            $validationEvent->addError(E::ts("Profile %1 is not available for submission"));
-            return;
-        }
-
         // simply add the fields from the profile
-        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
+        $profile = self::getProfile($validationEvent);
 
         // run the validation
         $profile->validateSubmission($validationEvent);
@@ -257,7 +278,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
             unset($event['event_remote_registration.remote_registration_default_profile']);
         }
 
-        // enabled profiles
+        // set enabled profiles
         $enabled_profiles      = $event['event_remote_registration.remote_registration_profiles'];
         $enabled_profile_names = [];
         if (is_array($enabled_profiles)) {
@@ -269,6 +290,31 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
         $event['enabled_profiles'] = implode(',', $enabled_profile_names);
         unset($event['event_remote_registration.remote_registration_profiles']);
+
+        // set default UPDATE profile
+        if (isset($event['event_remote_registration.remote_registration_default_update_profile'])) {
+            $default_profile_id = (int)$event['event_remote_registration.remote_registration_default_update_profile'];
+            if (isset($profiles[$default_profile_id])) {
+                $event['default_update_profile'] = $profiles[$default_profile_id];
+            } else {
+                $event['default_update_profile'] = '';
+            }
+            unset($event['event_remote_registration.remote_registration_default_update_profile']);
+        }
+
+        // set enabled UPDATE profiles
+        $enabled_profiles      = $event['event_remote_registration.remote_registration_update_profiles'];
+        $enabled_profile_names = [];
+        if (is_array($enabled_profiles)) {
+            foreach ($enabled_profiles as $profile_id) {
+                if (isset($profiles[$profile_id])) {
+                    $enabled_profile_names[] = $profiles[$profile_id];
+                }
+            }
+        }
+        $event['enabled_update_profiles'] = implode(',', $enabled_profile_names);
+        unset($event['event_remote_registration.remote_registration_update_profiles']);
+
 
         // also map remote_registration_enabled
         $event['remote_registration_enabled'] = $event['event_remote_registration.remote_registration_enabled'];
@@ -483,7 +529,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Will set the default values for the given contact fields
      *
-     * @param GetCreateParticipantFormEvent $resultsEvent
+     * @param GetParticipantFormEventBase $resultsEvent
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      * @param array $contact_fields
@@ -493,7 +539,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *   maps the contact fields to the profile fields
      *
      */
-    public function addDefaultContactValues(GetCreateParticipantFormEvent $resultsEvent, $contact_fields, $attribute_mapping = [])
+    public function addDefaultContactValues(GetParticipantFormEventBase $resultsEvent, $contact_fields, $attribute_mapping = [])
     {
         $contact_id = $resultsEvent->getContactID();
         if ($contact_id) {

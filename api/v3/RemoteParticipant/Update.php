@@ -28,7 +28,7 @@ function _civicrm_api3_remote_participant_update_spec(&$spec)
 {
     $spec['event_id']          = [
         'name'         => 'event_id',
-        'api.required' => 1,
+        'api.required' => 0,
         'title'        => E::ts('Event ID'),
         'description'  => E::ts('Internal ID of the event the registration form is needed for'),
     ];
@@ -76,6 +76,7 @@ function civicrm_api3_remote_participant_update($params)
 
     // first: validate (again)
     try {
+        $params['context'] = 'upgrade';
         $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);
     } catch (CiviCRM_API3_Exception $ex) {
         $errors = $ex->getExtraParams()['values'];

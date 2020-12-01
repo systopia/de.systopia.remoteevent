@@ -74,15 +74,17 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     {
         // prepare event
         $event_data = [
-            'title'                                                         => "Event " . microtime(),
-            'event_type_id'                                                 => 1,
-            'start_date'                                                    => date('Y-m-d', strtotime('tomorrow')),
-            'default_role_id'                                               => 1,
-            'is_active'                                                     => 1,
-            'event_remote_registration.remote_registration_enabled'         => 1,
-            'event_remote_registration.remote_disable_civicrm_registration' => 1,
-            'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-            'event_remote_registration.remote_registration_profiles'        => ['Standard1'],
+            'title'                                                                => "Event " . microtime(),
+            'event_type_id'                                                        => 1,
+            'start_date'                                                           => date('Y-m-d', strtotime('tomorrow')),
+            'default_role_id'                                                      => 1,
+            'is_active'                                                            => 1,
+            'event_remote_registration.remote_registration_enabled'                => 1,
+            'event_remote_registration.remote_disable_civicrm_registration'        => 1,
+            'event_remote_registration.remote_registration_default_profile'        => 'Standard1',
+            'event_remote_registration.remote_registration_profiles'               => ['Standard1'],
+            'event_remote_registration.remote_registration_default_update_profile' => 'Standard1',
+            'event_remote_registration.remote_registration_update_profiles'        => ['Standard1'],
         ];
         foreach ($event_details as $key => $value) {
             $event_data[$key] = $value;
@@ -139,6 +141,19 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         }
 
         return $this->callRemoteEventAPI('RemoteParticipant', 'create', $participant_data);
+    }
+
+    /**
+     * Register the given contact to the given event
+     *
+     * @param integer $participant_id
+     * @param array $submission
+     */
+    public function updateRegistration($participant_id, $submission = [])
+    {
+        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'update');
+        $submission['token'] = $token;
+        return $this->callRemoteEventAPI('RemoteParticipant', 'update', $submission);
     }
 
     /**

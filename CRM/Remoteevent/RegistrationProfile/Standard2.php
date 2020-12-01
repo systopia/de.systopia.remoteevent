@@ -14,7 +14,7 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 
 /**
  * Implements profile 'Standard2': Email, prefix, title, first and last name
@@ -108,11 +108,11 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
      * Add the default values to the form data, so people using this profile
      *  don't have to enter everything themselves
      *
-     * @param GetCreateParticipantFormEvent $resultsEvent
+     * @param GetParticipantFormEventBase $resultsEvent
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    public function addDefaultValues(GetCreateParticipantFormEvent $resultsEvent)
+    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
     {
         $this->addDefaultContactValues($resultsEvent, ['prefix_id', 'email', 'formal_title', 'first_name', 'last_name']);
     }

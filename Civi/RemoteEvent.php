@@ -58,6 +58,14 @@ abstract class RemoteEvent extends Event
     public abstract function getQueryParameters();
 
     /**
+     * Get the context of this validation:
+     * 'create', 'update', 'cancel'
+     */
+    public function getContext(){
+        return \CRM_Utils_Array::value('context', $this->getQueryParameters(), '');
+    }
+
+    /**
      * Add a debug message to the event, so it's easier to find out what happened
      *
      * @param string $message
@@ -187,6 +195,22 @@ abstract class RemoteEvent extends Event
     }
 
     /**
+     * Get the given event data
+     *
+     * @return array
+     *   event data
+     */
+    public function getEvent()
+    {
+        $event_id = $this->getEventID();
+        if ($event_id) {
+            return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get the contact ID if a valid remote_contact_id is involved with this event
      *
      * Warning: this function is cached
@@ -211,6 +235,19 @@ abstract class RemoteEvent extends Event
     }
 
     /**
+     * Get the currently relevant locale
+     */
+    public function getLocale()
+    {
+        $data = $this->getQueryParameters();
+        if (empty($data['locale'])) {
+            return 'default';
+        } else {
+            return $data['locale'];
+        }
+    }
+
+    /**
      * Get the currently used locale
      *
      * @return \CRM_Remoteevent_Localisation
@@ -224,6 +261,20 @@ abstract class RemoteEvent extends Event
         } else {
             return \CRM_Remoteevent_Localisation::getLocalisation($data['locale']);
         }
+    }
+
+    /**
+     * Localise the string with the currently active localisation
+     *
+     * @param string $string
+     *    string to be localised
+     *
+     * @return string
+     *    localised string
+     */
+    public function localise($string)
+    {
+        return $this->getLocalisation()->localise($string);
     }
 
     // ERROR/WARNING/STATUS MESSAGES
