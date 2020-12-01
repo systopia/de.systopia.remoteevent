@@ -18,7 +18,7 @@ use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 use \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
 
 /**
- * Class to coordinate event registrations (RemoteParticipant)
+ * Class to execute event registrations (RemoteParticipant.create)
  */
 class CRM_Remoteevent_Registration
 {

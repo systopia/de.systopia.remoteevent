@@ -75,6 +75,22 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             ['class' => 'crm-select2', 'multiple' => 'multiple']
         );
         $this->add(
+            'select',
+            'remote_registration_default_update_profile',
+            E::ts("Default Registration Profile for Updates"),
+            $available_registration_profiles,
+            false,
+            ['class' => 'crm-select2']
+        );
+        $this->add(
+            'select',
+            'remote_registration_update_profiles',
+            E::ts("Allowed Registration Profiles for Updates"),
+            $available_registration_profiles,
+            false,
+            ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+        $this->add(
             'checkbox',
             'remote_use_custom_event_location',
             E::ts("Use Custom Event Location?")

@@ -89,6 +89,29 @@ function remoteevent_civicrm_config(&$config)
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
 
+    // EVENT REGISTRATION.UPDATE
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_RegistrationProfile', 'addProfileContactData'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_Registration', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_Registration', 'verifyContactNotRegistered'], CRM_Remoteevent_Registration::AFTER_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_Registration', 'confirmExistingParticipant'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 40);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_Registration', 'determineParticipantStatus'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
+
     // EVENTMESSAGES.TOKENS
     $dispatcher->addUniqueListener(
         'civi.eventmessages.tokens',

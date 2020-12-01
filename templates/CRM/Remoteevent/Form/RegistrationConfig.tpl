@@ -47,10 +47,19 @@
       <div class="content">{$form.remote_registration_default_profile.html}</div>
       <div class="clear"></div>
     </div>
-
     <div class="crm-section">
       <div class="label">{$form.remote_registration_profiles.label}&nbsp;{help id="id-remote-registration-profiles" title=$form.remote_registration_profiles.label}</div>
       <div class="content">{$form.remote_registration_profiles.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_default_update_profile.label}&nbsp;{help id="id-remote-registration-default-update-profile" title=$form.remote_registration_default_update_profile.label}</div>
+      <div class="content">{$form.remote_registration_default_update_profile.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_update_profiles.label}&nbsp;{help id="id-remote-registration-update-profiles" title=$form.remote_registration_update_profiles.label}</div>
+      <div class="content">{$form.remote_registration_update_profiles.html}</div>
       <div class="clear"></div>
     </div>
   </div>

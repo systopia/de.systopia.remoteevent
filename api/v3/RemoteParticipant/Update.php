@@ -15,7 +15,8 @@
 
 require_once 'remoteevent.civix.php';
 
-use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
+use Civi\RemoteEvent;
+use \Civi\RemoteParticipant\Event\UpdateEvent as UpdateEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -72,30 +73,43 @@ function _civicrm_api3_remote_participant_update_spec(&$spec)
 function civicrm_api3_remote_participant_update($params)
 {
     unset($params['check_permissions']);
-    $validation = new ValidateEvent($params);
 
-    // identify a given contact ID
-    $contact_id = null;
-    if (!empty($params['remote_contact_id'])) {
-        $contact_id = CRM_Remotetools_Contact::getByKey($params['remote_contact_id']);
-        if (!$contact_id) {
-            $validation->addError(E::ts("RemoteContactID is invalid"));
-        }
+    // first: validate (again)
+    try {
+        $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);
+    } catch (CiviCRM_API3_Exception $ex) {
+        $errors = $ex->getExtraParams()['values'];
+        return RemoteEvent::createStaticAPI3Error(reset($errors), ['errors' => $errors]);
     }
 
-    // first: check if registration is enabled
-    $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($params['event_id'], $contact_id);
-    if ($cant_register_reason) {
-        $validation->addError($cant_register_reason);
-    } else {
-        // dispatch the validation event for other validations to weigh in
-        Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
+    // create a transaction
+    $update_transaction = new CRM_Core_Transaction();
+
+    // dispatch to the various handlers
+    $update_event = new UpdateEvent($params);
+    try {
+        Civi::dispatcher()->dispatch('civi.remoteevent.registration.update', $update_event);
+    } catch (Exception $ex) {
+        $update_event->addError($ex->getMessage());
     }
 
-    // return the result
-    if ($validation->hasErrors()) {
-        return $validation->createAPI3Error();
+    // evaluate the result
+    if ($update_event->hasErrors()) {
+        // something went wrong...
+        $update_transaction->rollback();
+        return $update_event->createAPI3Error();
+
     } else {
-        return $validation->createAPI3Success('RemoteEvent', 'get');
+        $update_transaction->commit();
+        $participant = civicrm_api3('Participant', 'getsingle', ['id' => $update_event->getParticipantID()]);
+        $null = null;
+
+        return $update_event->createAPI3Success('RemoteParticipant', 'create', 1, [
+            'event_id'           => $participant['event_id'],
+            'participant_id'     => $participant['id'],
+            'participant_role'   => $participant['participant_role'],
+            'participant_status' => $participant['participant_status'],
+            'participant_class'  => CRM_Remoteevent_Registration::getParticipantStatusClass($participant['participant_status_id'])
+        ]);
     }
 }
