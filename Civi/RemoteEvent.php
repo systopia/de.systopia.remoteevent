@@ -36,6 +36,9 @@ abstract class RemoteEvent extends Event
     /** @var integer event ID */
     protected $event_id = null;
 
+    /** @var array context data */
+    protected $context_data = [];
+
     /** @var array accepted usage for tokes */
     protected $token_usages = ['invite'];
 
@@ -62,7 +65,7 @@ abstract class RemoteEvent extends Event
      * 'create', 'update', 'cancel'
      */
     public function getContext(){
-        return \CRM_Utils_Array::value('context', $this->getQueryParameters(), '');
+        return \CRM_Utils_Array::value('context', $this->getQueryParameters(), 'create');
     }
 
     /**
@@ -276,6 +279,36 @@ abstract class RemoteEvent extends Event
     {
         return $this->getLocalisation()->localise($string);
     }
+
+    /**
+     * Allows the event users to add some arbitrary context data
+     *
+     * @param string $key
+     *   key for the context data
+     * @param mixed $value
+     *   any type of data
+     */
+    public function setContextData($key, $value)
+    {
+        $this->context_data[$key] = $value;
+    }
+
+    /**
+     * Get the context data for the given key
+     *
+     * @param string $key
+     *   key for the context data
+     * @param mixed $default
+     *   any type of data that is returned, if no context data is set
+     *
+     * @return mixed
+     *   the context data stored with the key, or the default
+     */
+    public function getContextData($key, $default = null)
+    {
+        return \CRM_Utils_Array::value($key, $this->context_data, $default);
+    }
+
 
     // ERROR/WARNING/STATUS MESSAGES
 

@@ -149,10 +149,13 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
      * @param integer $participant_id
      * @param array $submission
      */
-    public function updateRegistration($participant_id, $submission = [])
+    public function updateRegistration($submission)
     {
-        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'update');
-        $submission['token'] = $token;
+        if (empty($submission['token']) && !empty($submission['participant_id'])) {
+            $token = CRM_Remotetools_SecureToken::generateEntityToken(
+                'Participant', $submission['participant_id'], null, 'update');
+            $submission['token'] = $token;
+        }
         return $this->callRemoteEventAPI('RemoteParticipant', 'update', $submission);
     }
 
@@ -169,13 +172,18 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         try {
             $result = civicrm_api3($entity, $action, $data);
             $result['is_error'] = 0;
+            $this->assertArrayHasKey('status_messages', $result, "API Call {$entity}.{$action} doesn't return 'status_messages'");
             $status_messages = $result['status_messages'];
         } catch (CiviCRM_API3_Exception $ex) {
             $result = [
                 'is_error'      => 1,
                 'error_message' => $ex->getMessage()
             ];
-            $status_messages = $ex->getExtraParams()['status_messages'];
+            if (isset($ex->getExtraParams()['status_messages'])) {
+                $status_messages = $ex->getExtraParams()['status_messages'];
+            } else {
+                $status_messages = [];
+            }
         }
 
         // extract messages

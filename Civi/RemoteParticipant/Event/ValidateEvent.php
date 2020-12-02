@@ -34,18 +34,7 @@ class ValidateEvent extends RemoteEvent
     {
         $this->submission  = $submission_data;
         $this->error_list = $error_list;
-        $this->token_usages = ['invite'];
-    }
-
-    /**
-     * Get the event ID
-     *
-     * @return integer
-     *    event ID
-     */
-    public function getEventID()
-    {
-        return (int) $this->submission['event_id'];
+        $this->token_usages = ['invite', 'update'];
     }
 
     /**

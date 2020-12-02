@@ -76,10 +76,14 @@ function civicrm_api3_remote_participant_update($params)
 
     // first: validate (again)
     try {
-        $params['context'] = 'upgrade';
+        $params['context'] = 'update';
         $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);
     } catch (CiviCRM_API3_Exception $ex) {
-        $errors = $ex->getExtraParams()['values'];
+        if (isset($ex->getExtraParams()['values'])) {
+            $errors = $ex->getExtraParams()['values'];
+        } else {
+            $errors[] = $ex->getMessage();
+        }
         return RemoteEvent::createStaticAPI3Error(reset($errors), ['errors' => $errors]);
     }
 
@@ -105,7 +109,7 @@ function civicrm_api3_remote_participant_update($params)
         $participant = civicrm_api3('Participant', 'getsingle', ['id' => $update_event->getParticipantID()]);
         $null = null;
 
-        return $update_event->createAPI3Success('RemoteParticipant', 'create', 1, [
+        return $update_event->createAPI3Success('RemoteParticipant', 'update', 1, [
             'event_id'           => $participant['event_id'],
             'participant_id'     => $participant['id'],
             'participant_role'   => $participant['participant_role'],

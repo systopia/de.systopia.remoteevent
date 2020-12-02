@@ -93,6 +93,27 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
+    /**
+     * This function will tell you which entity/entities the given field
+     *   will relate to. It would mostly be Contact or Participant (or both)
+     *
+     * @param string $field_key
+     *   the field key as used by this profile
+     *
+     * @return array
+     *   list of entities
+     */
+    public function getFieldEntities($field_key)
+    {
+        // for now, we assume everything is contact, unless it's custom,
+        //   in which case we don't know - or more precisely are too lazy to find out.
+        if (preg_match('/^custom_/', $field_key)
+            || preg_match('/^\w+[.]\w+$/', $field_key)) {
+            return ['Contact', 'Participant'];
+        } else {
+            return ['Contact'];
+        }
+    }
 
     /*************************************************************
      *                HELPER / INFRASTRUCTURE                   **
@@ -339,12 +360,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     public static function addProfileContactData($registration)
     {
         // get the profile (has already been validated)
-        $profile_name = $registration->getSubmittedValue('profile');
-        if (empty($profile_name)) {
-            // use default profile
-            $profile_name = $registration->getEvent()['default_profile'];
-        }
-        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($profile_name);
+        $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registration);
 
         // then simply add all fields from the profile
         $contact_data = $registration->getContactData();

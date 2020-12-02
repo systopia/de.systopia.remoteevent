@@ -25,7 +25,7 @@ use Civi\RemoteEvent;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.submit API call, so the various stages can be applied
  */
-class CancelEvent extends RemoteEvent
+class CancelEvent extends ChangingEvent
 {
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;

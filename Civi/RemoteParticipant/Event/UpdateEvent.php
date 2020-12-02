@@ -26,7 +26,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.update API call, so the various stages can be applied
  */
-class UpdateEvent extends RemoteEvent
+class UpdateEvent extends ChangingEvent
 {
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
@@ -46,6 +46,7 @@ class UpdateEvent extends RemoteEvent
     public function __construct($submission_data)
     {
         $this->submission = $submission_data;
+        $this->token_usages = ['update'];
     }
 
     /**
@@ -73,8 +74,8 @@ class UpdateEvent extends RemoteEvent
      */
     public function setContact($contact_data)
     {
-        if ($this->participant === null) {
-            $this->participant = $contact_data;
+        if ($this->contact === null) {
+            $this->contact = $contact_data;
             if ($this->contact_id && $this->contact_id != $contact_data['id']) {
                 \Civi::log()->debug("UpdateEvent: Contact ID overruled");
             }

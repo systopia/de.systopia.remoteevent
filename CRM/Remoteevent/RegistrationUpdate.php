@@ -71,6 +71,40 @@ class CRM_Remoteevent_RegistrationUpdate
     }
 
     /**
+     * Apply all profile data as update
+     *
+     * @param UpdateEvent $registration_update
+     *   registration update event
+     */
+    public static function addProfileData($registration_update)
+    {
+        // get the profile (has already been validated)
+        $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registration_update);
+
+        $submission_data = $registration_update->getQueryParameters();
+        foreach ($profile->getFields() as $field_key => $field_spec) {
+            $related_entities = $profile->getFieldEntities($field_key);
+            if (isset($submission_data[$field_key])) {
+                foreach ($related_entities as $entity) {
+                    switch ($entity) {
+                        case 'Contact':
+                            $registration_update->addContactUpdate($field_key, $submission_data[$field_key]);
+                            break;
+
+                        case 'Participant':
+                            $registration_update->addParticipantUpdate($field_key, $submission_data[$field_key]);
+                            break;
+
+                        default:
+                            // no action
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Apply any contact updates
      *
      * @param UpdateEvent $registration_update
@@ -85,11 +119,24 @@ class CRM_Remoteevent_RegistrationUpdate
 
         // check if there is any updates
         $contact_updates = $registration_update->getContactUpdates();
-        if (!empty($contact_updates)) {
+        if (!empty($contact_updates) && !$registration_update->isContactUpdated()) {
             $contact_updates['id'] = $registration_update->getContactID();
             CRM_Remoteevent_CustomData::resolveCustomFields($contact_updates);
             try {
-                civicrm_api3('Contact', 'create', $contact_updates);
+                $xcm_profile = $registration_update->getXcmUpdateProfile();
+                if ($xcm_profile) {
+                    // if there is an xcm profile -> use that
+                    // in this case we use the XCM with the update profile with the ID set
+                    $contact_identification['xcm_profile'] = $xcm_profile;
+                    civicrm_api3('Contact', 'getorcreate', $contact_updates);
+                    $registration_update->setContactUpdated();
+
+                } else {
+                    // else just write to the DB
+                    civicrm_api3('Contact', 'create', $contact_updates);
+                    $registration_update->setContactUpdated();
+
+                }
             } catch (CiviCRM_API3_Exception $ex) {
                 $l10n = $registration_update->getLocalisation();
                 $registration_update->addError($l10n->localise("Couldn't update contact: %1", [1 => $l10n->localise($ex->getMessage())]));
@@ -112,11 +159,12 @@ class CRM_Remoteevent_RegistrationUpdate
 
         // check if there is any updates
         $participant_updates = $registration_update->getParticipantUpdates();
-        if (!empty($participant_updates)) {
+        if (!empty($participant_updates) && !$registration_update->isParticipantUpdated()) {
             $participant_updates['id'] = $registration_update->getParticipantID();
             CRM_Remoteevent_CustomData::resolveCustomFields($participant_updates);
             try {
                 civicrm_api3('Participant', 'create', $participant_updates);
+                $registration_update->setParticipantUpdated();
             } catch (CiviCRM_API3_Exception $ex) {
                 $l10n = $registration_update->getLocalisation();
                 $registration_update->addError($l10n->localise("Couldn't update participant: %1", [1 => $l10n->localise($ex->getMessage())]));
