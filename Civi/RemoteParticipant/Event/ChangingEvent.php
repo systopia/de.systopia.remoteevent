@@ -180,4 +180,14 @@ abstract class ChangingEvent extends RemoteEvent
         $this->participant_was_updated = true;
     }
 
+    /**
+     * Get the complete submission
+     *
+     * @return array
+     *   submission data
+     */
+    public function getSubmission()
+    {
+        return $this->getQueryParameters();
+    }
 }

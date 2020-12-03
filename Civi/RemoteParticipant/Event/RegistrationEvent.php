@@ -197,17 +197,6 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Get the complete submission
-     *
-     * @return array
-     *   submission data
-     */
-    public function getSubmission()
-    {
-        return $this->submission;
-    }
-
-    /**
      * Get a list of all errors
      *
      * @return array
