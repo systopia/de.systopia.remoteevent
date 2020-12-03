@@ -324,17 +324,21 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
 
         // set enabled UPDATE profiles
-        $enabled_profiles      = $event['event_remote_registration.remote_registration_update_profiles'];
-        $enabled_profile_names = [];
-        if (is_array($enabled_profiles)) {
-            foreach ($enabled_profiles as $profile_id) {
-                if (isset($profiles[$profile_id])) {
-                    $enabled_profile_names[] = $profiles[$profile_id];
+        if (isset($event['event_remote_registration.remote_registration_update_profiles'])) {
+            $enabled_profiles      = $event['event_remote_registration.remote_registration_update_profiles'];
+            $enabled_profile_names = [];
+            if (is_array($enabled_profiles)) {
+                foreach ($enabled_profiles as $profile_id) {
+                    if (isset($profiles[$profile_id])) {
+                        $enabled_profile_names[] = $profiles[$profile_id];
+                    }
                 }
             }
+            $event['enabled_update_profiles'] = implode(',', $enabled_profile_names);
+            unset($event['event_remote_registration.remote_registration_update_profiles']);
+        } else {
+            $event['enabled_update_profiles'] = [];
         }
-        $event['enabled_update_profiles'] = implode(',', $enabled_profile_names);
-        unset($event['event_remote_registration.remote_registration_update_profiles']);
 
 
         // also map remote_registration_enabled
