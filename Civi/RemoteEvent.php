@@ -94,6 +94,7 @@ abstract class RemoteEvent extends Event
     public function getParticipantID()
     {
         if ($this->participant_id === null) {
+            $this->participant_id = 0; // don't look it up again
             $query = $this->getQueryParameters();
             if (!empty($query['token'])) {
                 // there is a token, see if it complies with the known formats
@@ -106,12 +107,12 @@ abstract class RemoteEvent extends Event
                     if ($participant_id) {
                         $this->participant_id = $participant_id;
                         break;
-                    } else {
-                        $this->participant_id = 0; // don't look it up again
                     }
                 }
+            }
 
-                // if the contact is known: check if can find a partipant
+            // if the contact is known: check if can find a participant
+            if (empty($this->participant_id)) {
                 $contact_id = $this->getContactID();
                 if ($contact_id) {
                     // todo: how to select the relevant
