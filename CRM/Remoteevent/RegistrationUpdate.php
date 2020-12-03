@@ -127,7 +127,7 @@ class CRM_Remoteevent_RegistrationUpdate
                 if ($xcm_profile) {
                     // if there is an xcm profile -> use that
                     // in this case we use the XCM with the update profile with the ID set
-                    $contact_identification['xcm_profile'] = $xcm_profile;
+                    $contact_updates['xcm_profile'] = $xcm_profile;
                     civicrm_api3('Contact', 'getorcreate', $contact_updates);
                     $registration_update->setContactUpdated();
 
