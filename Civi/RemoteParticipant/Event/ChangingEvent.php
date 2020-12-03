@@ -32,6 +32,77 @@ abstract class ChangingEvent extends RemoteEvent
     protected $xcm_match_profile = 'setting:remote_registration_xcm_profile';
     protected $xcm_update_profile = 'setting:remote_registration_xcm_profile_update';
 
+    /** @var array holds the current participant data  */
+    protected $participant = null;
+
+    /** @var array holds the current contact data  */
+    protected $contact = null;
+
+
+    /**
+     * Get the contact_data object, which is used for
+     *   contact identification / creation
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function &getContact()
+    {
+        return $this->contact;
+    }
+
+    /**
+     * Set the contact_data object, which is used for
+     *   contact identification / creation
+     *
+     * @param array $contact_data
+     *    contact_data data
+     */
+    public function setContact($contact_data)
+    {
+        if ($this->contact === null) {
+            $this->contact = $contact_data;
+            if ($this->contact_id && $this->contact_id != $contact_data['id']) {
+                \Civi::log()->debug("UpdateEvent: Contact ID overruled");
+            }
+            $this->contact_id = $contact_data['id'];
+        } else {
+            $this->addError($this->localise("Contact already loaded."));
+        }
+    }
+
+    /**
+     * Set the participant object
+     *
+     * @return array $participant
+     *    participant data
+     */
+    public function &getParticipant()
+    {
+        return $this->participant;
+    }
+
+    /**
+     * Set the current participant
+     *
+     * @param array $participant_data
+     */
+    public function setParticipant($participant_data)
+    {
+        if ($this->participant === null) {
+            $this->participant = $participant_data;
+            if ($this->participant_id && $this->participant_id != $participant_data['id']) {
+                \Civi::log()->debug("UpdateEvent: Participant ID overruled");
+            }
+            $this->participant_id = $participant_data['id'];
+        } else {
+            $this->addError($this->localise("Participant already loaded."));
+        }
+    }
+
+
+
+
     /**
      * Get the name of the XCM profile to be used
      *   for contact matching/creation

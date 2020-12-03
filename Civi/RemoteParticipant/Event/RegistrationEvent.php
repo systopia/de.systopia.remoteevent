@@ -30,12 +30,6 @@ class RegistrationEvent extends ChangingEvent
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
 
-    /** @var array holds the participant data  */
-    protected $contact_data;
-
-    /** @var array holds the participant data  */
-    protected $participant;
-
     /** @var array holds a list of (minor) errors */
     protected $error_list;
 
@@ -44,7 +38,7 @@ class RegistrationEvent extends ChangingEvent
         $this->submission  = $submission_data;
         $this->contact_id = null;
         $this->participant_id = null;
-        $this->contact_data = [];
+        $this->contact = [];
         $this->error_list = [];
 
         // create participant data based on submission
@@ -93,54 +87,6 @@ class RegistrationEvent extends ChangingEvent
             return (int) $this->participant['id'];
         }
     }
-
-    /**
-     * Set the participant object
-     *
-     * @param array $participant
-     *    participant data
-     */
-    public function setParticipant($participant)
-    {
-        $this->participant_id = $participant['id'];
-        $this->participant = $participant;
-    }
-
-    /**
-     * Set the participant object
-     *
-     * @return array $participant
-     *    participant data
-     */
-    public function &getParticipant()
-    {
-        return $this->participant;
-    }
-
-    /**
-     * Set the contact_data object, which is used for
-     *   contact identification / creation
-     *
-     * @param array $contact_data
-     *    contact_data data
-     */
-    public function setContactData($contact_data)
-    {
-        $this->contact_data = $contact_data;
-    }
-
-    /**
-     * Get the contact_data object, which is used for
-     *   contact identification / creation
-     *
-     * @return array $contact_data
-     *    contact_data data
-     */
-    public function &getContactData()
-    {
-        return $this->contact_data;
-    }
-
 
     /**
      * Set the contact ID
