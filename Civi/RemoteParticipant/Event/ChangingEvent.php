@@ -35,19 +35,36 @@ abstract class ChangingEvent extends RemoteEvent
     /**
      * Get the currently available contact_data
      *
-     * @return array $contact_data
-     *    contact_data data
+     * @return array
+     *    contact data data
      */
-    public abstract  function getContact();
+    public abstract function getContact();
 
     /**
      * Get the contact_data BY REFERENCE, which is used for
      *   contact identification / creation
      *
-     * @return array $contact_data
-     *    contact_data data
+     * @return array
+     *   contact data
      */
-    public abstract  function &getContactData();
+    public abstract function &getContactData();
+
+    /**
+     * Get the currently available participant data
+     *
+     * @return array
+     *    participant data
+     */
+    public abstract function getParticipant();
+
+    /**
+     * Get the participant data BY REFERENCE, which is used for
+     *   registration creation / updates
+     *
+     * @return array
+     *    participant data
+     */
+    public abstract function &getParticipantData();
 
     /**
      * Get the name of the XCM profile to be used

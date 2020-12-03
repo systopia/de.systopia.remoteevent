@@ -107,12 +107,24 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Set the participant object
+     * Get the participant object
      *
      * @return array $participant
      *    participant data
      */
-    public function &getParticipant()
+    public function getParticipant()
+    {
+        return $this->participant;
+    }
+
+    /**
+     * Get the participant data BY REFERENCE, which is used for
+     *   registration creation / updates
+     *
+     * @return array
+     *    participant data
+     */
+    public function &getParticipantData()
     {
         return $this->participant;
     }

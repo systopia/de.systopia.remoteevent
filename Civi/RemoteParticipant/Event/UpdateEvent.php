@@ -84,13 +84,26 @@ class UpdateEvent extends ChangingEvent
             $this->addError($this->localise("Contact already loaded."));
         }
     }
+
     /**
-     * Set the participant object
+     * Get the participant object
      *
      * @return array $participant
      *    participant data
      */
     public function getParticipant()
+    {
+        return $this->participant;
+    }
+
+    /**
+     * Get the participant data by REFERENCE
+     *   for inline editing
+     *
+     * @return array $participant
+     *    participant data
+     */
+    public function &getParticipantData()
     {
         return $this->participant;
     }

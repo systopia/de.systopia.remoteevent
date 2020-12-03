@@ -553,7 +553,7 @@ class CRM_Remoteevent_Registration
             } else {
                 // there is no pre-existing participant, just add to the general to-be-created one
                 if (empty($submission['confirm'])) {
-                    $participant = &$registration->getParticipant();
+                    $participant = &$registration->getParticipantData();
                     $participant['status_id'] = 'Cancelled';
                 }
             }
@@ -581,7 +581,7 @@ class CRM_Remoteevent_Registration
         }
 
         // default status calculation
-        $participant_data = &$registration->getParticipant();
+        $participant_data = &$registration->getParticipantData();
         $event_data = $registration->getEvent();
 
         // check if it registration requires approval
@@ -626,7 +626,7 @@ class CRM_Remoteevent_Registration
         }
 
         // let's look into this
-        $participant_data = &$registration->getParticipant();
+        $participant_data = &$registration->getParticipantData();
 
         if ($registration->getParticipantID()) {
             // this is updating an existing participant
