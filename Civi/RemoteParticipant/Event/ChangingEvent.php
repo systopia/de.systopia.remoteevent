@@ -33,6 +33,23 @@ abstract class ChangingEvent extends RemoteEvent
     protected $xcm_update_profile = 'setting:remote_registration_xcm_profile_update';
 
     /**
+     * Get the currently available contact_data
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public abstract  function getContact();
+
+    /**
+     * Get the contact_data BY REFERENCE, which is used for
+     *   contact identification / creation
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public abstract  function &getContactData();
+
+    /**
      * Get the name of the XCM profile to be used
      *   for contact matching/creation
      *

@@ -141,6 +141,16 @@ class RegistrationEvent extends ChangingEvent
         return $this->contact_data;
     }
 
+    /**
+     * Set the participant object
+     *
+     * @return array $participant
+     *    participant data
+     */
+    public function getContact()
+    {
+        return $this->contact_data;
+    }
 
     /**
      * Set the contact ID

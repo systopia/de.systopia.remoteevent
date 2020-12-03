@@ -58,6 +58,30 @@ class CancelEvent extends ChangingEvent
     }
 
     /**
+     * Get the currently available contact_data
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function getContact() {
+        // todo: implement properly
+        return [];
+    }
+
+    /**
+     * Get the contact_data BY REFERENCE, which is used for
+     *   contact identification / creation
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function &getContactData() {
+        // todo: implement properly
+        $contact_data = [];
+        return $contact_data;
+    }
+
+    /**
      * Get the (editable) list of participants that were are identified by this call
      *
      * @return array

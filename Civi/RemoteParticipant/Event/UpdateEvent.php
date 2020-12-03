@@ -107,6 +107,18 @@ class UpdateEvent extends ChangingEvent
     }
 
     /**
+     * Get the contact_data object, which is used for
+     *   contact identification / creation
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function &getContactData()
+    {
+        return $this->contact;
+    }
+
+    /**
      * Get the currently planned updates for
      *  the contact.
      * Feel free to add/modify
