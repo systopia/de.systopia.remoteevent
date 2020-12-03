@@ -367,14 +367,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registration);
 
         // then simply add all fields from the profile
-        $contact_data = $registration->getContact();
+        $contact_data = $registration->getContactData();
         $submission_data = $registration->getSubmission();
         foreach ($profile->getFields() as $field_key => $field_spec) {
             if (isset($submission_data[$field_key])) {
                 $contact_data[$field_key] = $submission_data[$field_key];
             }
         }
-        $registration->setContact($contact_data);
+        $registration->setContactData($contact_data);
     }
 
 

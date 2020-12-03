@@ -424,7 +424,7 @@ class CRM_Remoteevent_Registration
     public static function createContactXCM($registration)
     {
         // get collected contact data
-        $contact_identification = $registration->getContact();
+        $contact_identification = $registration->getContactData();
 
         // add contact type if it's missing
         if (empty($contact_identification['contact_type'])) {

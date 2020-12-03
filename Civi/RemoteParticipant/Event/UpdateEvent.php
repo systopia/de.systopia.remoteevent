@@ -31,6 +31,12 @@ class UpdateEvent extends ChangingEvent
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
 
+    /** @var array holds the current participant data  */
+    protected $participant = null;
+
+    /** @var array holds the current contact data  */
+    protected $contact = null;
+
     /** @var array the participant update  */
     protected $participant_update = [];
 
@@ -41,6 +47,63 @@ class UpdateEvent extends ChangingEvent
     {
         $this->submission = $submission_data;
         $this->token_usages = ['update'];
+    }
+
+    /**
+     * Set the current participant
+     *
+     * @param array $participant_data
+     */
+    public function setParticipant($participant_data)
+    {
+        if ($this->participant === null) {
+            $this->participant = $participant_data;
+            if ($this->participant_id && $this->participant_id != $participant_data['id']) {
+                \Civi::log()->debug("UpdateEvent: Participant ID overruled");
+            }
+            $this->participant_id = $participant_data['id'];
+        } else {
+            $this->addError($this->localise("Participant already loaded."));
+        }
+    }
+
+    /**
+     * Set the current participant
+     *
+     * @param array $contact_data
+     */
+    public function setContact($contact_data)
+    {
+        if ($this->contact === null) {
+            $this->contact = $contact_data;
+            if ($this->contact_id && $this->contact_id != $contact_data['id']) {
+                \Civi::log()->debug("UpdateEvent: Contact ID overruled");
+            }
+            $this->contact_id = $contact_data['id'];
+        } else {
+            $this->addError($this->localise("Contact already loaded."));
+        }
+    }
+    /**
+     * Set the participant object
+     *
+     * @return array $participant
+     *    participant data
+     */
+    public function getParticipant()
+    {
+        return $this->participant;
+    }
+
+    /**
+     * Set the participant object
+     *
+     * @return array $participant
+     *    participant data
+     */
+    public function getContact()
+    {
+        return $this->contact;
     }
 
     /**
