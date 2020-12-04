@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-11-26 11:04+0100\n"
+"POT-Creation-Date: 2020-12-04 15:03+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -865,6 +865,10 @@ msgstr "Einladung annehmen"
 #: localisation function
 msgid "Decline"
 msgstr "Einladung ablehnen"
+
+#: localisation function
+msgid "General Terms and Conditions"
+msgstr "Anmeldebedingungen"
 
 #~ msgid "[FULL] "
 #~ msgstr "[AUSGEBUCHT] "

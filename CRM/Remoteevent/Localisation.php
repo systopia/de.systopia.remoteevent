@@ -75,7 +75,7 @@ class CRM_Remoteevent_Localisation
             return $string;
         } else {
             // todo: implement
-            return ts($string, $context);
+            return E::ts($string, $context);
         }
     }
 }
