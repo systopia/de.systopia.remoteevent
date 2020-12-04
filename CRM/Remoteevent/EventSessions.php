@@ -177,12 +177,13 @@ class CRM_Remoteevent_EventSessions
 
         // check if this even concerns us:
         $requested_session_ids = self::getSubmittedSessionIDs($validationEvent->getQueryParameters());
-        if (empty($registered_session_ids)) {
+        if (empty($requested_session_ids)) {
             return;
         }
 
         // load the event's sessions
         $sessions = CRM_Remoteevent_BAO_Session::getSessions($event_id);
+        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($event_id); // todo: lazy load?
 
         // load the current
         $registered_session_ids = [];
@@ -191,13 +192,52 @@ class CRM_Remoteevent_EventSessions
             $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($event_id, $participant_id);
         }
 
-        // now check each if booked out
+        // CHECK IF SPACE AVAILABLE IN REQUESTED SESSIONS
         foreach ($requested_session_ids as $requested_session_id) {
             if (in_array($requested_session_id, $registered_session_ids)) {
                 continue; // we don't need to check, if contact already registered there
             }
+
+            $session = $sessions[$requested_session_id];
+            if (!empty($sessions['max_participants'])) {
+                // here we need to check
+                $session_participant_count = CRM_Utils_Array::value($requested_session_id, $participant_counts, 0);
+                if ($session_participant_count >= $sessions['max_participants']) {
+                    $validationEvent->addValidationError("session{$requested_session_id}", E::ts("Session is full"));
+                }
+            }
         }
 
+        // load sessions
+        $sessions = civicrm_api3('Session', 'get', [
+            'id'           => ['IN' => $requested_session_ids],
+            'return'       => 'id,start_date,end_date,slot_id',
+            'option.limit' => 0,
+            'option.sort'  => 'start_date asc',
+            'sequential'   => 1,
+        ])['values'];
+
+        // CHECK IF THERE IS A TIME COLLISION
+        $last_time = null;
+        foreach ($sessions as $session) {
+            if ($last_time && strtotime($session['start_date']) < $last_time) {
+                $validationEvent->addValidationError("session{$session['id']}", E::ts("You can't register for two sessions with overlapping time"));
+            }
+            $last_time = strtotime($session['end_date']);
+        }
+
+        // CHECK IF THERE IS A SLOT COLLISION
+        $occupied_slots = [];
+        foreach ($sessions as $session) {
+            if (!empty($session['slot_id'])) {
+                $slot_id = $session['slot_id'];
+                if (in_array($slot_id, $occupied_slots)) {
+                    $validationEvent->addValidationError("session{$session['id']}", E::ts("You can't register for two sessions in the same slot"));
+                } else {
+                    $occupied_slots[] = $slot_id;
+                }
+            }
+        }
     }
 
 
@@ -211,8 +251,8 @@ class CRM_Remoteevent_EventSessions
     {
         $session_ids = [];
         foreach ($submission as $key => $value) {
-            if (!empty($value) && preg_match('/^session_[0-9]+$/', $key)) {
-                $session_ids[] = (int) substr($key, 8);
+            if (!empty($value) && preg_match('/^session[0-9]+$/', $key)) {
+                $session_ids[] = (int) substr($key, 7);
             }
         }
         return $session_ids;

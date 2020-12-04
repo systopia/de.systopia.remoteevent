@@ -105,6 +105,41 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         return $event;
     }
 
+
+    /**
+     * Create a new session
+     *
+     * @params
+     * @param array $session_details
+     *   overrides the default values
+     *
+     * @return array
+     *  contact data
+     */
+    public function createEventSession($event_id, $session_details = [])
+    {
+        // prepare event
+        $session_data = [
+            'event_id'     => $event_id,
+            'title'        => $this->randomString(50),
+            'is_active'    => 1,
+            'start_date'   => $this->getUniqueDateTime(),
+            'end_date'     => $this->getUniqueDateTime(),
+            //'slot_id'      => '',
+            'category_id'  => 1,
+            'type_id'      => 1,
+            'description'  => $this->randomString(50),
+        ];
+        foreach ($session_details as $key => $value) {
+            $session_data[$key] = $value;
+        }
+
+        // create contact
+        $result = $this->traitCallAPISuccess('Session', 'create', $session_data);
+        $session = $this->traitCallAPISuccess('Session', 'getsingle', ['id' => $result['id']]);
+        return $session;
+    }
+
     /**
      * Create a number of events with the same setup,
      *   using the createRemoteEvent function
@@ -524,5 +559,23 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             'status_id' => 1,
         ]);
         return $this->traitCallAPISuccess('Campaign', 'getsingle', ['id' => $campaign['id']]);
+    }
+
+    /**
+     * Get a (within this test) unique
+     *  timestamp. It starts with now+1h and
+     *  increments in 5 minute interval
+     *
+     * @return string timestamp
+     */
+    public function getUniqueDateTime()
+    {
+        static $last_timestamp = null;
+        if ($last_timestamp === null) {
+            $last_timestamp = strtotime('now + 1 hour');
+        } else {
+            $last_timestamp = strtotime('+5 minutes', $last_timestamp);
+        }
+        return date('YmdHis', $last_timestamp);
     }
 }
