@@ -216,6 +216,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             'first_name'   => $this->randomString(10),
             'last_name'    => $this->randomString(10),
             'email'        => $this->randomString(10) . '@' . $this->randomString(10) . '.org',
+            'prefix_id'    => 1,
         ];
         foreach ($contact_details as $key => $value) {
             $contact_data[$key] = $value;

@@ -79,6 +79,20 @@ class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase
 
         // test registration update
         $different_last_name = $this->createContact()['last_name'];
+
+        // first validate
+        $validation = $this->traitCallAPISuccess('RemoteParticipant', 'validate', [
+               'token'      => $token,
+               'context'    => 'update',
+               'event_id'   => $event['id'],
+               'email'      => $contactA_before['email'],
+               'prefix_id'  => $contactA_before['prefix_id'],
+               'first_name' => $contactA_before['first_name'],
+               'last_name'  => $different_last_name
+           ]);
+
+
+        // then: update
         $registration2 = $this->updateRegistration([
             'token'      => $token,
             'email'      => $contactA_before['email'],
