@@ -18,7 +18,7 @@ use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 use \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
 
 /**
- * Class to coordinate event registrations (RemoteParticipant)
+ * Class to execute event registrations (RemoteParticipant.create)
  */
 class CRM_Remoteevent_Registration
 {
@@ -270,6 +270,10 @@ class CRM_Remoteevent_Registration
             }
         }
 
+        if (empty($event_data['enabled_update_profiles'])) {
+            return E::ts("This event does not allow participants to update their registration.");
+        }
+
         // contact CAN edit registration (can not not edit)
         return false;
     }
@@ -431,38 +435,43 @@ class CRM_Remoteevent_Registration
             $contact_identification['contact_type'] = 'Individual';
         }
 
-        if ($registration->getContactID()) {
-            // the contact creation job has been done already -> check if want to do an upgrade
-            $xcm_profile = Civi::settings()->get('remote_registration_xcm_profile_update');
-            if ($xcm_profile) {
-                // in this case we use the XCM with the update profile with the ID set
-                $contact_identification['xcm_profile'] = $xcm_profile;
-                $contact_identification['id'] = $registration->getContactID();
-                civicrm_api3('Contact', 'getorcreate', $contact_identification);
-            }
-
-        } else {
-
-            // this is a yet unidentified contact => run 'normal' xcm
-            // add xcm profile, if one given
-            if (empty($contact_identification['xcm_profile'])) {
-                $xcm_profile = Civi::settings()->get('remote_registration_xcm_profile');
+        if (!$registration->isContactUpdated()) {
+            if ($registration->getContactID()) {
+                // the contact creation job has been done already -> check if want to do an upgrade
+                $xcm_profile = Civi::settings()->get('remote_registration_xcm_profile_update');
                 if ($xcm_profile) {
+                    // in this case we use the XCM with the update profile with the ID set
                     $contact_identification['xcm_profile'] = $xcm_profile;
+                    $contact_identification['id'] = $registration->getContactID();
+                    civicrm_api3('Contact', 'getorcreate', $contact_identification);
+                    $registration->setContactUpdated();
+                }
+
+            } else {
+
+                // this is a yet unidentified contact => run 'normal' xcm
+                // add xcm profile, if one given
+                if (empty($contact_identification['xcm_profile'])) {
+                    $xcm_profile = $registration->getXcmUpdateProfile();
+                    if ($xcm_profile) {
+                        $contact_identification['xcm_profile'] = $xcm_profile;
+                    }
+                }
+
+                // run through the contact matcher
+                try {
+                    CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
+                    $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
+                    $registration->setContactID($match['id']);
+                    $registration->setContactUpdated();
+                } catch (Exception $ex) {
+                    throw new Exception(
+                        E::ts("Not enough contact data to identify/create contact.")
+                    );
                 }
             }
-
-            // run through the contact matcher
-            try {
-                CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
-                $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
-                $registration->setContactID($match['id']);
-            } catch (Exception $ex) {
-                throw new Exception(
-                    E::ts("Not enough contact data to identify/create contact.")
-                );
-            }
         }
+
     }
 
     /**
@@ -548,7 +557,7 @@ class CRM_Remoteevent_Registration
             } else {
                 // there is no pre-existing participant, just add to the general to-be-created one
                 if (empty($submission['confirm'])) {
-                    $participant = &$registration->getParticipant();
+                    $participant = &$registration->getParticipantData();
                     $participant['status_id'] = 'Cancelled';
                 }
             }
@@ -576,7 +585,7 @@ class CRM_Remoteevent_Registration
         }
 
         // default status calculation
-        $participant_data = &$registration->getParticipant();
+        $participant_data = &$registration->getParticipantData();
         $event_data = $registration->getEvent();
 
         // check if it registration requires approval
@@ -621,7 +630,7 @@ class CRM_Remoteevent_Registration
         }
 
         // let's look into this
-        $participant_data = &$registration->getParticipant();
+        $participant_data = &$registration->getParticipantData();
 
         if ($registration->getParticipantID()) {
             // this is updating an existing participant

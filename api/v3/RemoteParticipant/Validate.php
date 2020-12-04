@@ -90,18 +90,27 @@ function civicrm_api3_remote_participant_validate($params)
     }
 
     // todo: implement other modes (update/cancel)
-    if ($params['context'] != 'create') {
-        $validation->addError(E::ts("Context '%1' not implemented.", [1 => $params['context']]));
+    switch ($params['context']) {
+        case 'create':
+            // first: check if registration is enabled
+            $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($params['event_id'], $contact_id);
+            if ($cant_register_reason) {
+                $validation->addError($cant_register_reason);
+            } else {
+                // dispatch the validation event for other validations to weigh in
+                Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
+            }
+            break;
+
+        case 'update':
+            Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
+            break;
+
+        default:
+            $validation->addError(E::ts("Context '%1' not implemented.", [1 => $params['context']]));
+            break;
     }
 
-    // first: check if registration is enabled
-    $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($params['event_id'], $contact_id);
-    if ($cant_register_reason) {
-        $validation->addError($cant_register_reason);
-    } else {
-        // dispatch the validation event for other validations to weigh in
-        Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
-    }
 
     // return the result
     return $validation->createAPI3Success('RemoteEvent', 'get', $validation->getReferencedStatusList(['error']));

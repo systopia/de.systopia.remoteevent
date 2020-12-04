@@ -61,6 +61,16 @@ function remoteevent_civicrm_config(&$config)
         'civi.remoteevent.registration.getform',
         ['CRM_Remoteevent_EventSessions', 'addSessionFields']);
 
+    // EVENT REGISTRATION_UPDATE.GETFORM
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration_update.getform',
+        ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration_update.getform',
+        ['CRM_Remoteevent_EventSessions', 'addSessionFields']);
+
+
+
     // EVENT REGISTRATION.VALIDATE
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.validate',
@@ -88,6 +98,20 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
+
+    // EVENT REGISTRATION.UPDATE
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_RegistrationUpdate', 'loadParticipant'], CRM_Remoteevent_RegistrationUpdate::STAGE1_PARTICIPANT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_RegistrationUpdate', 'addProfileData'], CRM_Remoteevent_RegistrationUpdate::BEFORE_APPLY_CONTACT_CHANGES + 100);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_RegistrationUpdate', 'updateContact'], CRM_Remoteevent_RegistrationUpdate::STAGE2_APPLY_CONTACT_CHANGES);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_RegistrationUpdate', 'updateParticipant'], CRM_Remoteevent_RegistrationUpdate::STAGE3_APPLY_PARTICIPANT_CHANGES);
 
     // EVENTMESSAGES.TOKENS
     $dispatcher->addUniqueListener(
@@ -276,6 +300,7 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
     $permissions['remote_participant']['create']   = ['register to Remote Events'];
     $permissions['remote_participant']['validate'] = ['register to Remote Events'];
     $permissions['remote_participant']['cancel']   = ['cancel Remote Events registrations'];
+    $permissions['remote_participant']['update']   = ['edit Remote Event registrations'];
 }
 
 /**

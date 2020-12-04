@@ -25,7 +25,7 @@ use Civi\RemoteEvent;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.submit API call, so the various stages can be applied
  */
-class CancelEvent extends RemoteEvent
+class CancelEvent extends ChangingEvent
 {
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
@@ -55,6 +55,54 @@ class CancelEvent extends RemoteEvent
                 ];
             }
         }
+    }
+
+    /**
+     * Get the currently available contact_data
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function getContact() {
+        // todo: implement properly
+        return [];
+    }
+
+    /**
+     * Get the contact_data BY REFERENCE, which is used for
+     *   contact identification / creation
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function &getContactData() {
+        // todo: implement properly
+        $contact_data = [];
+        return $contact_data;
+    }
+
+    /**
+     * Get the currently available contact_data
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function getParticipant() {
+        // todo: implement properly
+        return [];
+    }
+
+    /**
+     * Get the contact_data BY REFERENCE, which is used for
+     *   contact identification / creation
+     *
+     * @return array $contact_data
+     *    contact_data data
+     */
+    public function &getParticipantData() {
+        // todo: implement properly
+        $participant_data = [];
+        return $participant_data;
     }
 
     /**

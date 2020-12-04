@@ -104,6 +104,21 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         return true;
     }
 
+    /**
+     * Adding more fields and a 'OneClick' profile
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0008()
+    {
+        $this->ctx->log->info('Adding Update Profiles');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        return true;
+    }
+
+
 
     /**
      * Make sure the given participant status exists

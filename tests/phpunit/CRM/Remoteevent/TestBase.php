@@ -74,15 +74,17 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     {
         // prepare event
         $event_data = [
-            'title'                                                         => "Event " . microtime(),
-            'event_type_id'                                                 => 1,
-            'start_date'                                                    => date('Y-m-d', strtotime('tomorrow')),
-            'default_role_id'                                               => 1,
-            'is_active'                                                     => 1,
-            'event_remote_registration.remote_registration_enabled'         => 1,
-            'event_remote_registration.remote_disable_civicrm_registration' => 1,
-            'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-            'event_remote_registration.remote_registration_profiles'        => ['Standard1'],
+            'title'                                                                => "Event " . microtime(),
+            'event_type_id'                                                        => 1,
+            'start_date'                                                           => date('Y-m-d', strtotime('tomorrow')),
+            'default_role_id'                                                      => 1,
+            'is_active'                                                            => 1,
+            'event_remote_registration.remote_registration_enabled'                => 1,
+            'event_remote_registration.remote_disable_civicrm_registration'        => 1,
+            'event_remote_registration.remote_registration_default_profile'        => 'Standard1',
+            'event_remote_registration.remote_registration_profiles'               => ['Standard1'],
+            'event_remote_registration.remote_registration_default_update_profile' => 'Standard1',
+            'event_remote_registration.remote_registration_update_profiles'        => ['Standard1'],
         ];
         foreach ($event_details as $key => $value) {
             $event_data[$key] = $value;
@@ -142,6 +144,22 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     }
 
     /**
+     * Register the given contact to the given event
+     *
+     * @param integer $participant_id
+     * @param array $submission
+     */
+    public function updateRegistration($submission)
+    {
+        if (empty($submission['token']) && !empty($submission['participant_id'])) {
+            $token = CRM_Remotetools_SecureToken::generateEntityToken(
+                'Participant', $submission['participant_id'], null, 'update');
+            $submission['token'] = $token;
+        }
+        return $this->callRemoteEventAPI('RemoteParticipant', 'update', $submission);
+    }
+
+    /**
      * Wrap an API call to fit the status message system
      *
      * @param $entity
@@ -154,13 +172,18 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         try {
             $result = civicrm_api3($entity, $action, $data);
             $result['is_error'] = 0;
+            $this->assertArrayHasKey('status_messages', $result, "API Call {$entity}.{$action} doesn't return 'status_messages'");
             $status_messages = $result['status_messages'];
         } catch (CiviCRM_API3_Exception $ex) {
             $result = [
                 'is_error'      => 1,
                 'error_message' => $ex->getMessage()
             ];
-            $status_messages = $ex->getExtraParams()['status_messages'];
+            if (isset($ex->getExtraParams()['status_messages'])) {
+                $status_messages = $ex->getExtraParams()['status_messages'];
+            } else {
+                $status_messages = [];
+            }
         }
 
         // extract messages
@@ -193,6 +216,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             'first_name'   => $this->randomString(10),
             'last_name'    => $this->randomString(10),
             'email'        => $this->randomString(10) . '@' . $this->randomString(10) . '.org',
+            'prefix_id'    => 1,
         ];
         foreach ($contact_details as $key => $value) {
             $contact_data[$key] = $value;

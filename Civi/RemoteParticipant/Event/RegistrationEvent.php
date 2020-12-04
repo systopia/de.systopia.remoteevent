@@ -25,7 +25,7 @@ use Civi\RemoteEvent;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.submit API call, so the various stages can be applied
  */
-class RegistrationEvent extends RemoteEvent
+class RegistrationEvent extends ChangingEvent
 {
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
@@ -107,12 +107,24 @@ class RegistrationEvent extends RemoteEvent
     }
 
     /**
-     * Set the participant object
+     * Get the participant object
      *
      * @return array $participant
      *    participant data
      */
-    public function &getParticipant()
+    public function getParticipant()
+    {
+        return $this->participant;
+    }
+
+    /**
+     * Get the participant data BY REFERENCE, which is used for
+     *   registration creation / updates
+     *
+     * @return array
+     *    participant data
+     */
+    public function &getParticipantData()
     {
         return $this->participant;
     }
@@ -141,6 +153,16 @@ class RegistrationEvent extends RemoteEvent
         return $this->contact_data;
     }
 
+    /**
+     * Set the participant object
+     *
+     * @return array $participant
+     *    participant data
+     */
+    public function getContact()
+    {
+        return $this->contact_data;
+    }
 
     /**
      * Set the contact ID
@@ -184,17 +206,6 @@ class RegistrationEvent extends RemoteEvent
     public function getEvent()
     {
         return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
-    }
-
-    /**
-     * Get the complete submission
-     *
-     * @return array
-     *   submission data
-     */
-    public function getSubmission()
-    {
-        return $this->submission;
     }
 
     /**

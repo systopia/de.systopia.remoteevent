@@ -36,6 +36,9 @@ abstract class RemoteEvent extends Event
     /** @var integer event ID */
     protected $event_id = null;
 
+    /** @var array context data */
+    protected $context_data = [];
+
     /** @var array accepted usage for tokes */
     protected $token_usages = ['invite'];
 
@@ -56,6 +59,14 @@ abstract class RemoteEvent extends Event
      *   parameters of the query
      */
     public abstract function getQueryParameters();
+
+    /**
+     * Get the context of this validation:
+     * 'create', 'update', 'cancel'
+     */
+    public function getContext(){
+        return \CRM_Utils_Array::value('context', $this->getQueryParameters(), 'create');
+    }
 
     /**
      * Add a debug message to the event, so it's easier to find out what happened
@@ -83,6 +94,7 @@ abstract class RemoteEvent extends Event
     public function getParticipantID()
     {
         if ($this->participant_id === null) {
+            $this->participant_id = 0; // don't look it up again
             $query = $this->getQueryParameters();
             if (!empty($query['token'])) {
                 // there is a token, see if it complies with the known formats
@@ -95,12 +107,12 @@ abstract class RemoteEvent extends Event
                     if ($participant_id) {
                         $this->participant_id = $participant_id;
                         break;
-                    } else {
-                        $this->participant_id = 0; // don't look it up again
                     }
                 }
+            }
 
-                // if the contact is known: check if can find a partipant
+            // if the contact is known: check if can find a participant
+            if (empty($this->participant_id)) {
                 $contact_id = $this->getContactID();
                 if ($contact_id) {
                     // todo: how to select the relevant
@@ -187,6 +199,22 @@ abstract class RemoteEvent extends Event
     }
 
     /**
+     * Get the given event data
+     *
+     * @return array
+     *   event data
+     */
+    public function getEvent()
+    {
+        $event_id = $this->getEventID();
+        if ($event_id) {
+            return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get the contact ID if a valid remote_contact_id is involved with this event
      *
      * Warning: this function is cached
@@ -211,6 +239,19 @@ abstract class RemoteEvent extends Event
     }
 
     /**
+     * Get the currently relevant locale
+     */
+    public function getLocale()
+    {
+        $data = $this->getQueryParameters();
+        if (empty($data['locale'])) {
+            return 'default';
+        } else {
+            return $data['locale'];
+        }
+    }
+
+    /**
      * Get the currently used locale
      *
      * @return \CRM_Remoteevent_Localisation
@@ -225,6 +266,50 @@ abstract class RemoteEvent extends Event
             return \CRM_Remoteevent_Localisation::getLocalisation($data['locale']);
         }
     }
+
+    /**
+     * Localise the string with the currently active localisation
+     *
+     * @param string $string
+     *    string to be localised
+     *
+     * @return string
+     *    localised string
+     */
+    public function localise($string)
+    {
+        return $this->getLocalisation()->localise($string);
+    }
+
+    /**
+     * Allows the event users to add some arbitrary context data
+     *
+     * @param string $key
+     *   key for the context data
+     * @param mixed $value
+     *   any type of data
+     */
+    public function setContextData($key, $value)
+    {
+        $this->context_data[$key] = $value;
+    }
+
+    /**
+     * Get the context data for the given key
+     *
+     * @param string $key
+     *   key for the context data
+     * @param mixed $default
+     *   any type of data that is returned, if no context data is set
+     *
+     * @return mixed
+     *   the context data stored with the key, or the default
+     */
+    public function getContextData($key, $default = null)
+    {
+        return \CRM_Utils_Array::value($key, $this->context_data, $default);
+    }
+
 
     // ERROR/WARNING/STATUS MESSAGES
 

@@ -34,6 +34,14 @@
   <p>{ts}Additional registration profiles that may be used to register for this event. You will need to enable at least your default profile. You will have to enable the One-Click-Profile in order ro allow contacts to respond to an event invitation (feature provided by separate Event Invitations Extension).{/ts}</p>
 {/htxt}
 
+{htxt id='id-remote-registration-default-update-profile'}
+  <p>{ts}This profile will be used for updates/changes to an existing registration{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote-registration-update-profiles'}
+  <p>{ts}Additional profiles that may be defined here for updating/changing an existing registration{/ts}</p>
+{/htxt}
+
 {htxt id='id-use-custom-event-location'}
   <p>{ts}If checked an alternative approach to handle event locations will be used and CiviCRM's default tab will be replaced with a custom one. Please refer to documentation for more information.{/ts}</p>
 {/htxt}

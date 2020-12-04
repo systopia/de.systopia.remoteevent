@@ -14,7 +14,7 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 
 
 /**
@@ -68,11 +68,11 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
      * Add the default values to the form data, so people using this profile
      *  don't have to enter everything themselves
      *
-     * @param GetCreateParticipantFormEvent $resultsEvent
+     * @param GetParticipantFormEventBase $resultsEvent
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    public function addDefaultValues(GetCreateParticipantFormEvent $resultsEvent)
+    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
     {
         $contact_id = $resultsEvent->getContactID();
         if ($contact_id) {

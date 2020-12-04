@@ -75,6 +75,22 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             ['class' => 'crm-select2', 'multiple' => 'multiple']
         );
         $this->add(
+            'select',
+            'remote_registration_default_update_profile',
+            E::ts("Default Registration Profile for Updates"),
+            $available_registration_profiles,
+            false,
+            ['class' => 'crm-select2']
+        );
+        $this->add(
+            'select',
+            'remote_registration_update_profiles',
+            E::ts("Allowed Registration Profiles for Updates"),
+            $available_registration_profiles,
+            false,
+            ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+        $this->add(
             'checkbox',
             'remote_use_custom_event_location',
             E::ts("Use Custom Event Location?")
@@ -110,12 +126,14 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         // load and set defaults
         if ($this->_id) {
             $field_list = [
-                'event_remote_registration.remote_registration_enabled'           => 'remote_registration_enabled',
-                'event_remote_registration.remote_registration_default_profile'   => 'remote_registration_default_profile',
-                'event_remote_registration.remote_registration_profiles'          => 'remote_registration_profiles',
-                'event_remote_registration.remote_use_custom_event_location'      => 'remote_use_custom_event_location',
-                'event_remote_registration.remote_registration_gtac'              => 'remote_registration_gtac',
-                'event_remote_registration.remote_disable_civicrm_registration'   => 'remote_disable_civicrm_registration',
+                'event_remote_registration.remote_registration_enabled'                => 'remote_registration_enabled',
+                'event_remote_registration.remote_registration_default_profile'        => 'remote_registration_default_profile',
+                'event_remote_registration.remote_registration_profiles'               => 'remote_registration_profiles',
+                'event_remote_registration.remote_registration_default_update_profile' => 'remote_registration_default_update_profile',
+                'event_remote_registration.remote_registration_update_profiles'        => 'remote_registration_update_profiles',
+                'event_remote_registration.remote_use_custom_event_location'           => 'remote_use_custom_event_location',
+                'event_remote_registration.remote_registration_gtac'                   => 'remote_registration_gtac',
+                'event_remote_registration.remote_disable_civicrm_registration'        => 'remote_disable_civicrm_registration',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
             $values = civicrm_api3(
@@ -186,9 +204,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 $values,
                 0
             ),
-            'event_remote_registration.remote_registration_default_profile' => $values['remote_registration_default_profile'],
-            'event_remote_registration.remote_registration_profiles'        => $values['remote_registration_profiles'],
-            'event_remote_registration.remote_registration_gtac'            => $values['remote_registration_gtac']
+            'event_remote_registration.remote_registration_default_profile'        => $values['remote_registration_default_profile'],
+            'event_remote_registration.remote_registration_update_profiles'        => $values['remote_registration_update_profiles'],
+            'event_remote_registration.remote_registration_default_update_profile' => $values['remote_registration_default_update_profile'],
+            'event_remote_registration.remote_registration_profiles'               => $values['remote_registration_profiles'],
+            'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac']
         ];
 
         // disable civicrm native online registration
@@ -209,6 +229,20 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             $enabled_profiles[] = $values['remote_registration_default_profile'];
         }
         $event_update['event_remote_registration.remote_registration_profiles'] = $enabled_profiles;
+
+        // make sure the default UPDATE profile is part of the enabled profiles
+        $enabled_profiles = $values['remote_registration_update_profiles'];
+        if (!is_array($enabled_profiles)) {
+            if (empty($enabled_profiles)) {
+                $enabled_profiles = [];
+            } else {
+                $enabled_profiles = [$enabled_profiles];
+            }
+        }
+        if (!in_array($values['remote_registration_default_update_profile'], $enabled_profiles)) {
+            $enabled_profiles[] = $values['remote_registration_default_update_profile'];
+        }
+        $event_update['event_remote_registration.remote_registration_update_profiles'] = $enabled_profiles;
 
         // resolve custom fields
         CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
