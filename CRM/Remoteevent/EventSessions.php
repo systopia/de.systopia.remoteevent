@@ -45,12 +45,16 @@ class CRM_Remoteevent_EventSessions
 
         // clean up: remove inactive session, add 'full' info
         foreach (array_keys($session_data) as $session_key) {
-            $session = &$session_data[$session_key];
-            if (empty($session['is_active'])) {
+            $_session = &$session_data[$session_key];
+            if (empty($_session['is_active'])) {
                 unset($session_data[$session_key]);
             } else {
-                $session['participant_count'] = CRM_Utils_Array::value($session['id'], $participant_counts, 0);
-                $session['is_full'] = ($session['participant_count'] >= $session['max_participants']) ? 1 : 0;
+                $session['participant_count'] = CRM_Utils_Array::value($_session['id'], $participant_counts, 0);
+                if (empty($session['max_participants'])) {
+                    $_session['is_full'] = 0;
+                } else {
+                    $_session['is_full'] = ($_session['participant_count'] >= $_session['max_participants']) ? 1 : 0;
+                }
             }
         }
 
@@ -193,7 +197,7 @@ class CRM_Remoteevent_EventSessions
         if ($participant_id) {
             $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($participant_id);
             foreach ($registered_session_ids as $registered_session_id) {
-                $get_form_results->setPrefillValue("session{$registered_session_id}", '1');
+                $get_form_results->setPrefillValue("session{$registered_session_id}", '1', false);
             }
         }
     }
