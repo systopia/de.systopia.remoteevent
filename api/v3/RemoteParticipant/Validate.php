@@ -104,6 +104,7 @@ function civicrm_api3_remote_participant_validate($params)
 
         case 'update':
             Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
+            break;
 
         default:
             $validation->addError(E::ts("Context '%1' not implemented.", [1 => $params['context']]));
