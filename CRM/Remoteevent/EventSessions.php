@@ -189,7 +189,7 @@ class CRM_Remoteevent_EventSessions
         $registered_session_ids = [];
         $participant_id = $validationEvent->getParticipantID();
         if ($participant_id) {
-            $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($event_id, $participant_id);
+            $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($participant_id);
         }
 
         // CHECK IF SPACE AVAILABLE IN REQUESTED SESSIONS

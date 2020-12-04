@@ -173,18 +173,14 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
     /**
      * Get all current registrations for the given participant and event
      *
-     * @param integer $event_id
-     *   event id
-     *
      * @param integer $participant_id
      *   participant id
      *
      * @return array
      *   list of session IDs
      */
-    public static function getParticipantRegistrations($event_id, $participant_id)
+    public static function getParticipantRegistrations($participant_id)
     {
-        $event_id = (int) $event_id;
         $participant_id = (int) $participant_id;
 
         // run this as a sql query
@@ -193,8 +189,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
             SELECT
              session_id AS session_id
             FROM civicrm_participant_session participant
-            WHERE event_id = {$event_id}
-              AND participant_id = {$participant_id}
+            WHERE participant_id = {$participant_id}
             ");
         while ($participant_query->fetch()) {
             $session_ids[] = $participant_query->session_id;
