@@ -42,7 +42,7 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase
     }
 
     /**
-     * Test registration with a waiting list
+     * Test registration with sessions
      */
     public function testSimpleRegistration()
     {
@@ -62,5 +62,39 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase
         $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registration1['participant_id']);
         $this->assertTrue(in_array($session1['id'], $registered_session_ids), "Participant should be registered for session 1");
         $this->assertFalse(in_array($session2['id'], $registered_session_ids), "Participant should NOT be registered for session 2");
+    }
+
+    /**
+     * Test form prefill
+     */
+    public function testSessionPrefill()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([]);
+        $session1 = $this->createEventSession($event['id']);
+        $session2 = $this->createEventSession($event['id']);
+        $session3 = $this->createEventSession($event['id']);
+
+        // register one contact
+        $contactA = $this->createContact();
+        $registration1 = $this->registerRemote($event['id'], [
+            'email'                    => $contactA['email'],
+            "session{$session1['id']}" => 1,
+            "session{$session2['id']}" => 1,
+            "session{$session3['id']}" => 0,
+        ]);
+        $this->assertEmpty($registration1['is_error'], "Registration Failed");
+
+        // see if the fields are prefilled for an update
+        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $registration1['participant_id'], null, 'update');
+        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+            'token'    => $token,
+            'context'  => 'update',
+            'event_id' => $event['id'],
+        ])['values'];
+        $this->assertGetFormStandardFields($fields, true);
+        $this->assertNotEmpty($fields["session{$session1['id']}"]['value'], "Session [{$session1['id']}] was not pre-filled");
+        $this->assertNotEmpty($fields["session{$session2['id']}"]['value'], "Session [{$session2['id']}] was not pre-filled");
+        $this->assertTrue(empty($fields["session{$session3['id']}"]['value']), "Session [{$session3['id']}] was pre-filled with 1");
     }
 }

@@ -120,15 +120,16 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     {
         // prepare event
         $session_data = [
-            'event_id'     => $event_id,
-            'title'        => $this->randomString(50),
-            'is_active'    => 1,
-            'start_date'   => $this->getUniqueDateTime(),
-            'end_date'     => $this->getUniqueDateTime(),
-            //'slot_id'      => '',
-            'category_id'  => 1,
-            'type_id'      => 1,
-            'description'  => $this->randomString(50),
+            'event_id'         => $event_id,
+            'title'            => $this->randomString(50),
+            'is_active'        => 1,
+            'start_date'       => $this->getUniqueDateTime(),
+            'end_date'         => $this->getUniqueDateTime(),
+            //'slot_id'        => '',
+            'category_id'      => 1,
+            'type_id'          => 1,
+            'description'      => $this->randomString(50),
+            'max_participants' => null,
         ];
         foreach ($session_details as $key => $value) {
             $session_data[$key] = $value;
