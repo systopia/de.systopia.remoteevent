@@ -868,7 +868,7 @@ msgstr "Einladung ablehnen"
 
 #: localisation function
 msgid "General Terms and Conditions"
-msgstr "Anmeldebedingungen"
+msgstr "Teilnahmebedingungen"
 
 #~ msgid "[FULL] "
 #~ msgstr "[AUSGEBUCHT] "
