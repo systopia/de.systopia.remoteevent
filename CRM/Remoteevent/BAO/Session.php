@@ -171,6 +171,75 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
     }
 
     /**
+     * Get all current registrations for the given participant and event
+     *
+     * @param integer $participant_id
+     *   participant id
+     *
+     * @return array
+     *   list of session IDs
+     */
+    public static function getParticipantRegistrations($participant_id)
+    {
+        $participant_id = (int) $participant_id;
+
+        // run this as a sql query
+        $session_ids = [];
+        $participant_query = CRM_Core_DAO::executeQuery("
+            SELECT
+             session_id AS session_id
+            FROM civicrm_participant_session participant
+            WHERE participant_id = {$participant_id}
+            ");
+        while ($participant_query->fetch()) {
+            $session_ids[] = $participant_query->session_id;
+        }
+        return $session_ids;
+    }
+
+    /**
+     * Set the session IDs for the given participant
+     *
+     * Warning: does not check if the sessions and the participant
+     *  belong to the same event
+     *
+     * @param integer $participant_id
+     *    the participant
+     *
+     * @param array $requested_session_ids
+     *    the list of session IDs
+     */
+    public static function setParticipantRegistrations($participant_id, $requested_session_ids) {
+        $participant_id = (int) $participant_id;
+        $current_session_ids = self::getParticipantRegistrations($participant_id);
+
+        // remove the ones that should go
+        $ids_to_remove = array_diff($current_session_ids, $requested_session_ids);
+        if (!empty($ids_to_remove)) {
+            // make sure it's int
+            $ids_to_remove_list = implode(',', array_map('intval', $ids_to_remove));
+            CRM_Core_DAO::executeQuery("
+                DELETE FROM civicrm_participant_session
+                WHERE participant_id = {$participant_id}
+                  AND session_id IN ({$ids_to_remove_list});"
+            );
+        }
+
+        // add the ones that should be there
+        $ids_to_add = array_diff($requested_session_ids, $current_session_ids);
+        if (!empty($ids_to_add)) {
+            $query = "INSERT INTO civicrm_participant_session (participant_id, session_id) VALUES ";
+            $inserts = [];
+            foreach ($ids_to_add as $id_to_add) {
+                $id_to_add = (int)$id_to_add;
+                $inserts[] = "({$participant_id}, {$id_to_add})";
+            }
+            CRM_Core_DAO::executeQuery($query . implode(',', $inserts));
+        }
+    }
+
+
+    /**
      * Get the label of the session category
      *
      * @param integer $session_category_id
