@@ -89,7 +89,12 @@ function civicrm_api3_remote_participant_validate($params)
         }
     }
 
-    // todo: implement other modes (update/cancel)
+    // special case: invitation decline (confirm=0) skips validation
+    if (isset($params['confirm']) && $params['confirm'] == '0') {
+        return $validation->createAPI3Success('RemoteEvent', 'validate');
+    }
+
+    // run by context
     switch ($params['context']) {
         case 'create':
             // first: check if registration is enabled
@@ -106,6 +111,10 @@ function civicrm_api3_remote_participant_validate($params)
             Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
             break;
 
+        case 'cancel':
+            // todo: implement?
+            break;
+
         default:
             $validation->addError(E::ts("Context '%1' not implemented.", [1 => $params['context']]));
             break;
@@ -113,5 +122,5 @@ function civicrm_api3_remote_participant_validate($params)
 
 
     // return the result
-    return $validation->createAPI3Success('RemoteEvent', 'get', $validation->getReferencedStatusList(['error']));
+    return $validation->createAPI3Success('RemoteEvent', 'validate', $validation->getReferencedStatusList(['error']));
 }
