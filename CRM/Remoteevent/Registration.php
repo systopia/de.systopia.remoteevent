@@ -270,6 +270,10 @@ class CRM_Remoteevent_Registration
             }
         }
 
+        if (empty($event_data['enabled_update_profiles'])) {
+            return E::ts("This event does not allow participants to update their registration.");
+        }
+
         // contact CAN edit registration (can not not edit)
         return false;
     }
