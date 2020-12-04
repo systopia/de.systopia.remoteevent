@@ -16,6 +16,7 @@
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use \Civi\RemoteParticipant\Event\ValidateEvent;
+use \Civi\RemoteParticipant\Event\ChangingEvent;
 
 /**
  * RemoteEvent logic for sessions
@@ -238,6 +239,29 @@ class CRM_Remoteevent_EventSessions
                 }
             }
         }
+    }
+
+    /**
+     * @param ChangingEvent $event
+     */
+    public static function synchroniseSessions(ChangingEvent $event)
+    {
+        // only do something when there's no error
+        if ($event->hasErrors()) {
+            return;
+        }
+
+        // only do something when there's a participant
+        $participant_id = $event->getParticipantID();
+        if (!$participant_id) {
+            return;
+        }
+
+        // get the old and the new registrations
+        $requested_session_ids = self::getSubmittedSessionIDs($event->getQueryParameters());
+
+        // todo: what to do if the sessions aren't submitted?
+        CRM_Remoteevent_BAO_Session::setParticipantRegistrations($participant_id, $requested_session_ids);
     }
 
 

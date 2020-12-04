@@ -61,6 +61,6 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase
         $this->assertEmpty($registration1['is_error'], "Registration Failed");
         $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registration1['participant_id']);
         $this->assertTrue(in_array($session1['id'], $registered_session_ids), "Participant should be registered for session 1");
-        $this->assertFalse(in_array($session1['id'], $registered_session_ids), "Participant should NOT be registered for session 2");
+        $this->assertFalse(in_array($session2['id'], $registered_session_ids), "Participant should NOT be registered for session 2");
     }
 }
