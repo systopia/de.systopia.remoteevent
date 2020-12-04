@@ -75,6 +75,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.validate',
             ['CRM_Remoteevent_RegistrationProfile', 'validateProfileData']);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.validate',
+        ['CRM_Remoteevent_EventSessions', 'validateSessionSubmission']);
 
     // EVENT REGISTRATION.SUBMIT
     $dispatcher->addUniqueListener(
