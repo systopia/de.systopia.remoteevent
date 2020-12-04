@@ -229,11 +229,12 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
         $ids_to_add = array_diff($requested_session_ids, $current_session_ids);
         if (!empty($ids_to_add)) {
             $query = "INSERT INTO civicrm_participant_session (participant_id, session_id) VALUES ";
+            $inserts = [];
             foreach ($ids_to_add as $id_to_add) {
                 $id_to_add = (int)$id_to_add;
-                $query .= "({$participant_id}, {$id_to_add})";
+                $inserts[] = "({$participant_id}, {$id_to_add})";
             }
-            CRM_Core_DAO::executeQuery($query);
+            CRM_Core_DAO::executeQuery($query . implode(',', $inserts));
         }
     }
 
