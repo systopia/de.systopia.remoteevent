@@ -695,7 +695,6 @@ class CRM_Remoteevent_Registration
                     'name'        => 'gtacs',
                     'label'       => $l10n->localise("General Terms and Conditions"),
                     'weight'      => 500, // this should be at the end
-                    'description' => $l10n->localise("General Terms and Conditions"),
                 ],
                 'gtac' => [
                     'name' => 'gtac',
@@ -704,7 +703,7 @@ class CRM_Remoteevent_Registration
                     'weight' => 100,
                     'required' => 1,
                     'label' => $l10n->localise("I accept the following terms and conditions"),
-                    'description' => $l10n->localise("You have to accept the terms and conditions to participate in this event"),
+                    'description' => '', //$l10n->localise("You have to accept the terms and conditions to participate in this event"),
                     'parent' => 'gtacs',
                     'suffix' => $event['event_remote_registration.remote_registration_gtac'],
                     'suffix_display' => 'inline',
