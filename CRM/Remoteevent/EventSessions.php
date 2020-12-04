@@ -64,17 +64,23 @@ class CRM_Remoteevent_EventSessions
 
         // start listing fields
         $weight = 200;
-        $get_form_results->addFields(['sessions' => [
-            'type'           => 'fieldset',
-            'name'           => 'sessions',
-            'label'          => E::ts("Workshops"),
-            'weight'         => $weight,
-            'description'    => '',
-        ]]);
+        $get_form_results->addFields(
+            [
+                'sessions' => [
+                    'type' => 'fieldset',
+                    'name' => 'sessions',
+                    'label' => E::ts("Workshops"),
+                    'weight' => $weight,
+                    'description' => '',
+                ]
+            ]
+        );
         foreach ($sessions_by_day_and_slot as $day => $slot_sessions) {
             $weight = $weight + 1;
             foreach ($slot_sessions as $slot_id => $sessions) {
-                if (empty($sessions)) continue;
+                if (empty($sessions)) {
+                    continue;
+                }
 
                 if ($slot_id) {
                     // add name slot fieldset
@@ -85,14 +91,18 @@ class CRM_Remoteevent_EventSessions
                         E::ts("Workshops - %1", [1 => $slot_name]);
 
                     // add group
-                    $get_form_results->addFields([$group_name => [
-                        'type'           => 'fieldset',
-                        'name'           => $group_name,
-                        'label'          => $group_label,
-                        'weight'         => $weight,
-                        'parent'         => 'sessions',
-                        'description'    => '',
-                     ]]);
+                    $get_form_results->addFields(
+                        [
+                            $group_name => [
+                                'type' => 'fieldset',
+                                'name' => $group_name,
+                                'label' => $group_label,
+                                'weight' => $weight,
+                                'parent' => 'sessions',
+                                'description' => '',
+                            ]
+                        ]
+                    );
                 } else {
                     // add open (no slot) fieldset
                     $group_name = "day{$day}_group";
@@ -101,14 +111,18 @@ class CRM_Remoteevent_EventSessions
                         E::ts("Workshops");
 
                     // add group
-                    $get_form_results->addFields([$group_name => [
-                        'type'           => 'fieldset',
-                        'name'           => $group_name,
-                        'label'          => $group_label,
-                        'weight'         => $weight,
-                        'parent'         => 'sessions',
-                        'description'    => '',
-                    ]]);
+                    $get_form_results->addFields(
+                        [
+                            $group_name => [
+                                'type' => 'fieldset',
+                                'name' => $group_name,
+                                'label' => $group_label,
+                                'weight' => $weight,
+                                'parent' => 'sessions',
+                                'description' => '',
+                            ]
+                        ]
+                    );
                 }
 
 
@@ -116,44 +130,70 @@ class CRM_Remoteevent_EventSessions
                     // enrich the session data
                     $weight += 1;
                     $session['type'] = CRM_Remoteevent_BAO_Session::getSessionTypeLabel($session['type_id']);
-                    $session['category'] = CRM_Remoteevent_BAO_Session::getSessionCategoryLabel($session['category_id']);
+                    $session['category'] = CRM_Remoteevent_BAO_Session::getSessionCategoryLabel(
+                        $session['category_id']
+                    );
 
                     if ($slot_id) {
                         // if this is a (real) slot
                         //   the session participation is mutually exclusive for the sessions in the slot
 
-                        $get_form_results->addFields([
-                            "session{$session['id']}" => [
-                                'name'                => "day{$day}slot{$slot_id}",
-                                'type'                => 'Radio',
-                                'weight'              => $weight,
-                                'label'               => self::renderSessionLabel($session, $full_prefix),
-                                'description'         => self::renderSessionDescriptionShort($session),
-                                'parent'              => "day{$day}slot{$slot_id}_group",
-                                'disabled'            => empty($session['is_full']) ? 0 : 1,
-                                'suffix'              => self::renderSessionDescriptionLong($session),
-                                'suffix_display'      => 'dialog',
-                                'suffix_dialog_label' => E::ts("Details"),
-                                'required'            => 0,
+                        $get_form_results->addFields(
+                            [
+                                "session{$session['id']}" => [
+                                    'name' => "day{$day}slot{$slot_id}",
+                                    'type' => 'Radio',
+                                    'weight' => $weight,
+                                    'label' => self::renderSessionLabel($session, $full_prefix),
+                                    'description' => self::renderSessionDescriptionShort($session),
+                                    'parent' => "day{$day}slot{$slot_id}_group",
+                                    'disabled' => empty($session['is_full']) ? 0 : 1,
+                                    'suffix' => self::renderSessionDescriptionLong($session),
+                                    'suffix_display' => 'dialog',
+                                    'suffix_dialog_label' => E::ts("Details"),
+                                    'required' => 0,
                                 ]
-                         ]);
+                            ]
+                        );
                     } else {
                         // no slot assigned
-                        $get_form_results->addFields(["session{$session['id']}" => [
-                            'name'                => "session{$session['id']}",
-                            'type'                => 'Checkbox',
-                            'weight'              => $weight,
-                            'label'               => self::renderSessionLabel($session, $full_prefix),
-                            'description'         => self::renderSessionDescriptionShort($session),
-                            'parent'              => "day{$day}_group",
-                            'disabled'            => empty($session['is_full']) ? 0 : 1,
-                            'suffix'              => self::renderSessionDescriptionLong($session),
-                            'suffix_display'      => 'dialog',
-                            'suffix_dialog_label' => E::ts("Details"),
-                            'required'            => 0,
-                        ]]);
+                        $get_form_results->addFields(
+                            [
+                                "session{$session['id']}" => [
+                                    'name' => "session{$session['id']}",
+                                    'type' => 'Checkbox',
+                                    'weight' => $weight,
+                                    'label' => self::renderSessionLabel($session, $full_prefix),
+                                    'description' => self::renderSessionDescriptionShort($session),
+                                    'parent' => "day{$day}_group",
+                                    'disabled' => empty($session['is_full']) ? 0 : 1,
+                                    'suffix' => self::renderSessionDescriptionLong($session),
+                                    'suffix_display' => 'dialog',
+                                    'suffix_dialog_label' => E::ts("Details"),
+                                    'required' => 0,
+                                ]
+                            ]
+                        );
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Add the the sessions the participant's registered for
+     *   as a default selections
+     *
+     * @param GetCreateParticipantFormEvent $get_form_results
+     *      event triggered by the RemoteParticipant.get_form API call
+     */
+    public static function addRegisteredSessions($get_form_results)
+    {
+        $participant_id = $get_form_results->getParticipantID();
+        if ($participant_id) {
+            $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($participant_id);
+            foreach ($registered_session_ids as $registered_session_id) {
+                $get_form_results->setPrefillValue("session{$registered_session_id}", '1');
             }
         }
     }

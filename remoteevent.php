@@ -60,6 +60,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.getform',
         ['CRM_Remoteevent_EventSessions', 'addSessionFields']);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.getform',
+        ['CRM_Remoteevent_EventSessions', 'addRegisteredSessions']);
 
     // EVENT REGISTRATION_UPDATE.GETFORM
     $dispatcher->addUniqueListener(
