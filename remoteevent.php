@@ -300,6 +300,7 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
     $permissions['remote_participant']['create']   = ['register to Remote Events'];
     $permissions['remote_participant']['validate'] = ['register to Remote Events'];
     $permissions['remote_participant']['cancel']   = ['cancel Remote Events registrations'];
+    $permissions['remote_participant']['update']   = ['edit Remote Event registrations'];
 }
 
 /**
