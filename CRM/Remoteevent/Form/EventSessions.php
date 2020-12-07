@@ -172,11 +172,11 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                         // check if full
                         if ($session['participant_count'] >= $session['max_participants']) {
                             $message = E::ts("Session is full");
-                            $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-stop-circle-o\" aria-hidden=\"true\"></i>";
+                            $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-lock\" aria-hidden=\"true\"></i>";
                             $classes[] = " remote-session-max-participants remote-session-full ";
                         } else {
                             $message = E::ts("Session restricted to %1 participants", [1 => $session['max_participants']]);
-                            $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-users\" aria-hidden=\"true\"></i>";
+                            $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-unlock-alt\" aria-hidden=\"true\"></i>";
                             $classes[] = " remote-session-max-participants ";
                         }
                     } else {
@@ -191,7 +191,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                         } else {
                             $message = E::ts("%1 is %2", [1 => $session['presenter_title'], 2 => $presenter]);
                         }
-                        $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-user\" aria-hidden=\"true\"></i>";
+                        $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-slideshare\" aria-hidden=\"true\"></i>";
                     }
 
                     // add inactive icon
@@ -205,7 +205,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                     // add location icon
                     if (!empty($session['location'])) {
                         $message = CRM_Utils_String::htmlToText($session['location']);
-                        $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-street-view\" aria-hidden=\"true\"></i>";
+                        $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-map-marker\" aria-hidden=\"true\"></i>";
                         $classes[] = " remote-session-location ";
                     }
 
