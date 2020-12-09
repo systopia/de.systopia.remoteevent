@@ -17,6 +17,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use \Civi\RemoteParticipant\Event\ValidateEvent;
 use \Civi\RemoteParticipant\Event\ChangingEvent;
+use \Civi\EventMessages\MessageTokens;
 
 /**
  * RemoteEvent logic for sessions
@@ -326,6 +327,180 @@ class CRM_Remoteevent_EventSessions
         return $session_ids;
     }
 
+
+
+    /**
+     * Define/list the additional session tokens
+     *
+     * @param MessageTokenList $tokenList
+     *   token list event
+     */
+    public static function listTokens($tokenList)
+    {
+        $tokenList->addToken('$participant_sessions', E::ts("List of sessions the participant is registered to (as array)"));
+        $tokenList->addToken('$participant_sessions_list_html', E::ts("List of sessions the participant is registered to (as html list)."));
+        $tokenList->addToken('$participant_sessions_list_txt', E::ts("List of sessions the participant is registered to (as ascii list)."));
+    }
+
+    /**
+     * Add some tokens to an event message:
+     *  - cancellation token
+     *
+     * @param MessageTokens $messageTokens
+     *   the token list
+     */
+    public static function addTokens(MessageTokens $messageTokens)
+    {
+        $tokens = $messageTokens->getTokens();
+        if (!empty($tokens['participant'])) {
+            // cached sessions (for this event)
+            $all_event_sessions = CRM_Remoteevent_BAO_Session::getSessions($tokens['participant']['event_id']);
+
+            // get sessions for this participant
+            $participant_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($tokens['participant']['id']);
+            $participant_sessions = [];
+            foreach ($all_event_sessions as $session) {  // use this inverse lookup to maintain the order
+                if (in_array($session['id'], $participant_session_ids)) {
+                    $session['category'] = self::getSessionCategory($session);
+                    $participant_sessions[] = $session;
+                }
+            }
+            $messageTokens->setToken('participant_sessions', $participant_sessions);
+
+            // generate a bullet point list
+            $participant_sessions_list = '';
+            if (!empty($participant_sessions)) {
+                $participant_sessions_list .= '<ul>';
+                foreach ($participant_sessions as $session) {
+                    $start_time = date('H:i', $session['start_date']);
+                    $end_time = date('H:i', $session['end_date']);
+                    $participant_sessions_list .= "<li>[{$start_time}-{$end_time}] {$session['title']} ({$session['category']})";
+                    if (!empty($session['presenter_id'])) {
+                        $participant_sessions_list .= '<br/>';
+                        $participant_sessions_list .= self::getSessionPresenterText($session);
+                    }
+                    if (!empty($session['location'])) {
+                        $participant_sessions_list .= '<br/>';
+                        $participant_sessions_list .= self::getSessionLocationText($session, true);
+                    }
+                    $participant_sessions_list .= '</li>';
+                }
+                $participant_sessions_list .= '</ul>';
+            }
+            $messageTokens->setToken('participant_sessions_list_html', $participant_sessions_list);
+
+            // generate an ASCII list
+            $participant_sessions_list = '';
+            if (!empty($participant_sessions)) {
+                foreach ($participant_sessions as $session) {
+                    $start_time = date('H:i', $session['start_date']);
+                    $end_time = date('H:i', $session['end_date']);
+                    $participant_sessions_list .= " * [{$start_time}-{$end_time}] {$session['title']} ({$session['category']})";
+                    if (!empty($session['presenter_id'])) {
+                        $participant_sessions_list .= "\n   ";
+                        $participant_sessions_list .= self::getSessionPresenterText($session);
+                    }
+                    if (!empty($session['location'])) {
+                        $participant_sessions_list .= "\n   ";
+                        $participant_sessions_list .= self::getSessionLocationText($session, false);
+                    }
+                }
+                $participant_sessions_list .= "\n";
+            }
+            $messageTokens->setToken('participant_sessions_list_txt', $participant_sessions_list);
+        }
+    }
+
+
+    /**
+     * Get a rendered location string for the session
+     *
+     * @param array $session_data
+     *    session data
+     *
+     * @param boolean $html
+     *    do we want HTML data?
+     *
+     * @return string
+     *    session location or empty string
+     */
+    protected static function getSessionLocationText($session_data, $html)
+    {
+        if (empty($session_data['location'])) {
+            return '';
+        } else {
+            if ($html) {
+                return $session_data['location'];
+            } else {
+                return CRM_Utils_String::htmlToText($session_data['location']);
+            }
+        }
+    }
+
+    /**
+     * Get a rendered presenter string for the session
+     *
+     * @param array $session_data
+     *    session data
+     *
+     * @return string
+     *    session presenter or empty string
+     */
+    protected static function getSessionPresenterText($session_data)
+    {
+        static $presenter_names = [];
+        if (empty($session_data['presenter_id'])) {
+            return ''; // no presenter given
+        } else {
+            $presenter_id = (int)$session_data['presenter_id'];
+            if (!isset($presenter_names[$presenter_id])) {
+                $presenter_names[$presenter_id] = civicrm_api3(
+                    'Contact',
+                    'getvalue',
+                    [
+                        'id' => $presenter_id,
+                        'return' => 'display_name'
+                    ]
+                );
+            }
+            if (empty($session_data['presenter_title'])) {
+                return E::ts("Given by %1", [1 => $presenter_names[$presenter_id]]);
+            } else {
+                return E::ts("%1 is %2", [1 => $session_data['presenter_title'], 2 => $presenter_names[$presenter_id]]);
+            }
+        }
+    }
+
+    /**
+     * Get the category label for the given session data
+     *
+     * @param array $session_data
+     *    session data
+     *
+     * @return string
+     *    session category
+     */
+    protected static function getSessionCategory($session_data)
+    {
+        static $categories = null;
+        if ($categories === null) {
+            $categories = [];
+            $query = civicrm_api3('OptionValue', 'get', [
+                'option_group_id' => 'session_category',
+                'option.limit'    => 0,
+                'return'          => 'label,value'
+            ]);
+            foreach ($query['values'] as $category) {
+                $categories[$category['value']] = $category['label'];
+            }
+        }
+
+        if (empty($session_data['category_id'])) {
+            return E::ts("no category"); // this shouldn't happen
+        } else {
+            return CRM_Utils_Array::value($session_data['category_id'], $categories, E::ts("unknown"));
+        }
+    }
 
 
 
