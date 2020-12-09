@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-12-04 15:03+0100\n"
+"POT-Creation-Date: 2020-12-09 12:21+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -54,6 +54,51 @@ msgstr "Workshops - Tag %1"
 msgid "Details"
 msgstr "Details"
 
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+msgid "Session is full"
+msgstr "Workshop ist ausgebucht"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "You can't register for two sessions with overlapping time"
+msgstr ""
+"Sie können sich nicht für zwei Workshops anmelden, die zum gleichen "
+"Zeitpunkt stattfinden"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "You can't register for two sessions in the same slot"
+msgstr "Sie können sich immer nur für einen Workshop pro Slot anmelden"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "List of sessions the participant is registered to (as array)"
+msgstr ""
+"Liste der Workshops für die sich der Teilnehmer angemeldet hat (als Array)"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "List of sessions the participant is registered to (as html list)."
+msgstr ""
+"Liste der Workshops für die sich der Teilnehmer angemeldet hat (als HTML)"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "List of sessions the participant is registered to (as ascii list)."
+msgstr ""
+"Liste der Workshops für die sich der Teilnehmer angemeldet hat (als TXT)"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+msgid "Given by %1"
+msgstr "Gehalten von %1"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+msgid "%1 is %2"
+msgstr "%1 ist %2"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "no category"
+msgstr "ohne Kategorie"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "unknown"
+msgstr "unbekannt"
+
 #: CRM/Remoteevent/Form/EventLocation.php
 msgid "Additional Information for this Event"
 msgstr "Zusatzinformationen für diese Veranstaltung"
@@ -93,20 +138,8 @@ msgid "%1 / %2"
 msgstr "%1 / %2"
 
 #: CRM/Remoteevent/Form/EventSessions.php
-msgid "Session is full"
-msgstr "Workshop ist ausgebucht"
-
-#: CRM/Remoteevent/Form/EventSessions.php
 msgid "Session restricted to %1 participants"
 msgstr "Workshop auf %1 Teilnehmer begrenzt"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-msgid "Given by %1"
-msgstr "Gehalten von %1"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-msgid "%1 is %2"
-msgstr "%1 ist %2"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "This session is disabled"
@@ -135,6 +168,14 @@ msgstr "Standardanmeldeprofil"
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Allowed Registration Profiles"
 msgstr "Anmeldeprofile"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Default Registration Profile for Updates"
+msgstr "Standardupdateprofil"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Allowed Registration Profiles for Updates"
+msgstr "Updateprofile"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Use Custom Event Location?"
@@ -339,6 +380,10 @@ msgid "Event is not active"
 msgstr "Veranstaltung ist nicht aktiv"
 
 #: CRM/Remoteevent/Registration.php
+msgid "Event has ended."
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
 msgid "Registration is not yet open."
 msgstr "Die Anmeldung ist noch nicht möglich."
 
@@ -376,6 +421,12 @@ msgid "The window for registration changes has passed."
 msgstr "Die Bearbeitung von Anmeldungen ist nicht mehr möglich."
 
 #: CRM/Remoteevent/Registration.php
+msgid "This event does not allow participants to update their registration."
+msgstr ""
+"Bei dieser Veranstaltung ist das Berarbeiten einer Ameldung durch den "
+"Teilnehmer nicht erlaubt."
+
+#: CRM/Remoteevent/Registration.php
 msgid "Not enough contact data to identify/create contact."
 msgstr ""
 "Es wurden unzureichende persönliche Daten übermittelt, um eine Anmeldung "
@@ -388,10 +439,6 @@ msgstr "Sie wurden auf die Warteliste aufgenommen."
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Profile [%2] cannot be used with RemoteEvent [%1]."
 msgstr "Profil [%2] kann für  RemoteEvent [%1] nicht verwendet werden."
-
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "Profile %1 is not available for submission"
-msgstr "Profil %1 ist nicht für die Registrierung freigeschaltet"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Implementation for profile '%1' not found."
@@ -574,7 +621,7 @@ msgstr ""
 msgid "RemoteEvent [%1] has no remote registration enabled."
 msgstr ""
 
-#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Validate.php
 msgid "RemoteContactID is invalid"
 msgstr ""
 
@@ -737,6 +784,21 @@ msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
+"This profile will be used for updates/changes to an existing registration"
+msgstr ""
+"Dieses Profil wird standardmäßig verwendet um Änderungen an einer bereits "
+"bestehenden Anmeldung zu verarbeiten."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"Additional profiles that may be defined here for updating/changing an "
+"existing registration"
+msgstr ""
+"Liste der Profile die für die Verarbeitung von Änderungen an einer bereits "
+"bestehenden Anmeldung verwendet werden dürfen."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
 "If checked an alternative approach to handle event locations will be used "
 "and CiviCRM's default tab will be replaced with a custom one. Please refer "
 "to documentation for more information."
@@ -844,31 +906,28 @@ msgstr ""
 "Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact ID"
 "\" zu aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
 
-#: localisation function
-msgid "I accept the following terms and conditions"
-msgstr "Ich akzeptiere die Teilnahmebedingungen"
+#~ msgid "Profile %1 is not available for submission"
+#~ msgstr "Profil %1 ist nicht für die Registrierung freigeschaltet"
 
-#: localisation function
-msgid ""
-"You have to accept the terms and conditions to participate in this event"
-msgstr ""
-"Sie müssen die Teilnahmebedingungen akzeptieren um fortfahren zu können"
+#~ msgid "I accept the following terms and conditions"
+#~ msgstr "Ich akzeptiere die Teilnahmebedingungen"
 
-#: localisation function
-msgid "Do you accept the invitation?"
-msgstr "Nehmen Sie die Einladung an?"
+#~ msgid ""
+#~ "You have to accept the terms and conditions to participate in this event"
+#~ msgstr ""
+#~ "Sie müssen die Teilnahmebedingungen akzeptieren um fortfahren zu können"
 
-#: localisation function
-msgid "Confirm Invitation"
-msgstr "Einladung annehmen"
+#~ msgid "Do you accept the invitation?"
+#~ msgstr "Nehmen Sie die Einladung an?"
 
-#: localisation function
-msgid "Decline"
-msgstr "Einladung ablehnen"
+#~ msgid "Confirm Invitation"
+#~ msgstr "Einladung annehmen"
 
-#: localisation function
-msgid "General Terms and Conditions"
-msgstr "Teilnahmebedingungen"
+#~ msgid "Decline"
+#~ msgstr "Einladung ablehnen"
+
+#~ msgid "General Terms and Conditions"
+#~ msgstr "Teilnahmebedingungen"
 
 #~ msgid "[FULL] "
 #~ msgstr "[AUSGEBUCHT] "
