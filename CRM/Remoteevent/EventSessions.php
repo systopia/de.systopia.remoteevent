@@ -389,16 +389,18 @@ class CRM_Remoteevent_EventSessions
                     $participant_sessions[] = $session;
                 }
             }
-            $messageTokens->setToken('participant_sessions', $participant_sessions);
+            $messageTokens->setToken('participant_sessions', $participant_sessions, false);
 
             // generate a bullet point list
             $participant_sessions_list = '';
             if (!empty($participant_sessions)) {
                 $participant_sessions_list .= '<ul>';
                 foreach ($participant_sessions as $session) {
-                    $start_time = date('H:i', $session['start_date']);
-                    $end_time = date('H:i', $session['end_date']);
-                    $participant_sessions_list .= "<li>[{$start_time}-{$end_time}] {$session['title']} ({$session['category']})";
+                    $start_time = date(E::ts("H:i"), strtotime($session['start_date']));
+                    $end_time = date(E::ts("H:i"), strtotime($session['end_date']));
+                    $session_time = E::ts("[%1h - %2h]", [1 => $start_time, 2 => $end_time]);
+
+                   $participant_sessions_list .= "<li>{$session_time} {$session['title']} ({$session['category']})";
                     if (!empty($session['presenter_id'])) {
                         $participant_sessions_list .= '<br/>';
                         $participant_sessions_list .= self::getSessionPresenterText($session);
@@ -411,15 +413,17 @@ class CRM_Remoteevent_EventSessions
                 }
                 $participant_sessions_list .= '</ul>';
             }
-            $messageTokens->setToken('participant_sessions_list_html', $participant_sessions_list);
+            $messageTokens->setToken('participant_sessions_list_html', $participant_sessions_list, false);
 
             // generate an ASCII list
             $participant_sessions_list = '';
             if (!empty($participant_sessions)) {
                 foreach ($participant_sessions as $session) {
-                    $start_time = date('H:i', $session['start_date']);
-                    $end_time = date('H:i', $session['end_date']);
-                    $participant_sessions_list .= " * [{$start_time}-{$end_time}] {$session['title']} ({$session['category']})";
+                    $start_time = date(E::ts("H:i"), strtotime($session['start_date']));
+                    $end_time = date(E::ts("H:i"), strtotime($session['end_date']));
+                    $session_time = E::ts("%1h-%2h", [1 => $start_time, 2 => $end_time]);
+
+                    $participant_sessions_list .= " * {$session_time}: {$session['title']} ({$session['category']})";
                     if (!empty($session['presenter_id'])) {
                         $participant_sessions_list .= "\n   ";
                         $participant_sessions_list .= self::getSessionPresenterText($session);
@@ -431,7 +435,7 @@ class CRM_Remoteevent_EventSessions
                 }
                 $participant_sessions_list .= "\n";
             }
-            $messageTokens->setToken('participant_sessions_list_txt', $participant_sessions_list);
+            $messageTokens->setToken('participant_sessions_list_txt', $participant_sessions_list, false);
         }
     }
 
