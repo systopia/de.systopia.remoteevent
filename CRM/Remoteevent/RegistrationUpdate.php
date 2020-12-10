@@ -161,6 +161,7 @@ class CRM_Remoteevent_RegistrationUpdate
         $participant_updates = $registration_update->getParticipantUpdates();
         if (!empty($participant_updates) && !$registration_update->isParticipantUpdated()) {
             $participant_updates['id'] = $registration_update->getParticipantID();
+            $participant_updates['force_trigger_eventmessage'] = 1;
             CRM_Remoteevent_CustomData::resolveCustomFields($participant_updates);
             try {
                 civicrm_api3('Participant', 'create', $participant_updates);
