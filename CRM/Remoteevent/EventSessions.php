@@ -24,6 +24,9 @@ use \Civi\EventMessages\MessageTokens;
  */
 class CRM_Remoteevent_EventSessions
 {
+    /** @var null|array list of sessions submitted with the current proces */
+    protected static $sessions_in_progress = null;
+
     /**
      * Add the profile data to the get_form results
      *
@@ -307,6 +310,9 @@ class CRM_Remoteevent_EventSessions
 
         // todo: what to do if the sessions aren't submitted?
         CRM_Remoteevent_BAO_Session::setParticipantRegistrations($participant_id, $requested_session_ids);
+
+        // now that they're written, we can reset this
+        self::$sessions_in_progress = null;
     }
 
 
@@ -327,7 +333,20 @@ class CRM_Remoteevent_EventSessions
         return $session_ids;
     }
 
-
+    /**
+     * Extract the submitted sessions from the submitted data
+     *   and store in a static variable.
+     * The reason for this handover is, that the token events below might be triggered
+     *   before the participants have been written to the DB
+     *
+     * @param ChangingEvent $event
+     *   token list event
+     */
+    public static function extractSessions($event)
+    {
+        $submission = $event->getSubmission();
+        self::$sessions_in_progress = self::getSubmittedSessionIDs($submission);
+    }
 
     /**
      * Define/list the additional session tokens
@@ -357,7 +376,12 @@ class CRM_Remoteevent_EventSessions
             $all_event_sessions = CRM_Remoteevent_BAO_Session::getSessions($tokens['participant']['event_id']);
 
             // get sessions for this participant
-            $participant_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($tokens['participant']['id']);
+            if (self::$sessions_in_progress === null)  {
+                $participant_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($tokens['participant']['id']);
+            } else {
+                $participant_session_ids = self::$sessions_in_progress;
+            }
+
             $participant_sessions = [];
             foreach ($all_event_sessions as $session) {  // use this inverse lookup to maintain the order
                 if (in_array($session['id'], $participant_session_ids)) {
