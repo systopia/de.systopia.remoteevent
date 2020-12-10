@@ -88,7 +88,7 @@ function remoteevent_civicrm_config(&$config)
     // EVENT REGISTRATION.SUBMIT
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.update',
-        ['CRM_Remoteevent_EventSessions', 'extractSessions'], CRM_Remoteevent_RegistrationUpdate::BEFORE_CONTACT_IDENTIFICATION);
+        ['CRM_Remoteevent_EventSessions', 'extractSessions'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.submit',
         ['CRM_Remoteevent_RegistrationProfile', 'addProfileContactData'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
