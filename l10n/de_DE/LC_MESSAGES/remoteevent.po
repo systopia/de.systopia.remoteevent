@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-12-10 14:48+0100\n"
+"POT-Creation-Date: 2020-12-10 15:08+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -87,13 +87,13 @@ msgstr ""
 msgid "H:i"
 msgstr "H:i"
 
-#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+#: CRM/Remoteevent/EventSessions.php
 msgid "[%1h - %2h]"
-msgstr "[%1 Uhr - %2Uhr]"
+msgstr "[%1 Uhr - %2 Uhr]"
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "%1h-%2h"
-msgstr "%1 Uhr - %2Uhr"
+msgstr "%1 Uhr - % 2Uhr"
 
 #: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
 msgid "Given by %1"
@@ -127,6 +127,10 @@ msgstr "Die Veranstaltung hat kein Startdatum!"
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "Day %1 (%2)"
 msgstr "Tag %1 (%2)"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+msgid "%1h - %2h"
+msgstr "%1 Uhr - %2 Uhr"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "%1 minutes"
