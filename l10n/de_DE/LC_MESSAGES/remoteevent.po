@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-12-10 15:08+0100\n"
+"POT-Creation-Date: 2020-12-16 13:35+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -35,6 +35,10 @@ msgid ""
 msgstr "Diese Kontakte können als Veranstaltungsorte verwendet werden"
 
 #: CRM/Remoteevent/EventSessions.php
+msgid "[FULL] "
+msgstr "[AUSGEBUCHT] "
+
+#: CRM/Remoteevent/EventSessions.php
 msgid "Workshops"
 msgstr "Workshops"
 
@@ -50,7 +54,8 @@ msgstr "Workshops - %1"
 msgid "Workshops - Day %1"
 msgstr "Workshops - Tag %1"
 
-#: CRM/Remoteevent/EventSessions.php resources/remote_session_description.tpl
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Registration.php
+#: resources/remote_session_description.tpl
 msgid "Details"
 msgstr "Details"
 
@@ -448,6 +453,144 @@ msgstr ""
 msgid "You have been added to the waitlist."
 msgstr "Sie wurden auf die Warteliste aufgenommen."
 
+#: CRM/Remoteevent/Registration.php
+msgid "General Terms and Conditions"
+msgstr "Teilnahmebedingungen"
+
+#: CRM/Remoteevent/Registration.php
+msgid "I accept the following terms and conditions"
+msgstr "Ich akzeptiere die Teilnahmebedingungen"
+
+#: CRM/Remoteevent/RegistrationProfile/OneClick.php
+msgid "User must be identified to use one-click registration"
+msgstr "Für die One-Click Anmeldung muss der Teilnehmer bekannt sein"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard1.php
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Contact Data"
+msgstr "Stammdaten"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard1.php
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Email"
+msgstr "E-Mail"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard1.php
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Participant's email address"
+msgstr "E-Mail Adresse des Teilnehmers"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Prefix"
+msgstr "Anrede"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#, fuzzy
+#| msgid "Participants"
+msgid "Participant's Prefix"
+msgstr "Teilnehmer"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: resources/remote_session_description.tpl
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+msgid "Title"
+msgstr "Titel"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Participant's Formal Title"
+msgstr "Titel des Teilnehmers"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "First Name"
+msgstr "Vorname"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Participant's First Name"
+msgstr "Vorname des Teilnehmers"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Last Name"
+msgstr "Nachname"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Participant's Last Name"
+msgstr "Nachname des Teilnehmers"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Contact Address"
+msgstr "Adresse"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Phone Number"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+#, fuzzy
+#| msgid "Participant's Last Name"
+msgid "Participant's Phone Number"
+msgstr "Nachname des Teilnehmers"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Street Address"
+msgstr "Straße und Hausnummer"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Participant's street and house number"
+msgstr "Straße und Hausnummer des Teilnehmers"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Supplemental Address"
+msgstr "Adresszusatz"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+#, fuzzy
+#| msgid "Supplemental Address"
+msgid "Participant's supplemental address"
+msgstr "Adresszusatz"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Supplemental Address 2"
+msgstr "Adresszusatz 2"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Postal Code"
+msgstr "Postleitzahl"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+#, fuzzy
+#| msgid "Participant's Last Name"
+msgid "Participant's postal code"
+msgstr "Nachname des Teilnehmers"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "City"
+msgstr "Stadt"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+#, fuzzy
+#| msgid "Participants"
+msgid "Participant's city"
+msgstr "Teilnehmer"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Country"
+msgstr "Land"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+#, fuzzy
+#| msgid "Participants"
+msgid "Participant's country"
+msgstr "Teilnehmer"
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Required"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Invalid Value"
+msgstr ""
+
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Profile [%2] cannot be used with RemoteEvent [%1]."
 msgstr "Profil [%2] kann für  RemoteEvent [%1] nicht verwendet werden."
@@ -463,6 +606,22 @@ msgstr ""
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Value '%1' for field %2 is not valid"
 msgstr "'%1' ist kein gültiger Wert für das Feld %2"
+
+#: CRM/Remoteevent/RegistrationUpdate.php
+msgid "Participant could not be identified."
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationUpdate.php
+msgid "Contact could not be identified."
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationUpdate.php
+msgid "Couldn't update contact: %1"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationUpdate.php
+msgid "Couldn't update participant: %1"
+msgstr ""
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid "Cancellation Token valid for one-click cancellation, if available."
@@ -503,6 +662,30 @@ msgstr ""
 #: CRM/Remoteevent/Upgrader.php
 msgid "Invited"
 msgstr "eingeladen"
+
+#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
+msgid "Confirm"
+msgstr ""
+
+#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
+msgid "Decline"
+msgstr "Einladung ablehnen"
+
+#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
+msgid "Confirm Invitation"
+msgstr "Einladung annehmen"
+
+#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
+msgid "Do you accept the invitation?"
+msgstr "Nehmen Sie die Einladung an?"
+
+#: Civi/RemoteParticipant/Event/UpdateEvent.php
+msgid "Participant already loaded."
+msgstr "Teilnehmer bereits geladen."
+
+#: Civi/RemoteParticipant/Event/UpdateEvent.php
+msgid "Contact already loaded."
+msgstr "Kontakt bereits gelanden."
 
 #: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
@@ -676,11 +859,6 @@ msgstr "RemoteEventRegistration: Anmeldung bearbeiten"
 #: remoteevent.php
 msgid "RemoteEventRegistration: cancel"
 msgstr "RemoteEventRegistration: Anmeldung stornieren"
-
-#: resources/remote_session_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
-msgid "Title"
-msgstr "Titel"
 
 #: resources/remote_session_description.tpl
 msgid "Restrictions"
@@ -921,79 +1099,10 @@ msgstr ""
 #~ msgid "Profile %1 is not available for submission"
 #~ msgstr "Profil %1 ist nicht für die Registrierung freigeschaltet"
 
-#~ msgid "I accept the following terms and conditions"
-#~ msgstr "Ich akzeptiere die Teilnahmebedingungen"
-
 #~ msgid ""
 #~ "You have to accept the terms and conditions to participate in this event"
 #~ msgstr ""
 #~ "Sie müssen die Teilnahmebedingungen akzeptieren um fortfahren zu können"
-
-#~ msgid "Do you accept the invitation?"
-#~ msgstr "Nehmen Sie die Einladung an?"
-
-#~ msgid "Confirm Invitation"
-#~ msgstr "Einladung annehmen"
-
-#~ msgid "Decline"
-#~ msgstr "Einladung ablehnen"
-
-#~ msgid "General Terms and Conditions"
-#~ msgstr "Teilnahmebedingungen"
-
-#~ msgid "[FULL] "
-#~ msgstr "[AUSGEBUCHT] "
-
-#~ msgid "Contact Data"
-#~ msgstr "Stammdaten"
-
-#~ msgid "Street Address"
-#~ msgstr "Straße und Hausnummer"
-
-#~ msgid "Participant's street and house number"
-#~ msgstr "Straße und Hausnummer des Teilnehmers"
-
-#~ msgid "Contact Address"
-#~ msgstr "Adresse"
-
-#~ msgid "Supplemental Address"
-#~ msgstr "Adresszusatz"
-
-#~ msgid "Supplemental Address 2"
-#~ msgstr "Adresszusatz 2"
-
-#~ msgid "Postal Code"
-#~ msgstr "Postleitzahl"
-
-#~ msgid "City"
-#~ msgstr "Stadt"
-
-#~ msgid "Country"
-#~ msgstr "Land"
-
-#~ msgid "Email"
-#~ msgstr "E-Mail"
-
-#~ msgid "Prefix"
-#~ msgstr "Anrede"
-
-#~ msgid "Participant's Formal Title"
-#~ msgstr "Titel des Teilnehmers"
-
-#~ msgid "First Name"
-#~ msgstr "Vorname"
-
-#~ msgid "Participant's First Name"
-#~ msgstr "Vorname des Teilnehmers"
-
-#~ msgid "Last Name"
-#~ msgstr "Nachname"
-
-#~ msgid "Participant's Last Name"
-#~ msgstr "Nachname des Teilnehmers"
-
-#~ msgid "User must be identified to use one-click registration"
-#~ msgstr "Für die One-Click Anmeldung muss der Teilnehmer bekannt sein"
 
 #~ msgid "Event Invitation"
 #~ msgstr "Einladung"
