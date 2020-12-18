@@ -368,3 +368,23 @@ function remoteevent_civicrm_copy($objectName, &$object)
         }
     }
 }
+
+/**
+ * Monitor Participant objects
+ */
+function remoteevent_civicrm_pre($op, $objectName, $id, &$params)
+{
+    if (($op == 'edit' || $op == 'create') && $objectName == 'Participant') {
+        CRM_Remoteevent_ChangeActivity::recordPre($id, $params);
+    }
+}
+
+/**
+ * Monitor Participant objects
+ */
+function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef)
+{
+    if (($op == 'edit' || $op == 'create') && $objectName == 'Participant') {
+        CRM_Remoteevent_ChangeActivity::recordPost($objectId, $objectRef);
+    }
+}
