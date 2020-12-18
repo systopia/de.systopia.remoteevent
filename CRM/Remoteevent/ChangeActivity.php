@@ -33,11 +33,7 @@ class CRM_Remoteevent_ChangeActivity
      */
     public static function getActivityTypeID()
     {
-        static $activity_id = null;
-        if ($activity_id === null) {
-            $activity_id = Civi::settings()->get('remote_participant_change_activity_type_id');
-        }
-        return $activity_id;
+        return Civi::settings()->get('remote_participant_change_activity_type_id');
     }
 
 
@@ -56,7 +52,7 @@ class CRM_Remoteevent_ChangeActivity
             } else {
 
                 $current_values = self::getParticipantData($participant_id);
-                array_push(self::$record_stack, [$participant_id, $participant_data]);
+                array_push(self::$record_stack, [$participant_id, $current_values]);
             }
 
         }
@@ -79,7 +75,7 @@ class CRM_Remoteevent_ChangeActivity
                 } else {
                     $previous_values = $record[1];
                     $current_values = self::getParticipantData($participant_id);
-                    self::createDiffActivity($participant_id, $previous_values, $current_values);
+                    self::createDiffActivity($previous_values, $current_values);
                 }
             } else {
                 // this is a new participant -> skip
@@ -97,25 +93,54 @@ class CRM_Remoteevent_ChangeActivity
     {
         // todo be more efficient? tap into caches? use SQL?
         // also: limit return parameters?
-        $participant = civicrm_api3('Participant', 'getsingle', ['id' => $participant_id]);
-        return $participant;
+        $participant_raw = civicrm_api3('Participant', 'getsingle', ['id' => $participant_id]);
+        $participant_filtered = [];
+        foreach ($participant_raw as $field_name => $value) {
+            if (substr($field_name, 0, 12) == 'participant_') {
+                $participant_filtered[$field_name] = $value;
+
+            } elseif (substr($field_name, 0, 7) == 'custom_') {
+                $participant_filtered[$field_name] = $value;
+
+            } elseif ($field_name == 'contact_id' || $field_name == 'event_id') {
+                $participant_filtered[$field_name] = $value;
+
+            } else {
+                // drop value
+            }
+        }
+
+        // use the status/role name if available
+        if (!empty($participant_filtered['participant_status'])) {
+            $participant_filtered['participant_status_id'] = $participant_filtered['participant_status'];
+            unset($participant_filtered['participant_status']);
+        }
+        if (!empty($participant_filtered['participant_role'])) {
+            $participant_filtered['participant_role_id'] = $participant_filtered['participant_role'];
+            unset($participant_filtered['participant_role']);
+        }
+        return $participant_filtered;
     }
 
     /**
      * Create a new activity of there are differences
      *
-     * @param integer $participant_id
      * @param array $previous_values
      * @param array $current_values
      */
-    protected static function createDiffActivity($participant_id, $previous_values, $current_values)
+    protected static function createDiffActivity($previous_values, $current_values)
     {
         // see if there's a diff
         $differing_attributes = [];
         $all_attributes = array_keys($previous_values) + array_keys($previous_values);
         foreach ($all_attributes as $attribute) {
-            $previous_value = CRM_Utils_Array::value($previous_values, $attribute);
-            $current_value  = CRM_Utils_Array::value($current_values, $attribute);
+            if (in_array($attribute, ['status', 'role'])) {
+                // skip those
+                continue;
+            }
+
+            $previous_value = CRM_Utils_Array::value($attribute, $previous_values);
+            $current_value  = CRM_Utils_Array::value($attribute, $current_values);
             if ($previous_value != $current_value) {
                 $differing_attributes[] = $attribute;
             }
@@ -133,8 +158,8 @@ class CRM_Remoteevent_ChangeActivity
             foreach ($differing_attributes as $attribute) {
                 // first: create record
                 $field_data[$attribute] = [
-                    'old_value' => CRM_Utils_Array::value($previous_values, $attribute),
-                    'new_value' => CRM_Utils_Array::value($current_values, $attribute),
+                    'old_value' => CRM_Utils_Array::value($attribute, $previous_values),
+                    'new_value' => CRM_Utils_Array::value($attribute, $current_values),
                 ];
 
                 // look for labels
@@ -143,7 +168,7 @@ class CRM_Remoteevent_ChangeActivity
                     $custom_fields[$attribute] = substr($attribute, 8);
                     $field_data[$attribute]['custom_field_id'] = $custom_fields[$attribute];
 
-                } elseif (isset($participant_code_fields[$attribute])) {
+                } else if (isset($participant_code_fields[$attribute])) {
                     // this is a core field
                     $field_data[$attribute]['label'] = $participant_code_fields[$attribute]['title'];
 
