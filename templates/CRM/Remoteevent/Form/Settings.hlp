@@ -14,15 +14,20 @@
 
 {crmScope extensionKey='de.systopia.remoteevent'}
 {htxt id='id-blocking-status'}
-  <p>{ts domain="de.systopia.remoteevent"}List of statuses the will prevent a contact from registering again.{/ts}</p>
+  <p>{ts}List of statuses the will prevent a contact from registering again.{/ts}</p>
 {/htxt}
 
 {htxt id='id-speaker-roles'}
-  <p>{ts domain="de.systopia.remoteevent"}Any roles you select here will cause all participants with this role to be publicly listed as speakers at the event.{/ts}</p>
+  <p>{ts}Any roles you select here will cause all participants with this role to be publicly listed as speakers at the event.{/ts}</p>
 {/htxt}
 
 {htxt id='id-update-profile'}
-  <p>{ts domain="de.systopia.remoteevent"}You may pick a XCM profile to <i>update</i> contacts that have already been identified, for example by token or remote user connection.{/ts}</p>
-  <p>{ts domain="de.systopia.remoteevent"}It is strongly recommended, that the chosen profile has the "Match contacts by contact ID" option enabled. This way you can avoid creating duplicates.{/ts}</p>
+  <p>{ts}You may pick a XCM profile to <i>update</i> contacts that have already been identified, for example by token or remote user connection.{/ts}</p>
+  <p>{ts}It is strongly recommended, that the chosen profile has the "Match contacts by contact ID" option enabled. This way you can avoid creating duplicates.{/ts}</p>
+{/htxt}
+
+{htxt id='id-change-activity'}
+  <p>{ts}You can select a custom activity type here to enable the recording of changes and updates of participant data.{/ts}</p>
+  <p>{ts}If you don't select anything here, nothing will be recorded.{/ts}</p>
 {/htxt}
 {/crmScope}

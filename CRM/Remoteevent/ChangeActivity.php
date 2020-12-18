@@ -25,12 +25,6 @@ class CRM_Remoteevent_ChangeActivity
     /** @var array stack of [participant_id, data] tuples */
     protected static $record_stack = [];
 
-    public static function recordParticpantChangeActivitiesEnabled()
-    {
-        // todo:
-        return true;
-    }
-
     /**
      * Get the activity type ID to be used to record actviities
      *
@@ -39,8 +33,11 @@ class CRM_Remoteevent_ChangeActivity
      */
     public static function getActivityTypeID()
     {
-        // todo:
-        return 1;
+        static $activity_id = null;
+        if ($activity_id === null) {
+            $activity_id = Civi::settings()->get('remote_participant_change_activity_type_id');
+        }
+        return $activity_id;
     }
 
 
