@@ -11,6 +11,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
+{crmScope extensionKey='de.systopia.remoteevent'}
 <table class="remote-session remote-session-info">
   <tr>
     <td>{ts}Title{/ts}</td>
@@ -43,3 +44,4 @@
     <td>{$session.description}</td>
   </tr>
 </table>
+{/crmScope}
