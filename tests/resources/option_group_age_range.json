@@ -1,0 +1,80 @@
+{
+  "_lookup": ["name"],
+  "_translate": ["title"],
+  "name": "age_range",
+  "title": "Age Range",
+  "is_reserved": "1",
+  "is_active": "1",
+  "_values": [
+    {
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
+      "name": "_17",
+      "label": "under 18",
+      "description": "",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "0"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
+      "name": "18_29",
+      "label": "18-29",
+      "description": "",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
+      "name": "30_39",
+      "label": "30-39",
+      "description": "",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
+      "name": "40_49",
+      "label": "40-49",
+      "description": "",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
+      "name": "50_59",
+      "label": "50-59",
+      "description": "",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
+      "name": "60_69",
+      "label": "60-69",
+      "description": "",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label", "description"],
+      "name": "70_",
+      "label": "70+",
+      "description": "",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    }
+  ]
+}
