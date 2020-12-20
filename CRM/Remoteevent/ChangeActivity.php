@@ -22,6 +22,10 @@ use CRM_Remoteevent_ExtensionUtil as E;
 class CRM_Remoteevent_ChangeActivity
 {
 
+    const RECORD_PARTICIPANT_ID = 0;
+    const RECORD_PARTICIPANT_DATA = 1;
+    const RECORD_PARTICIPANT_UPDATE_HAS_NO_CUSTOM_FIELDS = 2;
+
     /** @var array stack of [participant_id, data] tuples */
     protected static $record_stack = [];
 
@@ -46,13 +50,24 @@ class CRM_Remoteevent_ChangeActivity
     public static function recordPre($participant_id, $participant_data)
     {
         if (self::getActivityTypeID()) { // is this enabled?
+            // check if there is custom fields involved
+            $has_no_custom_fields = true;
+            foreach ($participant_data as $key => $value) {
+                if (substr($key, 0, 7) == 'custom_') {
+                    $has_no_custom_fields = false;
+                    break;
+                }
+            }
+
             if (empty($participant_id)) {
                 // this is a new contact
-                array_push(self::$record_stack, [0, []]);
+                array_push(self::$record_stack, [0, [], $has_no_custom_fields]);
+
             } else {
 
+                // load contact
                 $current_values = self::getParticipantData($participant_id);
-                array_push(self::$record_stack, [$participant_id, $current_values]);
+                array_push(self::$record_stack, [$participant_id, $current_values, $has_no_custom_fields]);
             }
 
         }
@@ -62,25 +77,39 @@ class CRM_Remoteevent_ChangeActivity
      * Record a participant status after a change, and trigger any matching rules
      *
      * @param integer $participant_id
-     * @param CRM_Event_BAO_Participant $participant_object
      */
-    public static function recordPost($participant_id, $participant_object)
+    public static function recordPost($participant_id, $custom_fields_done = false)
     {
         if (self::getActivityTypeID()) { // is this enabled?
-            $record = array_pop(self::$record_stack);
-            $pre_participant_id = $record[0];
-            if ($pre_participant_id) {
-                if ($pre_participant_id != $participant_id) {
-                    Civi::log()->warning("RemoteEvent: Participant monitoring issue, stack inconsistent.");
+            // if this change contains custom fields, we have to wait for that, too.
+            $record = end(self::$record_stack);
+            if ($record[self::RECORD_PARTICIPANT_UPDATE_HAS_NO_CUSTOM_FIELDS] || $custom_fields_done) {
+                $record = array_pop(self::$record_stack);
+                $pre_participant_id = $record[self::RECORD_PARTICIPANT_ID];
+                if ($pre_participant_id) {
+                    if ($pre_participant_id != $participant_id) {
+                        Civi::log()->warning("RemoteEvent: Participant monitoring issue, stack inconsistent.");
+                    } else {
+                        $previous_values = $record[self::RECORD_PARTICIPANT_DATA];
+                        $current_values = self::getParticipantData($participant_id);
+                        self::createDiffActivity($previous_values, $current_values);
+                    }
                 } else {
-                    $previous_values = $record[1];
-                    $current_values = self::getParticipantData($participant_id);
-                    self::createDiffActivity($previous_values, $current_values);
+                    // this is a new participant -> skip
                 }
-            } else {
-                // this is a new participant -> skip
             }
         }
+    }
+
+    /**
+     * Test if the currently processed record contains custom fields
+     * In this case, we want to wait for the custom field update hook rather then the regular post hook
+     */
+    protected static function currentRecordHasNoCustomFields()
+    {
+        $record = end(self::$record_stack);
+        $update = $record[1];
+        return false;
     }
 
     /**

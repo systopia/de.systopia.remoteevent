@@ -379,12 +379,23 @@ function remoteevent_civicrm_pre($op, $objectName, $id, &$params)
     }
 }
 
+
+function remoteevent_civicrm_custom( $op, $groupID, $entityID, &$params )
+{
+    foreach ($params as $param) {
+        if ($param['entity_table'] == 'civicrm_participant') {
+            CRM_Remoteevent_ChangeActivity::recordPost($entityID, true);
+            break;
+        }
+    }
+}
+
 /**
  * Monitor Participant objects
  */
 function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef)
 {
     if (($op == 'edit' || $op == 'create') && $objectName == 'Participant') {
-        CRM_Remoteevent_ChangeActivity::recordPost($objectId, $objectRef);
+        CRM_Remoteevent_ChangeActivity::recordPost($objectId);
     }
 }
