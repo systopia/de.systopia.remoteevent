@@ -197,8 +197,7 @@ class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_Test
         // todo: this needs a post hook
         $this->assertEquals(1, $change_activities['count'], "There should be a change activity with that contact");
         $change_activity = reset($change_activities['values']);
-        $this->assertNotEmpty(strstr($change_activity['details'], 'Registered'), "The activity should mention the Registered->Cancelled change");
-        $this->assertNotEmpty(strstr($change_activity['details'], 'Cancelled'), "The activity should mention the Registered->Cancelled change");
-
+        $this->assertNotEmpty(strstr($change_activity['details'], 'Twatter'), "The activity should mention the Twitter->Twatter change");
+        $this->assertNotEmpty(strstr($change_activity['details'], '40-49'), "The activity should mention the 30-39 to 40-49 change");
     }
 }

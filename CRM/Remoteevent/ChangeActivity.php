@@ -128,7 +128,7 @@ class CRM_Remoteevent_ChangeActivity
             if (substr($field_name, 0, 12) == 'participant_') {
                 $participant_filtered[$field_name] = $value;
 
-            } elseif (substr($field_name, 0, 7) == 'custom_') {
+            } elseif (preg_match('/^custom_[0-9]+$/', $field_name)) {
                 $participant_filtered[$field_name] = $value;
 
             } elseif ($field_name == 'contact_id' || $field_name == 'event_id') {
@@ -194,7 +194,7 @@ class CRM_Remoteevent_ChangeActivity
                 // look for labels
                 if (substr($attribute, 0, 7) == 'custom_') {
                     // this is a custom field -> will do a lookup below
-                    $custom_fields[$attribute] = substr($attribute, 8);
+                    $custom_fields[$attribute] = substr($attribute, 7);
                     $field_data[$attribute]['custom_field_id'] = $custom_fields[$attribute];
 
                 } else if (isset($participant_code_fields[$attribute])) {
@@ -211,7 +211,24 @@ class CRM_Remoteevent_ChangeActivity
             CRM_Remoteevent_CustomData::cacheCustomFields($custom_fields);
             foreach ($custom_fields as $attribute => $custom_field_id) {
                 $custom_field = CRM_Remoteevent_CustomData::getFieldSpecs($custom_field_id);
-                $field_data[$attribute]['label'] = $custom_fields['title'];
+                $field_data[$attribute]['label'] = $custom_field['label'];
+
+                // map the option values
+                if (!empty($custom_field['option_group_id'])) {
+                    foreach (['old_value', 'new_value'] as $value_key) {
+                        if (!empty($field_data[$attribute][$value_key])) {
+                            try {
+                                $field_data[$attribute][$value_key] = civicrm_api3('OptionValue', 'getvalue', [
+                                    'option_group_id' => $custom_field['option_group_id'],
+                                    'value'           => $field_data[$attribute][$value_key],
+                                    'return'          => 'label'
+                                ]);
+                            } catch (CiviCRM_API3_Exception $ex) {
+                                $field_data[$attribute][$value_key] = E::ts("%1 (invalid)", [1 => $field_data[$attribute][$value_key]]);
+                            }
+                        }
+                    }
+                }
             }
 
             // todo: format values
