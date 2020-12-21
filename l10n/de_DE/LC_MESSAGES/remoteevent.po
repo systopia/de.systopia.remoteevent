@@ -216,7 +216,7 @@ msgstr "Ende Anmeldefenster"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Require participant approval?"
-msgstr ""
+msgstr "Wird eine Freigabe zur Teilnahme benötigt?"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Allow self-service cancellation or transfer?"
@@ -224,7 +224,7 @@ msgstr "Teilnehmenden Stornierungen und Änderungen gestatten?"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Cancellation or transfer time limit (hours)"
-msgstr ""
+msgstr "Stornierungs- oder Übertragungszeitraum (in Stunden)"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Please enter the number of hours (as an integer)."
@@ -398,7 +398,7 @@ msgstr "Veranstaltung ist nicht aktiv"
 
 #: CRM/Remoteevent/Registration.php
 msgid "Event has ended."
-msgstr ""
+msgstr "Die Veranstaltung ist beendet."
 
 #: CRM/Remoteevent/Registration.php
 msgid "Registration is not yet open."
@@ -523,7 +523,7 @@ msgstr "Adresse"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 #, fuzzy
@@ -585,11 +585,11 @@ msgstr "Teilnehmer"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Required"
-msgstr ""
+msgstr "Erforderlich"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Invalid Value"
-msgstr ""
+msgstr "Ungültiger Wert"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Profile [%2] cannot be used with RemoteEvent [%1]."
@@ -597,11 +597,11 @@ msgstr "Profil [%2] kann für  RemoteEvent [%1] nicht verwendet werden."
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Implementation for profile '%1' not found."
-msgstr ""
+msgstr "Keine Implementierung für Profil '%1' gefunden."
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Registration profile '%1' is not available (any more)."
-msgstr ""
+msgstr "Das Anmeldeformular '%1' ist nicht (mehr) verfügbar."
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Value '%1' for field %2 is not valid"
@@ -609,19 +609,19 @@ msgstr "'%1' ist kein gültiger Wert für das Feld %2"
 
 #: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Participant could not be identified."
-msgstr ""
+msgstr "Anmeldung nicht gefunden."
 
 #: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Contact could not be identified."
-msgstr ""
+msgstr "Kontakt nicht gefunden."
 
 #: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Couldn't update contact: %1"
-msgstr ""
+msgstr "Kontakt %1 konnte nicht aktualisiert werden."
 
 #: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Couldn't update participant: %1"
-msgstr ""
+msgstr "Anmeldung %1 konnte nicht aktualisiert werden."
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid "Cancellation Token valid for one-click cancellation, if available."
@@ -649,11 +649,11 @@ msgstr ""
 
 #: CRM/Remoteevent/UI.php
 msgid "Remote Online Registration"
-msgstr "Onlineanmeldung (alternatives System)"
+msgstr "Onlineanmeldung (CiviRemote)"
 
 #: CRM/Remoteevent/UI.php
 msgid "Online Registration (CiviCRM)"
-msgstr ""
+msgstr "Online Anmeldung (CiviCRM)"
 
 #: CRM/Remoteevent/Upgrader/Base.php
 msgid "Upgrade %1 to revision %2"
@@ -665,7 +665,7 @@ msgstr "eingeladen"
 
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
 msgid "Confirm"
-msgstr ""
+msgstr "Absenden"
 
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
 msgid "Decline"
@@ -713,6 +713,9 @@ msgid ""
 "which case the fields should come with the default data. This takes "
 "preference over the remote_contact_id"
 msgstr ""
+"Sie können einen Einladungstoken übermitteln um den Kontakt zu "
+"identifizieren. In diesem Fall wird das Formular i.d.R. vorausgefüllt. Diese "
+"Form der Identifizierung hat Vorrang vor remote_contact_id ."
 
 #: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
@@ -726,12 +729,14 @@ msgid ""
 "You can submit a remote contact, in which case the result will be filtered "
 "for the events available to that contact"
 msgstr ""
+"Sie können einen \"Remote Contact\" mit übermitteln, in diesem Fall wird das "
+"Ergebnis gefiltert auf für diesen Kontakt verfügbare Veranstaltungen."
 
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Event ID"
-msgstr ""
+msgstr "Veranstaltungs ID"
 
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
@@ -763,7 +768,7 @@ msgstr "Name des Profils"
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "If omitted, the default profile is used"
-msgstr ""
+msgstr "Falls nicht angegeben, wird das Standardprofil genutzt"
 
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Update.php
 #: api/v3/RemoteParticipant/Validate.php
@@ -775,6 +780,8 @@ msgid ""
 "You can submit a remote contact, in which case the fields should come with "
 "the default data"
 msgstr ""
+"Sie können einen \"Remote Contact\" mit übermitteln, in diesem Fall wird das "
+"das Formular i.d.R. vorausgefüllt."
 
 #: api/v3/RemoteParticipant/Get.php
 msgid "Token to view your registration"
@@ -782,47 +789,50 @@ msgstr "Token für das Bearbeiten Ihrer Anmeldung"
 
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
 msgid "Context"
-msgstr ""
+msgstr "Kontext"
 
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
 msgid "Which context/action is the form for (create/cancel/update)"
 msgstr ""
+"Für welchen Kontext bzw. welche Aktion ist das Formular gedacht (anlegen/"
+"stornieren/aktualisieren)"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "Invalid context '%1'"
-msgstr ""
+msgstr "Ungültiger Kontext '%1'"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "Invalid token '%1'"
-msgstr ""
+msgstr "Ungültiger Token '%1'"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "Broken token '%1'"
-msgstr ""
+msgstr "Fehlerhafter Token '%1'"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "Token refers to another event '%1'"
-msgstr ""
+msgstr "Token bezieht sich auf ein anderes Event '%1'"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "RemoteEvent [%1] does not exist, or not eligible for registration."
 msgstr ""
+"RemoteEvent [%1] nicht verfügbar bzw. nicht für Anmeldung konfiguriert."
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "RemoteEvent [%1] is ambiguous."
-msgstr ""
+msgstr "RemoteEvent [%1] ist uneindeutig."
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "RemoteEvent [%1] has no remote registration enabled."
-msgstr ""
+msgstr "RemoteEvent [%1] hat keine Onlineanmeldung konfiguriert."
 
 #: api/v3/RemoteParticipant/Validate.php
 msgid "RemoteContactID is invalid"
-msgstr ""
+msgstr "RemoteContactID ist ungültig"
 
 #: api/v3/RemoteParticipant/Validate.php
 msgid "Context '%1' not implemented."
-msgstr ""
+msgstr "Kontext '%1' nicht implementiert."
 
 #: js/event_sessions.js
 msgid "de.systopia.remoteevent"
