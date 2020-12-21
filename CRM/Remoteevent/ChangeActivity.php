@@ -163,22 +163,27 @@ class CRM_Remoteevent_ChangeActivity
         $differing_attributes = [];
         $all_attributes = array_keys($previous_values) + array_keys($previous_values);
         foreach ($all_attributes as $attribute) {
-            if (in_array($attribute, ['status', 'role'])) {
-                // skip those
-                continue;
-            }
-
             // extract values
             $previous_value = CRM_Utils_Array::value($attribute, $previous_values);
+            $current_value  = CRM_Utils_Array::value($attribute, $current_values);
+
+            // format arrays
             if (is_array($previous_value)) {
                 $previous_value = implode(', ', $previous_value);
-                $previous_values[$attribute] = $previous_value;
             }
-            $current_value  = CRM_Utils_Array::value($attribute, $current_values);
             if (is_array($current_value)) {
                 $current_value = implode(', ', $current_value);
-                $current_values[$attribute] = $current_value;
             }
+
+            // format participant_register_date (sometimes the seconds get lost)
+            if ($attribute == 'participant_register_date') {
+                $previous_value = date('Y-m-d H:i', strtotime($previous_value));
+                $current_value = date('Y-m-d H:i', strtotime($current_value));
+            }
+
+            // store formatted values
+            $previous_values[$attribute] = $previous_value;
+            $current_values[$attribute]  = $current_value;
 
             // check if they're different
             if ($previous_value != $current_value) {
