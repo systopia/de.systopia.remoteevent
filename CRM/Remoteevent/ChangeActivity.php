@@ -168,8 +168,19 @@ class CRM_Remoteevent_ChangeActivity
                 continue;
             }
 
+            // extract values
             $previous_value = CRM_Utils_Array::value($attribute, $previous_values);
+            if (is_array($previous_value)) {
+                $previous_value = implode(', ', $previous_value);
+                $previous_values[$attribute] = $previous_value;
+            }
             $current_value  = CRM_Utils_Array::value($attribute, $current_values);
+            if (is_array($current_value)) {
+                $current_value = implode(', ', $current_value);
+                $current_values[$attribute] = $current_value;
+            }
+
+            // check if they're different
             if ($previous_value != $current_value) {
                 $differing_attributes[] = $attribute;
             }
