@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-01-04 11:33+0100\n"
+"POT-Creation-Date: 2021-01-04 11:58+0100\n"
 "Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -639,6 +639,10 @@ msgstr ""
 
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
 msgid "Invitation Feedback"
+msgstr ""
+
+#: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
+msgid "Welcome %1. You are modifying your registration for event '%2'"
 msgstr ""
 
 #: Civi/RemoteParticipant/Event/UpdateEvent.php

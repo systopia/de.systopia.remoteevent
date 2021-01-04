@@ -224,4 +224,37 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
             ]);
         }
     }
+
+
+    /**
+     * Add a standard message to greet the user, if known
+     */
+    public function addStandardGreeting()
+    {
+        // get some context
+        $context = $this->getContext();
+        $contact_id = $this->getContactID();
+        $participant_id = $this->getParticipantID();
+
+        try {
+            // add a greeting for updating registrations
+            if ($context == 'update' && $participant_id) {
+                $contact_name = \civicrm_api3('Contact', 'getvalue', [
+                    'id'     => $contact_id,
+                    'return' => 'display_name']);
+                $event = $this->getEvent();
+
+                $l10n = $this->getLocalisation();
+                $this->addStatus($l10n->localise("Welcome %1. You are modifying your registration for event '%2'", [
+                    1 => $contact_name,
+                    2 => $event['title']]));
+            }
+
+            // else... other titles to be set?
+
+
+        } catch (\CiviCRM_API3_Exception $exception) {
+            \Civi::log()->debug("Error while rendering standard greeting: " . $exception->getMessage());
+        }
+    }
 }

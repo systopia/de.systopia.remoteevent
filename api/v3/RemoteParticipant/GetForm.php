@@ -154,20 +154,23 @@ function civicrm_api3_remote_participant_get_form($params)
         switch ($params['context']) {
             case 'create':
                 $fields = new GetCreateParticipantFormEvent($params, $event);
-                Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $fields);
                 $fields->addStandardFields();
+                $fields->addStandardGreeting();
+                Civi::dispatcher()->dispatch('civi.remoteevent.registration.getform', $fields);
                 break;
 
             case 'cancel':
                 $fields = new GetCancelParticipantFormEvent($params, $event);
-                Civi::dispatcher()->dispatch('civi.remoteevent.cancellation.getform', $fields);
                 $fields->addStandardFields();
+                $fields->addStandardGreeting();
+                Civi::dispatcher()->dispatch('civi.remoteevent.cancellation.getform', $fields);
                 break;
 
             case 'update':
                 $fields = new GetUpdateParticipantFormEvent($params, $event);
-                Civi::dispatcher()->dispatch('civi.remoteevent.registration_update.getform', $fields);
                 $fields->addStandardFields();
+                $fields->addStandardGreeting();
+                Civi::dispatcher()->dispatch('civi.remoteevent.registration_update.getform', $fields);
                 break;
         }
     } catch (Exception $error) {
