@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2020-12-16 13:35+0100\n"
+"POT-Creation-Date: 2021-01-04 11:33+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -664,20 +664,16 @@ msgid "Invited"
 msgstr "eingeladen"
 
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
-msgid "Confirm"
-msgstr "Absenden"
-
-#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
-msgid "Decline"
-msgstr "Einladung ablehnen"
-
-#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
-msgid "Confirm Invitation"
+msgid "Accept Invitation"
 msgstr "Einladung annehmen"
 
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
-msgid "Do you accept the invitation?"
-msgstr "Nehmen Sie die Einladung an?"
+msgid "Decline Invitation"
+msgstr "Einladung ablehnen"
+
+#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
+msgid "Invitation Feedback"
+msgstr "Rückmeldung zur Einladung"
 
 #: Civi/RemoteParticipant/Event/UpdateEvent.php
 msgid "Participant already loaded."
@@ -1106,6 +1102,18 @@ msgstr ""
 "Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact ID"
 "\" zu aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
 
+#~ msgid "Confirm"
+#~ msgstr "Absenden"
+
+#~ msgid "Decline"
+#~ msgstr "Einladung ablehnen"
+
+#~ msgid "Confirm Invitation"
+#~ msgstr "Einladung annehmen"
+
+#~ msgid "Do you accept the invitation?"
+#~ msgstr "Nehmen Sie die Einladung an?"
+
 #~ msgid "Profile %1 is not available for submission"
 #~ msgstr "Profil %1 ist nicht für die Registrierung freigeschaltet"
 
@@ -1113,6 +1121,3 @@ msgstr ""
 #~ "You have to accept the terms and conditions to participate in this event"
 #~ msgstr ""
 #~ "Sie müssen die Teilnahmebedingungen akzeptieren um fortfahren zu können"
-
-#~ msgid "Event Invitation"
-#~ msgstr "Einladung"

@@ -39,12 +39,11 @@ class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
                 'confirm' => [
                      'name'        => 'confirm',
                      'type'        => 'Select',
-                     'options'     => [1 => $l10n->localise('Confirm'), 0 => $l10n->localise('Decline')],
+                     'options'     => [1 => $l10n->localise('Accept Invitation'), 0 => $l10n->localise('Decline Invitation')],
                      'validation'  => '',
                      'weight'      => 10,
                      'required'    => 0,
-                     'label'       => $l10n->localise('Confirm Invitation'),
-                     'description' => $l10n->localise('Do you accept the invitation?'),
+                     'label'       => $l10n->localise('Invitation Feedback'),
                  ],
             ]);
         }
