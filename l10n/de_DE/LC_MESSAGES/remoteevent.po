@@ -682,14 +682,14 @@ msgstr "Rückmeldung zur Einladung"
 #: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
 msgid "Welcome %1. You are modifying your registration for event '%2'"
 msgstr ""
-"Herzlich Willkommen \"%1\". Sie bearbeiten Ihre Anmeldung zur Veranstaltung "
+"Herzlich Willkommen %1. Sie bearbeiten Ihre Anmeldung zur Veranstaltung "
 "\"%2\"."
 
 #: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
 msgid ""
 "Welcome %1. You may now confirm or decline your invitation to event '%2'"
 msgstr ""
-"Herzlich Willkommen \"%1\". Sie können hier Ihre Einladung zur Veranstaltung "
+"Herzlich Willkommen %1. Sie können hier Ihre Einladung zur Veranstaltung "
 "\"%2\" annehmen oder auch ablehnen."
 
 #: Civi/RemoteParticipant/Event/UpdateEvent.php
