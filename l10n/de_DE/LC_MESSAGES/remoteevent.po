@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-01-04 11:58+0100\n"
+"POT-Creation-Date: 2021-01-05 10:49+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -15,6 +15,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: CRM/Remoteevent/ChangeActivity.php
+msgid "%1 (invalid)"
+msgstr "%1 (ungültig)"
+
+#: CRM/Remoteevent/ChangeActivity.php
+msgid "Participant Updated"
+msgstr "Teilenehmerdaten Aktualisiert"
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/UI.php
 msgid "Sessions"
@@ -361,6 +369,10 @@ msgid "Speaker Roles"
 msgstr "Vortrangende/r-Rollen"
 
 #: CRM/Remoteevent/Form/Settings.php
+msgid "Participant Update Activity Type"
+msgstr "Teilnehmerdaten Anpassung - Aktivitätstyp"
+
+#: CRM/Remoteevent/Form/Settings.php
 msgid "Default Matcher Profile (XCM)"
 msgstr "Kontakt-Matcher Profil (XCM)"
 
@@ -391,6 +403,10 @@ msgstr "Abmeldelink"
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Configuration Updated"
 msgstr "Konfiguration wurde aktualisiert"
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "-- don't record changes --"
+msgstr "-- nicht aufzeichnen --"
 
 #: CRM/Remoteevent/Registration.php
 msgid "Event is not active"
@@ -486,10 +502,8 @@ msgid "Prefix"
 msgstr "Anrede"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard2.php
-#, fuzzy
-#| msgid "Participants"
 msgid "Participant's Prefix"
-msgstr "Teilnehmer"
+msgstr "Teilnehmer Anrede"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard2.php
 #: resources/remote_session_description.tpl
@@ -526,10 +540,8 @@ msgid "Phone Number"
 msgstr "Telefonnummer"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-#, fuzzy
-#| msgid "Participant's Last Name"
 msgid "Participant's Phone Number"
-msgstr "Nachname des Teilnehmers"
+msgstr "Telefonnummer des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Street Address"
@@ -544,10 +556,8 @@ msgid "Supplemental Address"
 msgstr "Adresszusatz"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-#, fuzzy
-#| msgid "Supplemental Address"
 msgid "Participant's supplemental address"
-msgstr "Adresszusatz"
+msgstr "Adresszusatz des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Supplemental Address 2"
@@ -558,30 +568,24 @@ msgid "Postal Code"
 msgstr "Postleitzahl"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-#, fuzzy
-#| msgid "Participant's Last Name"
 msgid "Participant's postal code"
-msgstr "Nachname des Teilnehmers"
+msgstr "Postleitzahl des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "City"
 msgstr "Stadt"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-#, fuzzy
-#| msgid "Participants"
 msgid "Participant's city"
-msgstr "Teilnehmer"
+msgstr "Stadt des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Country"
 msgstr "Land"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-#, fuzzy
-#| msgid "Participants"
 msgid "Participant's country"
-msgstr "Teilnehmer"
+msgstr "Land des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Required"
@@ -872,6 +876,22 @@ msgstr "RemoteEventRegistration: Anmeldung bearbeiten"
 msgid "RemoteEventRegistration: cancel"
 msgstr "RemoteEventRegistration: Anmeldung stornieren"
 
+#: resources/participant_change_activity.tpl
+msgid "Participant Changes"
+msgstr "Teilnehmeranpassungen"
+
+#: resources/participant_change_activity.tpl
+msgid "Attribute"
+msgstr "Attribut"
+
+#: resources/participant_change_activity.tpl
+msgid "Previous Value"
+msgstr "Vorheriger Wert"
+
+#: resources/participant_change_activity.tpl
+msgid "New Value"
+msgstr "Neuer Wert"
+
 #: resources/remote_session_description.tpl
 msgid "Restrictions"
 msgstr "Beschränkungen"
@@ -1107,6 +1127,21 @@ msgid ""
 msgstr ""
 "Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact ID"
 "\" zu aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"You can select a custom activity type here to enable the recording of "
+"changes and updates of participant data."
+msgstr ""
+"Falls sie Änderungen der Teilnehmerdaten aufzeichnen möchten, können Sie "
+"hier einen Aktivitätstyp eintragen. Bei Änderungen wird dann jeweils eine "
+"entsprechende Aktivität angelegt."
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid "If you don't select anything here, nothing will be recorded."
+msgstr ""
+"Wenn Sie die Auswahl leer lassen, so werden die Änderungen nicht "
+"aufgezeichnet."
 
 #~ msgid "Confirm"
 #~ msgstr "Absenden"

@@ -5,11 +5,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-01-04 11:58+0100\n"
+"POT-Creation-Date: 2021-01-05 10:49+0100\n"
 "Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: CRM/Remoteevent/ChangeActivity.php
+msgid "%1 (invalid)"
+msgstr ""
+
+#: CRM/Remoteevent/ChangeActivity.php
+msgid "Participant Updated"
+msgstr ""
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/UI.php
 msgid "Sessions"
@@ -351,6 +359,10 @@ msgid "Speaker Roles"
 msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
+msgid "Participant Update Activity Type"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
 msgid "Default Matcher Profile (XCM)"
 msgstr ""
 
@@ -380,6 +392,10 @@ msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Configuration Updated"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "-- don't record changes --"
 msgstr ""
 
 #: CRM/Remoteevent/Registration.php
@@ -826,6 +842,22 @@ msgstr ""
 msgid "RemoteEventRegistration: cancel"
 msgstr ""
 
+#: resources/participant_change_activity.tpl
+msgid "Participant Changes"
+msgstr ""
+
+#: resources/participant_change_activity.tpl
+msgid "Attribute"
+msgstr ""
+
+#: resources/participant_change_activity.tpl
+msgid "Previous Value"
+msgstr ""
+
+#: resources/participant_change_activity.tpl
+msgid "New Value"
+msgstr ""
+
 #: resources/remote_session_description.tpl
 msgid "Restrictions"
 msgstr ""
@@ -1006,4 +1038,14 @@ msgstr ""
 msgid ""
 "It is strongly recommended, that the chosen profile has the \"Match contacts "
 "by contact ID\" option enabled. This way you can avoid creating duplicates."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"You can select a custom activity type here to enable the recording of "
+"changes and updates of participant data."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid "If you don't select anything here, nothing will be recorded."
 msgstr ""
