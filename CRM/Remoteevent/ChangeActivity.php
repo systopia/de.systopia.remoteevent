@@ -258,15 +258,15 @@ class CRM_Remoteevent_ChangeActivity
                 }
 
                 // render the details
-                static $template = null;
-                if ($template === null) {
-                    $template = 'string:' . file_get_contents(E::path('resources/participant_change_activity.tpl'));
-                }
-                $smarty = CRM_Core_Smarty::singleton();
-                $smarty->assign('previous_values', $previous_values);
-                $smarty->assign('current_values', $current_values);
-                $smarty->assign('diff_data', $field_data);
-                $details = $smarty->fetch($template);
+                $details = \Civi\RenderEvent::renderTemplate(
+                    E::path('resources/participant_change_activity.tpl'),
+                    [
+                        'previous_values' => $previous_values,
+                        'current_values'  => $current_values,
+                        'diff_data'       => $field_data,
+                    ],
+                    'remoteevent.participant.change_activity'
+                );
 
                 $activity_data = [
                     'activity_type_id'  => self::getActivityTypeID(),

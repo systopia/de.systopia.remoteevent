@@ -562,16 +562,12 @@ class CRM_Remoteevent_EventSessions
      */
     protected static function renderSessionDescriptionShort($session)
     {
-        // load the template
-        static $template = null;
-        if ($template === null) {
-            $template = 'string:' . file_get_contents(E::path('resources/remote_session_short_description.tpl'));
-        }
-
-        // render the template
-        $smarty = CRM_Core_Smarty::singleton();
-        $smarty->assign('session', $session);
-        return trim($smarty->fetch($template));
+        return \Civi\RenderEvent::renderTemplate(
+            E::path('resources/remote_session_short_description.tpl'),
+            ['session' => $session],
+            'remoteevent.session.description.short',
+            'meta-trim'
+        );
     }
 
     /**
@@ -586,16 +582,12 @@ class CRM_Remoteevent_EventSessions
      */
     protected static function renderSessionDescriptionLong($session)
     {
-        // load the template
-        static $template = null;
-        if ($template === null) {
-            $template = 'string:' . file_get_contents(E::path('resources/remote_session_description.tpl'));
-        }
-
-        // render the template
-        $smarty = CRM_Core_Smarty::singleton();
-        $smarty->assign('session', $session);
-        return trim($smarty->fetch($template));
+        return \Civi\RenderEvent::renderTemplate(
+            E::path('resources/remote_session_description.tpl'),
+            ['session' => $session],
+            'remoteevent.session.description.long',
+            'meta-trim'
+        );
     }
 
 }
