@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-01-05 11:14+0100\n"
+"POT-Creation-Date: 2021-01-05 14:46+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -691,6 +691,13 @@ msgid ""
 msgstr ""
 "Herzlich Willkommen %1. Sie können hier Ihre Einladung zur Veranstaltung "
 "\"%2\" annehmen oder auch ablehnen."
+
+#: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
+msgid ""
+"Welcome %1. You are about to cancel your registration for the event '%2'"
+msgstr ""
+"Herzlich Willkommen %1. Mit diesem Formular stornieren Sie Ihre Anmeldung "
+"zur Veranstaltung \"%2\""
 
 #: Civi/RemoteParticipant/Event/UpdateEvent.php
 msgid "Participant already loaded."

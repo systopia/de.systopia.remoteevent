@@ -263,7 +263,20 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
                     2 => $event['title']]));
             }
 
-            // else... other greetings to be set?
+            // add a greeting for cancellations
+            if ($context == 'cancel' && $participant_id) {
+                $contact_name = \civicrm_api3('Contact', 'getvalue', [
+                    'id'     => $contact_id,
+                    'return' => 'display_name']);
+                $event = $this->getEvent();
+
+                $l10n = $this->getLocalisation();
+                $this->addStatus($l10n->localise("Welcome %1. You are about to cancel your registration for the event '%2'", [
+                    1 => $contact_name,
+                    2 => $event['title']]));
+            }
+
+            // ...and else...other greetings to be set?
 
         } catch (\CiviCRM_API3_Exception $exception) {
             \Civi::log()->debug("Error while rendering standard greeting: " . $exception->getMessage());
