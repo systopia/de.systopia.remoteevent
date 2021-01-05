@@ -29,6 +29,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         'remote_registration_cancel_link',
         'remote_registration_xcm_profile',
         'remote_registration_xcm_profile_update',
+        'remote_participant_change_activity_type_id',
     ];
 
     public function buildQuickForm()
@@ -51,6 +52,15 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             CRM_Remoteevent_EventCache::getRoles(),
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+
+        $this->add(
+            'select',
+            'remote_participant_change_activity_type_id',
+            E::ts("Participant Update Activity Type"),
+            $this->getActivityTypes(),
+            false,
+            ['class' => 'crm-select2']
         );
 
         $this->add(
@@ -153,5 +163,24 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             $list[$status['id']] = $status['label'];
         }
         return $list;
+    }
+
+    /**
+     * Get a list of activity types
+     */
+    private function getActivityTypes()
+    {
+        $types = ['' => E::ts("-- don't record changes --")];
+        $query = civicrm_api3('OptionValue', 'get', [
+            'option_group_id' => 'activity_type',
+            'is_reserved'     => 0,
+            'component_id'    => ['IS NULL' => 1],
+            'option.limit'    => 0,
+            'return'          => 'label,value'
+        ]);
+        foreach ($query['values'] as $type) {
+            $types[$type['value']] = $type['label'];
+        }
+        return $types;
     }
 }
