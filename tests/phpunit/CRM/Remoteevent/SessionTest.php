@@ -129,4 +129,40 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase
         $this->assertEquals('Session is full', $registrationB['error_message'], "The registration should have failed the session was full.");
     }
 
+    /**
+     * Test registration update from one max 1 session to another
+     */
+    public function testMaxParticipantsRegistrationUpdate()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([]);
+        $sessionA = $this->createEventSession($event['id'], [
+            'max_participants' => 1
+        ]);
+        $sessionB = $this->createEventSession($event['id'], [
+            'max_participants' => 1
+        ]);
+
+        // register one contact
+        $contactA = $this->createContact();
+        $registrationA = $this->registerRemote($event['id'], [
+            'email'                   => $contactA['email'],
+            "session{$sessionA['id']}" => 1,
+        ]);
+        $this->assertEmpty($registrationA['is_error'], "Registration Failed");
+        $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registrationA['participant_id']);
+        $this->assertTrue(in_array($sessionA['id'], $registered_session_ids), "Participant should be registered for session");
+
+        // update registration
+        $registrationB = $this->updateRegistration([
+           'participant_id'           => $registrationA['participant_id'],
+           'email'                    => $contactA['email'],
+           "session{$sessionB['id']}" => 1,
+        ]);
+        $this->assertEmpty($registrationA['is_error'], "Registration Failed");
+        $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registrationA['participant_id']);
+        $this->assertTrue(in_array($sessionB['id'], $registered_session_ids), "Participant should now be registered for session B");
+        $this->assertFalse(in_array($sessionA['id'], $registered_session_ids), "Participant should not be registered for session A any more");
+    }
+
 }
