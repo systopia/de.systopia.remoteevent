@@ -248,10 +248,10 @@ class CRM_Remoteevent_EventSessions
             }
 
             $session = $sessions[$requested_session_id];
-            if (!empty($sessions['max_participants'])) {
+            if (!empty($session['max_participants'])) {
                 // here we need to check
                 $session_participant_count = CRM_Utils_Array::value($requested_session_id, $participant_counts, 0);
-                if ($session_participant_count >= $sessions['max_participants']) {
+                if ($session_participant_count >= $session['max_participants']) {
                     $validationEvent->addValidationError("session{$requested_session_id}", E::ts("Session is full"));
                 }
             }

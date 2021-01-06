@@ -97,4 +97,36 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase
         $this->assertNotEmpty($fields["session{$session2['id']}"]['value'], "Session [{$session2['id']}] was not pre-filled");
         $this->assertTrue(empty($fields["session{$session3['id']}"]['value']), "Session [{$session3['id']}] was pre-filled with 1");
     }
+
+    /**
+     * Test registration with sessions
+     */
+    public function testMaxParticipants()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([]);
+        $session = $this->createEventSession($event['id'], [
+            'max_participants' => 1
+        ]);
+
+        // register one contact
+        $contactA = $this->createContact();
+        $registrationA = $this->registerRemote($event['id'], [
+            'email'                   => $contactA['email'],
+            "session{$session['id']}" => 1,
+        ]);
+        $this->assertEmpty($registrationA['is_error'], "Registration Failed");
+        $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registrationA['participant_id']);
+        $this->assertTrue(in_array($session['id'], $registered_session_ids), "Participant should be registered for session");
+
+        // register another contact
+        $contactB = $this->createContact();
+        $registrationB = $this->registerRemote($event['id'], [
+            'email'                   => $contactB['email'],
+            "session{$session['id']}" => 1,
+        ]);
+        $this->assertNotEmpty($registrationB['is_error'], "Registration should have failed Failed");
+        $this->assertEquals('Session is full', $registrationB['error_message'], "The registration should have failed the session was full.");
+    }
+
 }
