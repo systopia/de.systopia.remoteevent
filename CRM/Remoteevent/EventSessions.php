@@ -53,8 +53,8 @@ class CRM_Remoteevent_EventSessions
             if (empty($_session['is_active'])) {
                 unset($session_data[$session_key]);
             } else {
-                $session['participant_count'] = CRM_Utils_Array::value($_session['id'], $participant_counts, 0);
-                if (empty($session['max_participants'])) {
+                $_session['participant_count'] = CRM_Utils_Array::value($_session['id'], $participant_counts, 0);
+                if (empty($_session['max_participants'])) {
                     $_session['is_full'] = 0;
                 } else {
                     $_session['is_full'] = ($_session['participant_count'] >= $_session['max_participants']) ? 1 : 0;
