@@ -566,7 +566,7 @@ class CRM_Remoteevent_EventSessions
             E::path('resources/remote_session_short_description.tpl'),
             ['session' => $session],
             'remoteevent.session.description.short',
-            'meta-trim'
+            'trim'
         );
     }
 
@@ -586,7 +586,7 @@ class CRM_Remoteevent_EventSessions
             E::path('resources/remote_session_description.tpl'),
             ['session' => $session],
             'remoteevent.session.description.long',
-            'meta-trim'
+            'trim'
         );
     }
 

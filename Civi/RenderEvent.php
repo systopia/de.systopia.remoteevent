@@ -180,17 +180,29 @@ class RenderEvent extends Event
 
         // step 3: render the template
         $smarty = \CRM_Core_Smarty::singleton();
-        $smarty_var_snapshot = $smarty->get_template_vars();
-        $smarty_variables = $render_event->getVars();
-        $smarty->assignAll($smarty_variables);
+        $new_smarty_vars = $render_event->getVars();
+        $previous_smarty_vars = $smarty->get_template_vars();
+        $smarty_var_backup = [];
+        foreach ($new_smarty_vars as $key => $value) {
+            if (isset($previous_smarty_vars[$key])) {
+                $smarty_var_backup[$key] = $previous_smarty_vars[$key];
+            } else {
+                $smarty_var_backup[$key] = null;
+            }
+            $smarty->assign($key, $value);
+        }
         $rendered_text = $smarty->fetch($template);
 
         // step 4: restore smarty state
-        foreach ($smarty_variables as $key => $value) {
+        foreach ($new_smarty_vars as $key => $value) {
             $smarty->clear_assign($key);
         }
-        foreach ($smarty_var_snapshot as $key => $value) {
-            $smarty->assign($key, $value);
+        foreach ($smarty_var_backup as $key => $value) {
+            if ($value === null) {
+                $smarty->clear_assign($key);
+            } else {
+                $smarty->assign($key, $value);
+            }
         }
 
         // step 5: clean the output
