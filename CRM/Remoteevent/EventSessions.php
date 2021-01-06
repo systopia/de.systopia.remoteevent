@@ -385,57 +385,44 @@ class CRM_Remoteevent_EventSessions
             $participant_sessions = [];
             foreach ($all_event_sessions as $session) {  // use this inverse lookup to maintain the order
                 if (in_array($session['id'], $participant_session_ids)) {
-                    $session['category'] = self::getSessionCategory($session);
+                    $session['category']      = self::getSessionCategory($session);
+                    $session['presenter_txt'] = self::getSessionPresenterText($session);
+                    $session['location_txt']  = self::getSessionLocationText($session, false);
+                    $session['location_html'] = self::getSessionLocationText($session, true);
                     $participant_sessions[] = $session;
                 }
             }
             $messageTokens->setToken('participant_sessions', $participant_sessions, false);
 
-            // generate a bullet point list
-            $participant_sessions_list = '';
-            if (!empty($participant_sessions)) {
-                $participant_sessions_list .= '<ul>';
-                foreach ($participant_sessions as $session) {
-                    $start_time = date(E::ts("H:i"), strtotime($session['start_date']));
-                    $end_time = date(E::ts("H:i"), strtotime($session['end_date']));
-                    $session_time = E::ts("[%1h - %2h]", [1 => $start_time, 2 => $end_time]);
-
-                   $participant_sessions_list .= "<li>{$session_time} {$session['title']} ({$session['category']})";
-                    if (!empty($session['presenter_id'])) {
-                        $participant_sessions_list .= '<br/>';
-                        $participant_sessions_list .= self::getSessionPresenterText($session);
-                    }
-                    if (!empty($session['location'])) {
-                        $participant_sessions_list .= '<br/>';
-                        $participant_sessions_list .= self::getSessionLocationText($session, true);
-                    }
-                    $participant_sessions_list .= '</li>';
-                }
-                $participant_sessions_list .= '</ul>';
+            // generate a HTML bullet point list token
+            if (empty($participant_sessions)) {
+                $messageTokens->setToken('participant_sessions_list_html', '');
+            } else {
+                $messageTokens->setToken(
+                    'participant_sessions_list_html',
+                    \Civi\RenderEvent::renderTemplate(
+                        E::path('resources/remote_token_sessions_list_html.tpl'),
+                        ['sessions' => $participant_sessions],
+                        'remoteevent.eventmessages.participant.sessions.htmllist',
+                        'none'
+                    )
+                );
             }
-            $messageTokens->setToken('participant_sessions_list_html', $participant_sessions_list, false);
 
-            // generate an ASCII list
-            $participant_sessions_list = '';
-            if (!empty($participant_sessions)) {
-                foreach ($participant_sessions as $session) {
-                    $start_time = date(E::ts("H:i"), strtotime($session['start_date']));
-                    $end_time = date(E::ts("H:i"), strtotime($session['end_date']));
-                    $session_time = E::ts("%1h-%2h", [1 => $start_time, 2 => $end_time]);
-
-                    $participant_sessions_list .= " * {$session_time}: {$session['title']} ({$session['category']})";
-                    if (!empty($session['presenter_id'])) {
-                        $participant_sessions_list .= "\n   ";
-                        $participant_sessions_list .= self::getSessionPresenterText($session);
-                    }
-                    if (!empty($session['location'])) {
-                        $participant_sessions_list .= "\n   ";
-                        $participant_sessions_list .= self::getSessionLocationText($session, false);
-                    }
-                }
-                $participant_sessions_list .= "\n";
+            // generate a ASCII bullet point list token
+            if (empty($participant_sessions)) {
+                $messageTokens->setToken('participant_sessions_list_txt', '');
+            } else {
+                $messageTokens->setToken(
+                    'participant_sessions_list_txt',
+                    \Civi\RenderEvent::renderTemplate(
+                        E::path('resources/remote_token_sessions_list_txt.tpl'),
+                        ['sessions' => $participant_sessions],
+                        'remoteevent.eventmessages.participant.sessions.asciilist',
+                        'none'
+                    )
+                );
             }
-            $messageTokens->setToken('participant_sessions_list_txt', $participant_sessions_list, false);
         }
     }
 
@@ -460,7 +447,8 @@ class CRM_Remoteevent_EventSessions
             if ($html) {
                 return $session_data['location'];
             } else {
-                return CRM_Utils_String::htmlToText($session_data['location']);
+                //return CRM_Utils_String::htmlToText($session_data['location']);
+                return strip_tags($session_data['location']);
             }
         }
     }
@@ -562,16 +550,12 @@ class CRM_Remoteevent_EventSessions
      */
     protected static function renderSessionDescriptionShort($session)
     {
-        // load the template
-        static $template = null;
-        if ($template === null) {
-            $template = 'string:' . file_get_contents(E::path('resources/remote_session_short_description.tpl'));
-        }
-
-        // render the template
-        $smarty = CRM_Core_Smarty::singleton();
-        $smarty->assign('session', $session);
-        return trim($smarty->fetch($template));
+        return \Civi\RenderEvent::renderTemplate(
+            E::path('resources/remote_session_short_description.tpl'),
+            ['session' => $session],
+            'remoteevent.session.description.short',
+            'trim'
+        );
     }
 
     /**
@@ -586,16 +570,12 @@ class CRM_Remoteevent_EventSessions
      */
     protected static function renderSessionDescriptionLong($session)
     {
-        // load the template
-        static $template = null;
-        if ($template === null) {
-            $template = 'string:' . file_get_contents(E::path('resources/remote_session_description.tpl'));
-        }
-
-        // render the template
-        $smarty = CRM_Core_Smarty::singleton();
-        $smarty->assign('session', $session);
-        return trim($smarty->fetch($template));
+        return \Civi\RenderEvent::renderTemplate(
+            E::path('resources/remote_session_description.tpl'),
+            ['session' => $session],
+            'remoteevent.session.description.long',
+            'trim'
+        );
     }
 
 }
