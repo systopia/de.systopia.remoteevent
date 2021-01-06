@@ -198,6 +198,33 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
     }
 
     /**
+     * Get all current participants for the given session
+     *
+     * @param integer $session_id
+     *   session_id id
+     *
+     * @return array
+     *   list of participant IDs
+     */
+    public static function getSessionRegistrations($session_id)
+    {
+        $session_id = (int) $session_id;
+
+        // run this as a sql query
+        $participant_ids = [];
+        $participant_query = CRM_Core_DAO::executeQuery("
+            SELECT
+             participant_id AS participant_id
+            FROM civicrm_participant_session participant
+            WHERE session_id = {$session_id}
+            ");
+        while ($participant_query->fetch()) {
+            $participant_ids[] = $participant_query->participant_id;
+        }
+        return $participant_ids;
+    }
+
+    /**
      * Set the session IDs for the given participant
      *
      * Warning: does not check if the sessions and the participant
