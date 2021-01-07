@@ -35,16 +35,16 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         $event = civicrm_api3('Event', 'getsingle', ['id' => $this->_id]);
 
         // load days
-        $event_days = $this->getEventDays($event);
+        $event_days = self::getEventDays($event);
         $this->assign('event_days', $event_days);
         $this->assign('is_single_day', $event_days == 1);
 
         // load slots
-        $slots = $this->getSlots();
+        $slots = self::getSlots();
         $this->assign('slots', $slots);
 
         // load sessions
-        $this->assign('sessions', $this->getSessionList($event_days));
+        $this->assign('sessions', self::getSessionList($event_days, $this->_id));
 
         // more stuff
         $this->assign('add_session_link', CRM_Utils_System::url("civicrm/event/session", "reset=1&event_id={$this->_id}"));
@@ -76,7 +76,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return array
      *   list of Y-m-d dates
      */
-    protected function getEventDays($event_data)
+    public static function getEventDays($event_data)
     {
         if (empty($event_data['start_date'])) {
             throw new Exception(E::ts("Event doesn't have a start date!"));
@@ -108,7 +108,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return array
      *   session items by slot
      */
-    protected function getSessionList($event_days)
+    public static function getSessionList($event_days, $event_id)
     {
         $sessions_by_day_and_slot = [];
         foreach ($event_days as $event_day) {
@@ -116,7 +116,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         }
 
         // load all sessions
-        $sessions = CRM_Remoteevent_BAO_Session::getSessions($this->_id);
+        $sessions = CRM_Remoteevent_BAO_Session::getSessions($event_id);
 
         // sort into days and slots
         foreach ($sessions as $session) {
@@ -126,8 +126,8 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         }
 
         // beautify / improve list
-        $categories = $this->getCategories();
-        $types = $this->getTypes();
+        $categories = self::getCategories();
+        $types = self::getTypes();
         // rename days
         foreach (array_keys($sessions_by_day_and_slot) as $day_index => $day) {
             $new_key = E::ts("Day %1 (%2)", [
@@ -138,7 +138,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         }
 
         // enrich data
-        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($this->_id);
+        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($event_id);
         foreach ($sessions_by_day_and_slot as $day => &$day_slots) {
             foreach ($day_slots as $slot => &$sessions) {
                 foreach ($sessions as &$session) {
@@ -184,7 +184,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
 
                     // add presenter icon
                     if (!empty($session['presenter_id'])) {
-                        $presenter = $this->getPresenterString($session['presenter_id']);
+                        $presenter = self::getPresenterString($session['presenter_id']);
                         if (empty($session['presenter_title'])) {
                             $message = E::ts("Given by %1", [1 => $presenter]);
                         } else {
@@ -240,7 +240,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return array
      *   list of slot_id -> slot label
      */
-    protected function getSlots()
+    public static function getSlots()
     {
         $slots = ['' => E::ts("No Slot")];
         $slot_query = civicrm_api3('OptionValue', 'get', [
@@ -260,7 +260,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return array
      *   list of slot_id -> slot label
      */
-    protected function getCategories()
+    public static function getCategories()
     {
         $categories = ['' => E::ts("None")];
         $category_query = civicrm_api3('OptionValue', 'get', [
@@ -279,7 +279,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return array
      *   list of type_id -> type label
      */
-    protected function getTypes()
+    public static function getTypes()
     {
         $types = ['' => E::ts("None")];
         $type_query = civicrm_api3('OptionValue', 'get', [
@@ -302,7 +302,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return string to be shown in UI
      *
      */
-    protected function getPresenterString($contact_id)
+    public static function getPresenterString($contact_id)
     {
         // todo: caching
         return civicrm_api3('Contact', 'getvalue', ['id' => $contact_id, 'return' => 'display_name']);
