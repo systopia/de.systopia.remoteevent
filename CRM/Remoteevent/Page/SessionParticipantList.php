@@ -30,6 +30,9 @@ class CRM_Remoteevent_Page_SessionParticipantList extends CRM_Core_Page
 
         // load the participants
         $particpant_ids = CRM_Remoteevent_BAO_Session::getSessionRegistrations($session_id);
+        if (empty($particpant_ids)) {
+            $particpant_ids = [0];
+        }
         $participant_query = civicrm_api3('Participant', 'get', [
             'id'           => ['IN' => $particpant_ids],
             'option.limit' => 0,

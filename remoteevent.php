@@ -399,3 +399,13 @@ function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef)
         CRM_Remoteevent_ChangeActivity::recordPost($objectId);
     }
 }
+
+/**
+ * Inject session information
+ */
+function remoteevent_civicrm_pageRun(&$page) {
+    $pageName = $page->getVar('_name');
+    if ($pageName == 'CRM_Event_Page_Tab') {
+        CRM_Remoteevent_Form_ParticipantSessions::injectSessionsInfo($page);
+    }
+}

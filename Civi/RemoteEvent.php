@@ -482,4 +482,23 @@ abstract class RemoteEvent extends Event
             ]
         ]);
     }
+
+    /**
+     * Allows the override of the participant ID.
+     *   Use with caution, a regular workflow driven be a API call
+     *   should not need to use this
+     *
+     * @param integer $particiant_id
+     *   override the participant_id
+     *
+     * @return integer
+     *   previously determined participant ID
+     */
+    public function overrideParticipant($particiant_id)
+    {
+        $previous_participant_id = $this->participant_id;
+        $this->participant_id = $particiant_id;
+        return $previous_participant_id;
+    }
+
 }

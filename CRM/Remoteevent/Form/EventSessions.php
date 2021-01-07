@@ -218,9 +218,11 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                     $actions[] = "<a href=\"#\" onClick=\"remote_session_delete({$session['id']},false);\" class=\"action-item crm-hover-button\">{$delete_text}</a>";
 
                     // add list action
-                    $list_link = CRM_Utils_System::url("civicrm/event/session/participant_list", "session_id={$session['id']}");
-                    $edit_text = E::ts("Participants");
-                    $actions[] = "<a href=\"{$list_link}\" class=\"action-item crm-popup crm-hover-button\">{$edit_text}</a>";
+                    if (!empty($session['participant_count'])) {
+                        $list_link = CRM_Utils_System::url("civicrm/event/session/participant_list", "session_id={$session['id']}");
+                        $edit_text = E::ts("Participants");
+                        $actions[] = "<a href=\"{$list_link}\" class=\"action-item crm-popup crm-hover-button\">{$edit_text}</a>";
+                    }
 
                     // finally, store UI stuff in the session
                     $session['icons'] = $icons;

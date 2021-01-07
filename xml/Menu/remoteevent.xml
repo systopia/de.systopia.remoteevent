@@ -38,4 +38,10 @@
     <title>Participant List</title>
     <access_arguments>view all events,edit all events</access_arguments>
   </item>
+  <item>
+    <path>civicrm/event/participant/sessions</path>
+    <page_callback>CRM_Remoteevent_Form_ParticipantSessions</page_callback>
+    <title>Participant Sessions</title>
+    <access_arguments>edit all events</access_arguments>
+  </item>
 </menu>
