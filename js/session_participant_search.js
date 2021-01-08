@@ -19,7 +19,7 @@ cj(document).ready(function() {
   function update_session_list() {
     // first: clear dropdown
     cj("[name^=session_ids]")
-      .select2({placeholder: "loading sessions..."})
+      .select2({placeholder: "loading sessions, please wait..."})
       .find("option")
       .remove();
     cj("[name^=session_ids]").change();

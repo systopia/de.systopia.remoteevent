@@ -409,3 +409,14 @@ function remoteevent_civicrm_pageRun(&$page) {
         CRM_Remoteevent_Form_ParticipantSessions::injectSessionsInfo($page);
     }
 }
+
+function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
+    if ($objectName == 'Participant' && $op == 'participant.selector.row') {
+        $links[] = [
+            'name'  => E::ts('Sessions'),
+            'url'   =>  CRM_Utils_System::url('civicrm/event/participant/sessions', "participant_id={$objectId}&reset=1"),
+            'title' => E::ts('Sessions'),
+            'class' => '',
+        ];
+    }
+}
