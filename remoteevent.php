@@ -420,3 +420,19 @@ function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask,
         ];
     }
 }
+
+/**
+ * Implementation of hook_civicrm_searchTasks,
+ *  to inject our 'Session Registration' task
+ */
+function remoteevent_civicrm_searchTasks($objectType, &$tasks)
+{
+    // add "Session Registration" task to participant list
+    if ($objectType == 'event') {
+        $tasks[] = [
+            'title' => E::ts('Session Registration'),
+            'class' => 'CRM_Remoteevent_Form_Task_ParticipantSession',
+            'result' => false
+        ];
+    }
+}
