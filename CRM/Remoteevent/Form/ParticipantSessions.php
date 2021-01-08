@@ -34,7 +34,7 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form
 
         // set titles
         $this->setTitle(E::ts("Sessions for '%1'", [1 => $this->participant['display_name']]));
-        $this->assign('event_header', E::ts("Event '%1'", [1 => $this->participant['event_title']]));
+        $this->assign('event_header', E::ts("Event is '%1'", [1 => $this->participant['event_title']]));
         Civi::resources()->addStyleUrl(E::url('css/event_sessions.css'));
 
         // build form

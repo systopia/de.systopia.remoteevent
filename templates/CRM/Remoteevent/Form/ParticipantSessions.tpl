@@ -53,6 +53,14 @@
   {/if}
   {/foreach}
 
+  <br/>
+
+  <div class="crm-section">
+    <div class="label">{$form.bypass_restriction.label}&nbsp;{help id="id-bypass" title=$form.bypass_restriction.label}</div>
+    <div class="content">{$form.bypass_restriction.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
