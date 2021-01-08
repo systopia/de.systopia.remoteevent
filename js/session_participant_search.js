@@ -48,8 +48,6 @@ cj(document).ready(function() {
 
           // pre-select the last values
           let last_values_string = cj("input[name=last_session_ids]").val();
-          console.log("NOW");
-          console.log(last_values_string);
           if (last_values_string) {
             let last_values = last_values_string.split(",");
             cj("[name^=session_ids]").val(last_values);
