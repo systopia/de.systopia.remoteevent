@@ -13,13 +13,16 @@
 +--------------------------------------------------------*/
 
 cj(document).ready(function() {
-
   /**
    * Will refill the session list based on the event_id
    */
   function update_session_list() {
     // first: clear dropdown
-    cj('#event_id').empty().multiSelect('refresh');
+    cj("[name^=session_ids]")
+      .select2({placeholder: "loading sessions..."})
+      .find("option")
+      .remove();
+    cj("[name^=session_ids]").change();
 
     // then reload
     let event_id = cj("input[name=event_id]").val();
@@ -28,9 +31,33 @@ cj(document).ready(function() {
         event_id: event_id
       }).done(function(result) {
         if (result.is_error) {
-          onError(result.error_message, null);
+          // there has been a problem
+          CRM.alert(
+            result.error_message,
+            "API Error",
+            'error'
+          );
+
         } else {
-          console.log(result.values);
+          // fill values
+          for (let session_id in result.values) {
+            cj("[name^=session_ids]")
+              .select2({placeholder: ""})
+              .append(`<option value="`+ session_id +`">`+ result.values[session_id]['title'] +`</option>`);
+          }
+
+          // pre-select the last values
+          let last_values_string = cj("input[name=last_session_ids]").val();
+          console.log("NOW");
+          console.log(last_values_string);
+          if (last_values_string) {
+            let last_values = last_values_string.split(",");
+            cj("[name^=session_ids]").val(last_values);
+            cj("input[name=last_session_ids]").val(''); // clear value
+          }
+
+          // update element
+          cj("[name^=session_ids]").change();
         }
       });
     }

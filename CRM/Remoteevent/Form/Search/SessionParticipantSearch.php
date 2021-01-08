@@ -61,12 +61,17 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch
             ['class' => 'crm-select2 huge', 'multiple' => 'multiple']
         );
 
+        $form->add(
+            'hidden',
+            'last_session_ids'
+        );
+        $form->_submitValues['last_session_ids'] = implode(',', $this->getSessionIds());
 
         /**
          * if you are using the standard template, this array tells the template what elements
          * are part of the search criteria
          */
-        $form->assign('elements', ['event_id', 'session_ids']);
+        $form->assign('elements', ['event_id', 'session_ids', 'last_session_ids']);
 
         Civi::resources()->addScriptUrl(E::url('js/session_participant_search.js'));
     }
@@ -160,8 +165,7 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch
         }
 
         // add session_ids clause
-        $session_ids = CRM_Utils_Array::value('session_ids', $this->_formValues);
-        $session_id_list = implode(',', array_map('intval', $session_ids));
+        $session_id_list = implode(',', $this->getSessionIds());
         if ($session_id_list) {
             $wheres[] = "session.id IN ({$session_id_list})";
         } else {
@@ -206,5 +210,30 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch
     function alterRow(&$row)
     {
         //$row['contact_id'] = "[{$row['contact_id']}]";
+    }
+
+    /**
+     * Get the submitted session IDs. This is tricky,
+     *  since the values are dynamic (depending on the event)
+     *  and will be filtered out by the systen
+     *
+     * @return array
+     *  list of session IDs
+     */
+    protected function getSessionIds()
+    {
+        if (!empty($this->_formValues['session_ids'])) {
+            $session_ids = $this->_formValues['session_ids'];
+        } else {
+            $session_ids = CRM_Utils_Array::value('session_ids', $_REQUEST, null);
+        }
+        if (empty($session_ids)) {
+            $session_ids = [];
+        } else if (is_array($session_ids)) {
+            $session_ids = array_map('intval', $session_ids);
+        } else {
+            $session_ids = [(int) $session_ids];
+        }
+        return $session_ids;
     }
 }
