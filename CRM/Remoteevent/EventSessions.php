@@ -390,6 +390,7 @@ class CRM_Remoteevent_EventSessions
             foreach ($all_event_sessions as $session) {  // use this inverse lookup to maintain the order
                 if (in_array($session['id'], $participant_session_ids)) {
                     $session['category']      = self::getSessionCategory($session);
+                    $session['type']          = self::getSessionType($session);
                     $session['presenter_txt'] = self::getSessionPresenterText($session);
                     $session['location_txt']  = self::getSessionLocationText($session, false);
                     $session['location_html'] = self::getSessionLocationText($session, true);
@@ -491,6 +492,7 @@ class CRM_Remoteevent_EventSessions
         }
     }
 
+
     /**
      * Get the category label for the given session data
      *
@@ -500,7 +502,38 @@ class CRM_Remoteevent_EventSessions
      * @return string
      *    session category
      */
-    protected static function getSessionCategory($session_data)
+    public static function getSessionType($session_data)
+    {
+        static $types = null;
+        if ($types === null) {
+            $types = [];
+            $query = civicrm_api3('OptionValue', 'get', [
+                'option_group_id' => 'session_type',
+                'option.limit'    => 0,
+                'return'          => 'label,value'
+            ]);
+            foreach ($query['values'] as $type) {
+                $types[$type['value']] = $type['label'];
+            }
+        }
+
+        if (empty($session_data['type_id'])) {
+            return E::ts("no type"); // this shouldn't happen
+        } else {
+            return CRM_Utils_Array::value($session_data['type_id'], $types, E::ts("unknown"));
+        }
+    }
+
+    /**
+     * Get the category label for the given session data
+     *
+     * @param array $session_data
+     *    session data
+     *
+     * @return string
+     *    session category
+     */
+    public static function getSessionCategory($session_data)
     {
         static $categories = null;
         if ($categories === null) {

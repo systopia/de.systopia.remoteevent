@@ -17,7 +17,8 @@
   {capture assign=start_time}{$session.start_date|date_format:$time_format}{/capture}
   {capture assign=end_time}{$session.end_date|date_format:$time_format}{/capture}
   <li>
-    {ts 1=$start_time 2=$end_time}[%1h - %2h]{/ts} {$session.title} ({$session.category})
+    {ts 1=$start_time 2=$end_time}[%1h - %2h]{/ts} {$session.title}
+      <br/>[{$session.category}] {$session.type}
     {if $session.presenter_txt}
       <br/>{$session.presenter_txt}
     {/if}
