@@ -29,12 +29,16 @@ class CRM_Remoteevent_Page_SessionParticipantList extends CRM_Core_Page
         CRM_Utils_System::setTitle(E::ts('Participant List for Session "%1"', [1 => $session['title']]));
 
         // load the participants
-        $particpant_ids = CRM_Remoteevent_BAO_Session::getSessionRegistrations($session_id);
-        if (empty($particpant_ids)) {
-            $particpant_ids = [0];
+        $raw_participants = CRM_Remoteevent_BAO_Session::getSessionRegistrations($session_id);
+        $participant_ids = [];
+        foreach ($raw_participants as $participant) {
+            $participant_ids[] = $participant['id'];
+        }
+        if (empty($participant_ids)) {
+            $participant_ids = [0];
         }
         $participant_query = civicrm_api3('Participant', 'get', [
-            'id'           => ['IN' => $particpant_ids],
+            'id'           => ['IN' => $participant_ids],
             'option.limit' => 0,
             'option.sort'  => 'last_name asc',
             'return'       => 'id,contact_id,display_name,participant_role,participant_status'
@@ -56,6 +60,9 @@ class CRM_Remoteevent_Page_SessionParticipantList extends CRM_Core_Page
             // add contact link
             $participant['contact_link'] = CRM_Utils_System::url('civicrm/contact/view',
                                                                  "reset=1&cid={$participant['contact_id']}");
+
+            // add is_counted
+            $participant['is_counted'] = $raw_participants[$participant['id']]['participant_counts'];
         }
 
         $this->assign('participants', $participants);

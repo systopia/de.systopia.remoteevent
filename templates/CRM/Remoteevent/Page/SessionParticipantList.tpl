@@ -25,9 +25,9 @@
 
   <tbody>
     {foreach from=$participants item=participant}
-      <tr class="remote-session-participants {cycle values="odd-row,even-row"}">
+      <tr class="remote-session-participants {cycle values="odd-row,even-row"} {if not $participant.is_counted}disabled{/if}">
         <td class="remote-session-participants remote-session-participants-name"><a href="{$participant.contact_link}">{$participant.display_name}</a></td>
-        <td class="remote-session-participants remote-session-participants-status">{$participant.participant_status}</td>
+        <td class="remote-session-participants remote-session-participants-status">{$participant.participant_status} {if not $participant.is_counted}{ts}(not counted){/ts}{/if}</td>
         <td class="remote-session-participants remote-session-participants-role">{$participant.participant_role}</td>
         <td class="remote-session-participants remote-session-participants-links">{$participant.link}</td>
       </tr>

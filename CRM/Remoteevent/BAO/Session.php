@@ -160,9 +160,17 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
              session.id            AS session_id,
              COUNT(participant.id) AS participant_count
             FROM civicrm_session session
-            LEFT JOIN civicrm_participant_session participant
-                   ON participant.session_id = session.id
+            LEFT JOIN civicrm_participant_session participant_session
+                   ON participant_session.session_id = session.id
+            LEFT JOIN civicrm_participant participant
+                   ON participant.id = participant_session.participant_id
+            LEFT JOIN civicrm_participant_status_type participant_status
+                   ON participant_status.id = participant.status_id
+            LEFT JOIN civicrm_contact contact
+                   ON contact.id = participant.contact_id
             WHERE session.event_id = {$event_id}
+              AND participant_status.is_counted = 1
+              AND (contact.is_deleted IS NULL OR contact.is_deleted = 0)
             GROUP BY session.id");
         while ($participant_query->fetch()) {
             $participant_counts[$participant_query->session_id] = $participant_query->participant_count;
@@ -204,24 +212,42 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
      *   session_id id
      *
      * @return array
-     *   list of participant IDs
+     *   list of participant data [id, is_counted, contact_id]
      */
-    public static function getSessionRegistrations($session_id)
+    public static function getSessionRegistrations($session_id, $only_counted = false)
     {
         $session_id = (int) $session_id;
 
+        $WHERE_CLAUSE = "session_id = {$session_id}";
+        if ($only_counted) {
+            $WHERE_CLAUSE .= " HAVING participant_counts = 1";
+        }
+
         // run this as a sql query
-        $participant_ids = [];
+        $participants = [];
         $participant_query = CRM_Core_DAO::executeQuery("
             SELECT
-             participant_id AS participant_id
-            FROM civicrm_participant_session participant
-            WHERE session_id = {$session_id}
+                participant.id AS participant_id,
+                contact.id     AS contact_id,
+                IF(participant_status.is_counted = 1 AND (contact.is_deleted = 0 OR contact.is_deleted IS NULL), 1 , 0)
+                               AS participant_counts
+            FROM civicrm_participant_session participant_session
+            LEFT JOIN civicrm_participant participant
+                   ON participant.id = participant_session.participant_id
+            LEFT JOIN civicrm_contact contact
+                   ON contact.id = participant.contact_id
+            LEFT JOIN civicrm_participant_status_type participant_status
+                   ON participant_status.id = participant.status_id          
+            WHERE {$WHERE_CLAUSE}
             ");
         while ($participant_query->fetch()) {
-            $participant_ids[] = $participant_query->participant_id;
+            $participants[$participant_query->participant_id] = [
+                'id'                 => $participant_query->participant_id,
+                'contact_id'         => $participant_query->contact_id,
+                'participant_counts' => $participant_query->participant_counts
+            ];
         }
-        return $participant_ids;
+        return $participants;
     }
 
     /**
