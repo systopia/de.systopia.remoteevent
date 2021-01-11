@@ -399,3 +399,40 @@ function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef)
         CRM_Remoteevent_ChangeActivity::recordPost($objectId);
     }
 }
+
+/**
+ * Inject session information
+ */
+function remoteevent_civicrm_pageRun(&$page) {
+    $pageName = $page->getVar('_name');
+    if ($pageName == 'CRM_Event_Page_Tab') {
+        CRM_Remoteevent_Form_ParticipantSessions::injectSessionsInfo($page);
+    }
+}
+
+function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
+    if ($objectName == 'Participant' && $op == 'participant.selector.row') {
+        $links[] = [
+            'name'  => E::ts('Sessions'),
+            'url'   =>  CRM_Utils_System::url('civicrm/event/participant/sessions', "participant_id={$objectId}&reset=1"),
+            'title' => E::ts('Sessions'),
+            'class' => '',
+        ];
+    }
+}
+
+/**
+ * Implementation of hook_civicrm_searchTasks,
+ *  to inject our 'Session Registration' task
+ */
+function remoteevent_civicrm_searchTasks($objectType, &$tasks)
+{
+    // add "Session Registration" task to participant list
+    if ($objectType == 'event') {
+        $tasks[] = [
+            'title' => E::ts('Session Registration'),
+            'class' => 'CRM_Remoteevent_Form_Task_ParticipantSession',
+            'result' => false
+        ];
+    }
+}

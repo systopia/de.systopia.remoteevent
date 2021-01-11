@@ -1,7 +1,7 @@
 <?php
 /*-------------------------------------------------------+
 | SYSTOPIA Remote Event Extension                        |
-| Copyright (C) 2020 SYSTOPIA                            |
+| Copyright (C) 2021 SYSTOPIA                            |
 | Author: B. Endres (endres@systopia.de)                 |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
@@ -14,89 +14,129 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-
+use Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 /**
- * Session Tab
+ * Form to edit the sessions for a specific participant
  */
-class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
+class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form
 {
-    /**
-     * Set variables up before form is built.
-     */
-    public function preProcess()
-    {
-        parent::preProcess();
-        $this->setSelectedChild('sessions');
-    }
+    /** @var integer participant id */
+    protected $participant_id = null;
 
     public function buildQuickForm()
     {
-        // render sessions
-        $event = civicrm_api3('Event', 'getsingle', ['id' => $this->_id]);
+        // load participant, sessions, registrations
+        $this->participant_id = CRM_Utils_Request::retrieve('participant_id', 'Integer', $this, true);
+        $this->participant = civicrm_api3('Participant', 'getsingle', ['id' => $this->participant_id]);
+        $this->event = civicrm_api3('Event', 'getsingle', ['id' => $this->participant['event_id']]);
+        $this->sessions = CRM_Remoteevent_BAO_Session::getSessions($this->participant['event_id']);
+        $this->registrations = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($this->participant_id);
+
+        // set titles
+        $this->setTitle(E::ts("Sessions for '%1'", [1 => $this->participant['display_name']]));
+        $this->assign('event_header', E::ts("Event is '%1'", [1 => $this->participant['event_title']]));
+        Civi::resources()->addStyleUrl(E::url('css/event_sessions.css'));
+
+        // build form
+        $this->add(
+            'checkbox',
+            'bypass_restriction',
+            E::ts("Bypass restrictions")
+        );
 
         // load days
-        $event_days = self::getEventDays($event);
+        $event_days = CRM_Remoteevent_Form_EventSessions::getEventDays($this->event);
         $this->assign('event_days', $event_days);
         $this->assign('is_single_day', $event_days == 1);
 
         // load slots
-        $slots = self::getSlots();
+        $slots = CRM_Remoteevent_Form_EventSessions::getSlots();
         $this->assign('slots', $slots);
 
         // load sessions
-        $this->assign('sessions', self::getSessionList($event_days, $this->_id));
+        $this->assign('sessions', CRM_Remoteevent_Form_EventSessions::getSessionList($event_days, $this->event['id']));
 
-        // more stuff
-        $this->assign('add_session_link', CRM_Utils_System::url("civicrm/event/session", "reset=1&event_id={$this->_id}"));
+        $session_fields = [];
+        foreach ($this->sessions as $session) {
+            $session_fields[] = "session{$session['id']}";
+            $this->add(
+                'checkbox',
+                "session{$session['id']}",
+                $session['title']
+            );
+        }
+        $this->assign('session_fields', $session_fields);
 
+        // set current values
+        foreach ($this->registrations as $session_id) {
+            $this->setDefaults(["session{$session_id}" => 1]);
+        }
+
+        $this->addButtons(
+            [
+                [
+                    'type' => 'submit',
+                    'name' => E::ts('Update Registration'),
+                    'isDefault' => true,
+                ],
+            ]
+        );
+
+        Civi::resources()->addStyleUrl(E::url('css/participant_sessions.css'));
         parent::buildQuickForm();
+    }
 
-        // not that kind of form :)
-        $this->addButtons([]);
+    /**
+     * enhanced validation for the submissons,
+     *  testing e.g. max participants and time overlaps
+     *
+     * will not be executed, if bypass_restriction is set
+     */
+    public function validate()
+    {
+        parent::validate();
+        if (empty($this->_submitValues['bypass_restriction'])) {
 
-        // add scripts and styling
-        $reload_link = CRM_Utils_System::url('civicrm/event/manage/sessions', "reset=1&action=update&id={$event['id']}");
-        Civi::resources()->addVars('remoteevent', [
-            'session_reload' => $reload_link
-        ]);
-        Civi::resources()->addScriptUrl(E::url('js/event_sessions.js'));
-        Civi::resources()->addStyleUrl(E::url('css/event_sessions.css'));
+            // we'll just use the internal validation function:
+            // todo: trigger the full validation event? then we'd have to add more overrides...
+            $submission_event = new ValidateEvent($this->_submitValues);
+            $submission_event->overrideParticipant($this->participant_id);
+            CRM_Remoteevent_EventSessions::validateSessionSubmission($submission_event);
+
+            // apply errors to the fields
+            $errors = $submission_event->getErrors();
+            foreach ($errors as $error) {
+                $this->_errors[$error[1]] = $error[0];
+            }
+        }
+
+        return (0 == count($this->_errors));
     }
 
 
     public function postProcess()
     {
         $values = $this->exportValues();
+        Civi::log()->debug("VALUES: " . json_encode($values));
+        // update selectes sessions
+        $selected_sessions = [];
+        foreach ($values as $key => $value) {
+            if (!empty($value) && preg_match('/^session([0-9]+)$/', $key, $match)) {
+                $selected_sessions[] = (int) $match[1];
+            }
+        }
+        CRM_Remoteevent_BAO_Session::setParticipantRegistrations($this->participant_id, $selected_sessions);
+
+        // set status
+        CRM_Core_Session::setStatus(
+            E::ts("Session Registrations were updated"),
+            E::ts("Participant Registration"),
+            'info'
+        );
+
         parent::postProcess();
     }
 
-    /**
-     * Return the list of days the event takes place on
-     *
-     * @return array
-     *   list of Y-m-d dates
-     */
-    public static function getEventDays($event_data)
-    {
-        if (empty($event_data['start_date'])) {
-            throw new Exception(E::ts("Event doesn't have a start date!"));
-        }
-        if (empty($event_data['end_date'])) {
-            return [date('Y-m-d', strtotime($event_data['start_date']))];
-        }
-
-        $start_date = date('Y-m-d', strtotime($event_data['start_date']));
-        $end_date = date('Y-m-d', strtotime($event_data['end_date']));
-
-        $event_days = [$start_date];
-        $current_date = $start_date;
-        while ($current_date != $end_date) {
-            $current_date = date('Y-m-d', strtotime("{$current_date} + 1 day"));
-            $event_days[] = $current_date;
-        }
-
-        return $event_days;
-    }
 
     /**
      * Renders a list of all sessions for this event
@@ -108,15 +148,16 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return array
      *   session items by slot
      */
-    public static function getSessionList($event_days, $event_id)
+    protected function getSessionList($event_days)
     {
+        $event_days = self::getEventDays($event);
         $sessions_by_day_and_slot = [];
         foreach ($event_days as $event_day) {
             $sessions_by_day_and_slot[$event_day] = [];
         }
 
         // load all sessions
-        $sessions = CRM_Remoteevent_BAO_Session::getSessions($event_id);
+        $sessions = CRM_Remoteevent_BAO_Session::getSessions($this->_id);
 
         // sort into days and slots
         foreach ($sessions as $session) {
@@ -126,8 +167,8 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         }
 
         // beautify / improve list
-        $categories = self::getCategories();
-        $types = self::getTypes();
+        $categories = $this->getCategories();
+        $types = $this->getTypes();
         // rename days
         foreach (array_keys($sessions_by_day_and_slot) as $day_index => $day) {
             $new_key = E::ts("Day %1 (%2)", [
@@ -138,7 +179,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         }
 
         // enrich data
-        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($event_id);
+        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($this->_id);
         foreach ($sessions_by_day_and_slot as $day => &$day_slots) {
             foreach ($day_slots as $slot => &$sessions) {
                 foreach ($sessions as &$session) {
@@ -184,7 +225,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
 
                     // add presenter icon
                     if (!empty($session['presenter_id'])) {
-                        $presenter = self::getPresenterString($session['presenter_id']);
+                        $presenter = $this->getPresenterString($session['presenter_id']);
                         if (empty($session['presenter_title'])) {
                             $message = E::ts("Given by %1", [1 => $presenter]);
                         } else {
@@ -236,75 +277,53 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
     }
 
     /**
-     * Get a list of all available slots
-     * @return array
-     *   list of slot_id -> slot label
-     */
-    public static function getSlots()
-    {
-        $slots = ['' => E::ts("No Slot")];
-        $slot_query = civicrm_api3('OptionValue', 'get', [
-            'option_group_id' => 'session_slot',
-            'option.limit'    => 0,
-            'return'          => 'value,label'
-        ]);
-        foreach ($slot_query['values'] as $slot) {
-            $slots[$slot['value']] = $slot['label'];
-        }
-        $slots['no_slot'] = E::ts('No Slot');
-        return $slots;
-    }
-
-    /**
-     * Get a list of all available categories
-     * @return array
-     *   list of slot_id -> slot label
-     */
-    public static function getCategories()
-    {
-        $categories = ['' => E::ts("None")];
-        $category_query = civicrm_api3('OptionValue', 'get', [
-            'option_group_id' => 'session_category',
-            'option.limit'    => 0,
-            'return'          => 'value,label'
-        ]);
-        foreach ($category_query['values'] as $category) {
-            $categories[$category['value']] = $category['label'];
-        }
-        return $categories;
-    }
-
-    /**
-     * Get a list of all available types
-     * @return array
-     *   list of type_id -> type label
-     */
-    public static function getTypes()
-    {
-        $types = ['' => E::ts("None")];
-        $type_query = civicrm_api3('OptionValue', 'get', [
-            'option_group_id' => 'session_type',
-            'option.limit'    => 0,
-            'return'          => 'value,label'
-        ]);
-        foreach ($type_query['values'] as $type) {
-            $types[$type['value']] = $type['label'];
-        }
-        return $types;
-    }
-
-    /**
-     * Return string representation of the presenter
+     * Inject session information into the participant view
      *
-     * @param integer $contact_id
-     *   contact ID
-     *
-     * @return string to be shown in UI
-     *
+     * @param CRM_Event_Page_Tab $page
      */
-    public static function getPresenterString($contact_id)
+    public static function injectSessionsInfo($page)
     {
-        // todo: caching
-        return civicrm_api3('Contact', 'getvalue', ['id' => $contact_id, 'return' => 'display_name']);
+        if (!empty($page->_id) && ($page instanceof CRM_Event_Page_Tab)) {
+            try {
+                $participant_id = (int) $page->_id;
+                $event_id = (int) civicrm_api3('Participant', 'getvalue', [
+                    'id'     => $participant_id,
+                    'return' => 'event_id']);
+                $has_sessions = CRM_Core_DAO::singleValueQuery(
+                    "SELECT id FROM civicrm_session WHERE event_id = {$event_id} LIMIT 1");
+                if ($has_sessions) {
+                    // find registrations
+                    $registrations = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($participant_id);
+
+                    // load session names
+                    $session_names = [];
+                    if (!empty($registrations)) {
+                        $sessions = civicrm_api3('Session', 'get', [
+                            'id'           => ['IN' => $registrations],
+                            'return'       => 'title',
+                            'option.limit' => 0
+                        ]);
+                        foreach ($sessions['values'] as $session) {
+                            $session_names[] = $session['title'];
+                        }
+                    }
+
+                    Civi::resources()->addVars('remoteevent_participant_sessions', [
+                        'sessions'      => $registrations,
+                        'session_count' => count($registrations),
+                        'label'         => E::ts("Sessions"),
+                        'value_title'   => empty($registrations) ? E::ts("No Session Registrations") :
+                                                    implode(', ', $session_names),
+                        'value_text'    => empty($registrations) ? E::ts("No Session Registrations") :
+                            E::ts("Registered for %1 Sessions", [1 => count($registrations)]),
+                        'link'          => CRM_Utils_System::url('civicrm/event/participant/sessions',
+                                                    "participant_id={$participant_id}&reset=1"),
+                        ]);
+                    Civi::resources()->addScriptUrl(E::url('js/participant_session_snippet.js'));
+                }
+            } catch (Exception $ex) {
+                Civi::log()->debug("Error while checking for participant sessions: " . $ex->getMessage());
+            }
+        }
     }
 }

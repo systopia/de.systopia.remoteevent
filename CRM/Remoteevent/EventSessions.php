@@ -232,7 +232,7 @@ class CRM_Remoteevent_EventSessions
 
         // load the event's sessions
         $sessions = CRM_Remoteevent_BAO_Session::getSessions($event_id);
-        $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($event_id); // todo: lazy load?
+        $participant_counts = null;
 
         // load the current
         $registered_session_ids = [];
@@ -250,6 +250,10 @@ class CRM_Remoteevent_EventSessions
             $session = $sessions[$requested_session_id];
             if (!empty($session['max_participants'])) {
                 // here we need to check
+                if ($participant_counts === null) { // lazy load
+                    $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($event_id);
+                }
+
                 $session_participant_count = CRM_Utils_Array::value($requested_session_id, $participant_counts, 0);
                 if ($session_participant_count >= $session['max_participants']) {
                     $validationEvent->addValidationError("session{$requested_session_id}", E::ts("Session is full"));
