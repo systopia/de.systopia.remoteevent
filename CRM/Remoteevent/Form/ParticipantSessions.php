@@ -117,7 +117,6 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form
     public function postProcess()
     {
         $values = $this->exportValues();
-        Civi::log()->debug("VALUES: " . json_encode($values));
         // update selectes sessions
         $selected_sessions = [];
         foreach ($values as $key => $value) {

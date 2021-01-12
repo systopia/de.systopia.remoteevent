@@ -120,7 +120,6 @@ function civicrm_api3_remote_participant_cancel($params)
 
     // execute the cancellations
     foreach ($cancellations as $cancellation) {
-        Civi::log()->debug("Participant.create: " . json_encode($cancellation));
         civicrm_api3('Participant', 'create', $cancellation);
     }
 
