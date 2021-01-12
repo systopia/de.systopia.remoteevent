@@ -128,6 +128,7 @@ class CRM_Remoteevent_RegistrationUpdate
                     // if there is an xcm profile -> use that
                     // in this case we use the XCM with the update profile with the ID set
                     $contact_updates['xcm_profile'] = $xcm_profile;
+                    CRM_Remoteevent_CustomData::resolveCustomFields($contact_updates);
                     civicrm_api3('Contact', 'getorcreate', $contact_updates);
                     $registration_update->setContactUpdated();
 
