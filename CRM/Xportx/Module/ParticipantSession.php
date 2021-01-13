@@ -91,20 +91,15 @@ class CRM_Xportx_Module_ParticipantSession extends CRM_Xportx_Module
      */
     public function addJoins(&$joins)
     {
-        // join participant table (strictly speaking not necessary, but we'll do anyway for compatibility)
-        $participant_alias = $this->getAlias('participant');
-        $base_alias        = $this->getBaseAlias(); // this should be an alias of the civicrm_participant table
-        $joins[]           = "LEFT JOIN civicrm_participant {$participant_alias} ON {$participant_alias}.id = {$base_alias}.id";
-
-
         $session_base_alias = $this->getAlias('participant_session');
         $base_alias = $this->getBaseAlias(); // this should be an alias of the civicrm_participant table
 
         $session_indices = $this->getSessionIndices();
         foreach ($session_indices as $session_index) {
+            $temp_table_name = $this->getAlias('participant_session_tmp') . "_{$session_index}";
+            $joins[] = "LEFT JOIN {$temp_table_name} ON {$temp_table_name}.participant_id = {$base_alias}.id";
             $session_alias = "{$session_base_alias}_{$session_index}";
-            $session_id_clause = $this->getSessionIdExpression($session_index);
-            $joins[] = "LEFT JOIN civicrm_session {$session_alias} ON {$session_alias}.id {$session_id_clause}";
+            $joins[] = "LEFT JOIN civicrm_session {$session_alias} ON {$temp_table_name}.session_id = {$session_alias}.id";
         }
     }
 
@@ -130,4 +125,32 @@ class CRM_Xportx_Module_ParticipantSession extends CRM_Xportx_Module
         }
     }
 
+    /**
+     * allows a module to create temporary tables if needed
+     *
+     * @param array $entity_ids
+     *  IDs
+     */
+    public function createTempTables($entity_ids)
+    {
+        $session_indices = $this->getSessionIndices();
+        $entity_id_list = implode($entity_ids);
+        foreach ($session_indices as $session_index) {
+            $temp_table_name = $this->getAlias('participant_session_tmp') . "_{$session_index}";
+            $offset = $session_index - 1;
+            $temp_table_query = "
+                SELECT 
+                       participant_id AS participant_id,
+                       session_id     AS session_id
+                FROM civicrm_participant_session participant_session
+                LEFT JOIN civicrm_session session
+                       ON session.id = participant_session.session_id
+                WHERE participant_session.participant_id IN ({$entity_id_list})
+                ORDER BY session.start_date ASC
+                LIMIT 1
+                OFFSET {$offset}";
+            CRM_Core_DAO::executeQuery("CREATE TEMPORARY TABLE {$temp_table_name} ENGINE=MEMORY AS {$temp_table_query}");
+            CRM_Core_DAO::executeQuery("ALTER TABLE {$temp_table_name} ADD INDEX participant_id(participant_id)");
+        }
+    }
 }
