@@ -126,31 +126,61 @@ class CRM_Xportx_Module_ParticipantSession extends CRM_Xportx_Module
     }
 
     /**
-     * allows a module to create temporary tables if needed
+     * Create N temp-table containing the N-th session
+     *  (according to the order)
+     *
+     *
+     * @todo this is *really* ugly, is there a non-iterative way to do this?
      *
      * @param array $entity_ids
      *  IDs
      */
     public function createTempTables($entity_ids)
     {
+        // create N temp tables
+        $order = "session.start_date ASC"; // todo: config?
         $session_indices = $this->getSessionIndices();
-        $entity_id_list = implode($entity_ids);
+        $max_index = max($session_indices);
+        $entity_id_list = implode(',', $entity_ids);
+        $tmp_table_names = [];
         foreach ($session_indices as $session_index) {
             $temp_table_name = $this->getAlias('participant_session_tmp') . "_{$session_index}";
-            $offset = $session_index - 1;
-            $temp_table_query = "
-                SELECT 
-                       participant_id AS participant_id,
-                       session_id     AS session_id
-                FROM civicrm_participant_session participant_session
-                LEFT JOIN civicrm_session session
-                       ON session.id = participant_session.session_id
-                WHERE participant_session.participant_id IN ({$entity_id_list})
-                ORDER BY session.start_date ASC
-                LIMIT 1
-                OFFSET {$offset}";
-            CRM_Core_DAO::executeQuery("CREATE TEMPORARY TABLE {$temp_table_name} ENGINE=MEMORY AS {$temp_table_query}");
-            CRM_Core_DAO::executeQuery("ALTER TABLE {$temp_table_name} ADD INDEX participant_id(participant_id)");
+            CRM_Core_DAO::executeQuery(
+                "CREATE TEMPORARY TABLE {$temp_table_name} (
+             `session_id`       int unsigned,
+             `participant_id`   int unsigned,
+             INDEX participant_id(participant_id)
+            ) ENGINE=MEMORY;");
+            $tmp_table_names[$session_index] = $temp_table_name;
+        }
+
+        // run the query to fill them
+        $data_query = CRM_Core_DAO::executeQuery("
+            SELECT 
+                   participant_id AS participant_id,
+                   session_id     AS session_id
+            FROM civicrm_participant_session participant_session
+            LEFT JOIN civicrm_session session
+                   ON session.id = participant_session.session_id
+            WHERE participant_session.participant_id IN ({$entity_id_list})
+            ORDER BY participant_session.participant_id ASC, {$order}");
+        $current_participant = 0;
+        $current_participant_counter = 0;
+        while ($data_query->fetch()) {
+            // reset with next participant
+            if ($data_query->participant_id != $current_participant) {
+                $current_participant = $data_query->participant_id;
+                $current_participant_counter = 0;
+            }
+
+            // process current entry
+            $current_participant_counter++;
+            if ($current_participant_counter <= $max_index) {
+                CRM_Core_DAO::executeQuery(
+                    "INSERT INTO {$tmp_table_names[$current_participant_counter]} 
+                    (participant_id,session_id) VALUES ({$data_query->participant_id}, {$data_query->session_id})"
+                );
+            }
         }
     }
 }
