@@ -61,7 +61,8 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task
         foreach ($this->sessions as $session) {
             $session_title = $session['title'];
             if (!empty($session['max_participants'])) {
-                $free = $session['max_participants'] - $participant_counts[$session['id']];
+                $session_participant_count = CRM_Utils_Array::value($session['id'], $participant_counts, 0);
+                $free = $session['max_participants'] - $session_participant_count;
                 if ($free > 0) {
                     $session_title .= ' ' . E::ts('(%1 left)', [1 => $free]);
                 } else {
@@ -85,7 +86,10 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task
             'select',
             'unregister',
             E::ts('Mode'),
-            ['0' => E::ts("Register"), '1' => E::ts("Unregister")],
+            [
+                '0' => E::ts("Register (%1 participants)", [1 => count($this->_participantIds)]),
+                '1' => E::ts("Unregister (%1 participants)", [1 => count($this->_participantIds)]),
+            ],
             false,
             ['class' => 'crm-select2']
         );

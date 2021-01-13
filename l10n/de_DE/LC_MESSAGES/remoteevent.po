@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-01-11 15:02+0100\n"
+"POT-Creation-Date: 2021-01-13 13:29+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -525,12 +525,12 @@ msgid "Mode"
 msgstr "Modus"
 
 #: CRM/Remoteevent/Form/Task/ParticipantSession.php
-msgid "Register"
-msgstr "Anmelden"
+msgid "Register (%1 participants)"
+msgstr "Anmelden (%1 Teilnehmer)"
 
 #: CRM/Remoteevent/Form/Task/ParticipantSession.php
-msgid "Unregister"
-msgstr "Abmelden"
+msgid "Unregister (%1 participants)"
+msgstr "Abmelden (%1 Teilnehmer)"
 
 #: CRM/Remoteevent/Form/Task/ParticipantSession.php
 msgid "Apply"
@@ -1387,6 +1387,12 @@ msgstr "Teilnehmerrolle"
 #: templates/CRM/Remoteevent/Page/SessionParticipantList.tpl
 msgid "(not counted)"
 msgstr "(nicht gezählt)"
+
+#~ msgid "Register"
+#~ msgstr "Anmelden"
+
+#~ msgid "Unregister"
+#~ msgstr "Abmelden"
 
 #~ msgid "%1h-%2h"
 #~ msgstr "%1 Uhr - % 2Uhr"
