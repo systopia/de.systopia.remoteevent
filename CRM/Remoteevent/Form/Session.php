@@ -282,6 +282,7 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
         $value_query = civicrm_api3('OptionValue', 'get', [
             'option_group_id' => $option_group_name,
             'option.limit'    => 0,
+            'option.sort'     => 'weight asc',
             'return'          => 'value,label'
         ]);
         foreach ($value_query['values'] as $value) {
