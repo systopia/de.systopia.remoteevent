@@ -19,7 +19,7 @@
     <td>{$session.title}</td>
   </tr>
   <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-restrictions {$style_even}">
-    <td>{ts}Restrictions{/ts}</td>
+    <th>{ts}Restrictions{/ts}</th>
     <td>{if $session.max_participants}{ts 1=$session.max_participants}Up to %1 participants{/ts}{else}{ts}None{/ts}{/if}</td>
   </tr>
   {if $session.presenter_id}
