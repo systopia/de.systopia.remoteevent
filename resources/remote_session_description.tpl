@@ -12,35 +12,37 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 {crmScope extensionKey='de.systopia.remoteevent'}
-<table class="remote-session remote-session-info">
-  <tr>
-    <td>{ts}Title{/ts}</td>
+{assign var=style_odd value="odd"}{assign var=style_even value="even"}
+<table class="civiremote-event-session-info">
+  <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-title {$style_odd}">
+    <th>{ts}Title{/ts}</th>
     <td>{$session.title}</td>
   </tr>
-  <tr>
+  <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-restrictions {$style_even}">
     <td>{ts}Restrictions{/ts}</td>
     <td>{if $session.max_participants}{ts 1=$session.max_participants}Up to %1 participants{/ts}{else}{ts}None{/ts}{/if}</td>
   </tr>
   {if $session.presenter_id}
-  <tr>
-    <td>{if $session.presenter_title}{$session.presenter_title}{else}{ts}Presenter{/ts}{/if}</td>
+  <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-presenter {$style_odd}">
+    <th>{if $session.presenter_title}{$session.presenter_title}{else}{ts}Presenter{/ts}{/if}</th>
     <td>{crmAPI var='presenter' entity='Contact' action='getvalue' sequential=0 return="display_name" id=$session.presenter_id}{$presenter}</td>
+    {* swap following styles *}{assign var=style_odd value="even"}{assign var=style_even value="odd"}
   </tr>
   {/if}
-  <tr>
-    <td>{ts}Category{/ts}</td>
+  <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-category {$style_odd}">
+    <th>{ts}Category{/ts}</th>
     <td>{$session.category}</td>
   </tr>
-  <tr>
-    <td>{ts}Type{/ts}</td>
+  <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-type {$style_even}">
+    <th>{ts}Type{/ts}</th>
     <td>{$session.type}</td>
   </tr>
-  <tr>
-    <td>{ts}Location{/ts}</td>
+  <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-location {$style_odd}">
+    <th>{ts}Location{/ts}</th>
     <td>{$session.location}</td>
   </tr>
-  <tr>
-    <td>{ts}Details{/ts}</td>
+  <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-details {$style_even}">
+    <th>{ts}Details{/ts}</th>
     <td>{$session.description}</td>
   </tr>
 </table>
