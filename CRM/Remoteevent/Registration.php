@@ -453,7 +453,7 @@ class CRM_Remoteevent_Registration
                 // this is a yet unidentified contact => run 'normal' xcm
                 // add xcm profile, if one given
                 if (empty($contact_identification['xcm_profile'])) {
-                    $xcm_profile = $registration->getXcmUpdateProfile();
+                    $xcm_profile = $registration->getXcmMatchProfile();
                     if ($xcm_profile) {
                         $contact_identification['xcm_profile'] = $xcm_profile;
                     }
@@ -467,8 +467,7 @@ class CRM_Remoteevent_Registration
                     $registration->setContactUpdated();
                 } catch (Exception $ex) {
                     throw new Exception(
-                        E::ts("Not enough contact data to identify/create contact.")
-                    );
+                        E::ts("Couldn't find or create contact: ") . $ex->getMessage());
                 }
             }
         }
