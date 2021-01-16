@@ -595,13 +595,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      * @return array list of key => (localised) label
      */
-    public function getOptions($option_group_id, $locale, $params = [])
+    public function getOptions($option_group_id, $locale, $params = [], $use_name = false)
     {
         $option_list = [];
         $query       = [
             'option.limit'    => 0,
             'option_group_id' => $option_group_id,
-            'return'          => 'value,label',
+            'return'          => 'value,label,name',
             'is_active'       => 1,
             'sort'            => 'weight asc',
         ];
@@ -615,7 +615,11 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $result = civicrm_api3('OptionValue', 'get', $query);
         $l10n   = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($result['values'] as $entry) {
-            $option_list[$entry['value']] = $l10n->localise($entry['label']);
+            if ($use_name) {
+                $option_list[$entry['name']] = $l10n->localise($entry['label']);
+            } else {
+                $option_list[$entry['value']] = $l10n->localise($entry['label']);
+            }
         }
 
         return $option_list;
