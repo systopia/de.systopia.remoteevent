@@ -127,12 +127,14 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'label'       => $l10n->localise('Country'),
                     'parent'      => 'contact_address',
                     'dependencies'=> [
-                        'dependent_field'       => 'state_province_id',
-                        'hide_unrestricted'     => 1,
-                        'hide_restricted_empty' => 1,
-                        'command'               => 'restrict',
-                        'regex_subject'         => 'dependent',
-                        'regex'                 => '^(<current_value>-[0-9]+)$',
+                        [
+                            'dependent_field'       => 'state_province_id',
+                            'hide_unrestricted'     => 1,
+                            'hide_restricted_empty' => 1,
+                            'command'               => 'restrict',
+                            'regex_subject'         => 'dependent',
+                            'regex'                 => '^(<current_value>-[0-9]+)$',
+                        ],
                     ],
                 ],
                 'state_province_id'    => [
