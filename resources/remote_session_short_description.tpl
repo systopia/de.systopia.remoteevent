@@ -11,4 +11,4 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------+
-*}[{$session.category}] {$session.type}: {$session.title} in {$session.location}
+*}{crmScope extensionKey='de.systopia.remoteevent'}{ts}Category{/ts} {$session.category}, {ts}Type{/ts}: {$session.type}{if $session.location}, {ts}Location{/ts}: {$session.location}{/if}{/crmScope}
