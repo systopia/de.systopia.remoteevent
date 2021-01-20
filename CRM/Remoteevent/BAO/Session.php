@@ -123,7 +123,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
         $sessions_raw = civicrm_api3('Session', 'get', [
             'event_id'     => $event_id,
             'option.limit' => 0,
-            'option.sort'  => 'start_date asc'
+            'option.sort'  => 'start_date asc, id asc'
         ])['values'];
 
         foreach ($sessions_raw as $session) {
