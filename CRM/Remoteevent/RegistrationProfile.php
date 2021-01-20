@@ -595,7 +595,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      * @return array list of key => (localised) label
      */
-    public function getOptions($option_group_id, $locale, $params = [], $use_name = false)
+    public function getOptions($option_group_id, $locale, $params = [], $use_name = false, $sort = 'weight asc')
     {
         $option_list = [];
         $query       = [
@@ -603,7 +603,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
             'option_group_id' => $option_group_id,
             'return'          => 'value,label,name',
             'is_active'       => 1,
-            'sort'            => 'weight asc',
+            'sort'            => $sort,
         ];
 
         // extend/override query
