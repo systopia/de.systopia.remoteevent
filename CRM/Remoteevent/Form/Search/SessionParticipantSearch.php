@@ -73,6 +73,8 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch
          */
         $form->assign('elements', ['event_id', 'session_ids', 'last_session_ids']);
 
+        $slots = CRM_Remoteevent_Form_EventSessions::getSlots();
+        Civi::resources()->addVars('remoteevent_slots', $slots);
         Civi::resources()->addScriptUrl(E::url('js/session_participant_search.js'));
     }
 

@@ -41,9 +41,18 @@ cj(document).ready(function() {
         } else {
           // fill values
           for (let session_id in result.values) {
+            // compile label
+            let session = result.values[session_id];
+            let label = session['title'];
+            if (session['slot_id']) {
+              label += ' [' + CRM.vars.remoteevent_slots[session['slot_id']] + ']';
+            } else {
+              label += ' [' + CRM.vars.remoteevent_slots.no_slot + ']';
+            }
+
             cj("[name^=session_ids]")
               .select2({placeholder: ""})
-              .append(`<option value="`+ session_id +`">`+ result.values[session_id]['title'] +`</option>`);
+              .append(`<option value="`+ session_id +`">` + label + `</option>`);
           }
 
           // pre-select the last values
