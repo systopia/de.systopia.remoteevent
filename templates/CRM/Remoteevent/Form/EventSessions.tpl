@@ -17,6 +17,7 @@
 
 <div class="remote-session remote-button-section">
   <a class="button remote-session remote-session-add crm-popup" href="{$add_session_link}"><span><i class="crm-i fa-plus" aria-hidden="true"></i>&nbsp;{ts}Add Session{/ts}</span></a>
+  <a class="button remote-session remote-session-csv" href="{$download_session_link}"><span><i class="crm-i fa-table" aria-hidden="true"></i>&nbsp;{ts}Download as CSV{/ts}</span></a>
 </div>
 
 {foreach from=$sessions key=day item=day_sessions}

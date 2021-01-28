@@ -44,10 +44,18 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         $this->assign('slots', $slots);
 
         // load sessions
-        $this->assign('sessions', self::getSessionList($event_days, $this->_id));
+        $sessions = self::getSessionList($event_days, $this->_id);
+        $this->assign('sessions', $sessions);
+
+        // check if a download was requested
+        $download_requested = CRM_Utils_Request::retrieveValue('download_csv', 'String');
+        if (!empty($download_requested)) {
+            self::downloadSessionList($sessions, $event);
+        }
 
         // more stuff
         $this->assign('add_session_link', CRM_Utils_System::url("civicrm/event/session", "reset=1&event_id={$this->_id}"));
+        $this->assign('download_session_link', CRM_Utils_System::url("civicrm/event/manage/sessions", "id={$this->_id}&download_csv=1"));
 
         parent::buildQuickForm();
 
@@ -184,12 +192,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
 
                     // add presenter icon
                     if (!empty($session['presenter_id'])) {
-                        $presenter = self::getPresenterString($session['presenter_id']);
-                        if (empty($session['presenter_title'])) {
-                            $message = E::ts("Given by %1", [1 => $presenter]);
-                        } else {
-                            $message = E::ts("%1 is %2", [1 => $session['presenter_title'], 2 => $presenter]);
-                        }
+                        $message = self::getPresenterString($session);
                         $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-slideshare\" aria-hidden=\"true\"></i>";
                     }
 
@@ -302,9 +305,78 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
      * @return string to be shown in UI
      *
      */
-    public static function getPresenterString($contact_id)
+    public static function getPresenterString($session)
     {
-        // todo: caching
-        return civicrm_api3('Contact', 'getvalue', ['id' => $contact_id, 'return' => 'display_name']);
+        $presenter_string = '';
+        if (!empty($session['presenter_id'])) {
+            $presenter = civicrm_api3('Contact', 'getvalue', ['id' => $session['presenter_id'], 'return' => 'display_name']);
+            if (empty($session['presenter_title'])) {
+                $presenter_string = E::ts("Given by %1", [1 => $presenter]);
+            } else {
+                $presenter_string = E::ts("%1 is %2", [1 => $session['presenter_title'], 2 => $presenter]);
+            }
+        }
+        return $presenter_string;
+    }
+
+    /**
+     * Generate and download a CSV version of the session list
+     *
+     * @param array $sessions_by_day_and_slot
+     *   the sessions as delived by ::getSessionList
+     *
+     * @param array $event
+     *   the event data
+     */
+    protected static function downloadSessionList($sessions_by_day_and_slot, $event)
+    {
+        // generate the file data
+        $csv_buffer = fopen("php://temp", "w");
+
+        // add headers
+        fputcsv($csv_buffer, [
+            E::ts("ID"),
+            E::ts("Day"),
+            E::ts("Slot"),
+            E::ts("Time"),
+            E::ts("Category"),
+            E::ts("Type"),
+            E::ts("Title"),
+            E::ts("Participants"),
+            E::ts("Max Participants"),
+            E::ts("Presenter"),
+            E::ts("Location"),
+        ]);
+
+        // add events
+        $slots = self::getSlots();
+        foreach ($sessions_by_day_and_slot as $day => $day_slots) {
+            foreach ($day_slots as $slot => $sessions) {
+                foreach ($sessions as $session) {
+                    fputcsv($csv_buffer, [
+                            $session['id'],
+                            $day,
+                            $slots[$slot],
+                            $session['time'],
+                            $session['category'],
+                            $session['type'],
+                            $session['title'],
+                            $session['participant_count'],
+                            CRM_Utils_Array::value('max_participant_count', $session, ''),
+                            self::getPresenterString($session),
+                            CRM_Utils_String::htmlToText(CRM_Utils_Array::value('location', $session, '')),
+                        ]
+                    );
+                }
+            }
+        }
+        $csv_data = stream_get_contents($csv_buffer, -1, 0);
+
+        // generate the download
+        CRM_Utils_System::download(
+            E::ts("%1 - %2 Sessions.csv", [1 => date('Y-m-d'), 2 => $event['title']]),
+            'text/csv',
+            $csv_data
+        );
     }
 }
