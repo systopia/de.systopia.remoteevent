@@ -46,8 +46,8 @@ cj(document).ready(function() {
             let label = session['title'];
             if (session['slot_id']) {
               label += ' [' + CRM.vars.remoteevent_slots[session['slot_id']] + ']';
-            } else {
-              label += ' [' + CRM.vars.remoteevent_slots.no_slot + ']';
+            //} else {
+            //  label += ' [' + CRM.vars.remoteevent_slots.no_slot + ']';
             }
 
             cj("[name^=session_ids]")
