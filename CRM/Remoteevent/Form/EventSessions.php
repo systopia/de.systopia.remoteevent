@@ -362,7 +362,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
                             $session['type'],
                             $session['title'],
                             $session['participant_count'],
-                            CRM_Utils_Array::value('max_participant_count', $session, ''),
+                            CRM_Utils_Array::value('max_participants', $session, ''),
                             self::getPresenterString($session),
                             CRM_Utils_String::htmlToText(CRM_Utils_Array::value('location', $session, '')),
                         ]
