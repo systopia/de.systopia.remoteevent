@@ -14,8 +14,6 @@
 
 
 cj(document).ready(function() {
-  console.log(CRM.vars.remoteevent_participant_sessions.session_count);
-
   // inject stuff
   cj("tr.crm-event-participantview-form-block-event")
     .first()

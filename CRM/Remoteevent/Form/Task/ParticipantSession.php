@@ -64,7 +64,7 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task
             $session_title = $session['title'];
 
             // add slot
-            if (empty($session['slot_id'])) {
+            if (!empty($session['slot_id'])) {
                 $session_title .= " [{$slots[$session['slot_id']]}]";
             //} else {
             //    $session_title .= " [{$slots['no_slot']}]";
