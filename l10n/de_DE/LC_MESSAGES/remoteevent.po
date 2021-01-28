@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-01-13 13:29+0100\n"
+"POT-Creation-Date: 2021-01-28 10:03+0400\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -201,6 +201,69 @@ msgstr "Teilnehmer"
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "No Slot"
 msgstr "Ohne Zeitfenster"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+msgid "ID"
+msgstr "ID"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+msgid "Day"
+msgstr "Tag"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+msgid "Slot"
+msgstr "Zeitfenster"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+msgid "Time"
+msgstr "Zeit"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+#: resources/remote_session_description.tpl
+#: resources/remote_session_short_description.tpl
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+msgid "Category"
+msgstr "Kategorie"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+#: resources/remote_session_description.tpl
+#: resources/remote_session_short_description.tpl
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+msgid "Type"
+msgstr "Typ"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: resources/remote_session_description.tpl
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+msgid "Title"
+msgstr "Titel"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+#, fuzzy
+#| msgid "Maximum Participants"
+msgid "Max Participants"
+msgstr "Maximale Teilnehmeranzahl"
+
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/Session.php
+#: resources/remote_session_description.tpl
+msgid "Presenter"
+msgstr "Vortragende/r"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+#: resources/remote_session_description.tpl
+#: resources/remote_session_short_description.tpl
+msgid "Location"
+msgstr "Veranstaltungsort"
+
+#: CRM/Remoteevent/Form/EventSessions.php
+msgid "%1 - %2 Sessions.csv"
+msgstr "%1 - %2 Workshops.csv"
 
 #: CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "Sessions for '%1'"
@@ -415,10 +478,6 @@ msgstr "Maximale Teilnehmeranzahl"
 msgid "Presenter Title"
 msgstr "Titel der/des Vortragenden"
 
-#: CRM/Remoteevent/Form/Session.php resources/remote_session_description.tpl
-msgid "Presenter"
-msgstr "Vortragende/r"
-
 #: CRM/Remoteevent/Form/Session.php
 msgid "Update"
 msgstr "Aktualisieren"
@@ -616,10 +675,8 @@ msgstr ""
 "Teilnehmer nicht erlaubt."
 
 #: CRM/Remoteevent/Registration.php
-msgid "Not enough contact data to identify/create contact."
-msgstr ""
-"Es wurden unzureichende persönliche Daten übermittelt, um eine Anmeldung "
-"vorzunehmen."
+msgid "Couldn't find or create contact: "
+msgstr "Fehler beim Identifizieren oder Anlagen des Kontakts:"
 
 #: CRM/Remoteevent/Registration.php
 msgid "You have been added to the waitlist."
@@ -662,13 +719,6 @@ msgid "Participant's Prefix"
 msgstr "Teilnehmer Anrede"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard2.php
-#: resources/remote_session_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
-#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
-msgid "Title"
-msgstr "Titel"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
 msgid "Participant's Formal Title"
 msgstr "Titel des Teilnehmers"
 
@@ -689,16 +739,16 @@ msgid "Participant's Last Name"
 msgstr "Nachname des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Contact Address"
-msgstr "Adresse"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Participant's Phone Number"
-msgstr "Telefonnummer des Teilnehmers"
+msgid "Please include country code"
+msgstr "Bitte die Landesvorwahl mit angeben"
+
+#: CRM/Remoteevent/RegistrationProfile/Standard3.php
+msgid "Contact Address"
+msgstr "Adresse"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Street Address"
@@ -713,10 +763,6 @@ msgid "Supplemental Address"
 msgstr "Adresszusatz"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Participant's supplemental address"
-msgstr "Adresszusatz des Teilnehmers"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Supplemental Address 2"
 msgstr "Adresszusatz 2"
 
@@ -725,24 +771,16 @@ msgid "Postal Code"
 msgstr "Postleitzahl"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Participant's postal code"
-msgstr "Postleitzahl des Teilnehmers"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "City"
 msgstr "Stadt"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Participant's city"
-msgstr "Stadt des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Country"
 msgstr "Land"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Participant's country"
-msgstr "Land des Teilnehmers"
+msgid "State or Province"
+msgstr "Bundesland/Provinz"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Required"
@@ -775,6 +813,10 @@ msgstr "Anmeldung nicht gefunden."
 #: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Contact could not be identified."
 msgstr "Kontakt nicht gefunden."
+
+#: CRM/Remoteevent/RegistrationUpdate.php
+msgid "Couldn't update contact: "
+msgstr "Fehler beim Aktualisieren des Kontakts:"
 
 #: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Couldn't update contact: %1"
@@ -1075,22 +1117,6 @@ msgstr "Beschränkungen"
 msgid "Up to %1 participants"
 msgstr "Bis zu %1 Teilnehmer"
 
-#: resources/remote_session_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
-#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
-msgid "Category"
-msgstr "Kategory"
-
-#: resources/remote_session_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
-#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
-msgid "Type"
-msgstr "Typ"
-
-#: resources/remote_session_description.tpl
-msgid "Location"
-msgstr "Veranstaltungsort"
-
 #: resources/remote_token_sessions_list_html.tpl
 #: resources/remote_token_sessions_list_txt.tpl
 msgid "%H:%M"
@@ -1128,9 +1154,8 @@ msgstr ""
 "Implementierung ab."
 
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
-#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
-msgid "Time"
-msgstr "Zeit"
+msgid "Download as CSV"
+msgstr "CSV Exportieren"
 
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 msgid "Info"
@@ -1387,6 +1412,26 @@ msgstr "Teilnehmerrolle"
 #: templates/CRM/Remoteevent/Page/SessionParticipantList.tpl
 msgid "(not counted)"
 msgstr "(nicht gezählt)"
+
+#~ msgid "Not enough contact data to identify/create contact."
+#~ msgstr ""
+#~ "Es wurden unzureichende persönliche Daten übermittelt, um eine Anmeldung "
+#~ "vorzunehmen."
+
+#~ msgid "Participant's Phone Number"
+#~ msgstr "Telefonnummer des Teilnehmers"
+
+#~ msgid "Participant's supplemental address"
+#~ msgstr "Adresszusatz des Teilnehmers"
+
+#~ msgid "Participant's postal code"
+#~ msgstr "Postleitzahl des Teilnehmers"
+
+#~ msgid "Participant's city"
+#~ msgstr "Stadt des Teilnehmers"
+
+#~ msgid "Participant's country"
+#~ msgstr "Land des Teilnehmers"
 
 #~ msgid "Register"
 #~ msgstr "Anmelden"
