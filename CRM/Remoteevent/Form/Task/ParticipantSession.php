@@ -57,9 +57,20 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task
         // load sessions
         $this->sessions = CRM_Remoteevent_BAO_Session::getSessions($this->event_id);
         $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($this->event_id);
+        $slots = CRM_Remoteevent_Form_EventSessions::getSlots();
         $session_list = [];
         foreach ($this->sessions as $session) {
+            // compile label
             $session_title = $session['title'];
+
+            // add slot
+            if (empty($session['slot_id'])) {
+                $session_title .= " [{$slots[$session['slot_id']]}]";
+            //} else {
+            //    $session_title .= " [{$slots['no_slot']}]";
+            }
+
+            // add participant counts if restricted
             if (!empty($session['max_participants'])) {
                 $session_participant_count = CRM_Utils_Array::value($session['id'], $participant_counts, 0);
                 $free = $session['max_participants'] - $session_participant_count;
