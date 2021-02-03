@@ -162,9 +162,7 @@ class CRM_Remoteevent_RemoteEvent
         }
 
         // check if there's still time
-        $hours_before_allowed = (int) $event['selfcancelxfer_time'];
-        $hours_before = (strtotime($event['event_start_date']) - strtotime('now')) / 60 / 60;
-        if ($hours_before < $hours_before_allowed) {
+        if (!CRM_Remoteevent_Registration::cancellationStillAllowed($event)) {
             return false;
         }
 
@@ -199,9 +197,7 @@ class CRM_Remoteevent_RemoteEvent
         }
 
         // check if there's still time
-        $hours_before_allowed = (int) $event['selfcancelxfer_time'];
-        $hours_before = (strtotime($event['event_start_date']) - strtotime('now')) / 60 / 60;
-        if ($hours_before < $hours_before_allowed) {
+        if (!CRM_Remoteevent_Registration::cancellationStillAllowed($event)) {
             return false;
         }
 

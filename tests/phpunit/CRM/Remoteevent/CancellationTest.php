@@ -164,4 +164,72 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
         $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
     }
 
+    /**
+     * Test RemoteParticipant.cancel API with remote_contact_id
+     */
+    public function testCancelWithinAllowedTime()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([
+              'allow_selfcancelxfer' => 1,
+              'selfcancelxfer_time'  => 24,
+              'start_date'           => date('Y-m-d H:i:s', strtotime("now + 48 hours")),
+          ]);
+
+        // register one participant
+        $contact = $this->createContact();
+        $this->registerRemote($event['id'], ['email' => $contact['email']]);
+        $participant_id = $this->traitCallAPISuccess('Participant', 'getvalue', [
+            'contact_id' => $contact['id'],
+            'event_id'   => $event['id'],
+            'return'     => 'id']);
+
+        // cancel
+        $this->traitCallAPISuccess('RemoteParticipant', 'cancel', [
+            'event_id' => $event['id'],
+            'remote_contact_id' => $this->getRemoteContactKey($contact['id'])
+        ]);
+
+        // verify contact is cancelled
+        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
+        $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+    }
+
+    /**
+     * Test RemoteParticipant.cancel API with remote_contact_id
+     */
+    public function testCancelAfterAllowedTime()
+    {
+        // create an event
+        $event = $this->createRemoteEvent([
+              'allow_selfcancelxfer' => 1,
+              'selfcancelxfer_time'  => 49,
+              'start_date'           => date('Y-m-d H:i:s', strtotime("now + 48 hours")),
+          ]);
+
+        // register one participant
+        $contact = $this->createContact();
+        $this->registerRemote($event['id'], ['email' => $contact['email']]);
+        $participant_id = $this->traitCallAPISuccess('Participant', 'getvalue', [
+            'contact_id' => $contact['id'],
+            'event_id'   => $event['id'],
+            'return'     => 'id']);
+
+        // cancel
+        try {
+            $response = civicrm_api3('RemoteParticipant', 'cancel', [
+                'event_id' => $event['id'],
+                'remote_contact_id' => $this->getRemoteContactKey($contact['id'])
+            ]);
+            $this->fail("Cancelling a participant after the selfcancelxfer_time limit should not succeed.");
+        } catch (CiviCRM_API3_Exception $ex) {
+            // didn't work: verify it's for the right reason
+            $this->assertNotEmpty(strstr($ex->getMessage(), 'does not allow cancellation less than'), "There should be an error message regarding the cancellation time restrictions");
+        }
+
+        // verify contact NOT cancelled
+        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
+        $this->assertEquals('Registered', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+    }
+
 }

@@ -253,20 +253,16 @@ class CRM_Remoteevent_Registration
             return E::ts("Editing/cancelling registrations is not allowed for this event");
         }
 
+        // check the timeframe
+        if (!self::cancellationStillAllowed($event_data)) {
+            return E::ts("The window for registration changes has passed.");
+        }
+
         if ($contact_id) {
             // personalised stuff
             $active_registration = self::getActiveRegistration($event_id, $contact_id);
             if (empty($active_registration)) {
                 return E::ts("No eligible registration for modification found.");
-            }
-
-            // check the timeframe
-            if (!empty($event_data['selfcancelxfer_time'])) {
-                $min_seconds_before_start = 60 * 60 * (int) $event_data['selfcancelxfer_time'];
-                $seconds_before_start = strtotime($event_data['start_date']) - strtotime('now');
-                if ($seconds_before_start > $min_seconds_before_start) {
-                    return E::ts("The window for registration changes has passed.");
-                }
             }
         }
 
@@ -276,6 +272,28 @@ class CRM_Remoteevent_Registration
 
         // contact CAN edit registration (can not not edit)
         return false;
+    }
+
+    /**
+     * Check whether the setting for 'selfcancelxfer_time' currently
+     *   allows cancellations. This will *not* check if they are generally
+     *   enabled or the participant has the permission to do so.
+     *
+     * @param array $event_data
+     */
+    public static function cancellationStillAllowed($event_data)
+    {
+        if (empty($event_data['selfcancelxfer_time'])) {
+            return true; // no restrictions
+        } else {
+            $min_seconds_before_start = 60 * 60 * (int) $event_data['selfcancelxfer_time'];
+            $current_seconds_before_start = strtotime($event_data['start_date']) - strtotime('now');
+            if ($current_seconds_before_start > $min_seconds_before_start) {
+                return true; // we can still cancel
+            } else {
+                return false; // we're too close to the event starting date
+            }
+        }
     }
 
     /**

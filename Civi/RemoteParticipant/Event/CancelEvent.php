@@ -196,10 +196,9 @@ class CancelEvent extends ChangingEvent
         }
 
         // check if cancellation is active and within time-frame
-        $hours_before_allowed = (int) $event['selfcancelxfer_time'];
-        $hours_before = (strtotime($event['event_start_date']) - strtotime('now')) / 60 / 60;
-        if ($hours_before < $hours_before_allowed) {
-            $this->addError("Event of participant [{$participant['id']}] does not allow cancellation {$hours_before} hours before event");
+        if (!\CRM_Remoteevent_Registration::cancellationStillAllowed($event)) {
+            $hours_before = (int) $event['selfcancelxfer_time'];
+            $this->addError("Event of participant [{$participant['id']}] does not allow cancellation less than {$hours_before} hours before the event");
             return false;
         }
 

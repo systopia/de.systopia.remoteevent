@@ -115,7 +115,12 @@ function civicrm_api3_remote_participant_cancel($params)
 
     // at this point we should have at least one
     if (empty($cancellations)) {
-        return RemoteEvent::createStaticAPI3Error('No participants found to cancel');
+        if (empty($cancellation_event->getErrors())) {
+            return RemoteEvent::createStaticAPI3Error('No participants found to cancel');
+        } else {
+            return $cancellation_event->createAPI3Error();
+        }
+
     }
 
     // execute the cancellations
