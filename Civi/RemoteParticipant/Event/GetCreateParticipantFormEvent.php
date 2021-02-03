@@ -33,19 +33,32 @@ class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
         parent::__construct($params, $event);
 
         // add 'confirm' field if there already is a participant
-        if ($this->getParticipantID()) {
-            $l10n = $this->getLocalisation();
-            $this->addFields([
-                'confirm' => [
-                     'name'        => 'confirm',
-                     'type'        => 'Select',
-                     'options'     => [1 => $l10n->localise('Accept Invitation'), 0 => $l10n->localise('Decline Invitation')],
-                     'validation'  => '',
-                     'weight'      => 10,
-                     'required'    => 0,
-                     'label'       => $l10n->localise('Invitation Feedback'),
-                 ],
+        $participant_id = $this->getParticipantID();
+        if ($participant_id) {
+            // check if the participant in status 'Invited'
+            $participant_status_id = (int) \civicrm_api3('Participant', 'getvalue', [
+                'id'     => $participant_id,
+                'return' => 'status_id'
             ]);
+            $status_name = \CRM_Remoteevent_Registration::getParticipantStatusName($participant_status_id);
+            if ($status_name == 'Invited') {
+                $l10n = $this->getLocalisation();
+                $this->addFields([
+                     'confirm' => [
+                         'name'        => 'confirm',
+                         'type'        => 'Select',
+                         'options'     => [1 => $l10n->localise('Accept Invitation'), 0 => $l10n->localise('Decline Invitation')],
+                         'validation'  => '',
+                         'weight'      => 10,
+                         'required'    => 0,
+                         'label'       => $l10n->localise('Invitation Feedback'),
+                     ],
+                 ]);
+
+            } else {
+                // todo: there IS a participant, and it's NOT an invite. anything to do here?
+
+            }
         }
     }
 

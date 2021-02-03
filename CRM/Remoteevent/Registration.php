@@ -688,6 +688,22 @@ class CRM_Remoteevent_Registration
     }
 
     /**
+     * Get a the name of the given status ID
+     *
+     * @param integer $participant_status_id
+     *   the status id
+     *
+     * @return string
+     *   status (internal) name: 'Registered', 'Attended', ...
+     */
+    public static function getParticipantStatusName($participant_status_id)
+    {
+        $status_list = self::getParticipantStatusList();
+        $status = $status_list[$participant_status_id];
+        return $status['name'];
+    }
+
+    /**
      * Add the GTAC data to the get_form results
      *
      * @param GetCreateParticipantFormEvent $get_form_results
