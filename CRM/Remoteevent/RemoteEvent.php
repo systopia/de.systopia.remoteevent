@@ -248,4 +248,53 @@ class CRM_Remoteevent_RemoteEvent
             return false;
         }
     }
+
+    /**
+     * Get the type of the event
+     *
+     * @param array $event_data
+     *   event data, looking for entry 'event_type_id'
+     *
+     * @param CRM_Remoteevent_Localisation $locale
+     *   pass a localisation if you want the translated values
+     *
+     * @return string name of the event type
+     */
+    public static function getEventType($event, $locale = null)
+    {
+        $event_type_id = CRM_Utils_Array::value('event_type_id', $event, '');
+
+        if ($event_type_id) {
+            // load event types
+            static $event_types = null;
+            if ($event_types === null) {
+                $event_types = [];
+                $event_type_query = civicrm_api3('OptionValue', 'get', [
+                    'option_group_id' => 'event_type',
+                    'return'          => 'value,label',
+                    'option.limit'    => 0
+                ]);
+                foreach ($event_type_query['values'] as $value) {
+                    $event_types[$value['value']] = $value['label'];
+                }
+            }
+
+            // look up the type
+            if (isset($event_types[$event_type_id])) {
+                if ($locale) {
+                    return $locale->localise($event_types[$event_type_id]);
+                } else {
+                    return $event_types[$event_type_id];
+                }
+            } else {
+                if ($locale) {
+                    return $locale->localise("Unkown");
+                } else {
+                    return E::ts("Unkown");
+                }
+            }
+        } else {
+            return ''; // has no event type
+        }
+    }
 }

@@ -119,15 +119,17 @@ function civicrm_api3_remote_event_get($params)
         CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
     }
 
-    // add flags (might be overwritten by later event handlers)
+    // generally enrich event data
     foreach ($result->getEventData() as &$event) { // todo: optimise queries (over all events)?
-        // get counts
+        // add counts and other data
+        $event['event_type'] =
+            CRM_Remoteevent_RemoteEvent::getEventType($event, $result->getLocalisation());
         $event['registration_count'] =
             CRM_Remoteevent_Registration::getRegistrationCount($event['id']);
+
+        // add flags (might be overwritten by later event handlers)
         $event['participant_registration_count'] = 0; // might be overwritten below
         $event['is_registered'] = 0;  // might be overwritten below
-
-        // NOW: get can_register/can_instant_register flags
         $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($event['id'], $contact_id, $event);
         if ($cant_register_reason) {
             $event['can_register'] = 0;
