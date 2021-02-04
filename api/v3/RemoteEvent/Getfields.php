@@ -74,6 +74,13 @@ function civicrm_api3_remote_event_getfields($params) {
         'localizable'   => 0,
         'is_core_field' => false,
     ]);
+    $fields_collection->setFieldSpec('event_type', [
+        'name'          => 'event_type',
+        'type'          => CRM_Utils_Type::T_STRING,
+        'title'         => "Event Type Label",
+        'localizable'   => 1,
+        'is_core_field' => false,
+    ]);
 
     // dispatch to others
     Civi::dispatcher()->dispatch('civi.remoteevent.getfields', $fields_collection);
