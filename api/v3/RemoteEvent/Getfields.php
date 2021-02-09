@@ -85,6 +85,19 @@ function civicrm_api3_remote_event_getfields($params) {
     // dispatch to others
     Civi::dispatcher()->dispatch('civi.remoteevent.getfields', $fields_collection);
 
+    // finally: add options to all the relevant fields
+    foreach ($fields_collection->getFieldSpecs() as $field_name => $fieldSpec) {
+        if (!empty($fieldSpec['pseudoconstant']['optionGroupName']) && empty($fieldSpec['options'])) {
+            $fieldSpec['options'] = CRM_Remoteevent_Tools::getOptions(
+                $fieldSpec['pseudoconstant']['optionGroupName'],
+                $fields_collection->getLocale(),
+                ['is_reserved' => 0]
+            );
+            $fields_collection->setFieldSpec($field_name, $fieldSpec);
+        }
+    }
+
+
     // set results and return
     $fields['values'] = $fields_collection->getFieldSpecs();
     return $fields;
