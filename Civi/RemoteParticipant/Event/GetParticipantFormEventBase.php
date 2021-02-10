@@ -252,15 +252,30 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
 
             // add a greeting for invitations
             if ($context == 'create' && $participant_id) {
-                $contact_name = \civicrm_api3('Contact', 'getvalue', [
-                    'id'     => $contact_id,
-                    'return' => 'display_name']);
-                $event = $this->getEvent();
+                // first: find out the participant status
+                $participant_status_id = (int) \civicrm_api3('Participant', 'getvalue', [
+                    'id'     => $participant_id,
+                    'return' => 'participant_status_id'
+                ]);
+                $participant_status = \CRM_Remoteevent_Registration::getParticipantStatusName($participant_status_id);
 
-                $l10n = $this->getLocalisation();
-                $this->addStatus($l10n->localise("Welcome %1. You may now confirm or decline your invitation to event '%2'", [
-                    1 => $contact_name,
-                    2 => $event['title']]));
+                switch ($status_name) {
+                    case 'Invited':
+                        $contact_name = \civicrm_api3('Contact', 'getvalue', [
+                            'id'     => $contact_id,
+                            'return' => 'display_name']);
+                        $event = $this->getEvent();
+
+                        $l10n = $this->getLocalisation();
+                        $this->addStatus($l10n->localise("Welcome %1. You may now confirm or decline your invitation to event '%2'", [
+                            1 => $contact_name,
+                            2 => $event['title']]));
+                        break;
+
+                    default:
+                        // no greeting
+                        break;
+                }
             }
 
             // add a greeting for cancellations
