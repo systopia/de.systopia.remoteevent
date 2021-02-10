@@ -259,7 +259,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
                 ]);
                 $participant_status = \CRM_Remoteevent_Registration::getParticipantStatusName($participant_status_id);
 
-                switch ($status_name) {
+                switch ($participant_status) {
                     case 'Invited':
                         $contact_name = \civicrm_api3('Contact', 'getvalue', [
                             'id'     => $contact_id,
