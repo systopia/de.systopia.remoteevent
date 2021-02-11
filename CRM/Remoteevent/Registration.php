@@ -262,9 +262,9 @@ class CRM_Remoteevent_Registration
 
             // check the timeframe
             if (!empty($event_data['selfcancelxfer_time'])) {
-                $min_seconds_before_start = 60 * 60 * (int) $event_data['selfcancelxfer_time'];
-                $seconds_before_start = strtotime($event_data['start_date']) - strtotime('now');
-                if ($seconds_before_start > $min_seconds_before_start) {
+                $max_seconds_since_registration = 60 * 60 * (int) $event_data['selfcancelxfer_time'];
+                $seconds_since_registration = strtotime($active_registration['register_date']);
+                if ($seconds_since_registration > $max_seconds_since_registration) {
                     return E::ts("The window for registration changes has passed.");
                 }
             }
