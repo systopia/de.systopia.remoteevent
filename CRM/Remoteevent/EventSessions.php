@@ -344,7 +344,7 @@ class CRM_Remoteevent_EventSessions
      *   before the participants have been written to the DB
      *
      * @param ChangingEvent $event
-     *   token list event
+     *   an event that might perform changes to contact/participant
      */
     public static function extractSessions($event)
     {
