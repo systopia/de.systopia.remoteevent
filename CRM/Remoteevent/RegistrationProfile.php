@@ -597,32 +597,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public function getOptions($option_group_id, $locale, $params = [], $use_name = false, $sort = 'weight asc')
     {
-        $option_list = [];
-        $query       = [
-            'option.limit'    => 0,
-            'option_group_id' => $option_group_id,
-            'return'          => 'value,label,name',
-            'is_active'       => 1,
-            'sort'            => $sort,
-        ];
-
-        // extend/override query
-        foreach ($params as $key => $value) {
-            $query[$key] = $value;
-        }
-
-        // run query + compile result
-        $result = civicrm_api3('OptionValue', 'get', $query);
-        $l10n   = CRM_Remoteevent_Localisation::getLocalisation($locale);
-        foreach ($result['values'] as $entry) {
-            if ($use_name) {
-                $option_list[$entry['name']] = $l10n->localise($entry['label']);
-            } else {
-                $option_list[$entry['value']] = $l10n->localise($entry['label']);
-            }
-        }
-
-        return $option_list;
+        return CRM_Remoteevent_Tools::getOptions($option_group_id, $locale, $params, $use_name, $sort);
     }
 
     /**
