@@ -28,7 +28,8 @@ cj(document).ready(function() {
     let event_id = cj("input[name=event_id]").val();
     if (event_id) {
       CRM.api3('Session', 'get', {
-        event_id: event_id
+        event_id: event_id,
+        'option.limit': 0
       }).done(function(result) {
         if (result.is_error) {
           // there has been a problem
