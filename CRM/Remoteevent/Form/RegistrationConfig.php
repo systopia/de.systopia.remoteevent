@@ -184,6 +184,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         // store data
         $event_update = [
             'id'                                                            => $this->_id,
+            'is_template'                                                   => CRM_Remoteevent_RemoteEvent::isTemplate($this->_id),
             'event_remote_registration.remote_registration_enabled'         => CRM_Utils_Array::value(
                 'remote_registration_enabled',
                 $values,

@@ -297,4 +297,24 @@ class CRM_Remoteevent_RemoteEvent
             return ''; // has no event type
         }
     }
+
+    /**
+     * Check if the given event is a template
+     *
+     * @param $event_id integer
+     *   event id
+     *
+     * @return integer 0|1
+     */
+    public static function isTemplate($event_id)
+    {
+        // todo: caching?
+        $event_id = (int) $event_id;
+        try {
+            return (int) civicrm_api3('Event', 'getvalue', ['return' => 'is_template', 'id' => $event_id]);
+        } catch (CiviCRM_API3_Exception $ex) {
+            // event probably doesn't exist
+            return 0;
+        }
+    }
 }

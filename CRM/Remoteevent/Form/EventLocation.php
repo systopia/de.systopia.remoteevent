@@ -88,6 +88,8 @@ class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent
         // store values
         $event_update = [
             'id' => $this->_id,
+            'is_template'
+                    => CRM_Remoteevent_RemoteEvent::isTemplate($this->_id),
             'event_alternative_location.event_alternativelocation_contact_id'
                     => CRM_Utils_Array::value('event_alternativelocation_contact_id', $values),
             'event_alternative_location.event_alternativelocation_remark'
