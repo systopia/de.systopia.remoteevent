@@ -21,6 +21,10 @@
   <p>{ts}Any roles you select here will cause all participants with this role to be publicly listed as speakers at the event.{/ts}</p>
 {/htxt}
 
+{htxt id='id-session-data'}
+  <p>{ts}If this is active, the session data will be delivered with the general event data (<code>RemoteEvent.get</code>). Turn this off if you don't need it, as it can be increase the volume of submitted data substantially.{/ts}</p>
+{/htxt}
+
 {htxt id='id-update-profile'}
   <p>{ts}You may pick a XCM profile to <i>update</i> contacts that have already been identified, for example by token or remote user connection.{/ts}</p>
   <p>{ts}It is strongly recommended, that the chosen profile has the "Match contacts by contact ID" option enabled. This way you can avoid creating duplicates.{/ts}</p>

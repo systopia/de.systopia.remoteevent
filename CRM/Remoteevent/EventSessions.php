@@ -17,6 +17,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use \Civi\RemoteParticipant\Event\ValidateEvent;
 use \Civi\RemoteParticipant\Event\ChangingEvent;
+use \Civi\RemoteEvent\Event\GetResultEvent;
 use \Civi\EventMessages\MessageTokens;
 
 /**
@@ -26,6 +27,146 @@ class CRM_Remoteevent_EventSessions
 {
     /** @var null|array list of sessions submitted with the current proces */
     protected static $sessions_in_progress = null;
+
+
+    /**
+     * Add the session field to the RemoteEvent.get_fields list
+     *
+     * @param GetFieldsEvent $fields_collection
+     */
+    public static function addFieldSpecs($fields_collection)
+    {
+        // check if this should be delivered
+        $sessions_data_active = Civi::settings()->get('remote_event_get_session_data');
+        if (!$sessions_data_active) {
+            return;
+        }
+
+        $fields_collection->setFieldSpec('sessions', [
+            'name'          => 'sessions',
+            'type'          => CRM_Utils_Type::T_STRING,
+            'format'        => 'json',
+            'title'         => E::ts("Session List"),
+            'description'   => E::ts("List of sessions of the event (json encoded)"),
+            'localizable'   => 1,
+            'is_core_field' => false,
+        ]);
+    }
+
+    /**
+     * Extend the data returned by RemoteEvent.get by the session data
+     *
+     * @param GetResultEvent $result
+     */
+    public static function addSessionData(GetResultEvent $result)
+    {
+        // check if this should be delivered
+        $sessions_data_active = Civi::settings()->get('remote_event_get_session_data');
+        if (!$sessions_data_active) {
+            return;
+        }
+
+        // extract event_ids and cache session data
+        $event_data = &$result->getEventData();
+        $events_by_id = [];
+        foreach ($event_data as $event) {
+            $events_by_id[$event['id']] = $event;
+        }
+        CRM_Remoteevent_BAO_Session::cacheSessions(array_keys($events_by_id), $events_by_id);
+
+        // add session data to all events
+        foreach ($event_data as &$event) {
+            $session_data = CRM_Remoteevent_BAO_Session::getSessions($event['id'], true, $event['start_date']);
+            foreach ($session_data as $session) {
+                if (!empty($session['is_active'])) {
+                    $event['sessions'][] = [
+                        [
+                            'name'        => 'start_date',
+                            'type'        => CRM_Utils_Type::T_TIME,
+                            'value'       => $session['start_date'],
+                            'title'       => E::ts("Starts"),
+                            'localizable' => 0,
+                        ],
+                        [
+                            'name'        => 'end_date',
+                            'type'        => CRM_Utils_Type::T_TIME,
+                            'value'       => $session['end_date'],
+                            'title'       => E::ts("Ends"),
+                            'localizable' => 0,
+                        ],
+                        [
+                            'name'        => 'day',
+                            'type'        => CRM_Utils_Type::T_INT,
+                            'value'       => $session['day'],
+                            'title'       => E::ts("Day"),
+                            'localizable' => 0,
+                        ],
+                        [
+                            'name'        => 'title',
+                            'type'        => CRM_Utils_Type::T_STRING,
+                            'value'       => $session['title'],
+                            'title'       => E::ts("Title"),
+                            'localizable' => 1,
+                        ],
+                        [
+                            'name'        => 'description',
+                            'type'        => CRM_Utils_Type::T_STRING,
+                            'value'       => $session['description'],
+                            'title'       => E::ts("Description"),
+                            'localizable' => 1,
+                        ],
+                        [
+                            'name'        => 'location',
+                            'type'        => CRM_Utils_Type::T_STRING,
+                            'value'       => $session['location'],
+                            'title'       => E::ts("Location"),
+                            'localizable' => 1,
+                        ],
+                        [
+                            'name'        => 'slot',
+                            'type'        => CRM_Utils_Type::T_STRING,
+                            'value'       => "TODO: lookop",
+                            'title'       => E::ts("Slot"),
+                            'localizable' => 1,
+                        ],
+                        [
+                            'name'        => 'category',
+                            'type'        => CRM_Utils_Type::T_STRING,
+                            'value'       => "TODO: lookop",
+                            'title'       => E::ts("Category"),
+                            'localizable' => 1,
+                        ],
+                        [
+                            'name'        => 'type',
+                            'type'        => CRM_Utils_Type::T_STRING,
+                            'value'       => "TODO: lookop",
+                            'title'       => E::ts("Type"),
+                            'localizable' => 1,
+                        ],
+                        [
+                            'name'        => 'type',
+                            'type'        => CRM_Utils_Type::T_INT,
+                            'value'       => $session['max_participants'],
+                            'title'       => E::ts("Max Participants"),
+                            'localizable' => 1,
+                        ],
+                        [
+                            'name'        => 'type',
+                            'type'        => CRM_Utils_Type::T_STRING,
+                            'value'       => self::getSessionPresenterText($session),
+                            'title'       => E::ts("Presenter"),
+                            'localizable' => 1,
+                        ]
+                    ];
+                }
+            }
+            if ($session_data) {
+                $event['sessions'] = json_encode($session_data);
+            } else {
+                $event['sessions'] = '[]'; // set default to none
+            }
+        }
+    }
 
     /**
      * Add the profile data to the get_form results

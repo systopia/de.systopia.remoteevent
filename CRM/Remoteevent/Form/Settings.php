@@ -30,6 +30,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         'remote_registration_xcm_profile',
         'remote_registration_xcm_profile_update',
         'remote_participant_change_activity_type_id',
+        'remote_event_get_session_data',
     ];
 
     public function buildQuickForm()
@@ -52,6 +53,15 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             CRM_Remoteevent_EventCache::getRoles(),
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+
+        $this->add(
+            'select',
+            'remote_event_get_session_data',
+            E::ts("Submit Session Data"),
+            ['' => E::ts("no"), 1 => E::ts("yes")],
+            false,
+            ['class' => 'crm-select2']
         );
 
         $this->add(
