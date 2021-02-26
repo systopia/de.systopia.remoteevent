@@ -615,4 +615,58 @@ class CRM_Remoteevent_EventSessions
         );
     }
 
+    /**
+     * Generate a list of problems with the sessions
+     *
+     * @param array $event
+     *   event data, most importantly containing id, start_date, end_date
+     *
+     * @return array
+     *   list of error messages
+     */
+    public static function getSessionWarnings($event)
+    {
+        // if there's no start date, there is nothing we can do
+        //  this can, for example, happen in the context of templates
+        if (empty($event['start_date'])) {
+            return [E::ts("The event has no start date, so the session dates are probably not right.")];
+        }
+
+        // if we don't get the event ID, there is also a problem
+        $event_id = (int) $event['id'];
+        if (!$event_id) {
+            return ["Unable to determine the event ID. Please contact the author of the de.systopia.remoteevent extension."];
+        }
+
+        // check the start and end dates via SQL
+        $warnings = [];
+        $warning_count = 0;
+        $warning_text = '';
+        $warning_query = CRM_Core_DAO::executeQuery("
+            SELECT
+               session.title AS session_title,
+               session.id    AS session_id
+            FROM civicrm_event event
+            LEFT JOIN civicrm_session session
+                   ON session.event_id = event.id
+            WHERE event.id = {$event_id}
+              AND (  session.start_date < event.start_date
+                  OR session.end_date   > COALESCE(event.end_date, DATE(event.start_date) + INTERVAL 1 DAY)
+                  )
+            ");
+        while ($warning_query->fetch()) {
+            $warning_count += 1;
+            $warning_text = E::ts("The start or end date of session [%1] (%2) is outside of the event's time frame.",
+                                [1 => $warning_query->session_id, 2 => $warning_query->session_title]);
+        }
+        if ($warning_text) {
+            $warnings[] = $warning_text;
+        }
+        if ($warning_count > 1) {
+            $warnings[] = E::ts("%1 other sessions also violate the event's start or end date.",
+                                  [1 => $warning_count-1]);
+        }
+        return $warnings;
+    }
+
 }

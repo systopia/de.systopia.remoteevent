@@ -16,3 +16,21 @@ caption.remote-session-day {
   text-align: center;
   font-size: large;
 }
+
+div.remote-button-section {
+  width:95%;
+  height: 40px;
+}
+
+div.remote-session-warnings {
+  color: white;
+  background-color: red;
+  border-color: #ffcccb;
+  width:95%;
+  margin-top: 2px;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  border:1px solid transparent;
+  border-radius:8px
+}

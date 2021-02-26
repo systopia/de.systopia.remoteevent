@@ -39,6 +39,10 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         $this->assign('event_days', $event_days);
         $this->assign('is_single_day', $event_days == 1);
 
+        // add warnings (remark: can't use warning popups, since this code is excuted twice (for some reason)
+        $session_warnings = CRM_Remoteevent_EventSessions::getSessionWarnings($event);
+        $this->assign('session_warnings', $session_warnings);
+
         // load slots
         $slots = self::getSlots();
         $this->assign('slots', $slots);
@@ -87,7 +91,11 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
     public static function getEventDays($event_data)
     {
         if (empty($event_data['start_date'])) {
-            throw new Exception(E::ts("Event doesn't have a start date!"));
+            // throwing this exception can cause issues with event templates, where not having a start date is allowed..
+            // throw new Exception(E::ts("Event doesn't have a start date!"));
+
+            // simply use 'now' for the time being
+            $event_data['start_date'] = 'now';
         }
         if (empty($event_data['end_date'])) {
             return [date('Y-m-d', strtotime($event_data['start_date']))];

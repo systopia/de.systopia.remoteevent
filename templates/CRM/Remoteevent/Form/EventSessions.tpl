@@ -20,6 +20,16 @@
   <a class="button remote-session remote-session-csv" href="{$download_session_link}"><span><i class="crm-i fa-table" aria-hidden="true"></i>&nbsp;{ts}Download as CSV{/ts}</span></a>
 </div>
 
+{if $session_warnings}
+<div class="remote-session remote-session-warnings">
+  <ul>
+    {foreach from=$session_warnings item=warning}
+    <li>{$warning}</li>
+    {/foreach}
+  </ul>
+</div>
+{/if}
+
 {foreach from=$sessions key=day item=day_sessions}
 {if $day_sessions|@count gt 0}
 <table class="remote-session remote-session-day">
