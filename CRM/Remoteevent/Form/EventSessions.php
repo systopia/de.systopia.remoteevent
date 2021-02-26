@@ -39,10 +39,6 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         $this->assign('event_days', $event_days);
         $this->assign('is_single_day', $event_days == 1);
 
-        // add warnings (remark: can't use warning popups, since this code is excuted twice (for some reason)
-        $session_warnings = CRM_Remoteevent_EventSessions::getSessionWarnings($event);
-        $this->assign('session_warnings', $session_warnings);
-
         // load slots
         $slots = self::getSlots();
         $this->assign('slots', $slots);
@@ -50,6 +46,12 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         // load sessions
         $sessions = self::getSessionList($event_days, $this->_id);
         $this->assign('sessions', $sessions);
+
+        // add warnings (remark: can't use warning popups, since this code is excuted twice (for some reason)
+        if ($sessions) {
+            $session_warnings = CRM_Remoteevent_EventSessions::getSessionWarnings($event);
+            $this->assign('session_warnings', $session_warnings);
+        }
 
         // check if a download was requested
         $download_requested = CRM_Utils_Request::retrieveValue('download_csv', 'String');
