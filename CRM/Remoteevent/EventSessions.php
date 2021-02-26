@@ -76,6 +76,7 @@ class CRM_Remoteevent_EventSessions
 
         // add session data to all events
         foreach ($event_data as &$event) {
+            $event['sessions'] = [];
             $session_data = CRM_Remoteevent_BAO_Session::getSessions($event['id'], true, $event['start_date']);
             foreach ($session_data as $session) {
                 if (!empty($session['is_active'])) {
@@ -125,33 +126,33 @@ class CRM_Remoteevent_EventSessions
                         [
                             'name'        => 'slot',
                             'type'        => CRM_Utils_Type::T_STRING,
-                            'value'       => "TODO: lookop",
+                            'value'       => CRM_Remoteevent_BAO_Session::getSlotLabel(CRM_Utils_Array::value('slot_id', $session)),
                             'title'       => E::ts("Slot"),
                             'localizable' => 1,
                         ],
                         [
                             'name'        => 'category',
                             'type'        => CRM_Utils_Type::T_STRING,
-                            'value'       => "TODO: lookop",
+                            'value'       => CRM_Remoteevent_EventSessions::getSessionCategory($session),
                             'title'       => E::ts("Category"),
                             'localizable' => 1,
                         ],
                         [
                             'name'        => 'type',
                             'type'        => CRM_Utils_Type::T_STRING,
-                            'value'       => "TODO: lookop",
+                            'value'       => CRM_Remoteevent_EventSessions::getSessionType($session),
                             'title'       => E::ts("Type"),
                             'localizable' => 1,
                         ],
                         [
-                            'name'        => 'type',
+                            'name'        => 'max_participants',
                             'type'        => CRM_Utils_Type::T_INT,
                             'value'       => $session['max_participants'],
                             'title'       => E::ts("Max Participants"),
                             'localizable' => 1,
                         ],
                         [
-                            'name'        => 'type',
+                            'name'        => 'presenter',
                             'type'        => CRM_Utils_Type::T_STRING,
                             'value'       => self::getSessionPresenterText($session),
                             'title'       => E::ts("Presenter"),
@@ -160,11 +161,9 @@ class CRM_Remoteevent_EventSessions
                     ];
                 }
             }
-            if ($session_data) {
-                $event['sessions'] = json_encode($session_data);
-            } else {
-                $event['sessions'] = '[]'; // set default to none
-            }
+
+            // finally: encode
+            $event['sessions'] = json_encode($event['sessions']);
         }
     }
 

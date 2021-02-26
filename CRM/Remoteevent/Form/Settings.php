@@ -59,7 +59,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             'select',
             'remote_event_get_session_data',
             E::ts("Submit Session Data"),
-            ['' => E::ts("no"), 1 => E::ts("yes")],
+            [0 => E::ts("no"), 1 => E::ts("yes")],
             false,
             ['class' => 'crm-select2']
         );
