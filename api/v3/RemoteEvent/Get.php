@@ -64,7 +64,7 @@ function civicrm_api3_remote_event_get($params)
 {
     unset($params['check_permissions']);
 
-    // create an object for the paramters
+    // create an object for the parameters
     $get_params = new GetParamsEvent($params);
 
     // modify search terms based on user/permission/etc
@@ -73,8 +73,8 @@ function civicrm_api3_remote_event_get($params)
 
     if (!CRM_Core_Permission::check('view all Remote Events')) {
         // only basic view permissions -> only list public + active
-        $get_params->setParameter('is_public', 0);
-        $get_params->setParameter('is_active', 0);
+        $get_params->setParameter('is_public', 1);
+        $get_params->setParameter('is_active', 1);
     }
 
     // todo: only view the ones that are open for registration?
