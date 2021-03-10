@@ -57,7 +57,7 @@ class GetResultEvent extends RemoteEvent
     }
 
     /**
-     * Returns the current event data to be returned to the caller
+     * Returns the current event data for inline manipulation
      *
      * @return array event data (list)
      */
@@ -65,6 +65,18 @@ class GetResultEvent extends RemoteEvent
     {
         return $this->event_data;
     }
+
+    /**
+     * Returns the current event data to be returned to the caller
+     *
+     * @return array event data (list)
+     */
+    public function getFinalEventData()
+    {
+        return $this->event_data;
+    }
+
+
 
     /**
      * Trim the result to the given limit
@@ -75,7 +87,7 @@ class GetResultEvent extends RemoteEvent
     public function trimToLimit($limit)
     {
         if ($limit) {
-            $this->event_data = array_splice($this->event_data, 0, $limit);
+            $this->event_data = array_slice($this->event_data, 0, $limit, true);
         }
     }
 

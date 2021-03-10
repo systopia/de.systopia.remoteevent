@@ -133,7 +133,6 @@ function civicrm_api3_remote_event_get($params)
 
     // dispatch the event in case somebody else wants to add/remove something
     Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
-    $event_list = $result->getEventData();
 
     // finally, apply the limit
     $limit = $get_params->getOriginalLimit();
@@ -143,6 +142,6 @@ function civicrm_api3_remote_event_get($params)
     if ($result->hasErrors()) {
         return $result->createAPI3Error();
     } else {
-        return $result->createAPI3Success('RemoteEvent', 'get', $event_list);
+        return $result->createAPI3Success('RemoteEvent', 'get', $result->getFinalEventData());
     }
 }
