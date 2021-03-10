@@ -14,7 +14,8 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-
+use Civi\RemoteEvent\Event\GetParamsEvent;
+use Civi\RemoteEvent\Event\GetResultEvent;
 
 /**
  * Various Flags in events
@@ -111,5 +112,118 @@ class CRM_Remoteevent_EventFlags
     {
         $event_data = self::getEventFlags($event_id);
         return CRM_Utils_Array::value('event_remote_registration.remote_disable_civicrm_registration', $event_data, false);
+    }
+
+    /**
+     * If any of the flags are used as filters, we need to modify the
+     *   the query parameters. In particular, we need to drop any limit
+     *   parameters, since the flags cannot be evaluated by the underlying
+     *   Event.get call
+     *
+     * @see https://github.com/systopia/de.systopia.remoteevent/issues/4
+     *
+     * @param GetParamsEvent $get_parameters
+     */
+    public static function processFlagFilters($get_parameters)
+    {
+        $flag_filters_applied = [];
+
+        // check if any flag filter is applied
+        foreach (self::EVENT_FLAGS as $flag) {
+            $flag_value_filter = $get_parameters->getParameter($flag);
+            if (isset($flag_value_filter)) {
+                $flag_filters_applied[$flag] = $flag_value_filter;
+            }
+        }
+
+        if (!empty($flag_filters_applied)) {
+            // there some flag filters active, we have to remove any limit
+            $get_parameters->setLimit(0);
+        }
+    }
+
+    /**
+     * Apply the personalised flags to the result set
+     *
+     * @param GetResultEvent $result
+     */
+    public static function calculateFlags(GetResultEvent $result)
+    {
+        // check whether this is personalised
+        $contact_id = $contact_id = $result->getContactID();
+
+        // add flag values
+        foreach ($result->getEventData() as &$event) { // todo: optimise queries (over all events)?
+            // add flags (might be overwritten by later event handlers)
+            $event['participant_registration_count'] = 0; // might be overwritten below
+            $event['is_registered'] = 0;  // might be overwritten below
+            $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($event['id'], $contact_id, $event);
+            if ($cant_register_reason) {
+                $event['can_register'] = 0;
+            } else {
+                $event['can_register'] = 1;
+            }
+            // can_instant_register only if can_register
+            $event['can_instant_register'] = (int)
+                   ($event['can_register'] &&
+                   CRM_Remoteevent_Registration::canOneClickRegister($event['id'], $event));
+
+            // add generic can_edit_registration/can_cancel_registration (might be overridden below)
+            $cant_edit_reason = CRM_Remoteevent_Registration::cannotEditRegistration($event['id'], $contact_id, $event);
+            $event['can_edit_registration'] = (int) empty($cant_edit_reason);
+            $event['can_cancel_registration'] = (int) empty($cant_edit_reason);
+
+            if ($contact_id) {
+                // PERSONALISED OVERRIDES
+                $event['participant_registration_count'] = (int)
+                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
+                $event['is_registered'] = (int)($event['participant_registration_count'] > 0);
+                $event['can_edit_registration'] = (int)($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
+                $event['can_cancel_registration'] = (int)($event['can_cancel_registration'] && ($event['participant_registration_count'] > 0));
+            }
+        }
+
+        // add personal flags
+        if ($contact_id) {
+            // don't do this again: CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
+            foreach ($result->getEventData() as &$event) {
+                $event['participant_registration_count'] = (int)
+                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
+                $event['can_edit_registration'] = (int)
+                    ($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
+                $event['is_registered'] = $event['participant_registration_count'] > 0 ? 1 : 0;
+            }
+        }
+    }
+
+    /**
+     * Apply flag based filters (if any) to the result
+     *
+     * @see https://github.com/systopia/de.systopia.remoteevent/issues/4
+     *
+     * @param GetResultEvent $result
+     */
+    public static function applyFlagFilters(GetResultEvent $result)
+    {
+        $event_list = &$result->getEventData();
+        $query_values = $result->getQueryParameters();
+
+        foreach (self::EVENT_FLAGS as $flag) {
+            if (isset($query_values[$flag])) {
+                $queried_value = empty($query_values[$flag]) ? 0 : 1;
+                foreach (array_keys($event_list) as $event_key) {
+                    $event = $event_list[$event_key];
+                    $event_value = (int) CRM_Utils_Array::value($flag, $event, -1);
+                    if ($event_value != $queried_value) {
+                        // filter this event
+                        unset($event_list[$event_key]);
+                    }
+                }
+            }
+        }
+
+        // now, finally we can apply the limit
+        $requested_limit = $result->getOriginalLimit();
+        $result->trimToLimit($requested_limit);
     }
 }

@@ -41,14 +41,25 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.remoteevent.get.params',
         ['CRM_Remoteevent_RemoteEvent', 'deriveEventID']);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.get.params',
+        ['CRM_Remoteevent_EventFlags', 'processFlagFilters']);
+
+
 
     // EVENT GET
     $dispatcher->addUniqueListener(
         'civi.remoteevent.get.result',
-        ['CRM_Remoteevent_EventLocation', 'addLocationData']);
+        ['CRM_Remoteevent_EventFlags', 'calculateFlags'], 1000 /* at the very beginning */);
     $dispatcher->addUniqueListener(
         'civi.remoteevent.get.result',
-        ['CRM_Remoteevent_EventSpeaker', 'addSpeakerData']);
+        ['CRM_Remoteevent_EventFlags', 'applyFlagFilters'], -100 /** will trim entries */);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.get.result',
+        ['CRM_Remoteevent_EventLocation', 'addLocationData'], -1000 /** late */);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.get.result',
+        ['CRM_Remoteevent_EventSpeaker', 'addSpeakerData'], -1000 /** late */);
 
     // EVENT REGISTRATION.GETFORM
     $dispatcher->addUniqueListener(

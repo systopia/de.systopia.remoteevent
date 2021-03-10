@@ -100,4 +100,39 @@ class GetParamsEvent extends RemoteEvent
     {
         return $this->currentParameters;
     }
+
+    /**
+     * Get the limit parameter of the original reuqest
+     *
+     * @return integer
+     *   returned result count or 0 for 'no limit'
+     */
+    public function getOriginalLimit()
+    {
+        // check the options array
+        if (isset($this->originalParameters['options']['limit'])) {
+            return (int) $this->originalParameters['options']['limit'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->originalParameters['option.limit'])) {
+            return (int) $this->originalParameters['option.limit'];
+        }
+
+        // default is '25' (by general API contract)
+        return 25;
+    }
+
+    /**
+     * Set the query limit
+     *
+     * @param $limit integer
+     *   the new query limit
+     */
+    public function setLimit($limit)
+    {
+        unset($this->currentParameters['option.limit']);
+        unset($this->currentParameters['options']['limit']);
+        $this->currentParameters['option.limit'] = (int) $limit;
+    }
 }
