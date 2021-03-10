@@ -175,6 +175,56 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase
     }
 
     /**
+     * Test as filters
+     */
+    public function testFlagFilters()
+    {
+        // create an event
+        $event1 = $this->createRemoteEvent();
+        $event2 = $this->createRemoteEvent();
+        $event3 = $this->createRemoteEvent();
+        $my_events = ['id' => ['IN' => [$event1['id'], $event2['id'], $event3['id']]]];
+
+        // create a remote contact
+        $contact = $this->createContact();
+        $remote_key = $this->getRemoteContactKey($contact['id']);
+        $my_contact = ['remote_contact_id' => $remote_key];
+        $my_event_contact = $my_events + $my_contact;
+
+        // there should now be 3 events
+        $this->callAPISuccessGetCount('RemoteEvent', $my_events, 3);
+
+        // there should not be any registered contact yet
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact, 3);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 0], 3);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 1], 0);
+
+        // let's see what happens when we add limits
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['option.limit' => 3], 3);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['option.limit' => 2], 2);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['option.limit' => 1], 1);
+
+        // now, let's register, and see if something changes
+        $this->registerRemote($event1['id'], ['email' => $contact['email']]);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact, 3);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 0], 2);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 1], 1);
+
+        // let's see what happens when we add limits
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['option.limit' => 3], 3);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['option.limit' => 2], 2);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['option.limit' => 1], 1);
+
+        // let's see what happens when we add limits + flags
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 0, 'option.limit' => 1], 1);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 1, 'option.limit' => 3], 1);
+
+        // same without limits
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 0], 2);
+        $this->callAPISuccessGetCount('RemoteEvent',$my_event_contact + ['is_registered' => 1], 1);
+    }
+
+    /**
      * Verify the flag format / value
      *
      * @param string $flag_name
