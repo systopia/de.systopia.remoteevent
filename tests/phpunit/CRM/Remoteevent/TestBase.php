@@ -54,6 +54,8 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         $this->setUpXCMProfile('default');
 
         $profile = CRM_Xcm_Configuration::getConfigProfile('default');
+
+        //Civi::settings()->set('remote_event_get_performance_enhancement', true);
     }
 
     public function tearDown()
@@ -374,6 +376,17 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     {
         $params['id'] = $event_id;
         return $this->traitCallAPISuccess('RemoteEvent', 'getsingle', $params);
+    }
+
+    /**
+     * Use the RemoteEvent.get API to find events
+     *
+     * @param array $params
+     *   search parameters
+     */
+    public function findRemoteEvents($params = [])
+    {
+        return $this->traitCallAPISuccess('RemoteEvent', 'get', $params);
     }
 
     /**

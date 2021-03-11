@@ -225,6 +225,43 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase
     }
 
     /**
+     * Test flag performance improvements
+     */
+    public function testFlagFilterOptimisation()
+    {
+        // create 50 events
+        $events = [];
+        foreach (range(0, 50) as $index) {
+            $events[] = $this->createRemoteEvent();
+        }
+
+        // register one contact for the last event
+        $last_event = end($events);
+        $contact = $this->createContact();
+        $remote_key = $this->getRemoteContactKey($contact['id']);
+        $this->registerRemote($last_event['id'], ['email' => $contact['email']]);
+
+        // find all events registered the contact is registered to (without performance improvements)
+        Civi::settings()->set('remote_event_get_performance_enhancement', false);
+        $timestamp = microtime(true);
+        $registered_events = $this->findRemoteEvents(['is_registered' => 1, 'remote_contact_id' => $remote_key]);
+        $runtime_without_boost = microtime(true) - $timestamp;
+        $this->assertEquals(1, $registered_events['count'], "There should be exactly one event we're registered to");
+
+        // find all events registered the contact is registered to (with performance improvements)
+        Civi::settings()->set('remote_event_get_performance_enhancement', true);
+        $timestamp = microtime(true);
+        $registered_events = $this->findRemoteEvents(['is_registered' => 1, 'remote_contact_id' => $remote_key]);
+        $runtime_with_boost = microtime(true) - $timestamp;
+        $this->assertEquals(1, $registered_events['count'], "There should be exactly one event we're registered to");
+
+        // make sure the boost actually improves performance
+        $this->assertGreaterThan($runtime_with_boost, $runtime_without_boost, "The runtime boost doesn't seem to improve the runtime.");
+    }
+
+
+
+    /**
      * Verify the flag format / value
      *
      * @param string $flag_name
