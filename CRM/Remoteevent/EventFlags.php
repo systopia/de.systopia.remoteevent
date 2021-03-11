@@ -14,8 +14,8 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\RemoteEvent\Event\GetParamsEvent;
 use Civi\RemoteEvent\Event\GetResultEvent;
+use Civi\RemoteEvent\Event\GetParamsEvent;
 
 /**
  * Various Flags in events
@@ -139,6 +139,32 @@ class CRM_Remoteevent_EventFlags
         if (!empty($flag_filters_applied)) {
             // there some flag filters active, we have to remove any limit
             $get_parameters->setLimit(0);
+
+            // check if we should apply performance enhancements
+            $performance_enhancement_enabled = (boolean) Civi::settings()->get('remote_event_get_performance_enhancement');
+            $requested_event_ids = $get_parameters->getRequestedEventIDs();
+
+            // apply performance enhancements if there isn't already a restriction on event _IDs_ (<=25)
+            if ($performance_enhancement_enabled && ($requested_event_ids != 'fail' || $requested_event_ids > 25)) {
+
+                // if it's about registration modalities...
+                if (   !empty($get_parameters->getParameter('can_register'))
+                    || !empty($get_parameters->getParameter('can_instant_register'))) {
+                    // ... we can restrict to those events that are currently potentially open for registration
+                    self::restrictToEventsOpenForRegistration($get_parameters);
+                }
+
+                // if it's about personalised registration flags...
+                $contact_id = $get_parameters->getContactID();
+                if ($contact_id) {
+                    if (   !empty($get_parameters->getParameter('can_edit_registration'))
+                        || !empty($get_parameters->getParameter('can_cancel_registration'))
+                        || !empty($get_parameters->getParameter('is_registered'))) {
+                        // ... we can restrict to those events to the ones that the contact has registrations for
+                        self::restrictToContactsEvents($contact_id, $get_parameters);
+                    }
+                }
+            }
         }
     }
 
@@ -150,7 +176,7 @@ class CRM_Remoteevent_EventFlags
     public static function calculateFlags(GetResultEvent $result)
     {
         // check whether this is personalised
-        $contact_id = $contact_id = $result->getContactID();
+        $contact_id = $result->getContactID();
 
         // add flag values
         foreach ($result->getEventData() as &$event) { // todo: optimise queries (over all events)?
@@ -225,5 +251,59 @@ class CRM_Remoteevent_EventFlags
         // now, finally we can apply the limit
         $requested_limit = $result->getOriginalLimit();
         $result->trimToLimit($requested_limit);
+    }
+
+    /**
+     * Restrict the underlying event query to the ones that
+     *   are potentially open for registration
+     *
+     * @param GetParamsEvent $get_parameters
+     */
+    public static function restrictToEventsOpenForRegistration($get_parameters)
+    {
+        // run a simple DB query to find (potentially) open events
+        $open_event_ids = [];
+        $open_events = CRM_Core_DAO::executeQuery("
+            SELECT DISTINCT(event.id) AS event_id
+            FROM civicrm_event event
+            WHERE event.is_active = 1
+              AND COALESCE(event.end_date, event.start_date) >= NOW()
+              AND (   event.registration_start_date IS NULL 
+                   OR event.registration_start_date <= NOW())
+              AND (   event.registration_end_date IS NULL 
+                   OR event.registration_end_date >= NOW())
+             ");
+        while ($open_events->fetch()) {
+            $open_event_ids[] = $open_events->event_id;
+        }
+
+        // restrict the event query to those events
+        $get_parameters->restrictToEventIds($open_event_ids);
+    }
+
+    /**
+     * Restrict the underlying event query to the ones that
+     *   are potentially open for registration
+     *
+     * @param integer $contact_id
+     * @param GetParamsEvent $get_parameters
+     */
+    public static function restrictToContactsEvents($contact_id, $get_parameters)
+    {
+        // run a simple DB query to find all events linked to the contact
+        $contact_id = (int) $contact_id;
+        if ($contact_id) {
+            $contact_event_ids = [];
+            $contact_events = CRM_Core_DAO::executeQuery("
+                SELECT DISTINCT(event_id) AS event_id
+                FROM civicrm_participant
+                WHERE contact_id = {$contact_id}");
+            while ($contact_events->fetch()) {
+                $contact_event_ids[] = $contact_events->event_id;
+            }
+
+            // restrict the event query to those events
+            $get_parameters->restrictToEventIds($contact_event_ids);
+        }
     }
 }

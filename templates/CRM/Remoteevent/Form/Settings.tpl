@@ -46,6 +46,11 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.remote_event_get_performance_enhancement.label}&nbsp;{help id="id-performance-boost" title=$form.remote_event_get_performance_enhancement.label}</div>
+    <div class="content">{$form.remote_event_get_performance_enhancement.html}</div>
+    <div class="clear"></div>
+  </div>
   <!--
   <div class="crm-section">
     <div class="label">{$form.remote_registration_link.label}</div>
