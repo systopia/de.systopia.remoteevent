@@ -44,6 +44,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.remoteevent.get.params',
         ['CRM_Remoteevent_EventFlags', 'processFlagFilters']);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.get.params',
+        ['CRM_Remoteevent_EventCustomFields', 'processCustomFieldFilters']);
 
 
 
