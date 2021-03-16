@@ -107,6 +107,9 @@ class CRM_Remoteevent_EventCustomFields
                 $and_clauses[] = implode(' OR ', $or_clauses);
             }
             $where_clause = implode(' AND ', $and_clauses);
+            if (empty($where_clause)) {
+                $where_clause = 'TRUE';
+            }
 
             // run a simple DB query to find all events linked to the contact
             $matching_values_event_ids = [];
