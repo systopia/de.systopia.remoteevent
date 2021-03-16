@@ -44,7 +44,7 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase
     /**
      * Search a set of values in a single value custom fields
      */
-    public function testRemoteEventGetCustomSingle()
+    public function testRemoteEventGetCustom()
     {
         // create custom group
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
@@ -145,7 +145,7 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase
         $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field range search");
         $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field range search");
 
-        // run a search for the custom field with all of the requested values
+        // run a search for the custom field with the precise values
         $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
             'option.limit'                  => 3,
             'event_test2.event_multi_test' => [2,3]
@@ -153,13 +153,12 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase
         $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field range search");
         $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field range search");
 
-        // run a search for the custom field with all of the requested values
+        // run a search for the custom field field with more than the precise values
         $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
             'option.limit'                  => 3,
-            'event_test2.event_multi_test' => [2,3]
+            'event_test2.event_multi_test' => [2,3,4]
         ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field range search");
+        $this->assertEmpty(CRM_Utils_Array::value('id', $search_result), "The should could not be found by this multi custom field equals operation");
     }
 
 }
