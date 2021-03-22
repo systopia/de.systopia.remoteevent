@@ -653,6 +653,7 @@ class CRM_Remoteevent_Registration
         if ($registration->getParticipantID()) {
             // this is updating an existing participant
             $participant_data['id'] = $registration->getParticipantID();
+            $participant_data['force_trigger_eventmessage'] = 1;
 
         } else {
             // we're creating an all new participant
