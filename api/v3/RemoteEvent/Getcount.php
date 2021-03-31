@@ -66,7 +66,5 @@ function civicrm_api3_remote_event_getcount($params)
 
     // todo: improve performance? how can we be sure that the modules hooked in are considered?
     $events = civicrm_api3('RemoteEvent', 'get', $params);
-
-    return civicrm_api3_create_success([], $params, 'RemoteEvent', 'getcount', $null,
-                                       ['result' => $events['count']]);
+    return $events['count'];
 }

@@ -110,90 +110,38 @@ function civicrm_api3_remote_event_get($params)
         CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
     }
 
-    // create the event
-    $result = new GetResultEvent($event_get, $event_list);
-
     // check if this is a personalised request
     $contact_id = $get_params->getContactID();
     if ($contact_id) {
         CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
     }
 
-    // generally enrich event data
+    //         NEXT STEP: CUSTOMISING
+
+    // create a symfony event instance for further processing
+    $result = new GetResultEvent($event_get, $event_list, $get_params->getOriginalParameters());
+
+    // add some basic information
     foreach ($result->getEventData() as &$event) { // todo: optimise queries (over all events)?
         // add counts and other data
         $event['event_type'] =
             CRM_Remoteevent_RemoteEvent::getEventType($event, $result->getLocalisation());
         $event['registration_count'] =
             CRM_Remoteevent_Registration::getRegistrationCount($event['id']);
-
-        // add flags (might be overwritten by later event handlers)
-        $event['participant_registration_count'] = 0; // might be overwritten below
-        $event['is_registered'] = 0;  // might be overwritten below
-        $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($event['id'], $contact_id, $event);
-        if ($cant_register_reason) {
-            $event['can_register'] = 0;
-            //$result->logMessage($cant_register_reason);
-        } else {
-            $event['can_register'] = 1;
-        }
-        // can_instant_register only if can_register
-        $event['can_instant_register'] = (int)
-            ($event['can_register']
-                && CRM_Remoteevent_Registration::canOneClickRegister($event['id'], $event));
-
-        // add generic can_edit_registration/can_cancel_registration (might be overridden below)
-        $cant_edit_reason = CRM_Remoteevent_Registration::cannotEditRegistration($event['id'], $contact_id, $event);
-        $event['can_edit_registration'] = (int) empty($cant_edit_reason);
-        $event['can_cancel_registration'] = (int) empty($cant_edit_reason);
-
-        if ($contact_id) {
-            // PERSONALISED OVERRIDES
-            $event['participant_registration_count'] = (int)
-                CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
-            $event['is_registered'] = (int) ($event['participant_registration_count'] > 0);
-            $event['can_edit_registration'] = (int) ($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
-            $event['can_cancel_registration'] = (int) ($event['can_cancel_registration'] && ($event['participant_registration_count'] > 0));
-        }
     }
 
-    // add personal flags
-    if ($contact_id) {
-        CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
-        foreach ($result->getEventData() as &$event) {
-            $event['participant_registration_count'] = (int)
-                CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
-            $event['can_edit_registration'] = (int)
-                ($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
-            $event['is_registered'] = $event['participant_registration_count'] > 0 ? 1 : 0;
-        }
-    }
 
-    // dispatch the event in case somebody else wants to add something
+    // dispatch the event in case somebody else wants to add/remove something
     Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
 
-    // finally: filter for flags
-    $event_list = &$result->getEventData();
-    $event_ids = null; // this might not be valid after this section
-    $query_values = $result->getQueryParameters();
-    foreach (['can_register', 'can_instant_register', 'is_registered', 'can_edit_registration'] as $flag) {
-        if (isset($query_values[$flag])) {
-            $queried_value = empty($query_values[$flag]) ? 0 : 1;
-            foreach (array_keys($event_list) as $event_key) {
-                $event = $event_list[$event_key];
-                $event_value = (int) CRM_Utils_Array::value($flag, $event, -1);
-                if ($event_value != $queried_value) {
-                    // filter this event
-                    unset($event_list[$event_key]);
-                }
-            }
-        }
-    }
+    // finally, apply the limit
+    $limit = $get_params->getOriginalLimit();
+    $result->trimToLimit($limit);
 
     // return the result
     if ($result->hasErrors()) {
         return $result->createAPI3Error();
     } else {
-        return $result->createAPI3Success('RemoteEvent', 'get', $event_list);
+        return $result->createAPI3Success('RemoteEvent', 'get', $result->getFinalEventData());
     }
 }

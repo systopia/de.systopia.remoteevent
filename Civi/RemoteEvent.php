@@ -453,14 +453,14 @@ abstract class RemoteEvent extends Event
     /**
      * Generate an API3 error
      */
-    public function createAPI3Success($entity, $action, $values = [], $extraReturnValues = [])
+    public function createAPI3Success($entity, $action, $values = [], $extraReturnValues = [], $params = [])
     {
         // add status messages
         $extraReturnValues['status_messages'] = $this->getStatusMessageList();
 
         // compile standard result
         static $null = null;
-        return civicrm_api3_create_success($values, [], $entity, $action, $null, $extraReturnValues);
+        return civicrm_api3_create_success($values, $params, $entity, $action, $null, $extraReturnValues);
     }
 
     /**

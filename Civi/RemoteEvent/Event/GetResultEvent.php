@@ -29,6 +29,9 @@ class GetResultEvent extends RemoteEvent
 {
 
     /** @var array holds the original RemoteEvent.get parameters */
+    protected $original_params;
+
+    /** @var array holds the executed RemoteEvent.get parameters */
     protected $params;
 
     /** @var array holds the RemoteEvent.get parameters to be applied */
@@ -37,16 +40,30 @@ class GetResultEvent extends RemoteEvent
     /**
      * GetResultEvent constructor.
      * @param array $params
-     *   the parameters of the Event.get query
+     *   the executed parameters of the Event.get query
      *
      * @param array $values
      *   the list of events to return
+     *
+     * @param array $original_params
+     *   the original parameters of the Event.get query
      */
-    public function __construct($params, $event_data)
+    public function __construct($params, $event_data, $original_params)
     {
-        $this->params     = $params;
+        $this->params = $params;
+        $this->original_params = $original_params;
         $this->event_data = $event_data;
         $this->token_usages = ['invite', 'cancel', 'update'];
+    }
+
+    /**
+     * Returns the current event data for inline manipulation
+     *
+     * @return array event data (list)
+     */
+    public function &getEventData()
+    {
+        return $this->event_data;
     }
 
     /**
@@ -54,9 +71,24 @@ class GetResultEvent extends RemoteEvent
      *
      * @return array event data (list)
      */
-    public function &getEventData()
+    public function getFinalEventData()
     {
         return $this->event_data;
+    }
+
+
+
+    /**
+     * Trim the result to the given limit
+     *
+     * @param integer $limit
+     *   the limit to trim to. if 0, no trimming will be done
+     */
+    public function trimToLimit($limit)
+    {
+        if ($limit) {
+            $this->event_data = array_slice($this->event_data, 0, $limit, true);
+        }
     }
 
     /**
@@ -70,6 +102,16 @@ class GetResultEvent extends RemoteEvent
     }
 
     /**
+     * Returns the original parameters to be submitted to Event.get by the client
+     *
+     * @return array parameters originally submitted
+     */
+    public function getOriginalParameters()
+    {
+        return $this->original_params;
+    }
+
+    /**
      * Get the parameters of the original query
      *
      * @return array
@@ -79,4 +121,27 @@ class GetResultEvent extends RemoteEvent
     {
         return $this->params;
     }
+
+    /**
+     * Get the limit parameter of the original reuqest
+     *
+     * @return integer
+     *   returned result count or 0 for 'no limit'
+     */
+    public function getOriginalLimit()
+    {
+        // check the options array
+        if (isset($this->original_params['options']['limit'])) {
+            return (int) $this->original_params['options']['limit'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->original_params['option.limit'])) {
+            return (int) $this->original_params['option.limit'];
+        }
+
+        // default is '25' (by general API contract)
+        return 25;
+    }
+
 }

@@ -30,4 +30,10 @@
   <p>{ts}You can select a custom activity type here to enable the recording of changes and updates of participant data.{/ts}</p>
   <p>{ts}If you don't select anything here, nothing will be recorded.{/ts}</p>
 {/htxt}
+
+{htxt id='id-performance-boost'}
+  <p>{ts}If you have a lot of events in your system, the response time to the registration system(s) via <code>RemoteEvent.get</code> can become quite slow.{/ts}</p>
+  <p>{ts}You can enable this option to boost its performance, but it if you have customisations that manipulate flags like <code>can_register</code> or <code>is_registered</code>, the results might be inaccurate.{/ts}</p>
+  <p>{ts}The reason for this lies in RemoteEvent's architecture, where Sympfony events can manipulate data <i>after</i> the main query was completed.{/ts}</p>
+{/htxt}
 {/crmScope}

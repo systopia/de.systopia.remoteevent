@@ -30,6 +30,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         'remote_registration_xcm_profile',
         'remote_registration_xcm_profile_update',
         'remote_participant_change_activity_type_id',
+        'remote_event_get_performance_enhancement',
     ];
 
     public function buildQuickForm()
@@ -80,6 +81,16 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             false,
             ['class' => 'crm-select2']
         );
+
+        $this->add(
+            'select',
+            'remote_event_get_performance_enhancement',
+            E::ts("Speed up API"),
+            [0 => E::ts("no"), 1 => E::ts("yes")],
+            false,
+            ['class' => 'crm-select2']
+        );
+
 
         //        $this->add(
 //            'text',
