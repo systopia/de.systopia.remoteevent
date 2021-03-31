@@ -25,7 +25,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  *
  * @group headless
  */
-class CRM_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestBase
+class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestBase
 {
     use Api3TestTrait {
         callAPISuccess as protected traitCallAPISuccess;

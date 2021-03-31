@@ -58,6 +58,17 @@ class GetParamsEvent extends RemoteEvent
     }
 
     /**
+     * Remove / unset a parameter for the current parameters
+     *
+     * @param string $key
+     *    parameter key
+     */
+    public function removeParameter($key)
+    {
+        unset($this->currentParameters[$key]);
+    }
+
+    /**
      * Returns the original parameters that were submitted to RemoteEvent.get
      *
      * @return array original parameters
