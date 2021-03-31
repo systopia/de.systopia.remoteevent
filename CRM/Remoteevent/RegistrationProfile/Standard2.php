@@ -57,7 +57,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
                 'weight'      => 10,
                 'required'    => 1,
                 'label'       => $l10n->localise('Email'),
-                'description' => $l10n->localise("Participant's email address"),
+                'description' => '', //$l10n->localise("Participant's email address"),
                 'parent'      => 'contact_base',
             ],
             'prefix_id'    => [
@@ -68,7 +68,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
                 'required'    => 1,
                 'options'     => $this->getOptions('individual_prefix', $locale),
                 'label'       => $l10n->localise('Prefix'),
-                'description' => $l10n->localise("Participant's Prefix"),
+                'description' => '', //$l10n->localise("Participant's Prefix"),
                 'parent'      => 'contact_base',
             ],
             'formal_title' => [
@@ -78,7 +78,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
                 'weight'      => 30,
                 'required'    => 0,
                 'label'       => $l10n->localise('Title'),
-                'description' => $l10n->localise("Participant's Formal Title"),
+                'description' => '', //$l10n->localise("Participant's Formal Title"),
                 'parent'      => 'contact_base',
             ],
             'first_name'   => [
@@ -88,7 +88,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
                 'weight'      => 40,
                 'required'    => 1,
                 'label'       => $l10n->localise('First Name'),
-                'description' => $l10n->localise("Participant's First Name"),
+                'description' => '', //$l10n->localise("Participant's First Name"),
                 'parent'      => 'contact_base',
             ],
             'last_name'    => [
@@ -98,7 +98,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
                 'weight'      => 50,
                 'required'    => 1,
                 'label'       => $l10n->localise('Last Name'),
-                'description' => $l10n->localise("Participant's Last Name"),
+                'description' => '', //$l10n->localise("Participant's Last Name"),
                 'parent'      => 'contact_base',
             ],
         ];
