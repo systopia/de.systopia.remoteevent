@@ -70,6 +70,7 @@ The API will then make the choosen event locations basic data availabe, includin
 The extension exposes a new API to remote event listings or registration systems:
 
 1. ``RemoteEvent.get`` allows querying for remotely available events in the same way ``Event.get`` would
+1. ``RemoteEvent.create`` allows creating remotely available events in the same way ``Event.create`` would
 1. ``RemoteParticipant.get_form`` returns a default specification fo the registration form required for signing up/cancel/update
 1. ``RemoteParticipant.create`` sign somebody up for an event by providing the necessary form data (as requested by ``RemoteParticipant``)
 1. ``RemoteRegistration.validate`` ask the system for validating the given signup data before the actual registration
@@ -84,6 +85,7 @@ This extension uses a series of Symfony events to extend and customise the behav
 
 1. ``civi.remoteevent.get.params`` modify / restrict query parameters to event information
 1. ``civi.remoteevent.get.result`` modify / extend event information
+1. ``civi.remoteevent.create.params`` modify / extend parameters for creating or updating a remote event
 1. ``civi.remoteevent.registration.validate`` modify / extend signup data
 1. ``civi.remoteevent.registration.submit``modify / extend signup process
 1. ``civi.remoteevent.registration.cancel``modify / extend cancellation process
