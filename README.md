@@ -6,7 +6,7 @@ This extension provides a lot of additional features to CiviCRM's events. In par
 
 The general idea is that your organization's staff can do all relevant event configurations in CiviCRM. CiviCRM will then make this information available via its REST API. The extension's API also has built in logic and actions to receive and update registrations.
 
-Any external system can interact with the API and display event calendars, detailed event information, registration forms etc. (this could be a remote system or the CMS your CiviCRM runs on) and also submit information entered by your constituents back to CiviCRM. 
+Any external system can interact with the API and display event calendars, detailed event information, registration forms etc. (this could be a remote system or the CMS your CiviCRM runs on) and also submit information entered by your constituents back to CiviCRM.
 
 All of this requires that you have or set up an external system to act as a frontend for your event listings, registration forms etc. In case you would like to build your system based on Drupal 8 you will most likely want to have a look and/or use the CiviRemote Drupal module which includes a lot of pre-built features (https://github.com/systopia/civiremote).
 
@@ -27,7 +27,7 @@ This extension is licensed under [AGPL-3.0](LICENSE.txt).
 * Pre-defined registration profiles including a "one click registration" for authenticated users (additional profiles can be added fairly easy)
 * Use different registration profiles withn the same event
 * Allow participants to modify and/or cancel their own registrations
-* Alternative approach for defining an event's location 
+* Alternative approach for defining an event's location
 
 TODO: Complete Feature List
 
@@ -47,7 +47,7 @@ TODO: List extensions that integrate with Remote Event Extensions
 After installing the extension, make sure your Remote Tool settings are according to your needs (refer to docmunentation provided in de.systopia.remotetools). Then head on to the general configuration:
 
 * Navigate to >>Administer >>Remote Events - General Configuration.
-* Define which participant statuses will block a re-registration to your events (e.g. rejected) and which roles you would like to assign to speakers. 
+* Define which participant statuses will block a re-registration to your events (e.g. rejected) and which roles you would like to assign to speakers.
 * Configure which default matcher profile you would like to use (XCM-Extension)
 * Enter the urls to be used for registrations, modifications of registrations and cancellations which will depend on the external system you use. In case you use the CiviRemote Drupal module you may use https://yourdomain.org/d8civiremote/, https://yourdomain.org/d8civiremote/modify/, https://yourdomain.org/d8civiremote/cancel/
 
@@ -55,7 +55,7 @@ After general configuration visit the new tab "Remote Online Registration" withi
 
 The "Registration Restrictions" allow you configurations regarding when registration is available, if a registration requires manual review and if participants can cancel or modify their own registrations.
 
-The "Public Event Text Blocks" may be used by your external system to display the information at the appropriate places during the registration process. How and when this information is presented to your constituents will depend on the design of your external system. 
+The "Public Event Text Blocks" may be used by your external system to display the information at the appropriate places during the registration process. How and when this information is presented to your constituents will depend on the design of your external system.
 
 CiviCRM's other basic event settings still apply and may be used in your external system, e.g. it's title, descriptions, start and end dates, max. number of participants, waitlist settings etc..
 
@@ -85,7 +85,7 @@ This extension uses a series of Symfony events to extend and customise the behav
 
 1. ``civi.remoteevent.get.params`` modify / restrict query parameters to event information
 1. ``civi.remoteevent.get.result`` modify / extend event information
-1. ``civi.remoteevent.create.params`` modify / extend parameters for creating or updating a remote event
+1. ``civi.remoteevent.spawn.params`` modify / extend parameters for creating or updating a remote event
 1. ``civi.remoteevent.registration.validate`` modify / extend signup data
 1. ``civi.remoteevent.registration.submit``modify / extend signup process
 1. ``civi.remoteevent.registration.cancel``modify / extend cancellation process

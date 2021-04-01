@@ -24,7 +24,7 @@ use Civi\RemoteParamsEvent;
  * This event will be triggered at the beginning of the
  *  RemoteEvent.create API call, so the search parameters can be manipulated
  */
-class CreateParamsEvent extends RemoteParamsEvent
+class SpawnParamsEvent extends RemoteParamsEvent
 {
 
 }

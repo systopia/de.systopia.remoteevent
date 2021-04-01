@@ -26,29 +26,7 @@ use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
  */
 function _civicrm_api3_remote_event_get_spec(&$spec)
 {
-    // add extra fields
-    $spec['locale'] = [
-        'name'         => 'locale',
-        'api.required' => 0,
-        'title'        => E::ts('Locale'),
-        'description'  => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
-    ];
-    $spec['token'] = [
-        'name'         => 'token',
-        'api.required' => 0,
-        'title'        => E::ts('Token'),
-        'description'  => E::ts(
-            'You can submit an invite token that can be used to identify the contact, in which case the fields should come with the default data. This takes preference over the remote_contact_id'
-        ),
-    ];
-    $spec['remote_contact_id'] = [
-        'name'         => 'remote_contact_id',
-        'api.required' => 0,
-        'title'        => E::ts('Remote Contact ID'),
-        'description'  => E::ts(
-            'You can submit a remote contact, in which case the result will be filtered for the events available to that contact'
-        ),
-    ];
+    // not in use, see civicrm_api3_remote_event_getfields_get
 }
 
 /**

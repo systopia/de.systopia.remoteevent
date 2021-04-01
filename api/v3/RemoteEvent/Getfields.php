@@ -22,16 +22,68 @@ use Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
  *
  * RemoteEvent.getfields
  */
-function civicrm_api3_remote_event_getfields($params) {
+function civicrm_api3_remote_event_getfields($params)
+{
     unset($params['check_permissions']);
 
-    // we only support 'get' actions
-    if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'getsingle') {
-        return civicrm_api3('Event', 'getfields', $params);
+    switch (strtolower($params['action'])) {
+        case 'get':
+        case 'getsingle':
+        case 'getcount':
+            return civicrm_api3_remote_event_getfields_get($params);
+
+        case 'spawn':
+            return civicrm_api3_remote_event_getfields_spawn($params);
+
+        default:
+            # default is to return the Event standards
+            return civicrm_api3('Event', 'getfields', $params);
     }
+}
 
+/**
+ * Customised RemoteEvent.getfields: spawn (create)
+ *
+ * @param array $params
+ *   parameters of the original call
+ *
+ * @return array
+ *   fields array
+ */
+function civicrm_api3_remote_event_getfields_spawn($params)
+{
     // get event fields
-    unset($params['check_permissions']);
+    $fields = civicrm_api3('Event', 'getfields', ['action' => 'spawn'])['values'];
+
+    // add template ID
+    $fields['template_id'] = [
+        'name'         => 'template_id',
+        'api.required' => 0,
+        'type'         => CRM_Utils_Type::T_INT,
+        'title'        => E::ts('Template ID'),
+        'description'  => E::ts('If the ID of an existing event or event template is given, the new event will be based on that.'),
+    ];
+
+    // remove some stuff
+    unset($fields['id']); // disable updates
+
+    return civicrm_api3_create_success($fields);
+}
+
+
+
+/**
+ * Customised RemoteEvent.getfields: get/getsingle
+ *
+ * @param array $params
+ *   parameters of the original call
+ *
+ * @return array
+ *   fields array
+ */
+function civicrm_api3_remote_event_getfields_get($params)
+{
+    // get event fields
     $fields = civicrm_api3('Event', 'getfields');
 
     // strip some fields
@@ -96,7 +148,6 @@ function civicrm_api3_remote_event_getfields($params) {
             $fields_collection->setFieldSpec($field_name, $fieldSpec);
         }
     }
-
 
     // set results and return
     $fields['values'] = $fields_collection->getFieldSpecs();
