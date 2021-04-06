@@ -100,7 +100,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'remote_registration_external_identifier',
             E::ts("External Identifier"),
             ['class' => 'huge'],
-            true
+            false
         );
         $this->add(
             'checkbox',
