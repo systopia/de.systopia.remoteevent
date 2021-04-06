@@ -96,6 +96,13 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Use Custom Event Location?")
         );
         $this->add(
+            'text',
+            'remote_registration_external_identifier',
+            E::ts("External Identifier"),
+            ['class' => 'huge'],
+            true
+        );
+        $this->add(
             'checkbox',
             'remote_disable_civicrm_registration',
             E::ts("Disable native CiviCRM Online Registration")
@@ -133,6 +140,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_update_profiles'        => 'remote_registration_update_profiles',
                 'event_remote_registration.remote_use_custom_event_location'           => 'remote_use_custom_event_location',
                 'event_remote_registration.remote_registration_gtac'                   => 'remote_registration_gtac',
+                'event_remote_registration.remote_registration_external_identifier'    => 'remote_registration_external_identifier',
                 'event_remote_registration.remote_disable_civicrm_registration'        => 'remote_disable_civicrm_registration',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
@@ -165,10 +173,33 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     public function validate()
     {
         parent::validate();
+
         if (!empty($this->_submitValues['remote_registration_enabled'])) {
             // online registration is enabled, do some checks:
             if (empty($this->_submitValues['remote_registration_default_profile'])) {
                 $this->_errors['remote_registration_default_profile'] = E::ts("You must select a default profile");
+            }
+        }
+
+        // make sure the external id is unique
+        if (strlen($this->_submitValues['remote_registration_external_identifier']) > 0) {
+            // check the format
+            if (!preg_match('/^[0-9a-zA-Z_#-]+$/', $this->_submitValues['remote_registration_external_identifier'])) {
+                $this->_errors['remote_registration_external_identifier'] =
+                    E::ts("The external identifier can only contain basic characters, numbers, and the characters '_', '#', and '-'.");
+            }
+            else {
+                // check if it already exists (with another event)
+                $exists_query = [
+                    'return' => 'id',
+                    'event_remote_registration.remote_registration_external_identifier' =>
+                        $this->_submitValues['remote_registration_external_identifier'],
+                ];
+                CRM_Remoteevent_CustomData::resolveCustomFields($exists_query);
+                $exists_for_event_id = civicrm_api3('Event', 'get', $exists_query);
+                if (!empty($exists_query['id']) && $exists_query['id'] != $this->_id) {
+                    $this->_errors['remote_registration_external_identifier'] = E::ts("This external identifier is already in use");
+                }
             }
         }
 
@@ -209,6 +240,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'event_remote_registration.remote_registration_update_profiles'        => $values['remote_registration_update_profiles'],
             'event_remote_registration.remote_registration_default_update_profile' => $values['remote_registration_default_update_profile'],
             'event_remote_registration.remote_registration_profiles'               => $values['remote_registration_profiles'],
+            'event_remote_registration.remote_registration_external_identifier'    => $values['remote_registration_external_identifier'],
             'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac']
         ];
 

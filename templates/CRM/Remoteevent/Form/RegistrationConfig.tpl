@@ -33,6 +33,11 @@
       <div class="clear"></div>
     </div>
     <div class="crm-section">
+      <div class="label">{$form.remote_registration_external_identifier.label}&nbsp;{help id="id-external-identifier" title=$form.remote_registration_external_identifier.label}</div>
+      <div class="content">{$form.remote_registration_external_identifier.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
       <div class="label">{$form.remote_disable_civicrm_registration.label}</div>
       <div class="content">{$form.remote_disable_civicrm_registration.html}</div>
       <div class="clear"></div>
