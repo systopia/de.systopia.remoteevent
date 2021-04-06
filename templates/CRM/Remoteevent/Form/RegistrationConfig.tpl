@@ -33,11 +33,6 @@
       <div class="clear"></div>
     </div>
     <div class="crm-section">
-      <div class="label">{$form.remote_registration_external_identifier.label}&nbsp;{help id="id-external-identifier" title=$form.remote_registration_external_identifier.label}</div>
-      <div class="content">{$form.remote_registration_external_identifier.html}</div>
-      <div class="clear"></div>
-    </div>
-    <div class="crm-section">
       <div class="label">{$form.remote_disable_civicrm_registration.label}</div>
       <div class="content">{$form.remote_disable_civicrm_registration.html}</div>
       <div class="clear"></div>
@@ -48,6 +43,16 @@
       <div class="clear"></div>
     </div>
     <div class="crm-section">
+      <div class="label">{$form.remote_registration_external_identifier.label}&nbsp;{help id="id-external-identifier" title=$form.remote_registration_external_identifier.label}</div>
+      <div class="content">{$form.remote_registration_external_identifier.html}</div>
+      <div class="clear"></div>
+    </div>
+  </div>
+
+<fieldset id="registration" class="crm-collapsible remote-registration-content">
+  <legend class="collapsible-title">{ts}Registration Restrictions{/ts}</legend>
+  <div class="remote-registration-restrictions">
+    <div class="crm-section">
       <div class="label">{$form.remote_registration_default_profile.label}&nbsp;{help id="id-remote-registration-default-profile" title=$form.remote_registration_default_profile.label}</div>
       <div class="content">{$form.remote_registration_default_profile.html}</div>
       <div class="clear"></div>
@@ -57,21 +62,6 @@
       <div class="content">{$form.remote_registration_profiles.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section">
-      <div class="label">{$form.remote_registration_default_update_profile.label}&nbsp;{help id="id-remote-registration-default-update-profile" title=$form.remote_registration_default_update_profile.label}</div>
-      <div class="content">{$form.remote_registration_default_update_profile.html}</div>
-      <div class="clear"></div>
-    </div>
-    <div class="crm-section">
-      <div class="label">{$form.remote_registration_update_profiles.label}&nbsp;{help id="id-remote-registration-update-profiles" title=$form.remote_registration_update_profiles.label}</div>
-      <div class="content">{$form.remote_registration_update_profiles.html}</div>
-      <div class="clear"></div>
-    </div>
-  </div>
-
-<fieldset id="registration" class="crm-collapsible remote-registration-content">
-  <legend class="collapsible-title">{ts}Registration Restrictions{/ts}</legend>
-  <div class="remote-registration-restrictions">
     <div class="crm-section crm-event-manage-registration-form-block-registration_start_date">
       <div class="label">{$form.registration_start_date.label}</div>
       <div class="content">{$form.registration_start_date.html}</div>
@@ -90,6 +80,16 @@
     <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
       <div class="label">{$form.allow_selfcancelxfer.label}&nbsp;{help id="id-allow-selfcancelxfer" title=$form.allow_selfcancelxfer.label}</div>
       <div class="content">{$form.allow_selfcancelxfer.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_default_update_profile.label}&nbsp;{help id="id-remote-registration-default-update-profile" title=$form.remote_registration_default_update_profile.label}</div>
+      <div class="content">{$form.remote_registration_default_update_profile.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_update_profiles.label}&nbsp;{help id="id-remote-registration-update-profiles" title=$form.remote_registration_update_profiles.label}</div>
+      <div class="content">{$form.remote_registration_update_profiles.html}</div>
       <div class="clear"></div>
     </div>
     <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
