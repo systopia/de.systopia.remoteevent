@@ -25,7 +25,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  *
  * @group headless
  */
-abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface,
+abstract class CRM_Remoteevent_TestBase extends CRM_Remotetools_TestBase implements HeadlessInterface, HookInterface,
                                                                             TransactionalInterface
 {
     use Api3TestTrait {
