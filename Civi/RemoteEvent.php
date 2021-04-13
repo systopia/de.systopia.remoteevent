@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\Event;
  *
  * Abstract event class to provide some basic functions
  */
-abstract class RemoteEvent extends Event
+abstract class RemoteEvent extends RemoteToolsRequest
 {
     /** @var integer participant ID */
     protected $participant_id = null;
