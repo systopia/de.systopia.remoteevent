@@ -71,8 +71,12 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
      *  the array passed
      *
      * @param array $event_details
+     *   list of event parameters
+     *
+     * @param boolean $use_remote_api
+     *   use the exposed RemoteEvent.create API instead of the internal (Event.create)
      */
-    public function createRemoteEvent($event_details = [])
+    public function createRemoteEvent($event_details = [], $use_remote_api = false)
     {
         // prepare event
         $event_data = [
@@ -89,7 +93,11 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             'event_remote_registration.remote_registration_update_profiles'        => ['Standard1'],
         ];
         foreach ($event_details as $key => $value) {
-            $event_data[$key] = $value;
+            if ($value === null) {
+                unset($event_data[$key]);
+            } else {
+                $event_data[$key] = $value;
+            }
         }
         // sanity check: default profile should be enabled
         $default_profile = $event_data['event_remote_registration.remote_registration_default_profile'];
@@ -100,9 +108,13 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         CRM_Remoteevent_CustomData::resolveCustomFields($event_data);
 
         // create event and reload
-        $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
-        $event = $result = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
-        CRM_Remoteevent_CustomData::labelCustomFields($event);
+        if ($use_remote_api) {
+            $event = $this->traitCallAPISuccess('RemoteEvent', 'spawn', $event_data);
+        } else {
+            $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
+            $event = $result = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
+            CRM_Remoteevent_CustomData::labelCustomFields($event);
+        }
 
         return $event;
     }
