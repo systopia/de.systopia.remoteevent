@@ -41,6 +41,9 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
 
         // add participant status
         $this->addParticipantStatus('Invited', E::ts('Invited'), 'Waiting');
+
+        // add constraints
+        $this->makeExternalIdentifierUnique();
     }
 
     /**
@@ -118,7 +121,51 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         return true;
     }
 
+    /**
+     * Adding external_identifier field
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0010()
+    {
+        $this->ctx->log->info('Adding event external_identifier');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        $this->makeExternalIdentifierUnique();
+        return true;
+    }
 
+
+
+    /****************************************************************
+    **                       HELPER FUNCTIONS                      **
+    ****************************************************************/
+
+    /**
+     * Add a unique index on the event external identifiers
+     */
+    protected function makeExternalIdentifierUnique()
+    {
+        // gather field / group info
+        $external_identifier_field = CRM_Remoteevent_CustomData::getCustomField(
+            'event_remote_registration', 'remote_registration_external_identifier');
+        if (empty($external_identifier_field)) {
+            throw new Exception("Field 'event_remote_registration.remote_registration_external_identifier' does not exist!");
+        }
+        $external_identifier_group = CRM_Remoteevent_CustomData::getGroupSpecs($external_identifier_field['custom_group_id']);
+
+        // add unique key (if not already there)
+        $find_index_query = "SHOW INDEX FROM `{$external_identifier_group['table_name']}`
+                             WHERE column_name = '{$external_identifier_field['column_name']}'";
+        $index = CRM_Core_DAO::executeQuery($find_index_query);
+        if (!$index->fetch()) {
+            // index missing: add unique key
+            CRM_Core_DAO::executeQuery("
+                ALTER TABLE `{$external_identifier_group['table_name']}`
+                ADD UNIQUE KEY `UI_external_identifier` (`{$external_identifier_field['column_name']}`)");
+        }
+    }
 
     /**
      * Make sure the given participant status exists

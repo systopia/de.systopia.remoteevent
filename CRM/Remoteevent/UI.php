@@ -93,6 +93,8 @@ class CRM_Remoteevent_UI
                 $native_registration_disabled = CRM_Remoteevent_EventFlags::isNativeOnlineRegistrationDisabled($event_id);
                 if ($native_registration_disabled) {
                     unset($tabs['registration']);
+                    unset($tabs['friend']);
+                    unset($tabs['pcp']);
                 } else {
                     $tabs['registration']['title'] = E::ts("Online Registration (CiviCRM)");
                 }
