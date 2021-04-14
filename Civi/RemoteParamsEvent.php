@@ -24,19 +24,13 @@ namespace Civi;
  */
 abstract class RemoteParamsEvent extends RemoteEvent
 {
-    /** @var array holds the original RemoteEvent.get parameters */
-    protected $originalParameters;
-
-    /** @var array holds the RemoteEvent.get parameters to be applied */
-    protected $currentParameters;
-
     /** @var integer|false|null remote contact ID if this is a personalised query */
     protected $remote_contact_id;
 
     public function __construct($params)
     {
-        $this->currentParameters  = $params;
-        $this->originalParameters = $params;
+        $this->request  = $params;
+        $this->original_request = $params;
         $this->remote_contact_id = false; // i.e. not looked up yet
     }
 
@@ -50,7 +44,7 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function setParameter($key, $value)
     {
-        $this->currentParameters[$key] = $value;
+        $this->request[$key] = $value;
     }
 
     /**
@@ -61,7 +55,7 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function removeParameter($key)
     {
-        unset($this->currentParameters[$key]);
+        unset($this->request[$key]);
     }
 
     /**
@@ -71,7 +65,7 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function getOriginalParameters()
     {
-        return $this->originalParameters;
+        return $this->original_request;
     }
 
     /**
@@ -81,7 +75,7 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function getParameters()
     {
-        return $this->currentParameters;
+        return $this->request;
     }
 
     /**
@@ -94,7 +88,7 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function getParameter($key)
     {
-        return \CRM_Utils_Array::value($key, $this->currentParameters, null);
+        return \CRM_Utils_Array::value($key, $this->request, null);
     }
 
     /**
@@ -105,7 +99,7 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function getQueryParameters()
     {
-        return $this->currentParameters;
+        return $this->request;
     }
 
     /**
@@ -117,13 +111,13 @@ abstract class RemoteParamsEvent extends RemoteEvent
     public function getOriginalLimit()
     {
         // check the options array
-        if (isset($this->originalParameters['options']['limit'])) {
-            return (int) $this->originalParameters['options']['limit'];
+        if (isset($this->original_request['options']['limit'])) {
+            return (int) $this->original_request['options']['limit'];
         }
 
         // check the old-fashioned parameter style
-        if (isset($this->originalParameters['option.limit'])) {
-            return (int) $this->originalParameters['option.limit'];
+        if (isset($this->original_request['option.limit'])) {
+            return (int) $this->original_request['option.limit'];
         }
 
         // default is '25' (by general API contract)
@@ -138,8 +132,8 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function setLimit($limit)
     {
-        unset($this->currentParameters['option.limit']);
-        unset($this->currentParameters['options']['limit']);
-        $this->currentParameters['option.limit'] = (int) $limit;
+        unset($this->request['option.limit']);
+        unset($this->request['options']['limit']);
+        $this->request['option.limit'] = (int) $limit;
     }
 }
