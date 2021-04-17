@@ -209,6 +209,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                  'name' => 'profile',
                  'type' => 'Value',
                  'value' => $profile->getName(),
+                 'label' => $profile->getLabel(),
              ]
         ]);
     }
