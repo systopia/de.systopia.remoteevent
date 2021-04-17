@@ -27,11 +27,24 @@ use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 abstract class CRM_Remoteevent_RegistrationProfile
 {
     /**
-     * Get the internal name of the profile represented
+     * Get the internal name of the profile represented.
+     *
+     * This name has to be identical to the corresponding OptionGroupValue
      *
      * @return string name
      */
     abstract public function getName();
+
+    /**
+     * Get the human-readable name of the profile represented
+     *
+     * @return string label
+     */
+    public function getLabel()
+    {
+        // default is the internal name
+        return $this->getName();
+    }
 
     /**
      * Get the list of fields expected by this profile
