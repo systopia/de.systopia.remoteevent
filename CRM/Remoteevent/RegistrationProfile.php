@@ -63,6 +63,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'description' => field description (localised)
      *      'parent'      => can link to parent element, which should be of type 'fieldset'
      *      'value'       => (optional) pre-filled value, typically set in a second pass (addDefaultValues, see below)
+     *      'maxlength'   => (optional) max length of the field content (as a string)
      *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
      *                       NOTE: this is just for the optional 'inline' validation in the form,
      *                             the main validation will go through the RemoteParticipant.validate function
@@ -101,6 +102,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
             } else {
                 if (!$this->validateFieldValue($field_spec, $value)) {
                     $validationEvent->addValidationError($field_name, $l10n->localise("Invalid Value"));
+                }
+                if (!$this->validateFieldLength($field_spec, $value)) {
+                    $validationEvent->addValidationError($field_name, $l10n->localise("Value too long"));
                 }
             }
         }
@@ -504,6 +508,32 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 return true;
         }
     }
+
+    /**
+     * Check whether the given value exceeds the length limits (if any defined)
+     *
+     * @param array $field_spec
+     *    specs, see getFields()
+     *
+     * @param string $value
+     *    field value
+     *
+     * @return boolean
+     *   is the value valid
+     *
+     */
+    protected function validateFieldLength($field_spec, $value)
+    {
+        $max_length = (int) CRM_Utils_Array::value('maxlength', $field_spec, 0);
+        if ($max_length) {
+            // there is a defined max_length -> test it
+            if (!is_array($value) && !is_object($value)) {
+                return strlen((string) $value) <= $max_length;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * Format the given field value

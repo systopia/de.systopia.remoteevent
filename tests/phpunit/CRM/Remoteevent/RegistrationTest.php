@@ -88,4 +88,38 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
         $this->assertArraySubset(['You have been added to the waitlist.'], $registration2['status'], "The status should have been 'You have been added to the waitlist'");
     }
+
+
+    /**
+     * Test field length validation
+     */
+    public function testMaxFieldLength()
+    {
+        // create an event
+        $event = $this->createRemoteEvent(['event_remote_registration.remote_registration_default_profile' => 'Standard2']);
+
+        // test registering contact
+        $contact1 = $this->createContact();
+        $registration1 = $this->registerRemote($event['id'], [
+            'profile'    => 'Standard2',
+            'prefix_id'  => $contact1['prefix_id'],
+            'first_name' => $contact1['first_name'],
+            'last_name'  => $contact1['last_name'],
+            'email'      => $contact1['email'],
+        ]);
+        $this->assertEmpty($registration1['is_error'], "Registration failed event without field length violation");
+
+        // test registering contact
+        $contact2 = $this->createContact([]);
+        $this->callAPIFailure('RemoteParticipant', 'create', [
+            'event_id'     => $event['id'],
+            'profile'      => 'Standard2',
+            'prefix_id'    => $contact2['prefix_id'],
+            'formal_title' => 'aasdgdfga gdf ofdsijgs[dosdfgsdfgdff ijgfsdpgdfg sdfhg hoigjsdfogds',
+            'first_name'   => 'ajdsofijdfoiahsdfioushepigauwfhepiufhpwaiuefhpawiuefhpwaeiufhsadasd',
+            'last_name'    => 'adfsdgksngkfn dfondfobindfsokm dkdf ofdsijgs[dof ijgfsdpoigjsdfogds',
+            'email'        => $contact2['email'],
+        ], "Value too long");
+    }
+
 }
