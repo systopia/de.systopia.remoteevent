@@ -53,9 +53,16 @@ function civicrm_api3_remote_event_getfields($params)
 function civicrm_api3_remote_event_getfields_spawn($params)
 {
     // get event fields
-    $fields = civicrm_api3('Event', 'getfields', ['action' => 'spawn'])['values'];
+    $fields = civicrm_api3('Event', 'getfields', ['action' => 'create'])['values'];
 
-    // add template ID
+    // use API sanitation / labelling
+    CRM_Remotetools_CustomData::labelCustomFields($fields);
+    foreach ($fields as $name => &$field) {
+        $field['name'] = $name;
+    }
+
+    // own fields:
+    // 1) template ID
     $fields['template_id'] = [
         'name'         => 'template_id',
         'api.required' => 0,
@@ -66,6 +73,7 @@ function civicrm_api3_remote_event_getfields_spawn($params)
 
     // remove some stuff
     unset($fields['id']); // disable updates
+    unset($fields['is_template']); // no template handling here
 
     return civicrm_api3_create_success($fields);
 }
