@@ -32,9 +32,6 @@ function civicrm_api3_remote_event_getfields($params)
         case 'getcount':
             return civicrm_api3_remote_event_getfields_get($params);
 
-        case 'spawn':
-            return civicrm_api3_remote_event_getfields_spawn($params);
-
         default:
             # default is to return the Event standards
             return civicrm_api3('Event', 'getfields', $params);
