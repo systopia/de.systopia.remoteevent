@@ -25,7 +25,39 @@ use \Civi\RemoteEvent\Event\SpawnParamsEvent;
  */
 function _civicrm_api3_remote_event_spawn_spec(&$spec)
 {
-    // not in use, see civicrm_api3_remote_event_getfields_create
+    $spec['template_id'] = [
+        'name'         => 'template_id',
+        'api.required' => 0,
+        'type'         => CRM_Utils_Type::T_INT,
+        'title'        => E::ts('Template ID'),
+        'description'  => E::ts('If the ID of an existing event or event template is given, the new event will be based on that.'),
+    ];
+    $spec['event_type_id'] = [
+        'name'         => 'event_type_id',
+        'api.required' => 0,
+        'type'         => CRM_Utils_Type::T_INT,
+        'title'        => E::ts('Event Type'),
+        'description'  => E::ts('Type of the event'),
+    ];
+    $spec['title'] = [
+        'name'         => 'title',
+        'api.required' => 1,
+        'type'         => CRM_Utils_Type::T_STRING,
+        'title'        => E::ts('Event Title'),
+        'description'  => E::ts('Title of the event'),
+    ];
+    $spec['start_date'] = [
+        'name'         => 'start_date',
+        'api.required' => 1,
+        'type'         => CRM_Utils_Type::T_STRING,
+        'title'        => E::ts('Event Start + Time'),
+    ];
+    $spec['end_date'] = [
+        'name'         => 'end_date',
+        'api.required' => 0,
+        'type'         => CRM_Utils_Type::T_STRING,
+        'title'        => E::ts('Event End + Time'),
+    ];
 }
 
 /**
@@ -63,6 +95,6 @@ function civicrm_api3_remote_event_spawn($params)
     CRM_Remoteevent_CustomData::resolveCustomFields($event_create);
     $result = civicrm_api3('Event', 'create', $event_create);
 
-    // todo: error handling / filtering
-    return civicrm_api3('RemoteEvent', 'getsingle', ['id' => $result['id']]);
+    $null = null;
+    return civicrm_api3_create_success([], $params, 'RemoteEvent', 'spawn', $null, ['id' => $result['id']]);
 }
