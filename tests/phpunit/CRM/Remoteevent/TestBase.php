@@ -109,10 +109,11 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
 
         // create event and reload
         if ($use_remote_api) {
-            $event = $this->traitCallAPISuccess('RemoteEvent', 'spawn', $event_data);
+            $result = $this->traitCallAPISuccess('RemoteEvent', 'spawn', $event_data);
+            $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
         } else {
             $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
-            $event = $result = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
+            $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
             CRM_Remoteevent_CustomData::labelCustomFields($event);
         }
 
