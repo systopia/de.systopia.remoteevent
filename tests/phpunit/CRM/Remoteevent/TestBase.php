@@ -606,4 +606,41 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     }
 
 
+    /**
+     * Create an associative array from a list of fields specs in the form of
+     * [
+     *   [
+     *      'name'        => 'some field name',
+     *      'type'        => CRM_Utils_Type::T_STRING,
+     *      'value'       => 'some value',
+     *      'title'       => 'some title',
+     *      'localizable' => 0,
+     *   ],
+     *    ...
+     * ]
+     *
+     * @param array $field_array
+     *    the outer array
+     * @param string $key_field
+     *    the inner field to be used as key
+     * @param string $value_field
+     *    the inner field to be used as value
+     *
+     * @return array
+     *    the extracted associative array
+     */
+    public function mapFieldArray($field_array, $key_field = 'name', $value_field = 'value')
+    {
+        $result = [];
+        foreach ($field_array as $field_spec) {
+            if (!isset($field_spec[$key_field])) {
+                $this->fail("Field array doesn't have key field '{$key_field}'");
+            }
+            if (!isset($field_spec[$value_field])) {
+                $this->fail("Field array doesn't have value field '{$value_field}'");
+            }
+            $result[$field_spec[$key_field]] = $field_spec[$value_field];
+        }
+        return $result;
+    }
 }

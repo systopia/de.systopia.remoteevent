@@ -36,6 +36,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.remoteevent.getfields',
         ['CRM_Remoteevent_EventSpeaker', 'addFieldSpecs']);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.getfields',
+        ['CRM_Remoteevent_EventSessions', 'addFieldSpecs']);
 
     // EVENT GET PARAMETERS
     $dispatcher->addUniqueListener(
@@ -63,6 +66,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.remoteevent.get.result',
         ['CRM_Remoteevent_EventSpeaker', 'addSpeakerData'], -1000 /** late */);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.get.result',
+        ['CRM_Remoteevent_EventSessions', 'addSessionData'], -1000 /** late */);
 
     // EVENT REGISTRATION.GETFORM
     $dispatcher->addUniqueListener(
