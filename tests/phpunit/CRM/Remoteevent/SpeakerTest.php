@@ -59,8 +59,8 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase
 
         // get the event data
         $remote_event = $this->getRemoteEvent($event['id']);
-        $this->assertEquals('false', $remote_event['speakers'],
-                                    "When speakers are disabled, the 'speakers' key should be set to 'false'");
+        $this->assertTrue(!isset($remote_event['speakers']),
+                                    "When speakers are disabled, the 'speakers' key should not be there.");
     }
 
     /**
@@ -131,12 +131,12 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase
 
         // check speakers and get speaker IDs
         $speaker_ids = [];
-        foreach ($event_speakers as $event_speaker) {
+        foreach ($event_speakers as $event_speaker_fields) {
+            $event_speaker = $this->mapFieldArray($event_speaker_fields);
             $this->assertNotEmpty($event_speaker['name'], 'Speaker should have a name');
             $this->assertNotEmpty($event_speaker['first_name'], 'Speaker should have a first_name');
             $this->assertNotEmpty($event_speaker['last_name'], 'Speaker should have a last_name');
             $this->assertNotEmpty($event_speaker['roles'], 'Speaker should have at least one role');
-
             $this->assertNotEmpty($event_speaker['contact_id'], 'Speaker contact_id should be set.');
             $speaker_ids[] = $event_speaker['contact_id'];
         }
@@ -184,7 +184,8 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase
             foreach ($remote_events as $remote_event) {
                 $event_speakers = json_decode($remote_event['speakers'], true);
                 $this->assertNotNull($event_speakers, "Couldn't decode speakers json");
-                foreach ($event_speakers as $event_speaker) {
+                foreach ($event_speakers as $event_speaker_spec) {
+                    $event_speaker = $this->mapFieldArray($event_speaker_spec);
                     $event_speaker_roles = explode(',', $event_speaker['roles']);
                     foreach ($event_speaker_roles as $event_speaker_role) {
                         $event_speaker_role = trim($event_speaker_role);

@@ -22,14 +22,6 @@ use \Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
  */
 class CRM_Remoteevent_EventSpeaker
 {
-    const SPEAKER_FIELDS = [
-        'roles',
-        'name',
-        'first_name',
-        'last_name',
-        'prefix',
-    ];
-
     /**
      * Extend the data returned by RemoteEvent.get by the location data
      *
@@ -42,9 +34,6 @@ class CRM_Remoteevent_EventSpeaker
         // see if speakers are turned on
         $speaker_roles = Civi::settings()->get('remote_registration_speaker_roles');
         if (empty($speaker_roles) || !is_array($speaker_roles)) {
-            foreach ($result->getEventData() as &$event) {
-                $event['speakers'] = 'false'; // mark as disabled
-            }
             return;
         }
 
@@ -73,12 +62,18 @@ class CRM_Remoteevent_EventSpeaker
      */
     public static function addFieldSpecs($fields_collection)
     {
+        // don't submit if turned off
+        $speaker_roles = Civi::settings()->get('remote_registration_speaker_roles');
+        if (empty($speaker_roles) || !is_array($speaker_roles)) {
+            return;
+        }
+
         $fields_collection->setFieldSpec('speakers', [
             'name'          => 'speakers',
             'type'          => CRM_Utils_Type::T_STRING,
             'format'        => 'json',
-            'title'         => "Speaker List",
-            'description'   => "List of speakers of the event (json encoded)",
+            'title'         => E::ts("Speaker List"),
+            'description'   => E::ts("List of speakers of the event (json encoded)"),
             'localizable'   => 1,
             'is_core_field' => false,
         ]);
@@ -133,11 +128,41 @@ class CRM_Remoteevent_EventSpeaker
         $speakers = [];
         while ($speaker->fetch()) {
             $speakers[$speaker->event_id][] = [
-                'name'       => $speaker->name,
-                'contact_id' => $speaker->contact_id,
-                'first_name' => $speaker->first_name,
-                'last_name'  => $speaker->last_name,
-                'roles'      => self::translateRoles($speaker->roles, $role_ids),
+                [
+                    'name'        => 'name',
+                    'type'        => CRM_Utils_Type::T_STRING,
+                    'value'       => $speaker->name,
+                    'title'       => E::ts("Speaker Name"),
+                    'localizable' => 0,
+                ],
+                [
+                    'name'        => 'contact_id',
+                    'type'        => CRM_Utils_Type::T_INT,
+                    'value'       => $speaker->contact_id,
+                    'title'       => E::ts("Contact ID"),
+                    'localizable' => 0,
+                ],
+                [
+                    'name'        => 'last_name',
+                    'type'        => CRM_Utils_Type::T_STRING,
+                    'value'       => $speaker->last_name,
+                    'title'       => E::ts("Last Name"),
+                    'localizable' => 0,
+                ],
+                [
+                    'name'        => 'first_name',
+                    'type'        => CRM_Utils_Type::T_STRING,
+                    'value'       => $speaker->first_name,
+                    'title'       => E::ts("First Name"),
+                    'localizable' => 0,
+                ],
+                [
+                    'name'        => 'roles',
+                    'type'        => CRM_Utils_Type::T_STRING,
+                    'value'       => self::translateRoles($speaker->roles, $role_ids),
+                    'title'       => E::ts("Speaker Roles"),
+                    'localizable' => 0,
+                ],
             ];
         }
 
