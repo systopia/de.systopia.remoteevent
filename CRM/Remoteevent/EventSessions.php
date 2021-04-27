@@ -120,7 +120,7 @@ class CRM_Remoteevent_EventSessions
                         [
                             'name'        => 'location',
                             'type'        => CRM_Utils_Type::T_STRING,
-                            'value'       => $session['location'],
+                            'value'       => CRM_Utils_Array::value('location', $session, ''),
                             'title'       => E::ts("Location"),
                             'localizable' => 1,
                         ],
