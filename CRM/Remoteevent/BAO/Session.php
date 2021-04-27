@@ -18,6 +18,9 @@ use CRM_Remoteevent_ExtensionUtil as E;
 class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
 {
 
+    /** @var array cached session data by event_id */
+    protected static $session_cache = [];
+
     /**
      * Create a new Session based on array-data
      *
@@ -81,6 +84,61 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
         }
     }
 
+
+
+    /**
+     * Cache the given sessions to be queried with getSessions
+     *
+     * @param array $event_ids
+     *  event IDs
+     */
+    public static function cacheSessions($event_ids, $event_data)
+    {
+        // make sure there are no bogous IDs
+        $event_ids = array_map('intval', $event_ids);
+        if (empty($event_ids)) {
+            return;
+        }
+
+        // this is what we want to collect and cache
+        $session_list_by_event = [];
+
+        // now load all sessions
+        $sessions_raw = civicrm_api3('Session', 'get', [
+            'event_id'     => ['IN' => $event_ids],
+            'option.limit' => 0,
+            'option.sort'  => 'start_date asc, id asc',
+            //'return'       => 'TODO',
+        ])['values'];
+
+        // sort all sessions into the events
+        foreach ($sessions_raw as $session) {
+            // detached session? skip!
+            if (empty($session['event_id'])) {
+                continue;
+            }
+
+            // get the event start date, so we can the session day
+            if (isset($event_data[$session['event_id']]['start_date'])) {
+                $event_start_date = strtotime($event_data[$session['event_id']]['start_date']);
+            } else {
+                Civi::log()->debug('CRM_Remoteevent_BAO_Session:cacheSessions separately loading event start dates. This should not happen, and is very slow.');
+                $event_start_date = strtotime(civicrm_api3('Event', 'getvalue', ['return' => 'start_date', 'id' => $session['event_id']]));
+            }
+
+            // calculate day of event
+            $session['day'] = 1 + (int) ((strtotime($session['start_date']) - $event_start_date) / (60 * 60 * 24));
+
+            // store
+            $session_list_by_event[$session['event_id']][] = $session;
+        }
+
+        // cache
+        foreach ($session_list_by_event as $event_id => $session_list) {
+            self::$session_cache[$event_id] = $session_list;
+        }
+    }
+
     /**
      * Get a list of sessions as property arrays,
      *  ordered by start_date,
@@ -99,10 +157,8 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
     public static function getSessions($event_id, $cached = true, $start_date = null)
     {
         $event_id = (int) $event_id;
-        // handle caching
-        static $session_cache = [];
-        if ($cached && isset($session_cache[$event_id])) {
-            return $session_cache[$event_id];
+        if ($cached && isset(self::$session_cache[$event_id])) {
+            return self::$session_cache[$event_id];
         }
 
         // first: get the start date if it's not passed
@@ -135,7 +191,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
         }
 
         // cache
-        $session_cache[$event_id] = $session_list;
+        self::$session_cache[$event_id] = $session_list;
 
         return $session_list;
     }

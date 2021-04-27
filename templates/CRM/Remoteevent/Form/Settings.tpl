@@ -29,6 +29,12 @@
   </div>
 
   <div class="crm-section">
+    <div class="label">{$form.remote_event_get_session_data.label}&nbsp;{help id="id-session-data" title=$form.remote_event_get_session_data.label}</div>
+    <div class="content">{$form.remote_event_get_session_data.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
     <div class="label">{$form.remote_participant_change_activity_type_id.label}&nbsp;{help id="id-change-activity" title=$form.remote_participant_change_activity_type_id.label}</div>
     <div class="content">{$form.remote_participant_change_activity_type_id.html}</div>
     <div class="clear"></div>
