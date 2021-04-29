@@ -89,6 +89,34 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         $this->assertArraySubset(['You have been added to the waitlist.'], $registration2['status'], "The status should have been 'You have been added to the waitlist'");
     }
 
+    /**
+     * Test the registration_suspended flag
+     */
+    public function testRegistrationSuspended()
+    {
+        // check if disabled by default
+        $event1 = $this->createRemoteEvent();
+        $this->assertTrue(empty($event1['event_remote_registration.remote_registration_suspended']), "Registration shouldn't be suspended by default");
+        $this->assertNotEmpty($event1['can_register'], "Registration should be possible");
+
+        // check if it works when created
+        $event2 = $this->createRemoteEvent(
+            ['event_remote_registration.remote_registration_suspended' => 1]
+        );
+        $this->assertNotEmpty($event2['event_remote_registration.remote_registration_suspended'], "RegistrationSuspended not saved.");
+        $this->assertEmpty($event2['can_register'], "Registration should NOT be possible (suspended)");
+
+        // check if it works when added later
+        $event3 = $this->createRemoteEvent();
+        $this->assertNotEmpty($event3['can_register'], "Registration should be possible");
+        // set suspended flag
+        $set_suspended = ['id' => $event3['id'], 'event_remote_registration.remote_registration_suspended' => 1];
+        CRM_Remotetools_CustomData::resolveCustomFields($set_suspended);
+        $this->traitCallAPISuccess('Event', 'create', $set_suspended);
+        // verify result
+        $event3 = $this->getRemoteEvent($event3['id']);
+        $this->assertEmpty($event3['can_register'], "Registration should NOT be possible");
+    }
 
     /**
      * Test field length validation
