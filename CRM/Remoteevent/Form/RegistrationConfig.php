@@ -107,6 +107,12 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'remote_disable_civicrm_registration',
             E::ts("Disable native CiviCRM Online Registration")
         );
+        $this->add(
+            'checkbox',
+            'remote_registration_suspended',
+            E::ts("Registration Suspended?")
+        );
+
         $this->assign('profiles', $available_registration_profiles);
 
         // add GTAC field
@@ -142,6 +148,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_gtac'                   => 'remote_registration_gtac',
                 'event_remote_registration.remote_registration_external_identifier'    => 'remote_registration_external_identifier',
                 'event_remote_registration.remote_disable_civicrm_registration'        => 'remote_disable_civicrm_registration',
+                'event_remote_registration.remote_registration_suspended'              => 'remote_registration_suspended',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
             $values = civicrm_api3(
@@ -233,6 +240,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             ),
             'event_remote_registration.remote_disable_civicrm_registration'    => CRM_Utils_Array::value(
                 'remote_disable_civicrm_registration',
+                $values,
+                0
+            ),
+            'event_remote_registration.remote_registration_suspended'    => CRM_Utils_Array::value(
+                'remote_registration_suspended',
                 $values,
                 0
             ),

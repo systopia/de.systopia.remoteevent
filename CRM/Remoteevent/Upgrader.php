@@ -136,6 +136,19 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         return true;
     }
 
+    /**
+     * Adding 'registration suspended' field
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0011()
+    {
+        $this->ctx->log->info('Updating data structures');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        return true;
+    }
 
 
     /****************************************************************

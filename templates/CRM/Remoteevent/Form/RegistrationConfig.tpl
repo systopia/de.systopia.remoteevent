@@ -72,12 +72,22 @@
       <div class="content">{$form.registration_end_date.html}</div>
       <div class="clear"></div>
     </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_suspended.label}&nbsp;{help id="id-registration-suspended" title=$form.remote_registration_suspended.label}</div>
+      <div class="content">{$form.remote_registration_suspended.html}</div>
+      <div class="clear"></div>
+    </div>
     <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
       <div class="label">{$form.requires_approval.label}&nbsp;{help id="id-requires-approval" title=$form.requires_approval.label}</div>
       <div class="content">{$form.requires_approval.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
+</fieldset>
+
+<fieldset id="registration" class="crm-collapsible remote-registration-content">
+    <legend class="collapsible-title">{ts}Registration Updates{/ts}</legend>
+    <div>
+      <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">
       <div class="label">{$form.allow_selfcancelxfer.label}&nbsp;{help id="id-allow-selfcancelxfer" title=$form.allow_selfcancelxfer.label}</div>
       <div class="content">{$form.allow_selfcancelxfer.html}</div>
       <div class="clear"></div>
@@ -97,7 +107,6 @@
       <div class="content">{$form.selfcancelxfer_time.html}</div>
       <div class="clear"></div>
     </div>
-  </div>
 </fieldset>
 
 <fieldset id="registration" class="crm-collapsible collapsed remote-registration-content">

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-01-28 10:03+0400\n"
+"POT-Creation-Date: 2021-04-29 20:27+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -44,6 +44,73 @@ msgstr "Veranstaltungsort"
 msgid ""
 "These contacts can be used as event locations by the RemoteEvents extension"
 msgstr "Diese Kontakte können als Veranstaltungsorte verwendet werden"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Session List"
+msgstr "Workshop Liste"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "List of sessions of the event (json encoded)"
+msgstr "Liste der Workshops in der Veranstaltung (json encodiert)"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Starts"
+msgstr "Beginnt"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Ends"
+msgstr "Endet"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+msgid "Day"
+msgstr "Tag"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: resources/remote_session_description.tpl
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+msgid "Title"
+msgstr "Titel"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "Description"
+msgstr "Beschreibung"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+#: resources/remote_session_description.tpl
+#: resources/remote_session_short_description.tpl
+msgid "Location"
+msgstr "Veranstaltungsort"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+msgid "Slot"
+msgstr "Zeitfenster"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+#: resources/remote_session_description.tpl
+#: resources/remote_session_short_description.tpl
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+msgid "Category"
+msgstr "Kategorie"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+#: resources/remote_session_description.tpl
+#: resources/remote_session_short_description.tpl
+#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+msgid "Type"
+msgstr "Typ"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+msgid "Max Participants"
+msgstr "Maximale Teilnehmeranzahl"
+
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
+#: CRM/Remoteevent/Form/Session.php resources/remote_session_description.tpl
+msgid "Presenter"
+msgstr "Vortragende/r"
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "[FULL] "
@@ -122,6 +189,57 @@ msgstr "unbekannt"
 msgid "no category"
 msgstr "ohne Kategorie"
 
+#: CRM/Remoteevent/EventSessions.php
+msgid ""
+"The event has no start date, so the session dates are probably not right."
+msgstr ""
+"Die Veranstaltung hat kein Startdatum, daher sind die Workshop Tag "
+"wahrscheinlich nicht korrekt"
+
+#: CRM/Remoteevent/EventSessions.php
+msgid ""
+"The start or end date of session [%1] (%2) is outside of the event's time "
+"frame."
+msgstr ""
+"Das Start- oder Enddatum des Workshops [%1] (%2) liegt außerhalb der "
+"Veranstaltung."
+
+#: CRM/Remoteevent/EventSessions.php
+msgid "%1 other sessions also violate the event's start or end date."
+msgstr ""
+"%1 weitere Workshops liegen außerhalb des Zeitrahmens der Veranstaltung."
+
+#: CRM/Remoteevent/EventSpeaker.php
+msgid "Speaker List"
+msgstr "Vortragende"
+
+#: CRM/Remoteevent/EventSpeaker.php
+msgid "List of speakers of the event (json encoded)"
+msgstr "Liste der Vortragenden (json encodiert)"
+
+#: CRM/Remoteevent/EventSpeaker.php
+msgid "Speaker Name"
+msgstr "Vortrangende/r"
+
+#: CRM/Remoteevent/EventSpeaker.php
+#: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
+msgid "Contact ID"
+msgstr "Kontakt ID"
+
+#: CRM/Remoteevent/EventSpeaker.php
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "Last Name"
+msgstr "Nachname"
+
+#: CRM/Remoteevent/EventSpeaker.php
+#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+msgid "First Name"
+msgstr "Vorname"
+
+#: CRM/Remoteevent/EventSpeaker.php CRM/Remoteevent/Form/Settings.php
+msgid "Speaker Roles"
+msgstr "Vortrangende/r-Rollen"
+
 #: CRM/Remoteevent/Form/EventLocation.php
 msgid "Additional Information for this Event"
 msgstr "Zusatzinformationen für diese Veranstaltung"
@@ -130,10 +248,6 @@ msgstr "Zusatzinformationen für diese Veranstaltung"
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 msgid "Add Session"
 msgstr "Workshop hinzufügen"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-msgid "Event doesn't have a start date!"
-msgstr "Die Veranstaltung hat kein Startdatum!"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 #: CRM/Remoteevent/Form/ParticipantSessions.php
@@ -207,59 +321,10 @@ msgid "ID"
 msgstr "ID"
 
 #: CRM/Remoteevent/Form/EventSessions.php
-msgid "Day"
-msgstr "Tag"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-msgid "Slot"
-msgstr "Zeitfenster"
-
-#: CRM/Remoteevent/Form/EventSessions.php
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Time"
 msgstr "Zeit"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-#: resources/remote_session_description.tpl
-#: resources/remote_session_short_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
-#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
-msgid "Category"
-msgstr "Kategorie"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-#: resources/remote_session_description.tpl
-#: resources/remote_session_short_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
-#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
-msgid "Type"
-msgstr "Typ"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-#: resources/remote_session_description.tpl
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
-#: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
-msgid "Title"
-msgstr "Titel"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-#, fuzzy
-#| msgid "Maximum Participants"
-msgid "Max Participants"
-msgstr "Maximale Teilnehmeranzahl"
-
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/Session.php
-#: resources/remote_session_description.tpl
-msgid "Presenter"
-msgstr "Vortragende/r"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-#: resources/remote_session_description.tpl
-#: resources/remote_session_short_description.tpl
-msgid "Location"
-msgstr "Veranstaltungsort"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "%1 - %2 Sessions.csv"
@@ -323,8 +388,16 @@ msgid "Use Custom Event Location?"
 msgstr "Alternativen Veranstaltungsort verwenden?"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "External Identifier"
+msgstr "Externe Identifikation"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Disable native CiviCRM Online Registration"
 msgstr "CiviCRM Standard-Online-Anmeldung deaktivieren?"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Registration Suspended?"
+msgstr "Anmeldung Ausgesetzt?"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Terms and Conditions"
@@ -352,7 +425,7 @@ msgstr "Stornierungs- oder Übertragungszeitraum (in Stunden)"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Please enter the number of hours (as an integer)."
-msgstr ""
+msgstr "Bitte die Anzahl der Stunden eingeben."
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Event Information"
@@ -395,6 +468,18 @@ msgstr "Speichern"
 msgid "You must select a default profile"
 msgstr "Sie müssen ein Standardanmeldeprofil hinterlegen"
 
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid ""
+"The external identifier can only contain basic characters, numbers, and the "
+"characters '_', '#', and '-'."
+msgstr ""
+"Die Externe Identifikation darf nur einfache Buchstaben, Zahlen, sowie die "
+"Zeichen '_', '#', und '-' enthalten."
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "This external identifier is already in use"
+msgstr ""
+
 #: CRM/Remoteevent/Form/Search/SessionParticipantSearch.mgd.php
 msgid "Session Participants Search"
 msgstr "Suche nach Workshopteilnehmern"
@@ -412,10 +497,6 @@ msgstr "Suche nach Workshopteilnehmern"
 #: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
 msgid "Event"
 msgstr "Veranstaltung"
-
-#: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
-msgid "Contact ID"
-msgstr "Kontakt ID"
 
 #: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
 #: templates/CRM/Remoteevent/Page/SessionParticipantList.tpl
@@ -508,8 +589,16 @@ msgid "Statuses blocking (re)registration"
 msgstr "Status die eine erneute Anmeldung verhindern"
 
 #: CRM/Remoteevent/Form/Settings.php
-msgid "Speaker Roles"
-msgstr "Vortrangende/r-Rollen"
+msgid "Submit Session Data"
+msgstr "Workshop Informationen Übertragen"
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "no"
+msgstr "nein"
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "yes"
+msgstr "ja"
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Participant Update Activity Type"
@@ -526,6 +615,10 @@ msgstr "Kontakt-Update Profil (XCM)"
 #: CRM/Remoteevent/Form/Settings.php
 msgid "No Updates"
 msgstr "Keine Aktualisierung"
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Speed up API"
+msgstr "API Beschleunigen"
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Registration Modification Link"
@@ -621,7 +714,11 @@ msgstr "Teilnahmeliste für Workshop \"%1\""
 
 #: CRM/Remoteevent/Page/SessionParticipantList.php
 msgid "View"
-msgstr ""
+msgstr "Ansicht"
+
+#: CRM/Remoteevent/Registration.php
+msgid "Registration Deactivated"
+msgstr "Anmeldung Nicht Aktiv"
 
 #: CRM/Remoteevent/Registration.php
 msgid "Event is not active"
@@ -661,12 +758,12 @@ msgstr ""
 "nicht erlaubt"
 
 #: CRM/Remoteevent/Registration.php
-msgid "No eligible registration for modification found."
-msgstr "Es wurde keine bestehende Anmeldung zur Aktualisierung gefunden."
-
-#: CRM/Remoteevent/Registration.php
 msgid "The window for registration changes has passed."
 msgstr "Die Bearbeitung von Anmeldungen ist nicht mehr möglich."
+
+#: CRM/Remoteevent/Registration.php
+msgid "No eligible registration for modification found."
+msgstr "Es wurde keine bestehende Anmeldung zur Aktualisierung gefunden."
 
 #: CRM/Remoteevent/Registration.php
 msgid "This event does not allow participants to update their registration."
@@ -705,38 +802,9 @@ msgstr "Stammdaten"
 msgid "Email"
 msgstr "E-Mail"
 
-#: CRM/Remoteevent/RegistrationProfile/Standard1.php
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Participant's email address"
-msgstr "E-Mail Adresse des Teilnehmers"
-
 #: CRM/Remoteevent/RegistrationProfile/Standard2.php
 msgid "Prefix"
 msgstr "Anrede"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Participant's Prefix"
-msgstr "Teilnehmer Anrede"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Participant's Formal Title"
-msgstr "Titel des Teilnehmers"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "First Name"
-msgstr "Vorname"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Participant's First Name"
-msgstr "Vorname des Teilnehmers"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Last Name"
-msgstr "Nachname"
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Participant's Last Name"
-msgstr "Nachname des Teilnehmers"
 
 #: CRM/Remoteevent/RegistrationProfile/Standard3.php
 msgid "Phone Number"
@@ -789,6 +857,10 @@ msgstr "Erforderlich"
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Invalid Value"
 msgstr "Ungültiger Wert"
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "Value too long"
+msgstr ""
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Profile [%2] cannot be used with RemoteEvent [%1]."
@@ -850,6 +922,10 @@ msgstr ""
 "Link für das Bearbeiten einer Anmeldung. Hierfür muss die Basis-URL für das "
 "Barbeiten von Anmeldungen in den RemoteEvent Einstellungen gesetzt sein."
 
+#: CRM/Remoteevent/RemoteEvent.php
+msgid "Unkown"
+msgstr ""
+
 #: CRM/Remoteevent/UI.php
 msgid "Remote Online Registration"
 msgstr "Onlineanmeldung (CiviRemote)"
@@ -877,6 +953,10 @@ msgstr "Einladung ablehnen"
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
 msgid "Invitation Feedback"
 msgstr "Rückmeldung zur Einladung"
+
+#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
+msgid "The link or reference you're using is no longer valid."
+msgstr ""
 
 #: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
 msgid "Welcome %1. You are modifying your registration for event '%2'"
@@ -906,50 +986,39 @@ msgstr "Teilnehmer bereits geladen."
 msgid "Contact already loaded."
 msgstr "Kontakt bereits gelanden."
 
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
-#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
-#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
-msgid "Locale"
+#: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
+msgid "Template ID"
 msgstr ""
 
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
-#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
-#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
-msgid "Locale of the field labels/etc. NOT IMPLEMENTED YET"
-msgstr ""
-
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
-#: api/v3/RemoteParticipant/GetForm.php
-msgid "Token"
-msgstr ""
-
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
-#: api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
 msgid ""
-"You can submit an invite token that can be used to identify the contact, in "
-"which case the fields should come with the default data. This takes "
-"preference over the remote_contact_id"
-msgstr ""
-"Sie können einen Einladungstoken übermitteln um den Kontakt zu "
-"identifizieren. In diesem Fall wird das Formular i.d.R. vorausgefüllt. Diese "
-"Form der Identifizierung hat Vorrang vor remote_contact_id ."
-
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
-#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
-#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
-msgid "Remote Contact ID"
+"If the ID of an existing event or event template is given, the new event "
+"will be based on that."
 msgstr ""
 
-#: api/v3/RemoteEvent/Get.php api/v3/RemoteEvent/Getcount.php
-msgid ""
-"You can submit a remote contact, in which case the result will be filtered "
-"for the events available to that contact"
-msgstr ""
-"Sie können einen \"Remote Contact\" mit übermitteln, in diesem Fall wird das "
-"Ergebnis gefiltert auf für diesen Kontakt verfügbare Veranstaltungen."
+#: api/v3/RemoteEvent/Spawn.php
+msgid "Event Type"
+msgstr "Veranstaltungstyp"
+
+#: api/v3/RemoteEvent/Spawn.php
+msgid "Type of the event"
+msgstr "Art der Veranstaltung"
+
+#: api/v3/RemoteEvent/Spawn.php
+msgid "Event Title"
+msgstr "Veranstaltungstitel"
+
+#: api/v3/RemoteEvent/Spawn.php
+msgid "Title of the event"
+msgstr "Titel der Veranstaltung"
+
+#: api/v3/RemoteEvent/Spawn.php
+msgid "Event Start + Time"
+msgstr "Veranstaltungsbeginn"
+
+#: api/v3/RemoteEvent/Spawn.php
+msgid "Event End + Time"
+msgstr "Veranstaltungsende"
 
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
@@ -961,6 +1030,12 @@ msgstr "Veranstaltungs ID"
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Internal ID of the event the registration form is needed for"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+msgid "Remote Contact ID"
 msgstr ""
 
 #: api/v3/RemoteParticipant/Cancel.php
@@ -977,6 +1052,18 @@ msgstr ""
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "You can cancel with a as generated by emails"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+msgid "Locale"
+msgstr ""
+
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+msgid "Locale of the field labels/etc. NOT IMPLEMENTED YET"
 msgstr ""
 
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php
@@ -1015,6 +1102,20 @@ msgid "Which context/action is the form for (create/cancel/update)"
 msgstr ""
 "Für welchen Kontext bzw. welche Aktion ist das Formular gedacht (anlegen/"
 "stornieren/aktualisieren)"
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "Token"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid ""
+"You can submit an invite token that can be used to identify the contact, in "
+"which case the fields should come with the default data. This takes "
+"preference over the remote_contact_id"
+msgstr ""
+"Sie können einen Einladungstoken übermitteln um den Kontakt zu "
+"identifizieren. In diesem Fall wird das Formular i.d.R. vorausgefüllt. Diese "
+"Form der Identifizierung hat Vorrang vor remote_contact_id ."
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "Invalid context '%1'"
@@ -1076,6 +1177,10 @@ msgstr "RemoteEvent: Öffentliche Events Anzeigen"
 #: remoteevent.php
 msgid "RemoteEvent: list all events"
 msgstr "RemoteEvent: Alle Events Anzeigen"
+
+#: remoteevent.php
+msgid "RemoteEvent: spawn (create) events"
+msgstr "RemoteEvent: Neue Events erzeugen"
 
 #: remoteevent.php
 msgid "RemoteEventRegistration: register"
@@ -1321,9 +1426,34 @@ msgstr "Kann als Überschrift Ihrer Dankeschönbereichs verwendet werden."
 msgid "Can be displayed at the bottom of your thank you page."
 msgstr "Kann im Fußbereich des Dankeschönbereichs angezeigt werden."
 
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"You can set an external identifier to identify this this event from an "
+"external system, e.g. a registration platform. This identifier has to be "
+"unique."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"If you wish to change an existing external identifier, first make sure no "
+"external system still refers to the previous value."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"With this flag you can suspend / disable the remote online registration for "
+"this event, regardless of the other restrictions."
+msgstr ""
+"Mit dieser Einstellung können sie die Registrierung über die RemoteEvent "
+"Schnittstelle aussetzen, unabhängig von den anderen Einstellungen"
+
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Registration Restrictions"
 msgstr "Einstellungen zur Anmeldung"
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
+msgid "Registration Updates"
+msgstr "Bearbeitung Bestehender Anmeldungen"
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Public Event Text Blocks"
@@ -1342,6 +1472,13 @@ msgid ""
 msgstr ""
 "Alle Teilnehmer mit den hier ausgewählten Rollen werden bei den "
 "Eventinformationen als Vortragende gelistet."
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"If this is active, the session data will be delivered with the general event "
+"data (<code>RemoteEvent.get</code>). Turn this off if you don't need it, as "
+"it can be increase the volume of submitted data substantially."
+msgstr ""
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
@@ -1374,6 +1511,26 @@ msgid "If you don't select anything here, nothing will be recorded."
 msgstr ""
 "Wenn Sie die Auswahl leer lassen, so werden die Änderungen nicht "
 "aufgezeichnet."
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"If you have a lot of events in your system, the response time to the "
+"registration system(s) via <code>RemoteEvent.get</code> can become quite "
+"slow."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"You can enable this option to boost its performance, but it if you have "
+"customisations that manipulate flags like <code>can_register</code> or "
+"<code>is_registered</code>, the results might be inaccurate."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid ""
+"The reason for this lies in RemoteEvent's architecture, where Sympfony "
+"events can manipulate data <i>after</i> the main query was completed."
+msgstr ""
 
 #: templates/CRM/Remoteevent/Form/Task/ParticipantSession.hlp
 msgid ""
@@ -1412,6 +1569,31 @@ msgstr "Teilnehmerrolle"
 #: templates/CRM/Remoteevent/Page/SessionParticipantList.tpl
 msgid "(not counted)"
 msgstr "(nicht gezählt)"
+
+#~ msgid "Event doesn't have a start date!"
+#~ msgstr "Die Veranstaltung hat kein Startdatum!"
+
+#~ msgid "Participant's email address"
+#~ msgstr "E-Mail Adresse des Teilnehmers"
+
+#~ msgid "Participant's Prefix"
+#~ msgstr "Teilnehmer Anrede"
+
+#~ msgid "Participant's Formal Title"
+#~ msgstr "Titel des Teilnehmers"
+
+#~ msgid "Participant's First Name"
+#~ msgstr "Vorname des Teilnehmers"
+
+#~ msgid "Participant's Last Name"
+#~ msgstr "Nachname des Teilnehmers"
+
+#~ msgid ""
+#~ "You can submit a remote contact, in which case the result will be "
+#~ "filtered for the events available to that contact"
+#~ msgstr ""
+#~ "Sie können einen \"Remote Contact\" mit übermitteln, in diesem Fall wird "
+#~ "das Ergebnis gefiltert auf für diesen Kontakt verfügbare Veranstaltungen."
 
 #~ msgid "Not enough contact data to identify/create contact."
 #~ msgstr ""

@@ -160,6 +160,11 @@ class CRM_Remoteevent_Registration
             $event_data = CRM_Remoteevent_EventCache::getEvent($event_id);
         }
 
+        // registration suspended?
+        if (self::isRegistrationSuspended($event_id, $event_data)) {
+            return E::ts("Registration Deactivated");
+        }
+
         // event active?
         if (empty($event_data['is_active'])) {
             return E::ts("Event is not active");
@@ -378,6 +383,27 @@ class CRM_Remoteevent_Registration
         } else {
             return false;
         }
+    }
+
+
+    /**
+     * Check the registration for this event is currently suspended (setting)
+     *
+     * @param integer $event_id
+     *      the event you want to register to
+     *
+     * @param array $event_data
+     *      the data known of the event (so we don't have to pull it ourselves)s
+     *
+     * @return true|string
+     *      is the registration currently suspended?
+     */
+    public static function isRegistrationSuspended($event_id, $event_data) {
+        if (empty($event_data)) {
+            $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
+        }
+
+        return !empty($event_data['event_remote_registration.remote_registration_suspended']);
     }
 
     /**

@@ -91,5 +91,9 @@
   <p>{ts}If you wish to change an existing external identifier, first make sure no external system still refers to the previous value.{/ts}</p>
 {/htxt}
 
+{htxt id='id-registration-suspended'}
+  <p>{ts}With this flag you can suspend / disable the remote online registration for this event, regardless of the other restrictions.{/ts}</p>
+{/htxt}
+
 
 {/crmScope}
