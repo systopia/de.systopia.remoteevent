@@ -130,7 +130,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
             $session['day'] = 1 + (int) ((strtotime($session['start_date']) - $event_start_date) / (60 * 60 * 24));
 
             // store
-            $session_list_by_event[$session['event_id']][] = $session;
+            $session_list_by_event[$session['event_id']][$session['id']] = $session;
         }
 
         // cache
@@ -293,7 +293,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
             LEFT JOIN civicrm_contact contact
                    ON contact.id = participant.contact_id
             LEFT JOIN civicrm_participant_status_type participant_status
-                   ON participant_status.id = participant.status_id          
+                   ON participant_status.id = participant.status_id
             WHERE {$WHERE_CLAUSE}
             ");
         while ($participant_query->fetch()) {
