@@ -139,7 +139,7 @@ class CRM_Remoteevent_EventLocation
             LEFT JOIN civicrm_value_remote_registration settings
                    ON settings.entity_id = event.id
             LEFT JOIN civicrm_value_event_alternative_location alt_location
-                   ON settings.entity_id = event.id
+                   ON alt_location.entity_id = event.id
             LEFT JOIN civicrm_contact location_contact
                    ON alt_location.contact_id = location_contact.id
             LEFT JOIN civicrm_address location_address
