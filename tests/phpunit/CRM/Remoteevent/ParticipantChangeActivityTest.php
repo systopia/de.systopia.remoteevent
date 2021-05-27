@@ -80,8 +80,9 @@ class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_Test
         ]);
         $this->assertEquals(1, $change_activities['count'], "There should be a change activity with that contact");
         $change_activity = reset($change_activities['values']);
-        $this->assertNotEmpty(strstr($change_activity['details'], 'Registered'), "The activity should mention the Registered->Cancelled change");
-        $this->assertNotEmpty(strstr($change_activity['details'], 'Cancelled'), "The activity should mention the Registered->Cancelled change");
+        // look for the jumbled (md5) names instead of the real ones
+        $this->assertNotEmpty(strstr($change_activity['details'], md5('Registered')), "The activity should mention the Registered->Cancelled change");
+        $this->assertNotEmpty(strstr($change_activity['details'], md5('Cancelled')), "The activity should mention the Registered->Cancelled change");
     }
 
     /**

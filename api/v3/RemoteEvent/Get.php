@@ -65,6 +65,7 @@ function civicrm_api3_remote_event_get($params)
     $event_get = $get_params->getParameters();
     CRM_Remoteevent_CustomData::resolveCustomFields($event_get);
     unset($event_get['return']); // we need the full event to cache
+    Civi::log()->debug("RemoteEvent generated Event.get: " . json_encode($event_get));
     $result     = civicrm_api3('Event', 'get', $event_get);
     $event_list = $result['values'];
     $event_ids  = [];

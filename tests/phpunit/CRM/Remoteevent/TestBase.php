@@ -55,6 +55,9 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
 
         $profile = CRM_Xcm_Configuration::getConfigProfile('default');
 
+        // jumble the participant status labels so we're sure we only using the names
+        CRM_Core_DAO::executeQuery("UPDATE civicrm_participant_status_type SET label = MD5(name);");
+
         //Civi::settings()->set('remote_event_get_performance_enhancement', true);
     }
 

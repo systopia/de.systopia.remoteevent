@@ -101,7 +101,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
 
         // verify contact is cancelled
         $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-        $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+        $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
     }
 
     /**
@@ -130,7 +130,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
 
         // verify contact is cancelled
         $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-        $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+        $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
     }
 
     /**
@@ -161,7 +161,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
 
         // verify contact is cancelled
         $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-        $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+        $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
     }
 
     /**
@@ -192,7 +192,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
 
         // verify contact is cancelled
         $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-        $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+        $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
     }
 
     /**
@@ -229,7 +229,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
 
         // verify contact NOT cancelled
         $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-        $this->assertEquals('Registered', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+        $this->assertParticipantStatus($participant['participant_id'], 'Registered', "Participant doesn't seem to be cancelled");
     }
 
 }
