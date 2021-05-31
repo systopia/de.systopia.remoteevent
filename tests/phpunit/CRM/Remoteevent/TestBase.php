@@ -200,7 +200,6 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     /**
      * Register the given contact to the given event
      *
-     * @param integer $participant_id
      * @param array $submission
      */
     public function updateRegistration($submission)
@@ -211,6 +210,21 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             $submission['token'] = $token;
         }
         return $this->callRemoteEventAPI('RemoteParticipant', 'update', $submission);
+    }
+
+    /**
+     * Cancel the given registration
+     *
+     * @param array $submission
+     */
+    public function cancelRegistration($submission)
+    {
+        if (empty($submission['token']) && !empty($submission['participant_id'])) {
+            $token = CRM_Remotetools_SecureToken::generateEntityToken(
+                'Participant', $submission['participant_id'], null, 'cancel');
+            $submission['token'] = $token;
+        }
+        return $this->callRemoteEventAPI('RemoteParticipant', 'cancel', $submission);
     }
 
     /**

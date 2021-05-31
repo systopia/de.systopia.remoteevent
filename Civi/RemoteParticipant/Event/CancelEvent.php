@@ -41,6 +41,7 @@ class CancelEvent extends ChangingEvent
 
     public function __construct($submission_data, $participants)
     {
+        $this->token_usages = ['cancel'];
         $this->submission  = $submission_data;
         $this->participants_identified = $participants;
         $this->error_list = [];
@@ -82,14 +83,14 @@ class CancelEvent extends ChangingEvent
     }
 
     /**
-     * Get the currently available contact_data
+     * Get the participant object
      *
-     * @return array $contact_data
-     *    contact_data data
+     * @return array $participant
+     *    participant data
      */
-    public function getParticipant() {
-        // todo: implement properly
-        return [];
+    public function getParticipant()
+    {
+        return $this->participant;
     }
 
     /**
