@@ -421,10 +421,13 @@ class CRM_Remoteevent_Registration
      * @param array $status_id_list
      *    list of participant status ids to be included - default is <all>
      *
+     * @param boolean $only_counted
+     *    only count registration where the status_type has is_counted = 1
+     *
      * @return int
      *    number of registrations (participant objects)
      */
-    public static function getRegistrationCount($event_id, $contact_id = null, $class_list = ['Positive'], $status_id_list = [])
+    public static function getRegistrationCount($event_id, $contact_id = null, $class_list = ['Positive'], $status_id_list = [], $only_counted = true)
     {
         $event_id = (int) $event_id;
         $contact_id = (int) $contact_id;
@@ -448,6 +451,11 @@ class CRM_Remoteevent_Registration
         } else {
             $AND_CONTACT_RESTRICTION = "";
         }
+        if ($only_counted) {
+            $AND_IS_COUNTED_CONDITION = 'AND status_type.is_counted = 1';
+        } else {
+            $AND_IS_COUNTED_CONDITION = '';
+        }
 
         $query = "
             SELECT COUNT(participant.id)
@@ -457,6 +465,7 @@ class CRM_Remoteevent_Registration
             LEFT JOIN civicrm_participant_status_type status_type
                    ON status_type.id = participant.status_id
             WHERE status_type.class IN {$REGISTRATION_CLASSES}
+                  {$AND_IS_COUNTED_CONDITION}
                   AND participant.event_id = {$event_id}
                   {$AND_STATUS_ID_IN_LIST}
                   {$AND_CONTACT_RESTRICTION}";
