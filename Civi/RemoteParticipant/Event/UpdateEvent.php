@@ -179,7 +179,25 @@ class UpdateEvent extends ChangingEvent
         $this->participant_update[$field_name] = $value;
     }
 
+    /**
+     * Get a copy of the submitted parameters
+     *
+     * @return array
+     *   the submitted parameters
+     */
     public function getQueryParameters()
+    {
+        return $this->submission;
+    }
+
+    /**
+     * Get a the submitted parameters as a reference
+     *  this allows you to adjust the submission parameters, but be careful with this
+     *
+     * @return array
+     *   the submitted parameters
+     */
+    public function &getSubmissionReference()
     {
         return $this->submission;
     }
