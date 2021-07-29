@@ -214,7 +214,7 @@ class CRM_Remoteevent_Registration
         if ($contact_id) {
             $blacklist_status_list = Civi::settings()->get('remote_registration_blocking_status_list');
             if (!empty($blacklist_status_list) && is_array($blacklist_status_list)) {
-                $blacklisted = self::getRegistrationCount($event_id, $contact_id, [], $blacklist_status_list);
+                $blacklisted = self::getRegistrationCount($event_id, $contact_id, [], $blacklist_status_list, false);
                 if ($blacklisted) {
                     return E::ts("Contact already has a registration record and can currently not register.");
                 }
