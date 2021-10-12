@@ -16,6 +16,8 @@
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
 use \Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
+use \Civi\EventMessages\MessageTokens as MessageTokens;
+use \Civi\EventMessages\MessageTokenList as MessageTokenList;
 
 /**
  * Functionality around the EventLocation
@@ -284,5 +286,52 @@ class CRM_Remoteevent_EventLocation
             'localizable'   => 0,
             'is_core_field' => false,
         ]);
+    }
+
+    /**
+     * @param MessageTokenList $tokenList
+     *   token list event
+     */
+    public static function listTokens($tokenList)
+    {
+        $tokenList->addToken('$location_name', E::ts("Event Location Name"));
+        $tokenList->addToken('$location_remark', E::ts("Event Location - Additional Note"));
+        $tokenList->addToken('$location_street_address', E::ts("Event Location - Address Line"));
+        $tokenList->addToken('$location_city', E::ts("Event Location - City"));
+        $tokenList->addToken('$location_supplemental_address_1', E::ts("Event Location - Supplemental Address 1"));
+        $tokenList->addToken('$location_supplemental_address_2', E::ts("Event Location - Supplemental Address 2"));
+        $tokenList->addToken('$location_supplemental_address_3', E::ts("Event Location - Supplemental Address 3"));
+        $tokenList->addToken('$location_geo_code_1', E::ts("Event Location - Latitude"));
+        $tokenList->addToken('$location_geo_code_2', E::ts("Event Location - Longitude"));
+    }
+
+    /**
+     * Add some tokens to an event message:
+     *  - cancellation token
+     *
+     * @param MessageTokens $messageTokens
+     *   the token list
+     */
+    public static function addTokens(MessageTokens $messageTokens)
+    {
+        // check if tokens are requested
+        $uses_location_tokens = false;
+        foreach (self::FIELDS as $token_name) {
+            if ($messageTokens->requiresToken($token_name)) {
+                $uses_location_tokens = true;
+                break;
+            }
+        }
+
+        // if so, add all tokens
+        if ($uses_location_tokens) {
+            $tokens = $messageTokens->getTokens();
+            if (!empty($tokens['participant']['event_id'])) {
+                $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($tokens['participant']['event_id']);
+                foreach (self::FIELDS as $token_name) {
+                    $messageTokens->setToken($token_name, $event_data[$token_name] ?? '');
+                }
+            }
+        }
     }
 }
