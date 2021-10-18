@@ -201,23 +201,14 @@ class CRM_Remoteevent_EventFlags
 
             if ($contact_id) {
                 // PERSONALISED OVERRIDES
-                $event['participant_registration_count'] = (int)
-                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
-                $event['is_registered'] = (int)($event['participant_registration_count'] > 0);
-                $event['can_edit_registration'] = (int)($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
-                $event['can_cancel_registration'] = (int)($event['can_cancel_registration'] && ($event['participant_registration_count'] > 0));
-            }
-        }
-
-        // add personal flags
-        if ($contact_id) {
-            // don't do this again: CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
-            foreach ($result->getEventData() as &$event) {
-                $event['participant_registration_count'] = (int)
-                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending']);
-                $event['can_edit_registration'] = (int)
-                    ($event['can_edit_registration'] && ($event['participant_registration_count'] > 0));
-                $event['is_registered'] = $event['participant_registration_count'] > 0 ? 1 : 0;
+                $valid_participant_registrations_count =
+                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id);
+                $all_participant_registrations_count =
+                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending'], [], false);
+                $event['participant_registration_count'] = (int) $valid_participant_registrations_count;
+                $event['is_registered'] = (int) ($valid_participant_registrations_count > 0);
+                $event['can_edit_registration'] = (int)($event['can_edit_registration'] && ($all_participant_registrations_count > 0));
+                $event['can_cancel_registration'] = (int)($event['can_cancel_registration'] && ($all_participant_registrations_count > 0));
             }
         }
     }
