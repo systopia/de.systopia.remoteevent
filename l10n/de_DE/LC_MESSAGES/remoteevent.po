@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.remoteevent\n"
-"POT-Creation-Date: 2021-04-29 20:27+0200\n"
+"POT-Creation-Date: 2021-10-19 15:26+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: SYSTOPIA (info@systopia.de)\n"
@@ -44,6 +44,42 @@ msgstr "Veranstaltungsort"
 msgid ""
 "These contacts can be used as event locations by the RemoteEvents extension"
 msgstr "Diese Kontakte können als Veranstaltungsorte verwendet werden"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location Name"
+msgstr "Veranstaltungsort - Name"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - Additional Note"
+msgstr "Veranstaltungsort - Zusatz"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - Address Line"
+msgstr "Veranstaltungsort - Straße / Hausnummer"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - City"
+msgstr "Veranstaltungsort - Stadt"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - Supplemental Address 1"
+msgstr "Veranstaltungsort - Adresszusatz 1"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - Supplemental Address 2"
+msgstr "Veranstaltungsort - Adresszusatz 2"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - Supplemental Address 3"
+msgstr "Veranstaltungsort - Adresszusatz 3"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - Latitude"
+msgstr "Veranstaltungsort - Längengrad"
+
+#: CRM/Remoteevent/EventLocation.php
+msgid "Event Location - Longitude"
+msgstr "Veranstaltungsort - Breitengrad"
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "Session List"
