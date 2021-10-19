@@ -155,6 +155,7 @@ function remoteevent_civicrm_config(&$config)
         ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_RegistrationUpdate::AFTER_APPLY_PARTICIPANT_CHANGES);
 
     // EVENTMESSAGES.TOKENS
+    // 1) REMOTE EVENT TOKENS
     $dispatcher->addUniqueListener(
         'civi.eventmessages.tokens',
         ['CRM_Remoteevent_RemoteEvent', 'addTokens']
@@ -163,6 +164,8 @@ function remoteevent_civicrm_config(&$config)
         'civi.eventmessages.tokenlist',
         ['CRM_Remoteevent_RemoteEvent', 'listTokens']
     );
+
+    // 2) SESSION TOKENS
     $dispatcher->addUniqueListener(
         'civi.eventmessages.tokens',
         ['CRM_Remoteevent_EventSessions', 'addTokens']
@@ -170,6 +173,16 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         'civi.eventmessages.tokenlist',
         ['CRM_Remoteevent_EventSessions', 'listTokens']
+    );
+
+    // 2) EVENT LOCATION TOKENS
+    $dispatcher->addUniqueListener(
+        'civi.eventmessages.tokens',
+        ['CRM_Remoteevent_EventLocation', 'addTokens']
+    );
+    $dispatcher->addUniqueListener(
+        'civi.eventmessages.tokenlist',
+        ['CRM_Remoteevent_EventLocation', 'listTokens']
     );
 }
 
