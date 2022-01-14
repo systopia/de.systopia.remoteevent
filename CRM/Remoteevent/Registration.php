@@ -458,6 +458,7 @@ class CRM_Remoteevent_Registration
             $AND_IS_COUNTED_CONDITION = '';
         }
 
+        $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
         $query = "
             SELECT COUNT(participant.id)
             FROM civicrm_participant participant
@@ -466,7 +467,11 @@ class CRM_Remoteevent_Registration
             LEFT JOIN civicrm_participant_status_type status_type
                    ON status_type.id = participant.status_id
             INNER JOIN civicrm_option_value option_value_participant_role
-                    ON option_value_participant_role.value = participant.role_id
+                    ON
+                        participant.role_id = option_value_participant_role.value
+                        OR participant.role_id LIKE CONCAT('%', option_value_participant_role.value, '{$value_separator}%')
+                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '%')
+                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '{$value_separator}%')
             INNER JOIN civicrm_option_group option_group_participant_role
                     ON option_group_participant_role.id = option_value_participant_role.option_group_id
                     AND option_group_participant_role.name = 'participant_role'
