@@ -453,8 +453,7 @@ class CRM_Remoteevent_Registration
         }
         if ($only_counted) {
             $AND_IS_COUNTED_CONDITION =
-                'AND status_type.is_counted = 1'
-                . 'AND option_value_participant_role.filter = 1';
+                'AND status_type.is_counted = 1 AND option_value_participant_role.filter = 1';
         } else {
             $AND_IS_COUNTED_CONDITION = '';
         }
