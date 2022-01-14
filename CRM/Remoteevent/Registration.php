@@ -452,7 +452,9 @@ class CRM_Remoteevent_Registration
             $AND_CONTACT_RESTRICTION = "";
         }
         if ($only_counted) {
-            $AND_IS_COUNTED_CONDITION = 'AND status_type.is_counted = 1';
+            $AND_IS_COUNTED_CONDITION =
+                'AND status_type.is_counted = 1'
+                . 'AND option_value_participant_role.filter = 1';
         } else {
             $AND_IS_COUNTED_CONDITION = '';
         }
@@ -464,6 +466,11 @@ class CRM_Remoteevent_Registration
                    ON event.id = participant.event_id
             LEFT JOIN civicrm_participant_status_type status_type
                    ON status_type.id = participant.status_id
+            INNER JOIN civicrm_option_value option_value_participant_role
+                    ON option_value_participant_role.value = participant.role_id
+            INNER JOIN civicrm_option_group option_group_participant_role
+                    ON option_group_participant_role.id = option_value_participant_role.option_group_id
+                    AND option_group_participant_role.name = 'participant_role'
             WHERE status_type.class IN {$REGISTRATION_CLASSES}
                   {$AND_IS_COUNTED_CONDITION}
                   AND participant.event_id = {$event_id}
