@@ -29,19 +29,23 @@ function remote_session_delete(session_id, confirmed)
     }).on('crmConfirm:yes', function() {
       remote_session_delete(session_id, true);
 
-      // trigger reload (how to only reload the tab?)
-      location.replace(CRM.vars.remoteevent.session_reload);
+      // Refresh the tab.
+      cj('#' + cj("#tab_sessions").attr('aria-controls'))
+        .crmSnippet('refresh');
     });
   }
 }
 
-cj(document).ready(function() {
+cj(document).ready(function () {
   // make sure we reload after a popup closes
-  cj(document).on('crmPopupFormSuccess', function () {
-    // gray out existing form
-    cj("div.remote-session-main-container").addClass("disabled");
+  cj(document)
+    .off('crmPopupFormSuccess.remoteevent_sessions')
+    .on('crmPopupFormSuccess.remoteevent_sessions', function (event) {
+      // gray out existing form
+      cj("div.remote-session-main-container").addClass("disabled");
 
-    // trigger reload (how to only reload the tab?)
-    location.replace(CRM.vars.remoteevent.session_reload);
-  });
+      // Refresh the tab.
+      cj('#' + cj("#tab_sessions").attr('aria-controls'))
+        .crmSnippet('refresh');
+    });
 });
