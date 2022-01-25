@@ -23,7 +23,7 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{$form.event_alternativelocation_contact_id.label}</div>
+    <div class="label">{$form.event_alternativelocation_contact_id.label}&nbsp;{help id="id-altlocation-remark" title=$form.event_alternativelocation_remark.label}</div>
     <div class="content">{$form.event_alternativelocation_contact_id.html}</div>
     <div class="clear"></div>
   </div>

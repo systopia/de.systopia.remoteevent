@@ -259,9 +259,9 @@ class CRM_Remoteevent_EventFlags
             FROM civicrm_event event
             WHERE event.is_active = 1
               AND COALESCE(event.end_date, event.start_date) >= NOW()
-              AND (   event.registration_start_date IS NULL 
+              AND (   event.registration_start_date IS NULL
                    OR event.registration_start_date <= NOW())
-              AND (   event.registration_end_date IS NULL 
+              AND (   event.registration_end_date IS NULL
                    OR event.registration_end_date >= NOW())
              ");
         while ($open_events->fetch()) {
