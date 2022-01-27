@@ -665,7 +665,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $countries = civicrm_api3('Country', 'get', $country_query);
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($countries['values'] as $country) {
-            $country_list[$country['id']] = $l10n->localise($country['name']);
+            $country_list[$country['id']] = $l10n->localise($country['name'], ['context' => 'country']);
         }
 
         return $country_list;
