@@ -708,7 +708,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($provinces['values'] as $province) {
             $province_key = "{$province['country_id']}-{$province['id']}";
-            $province_list[$province_key] = $l10n->localise($province['name']);
+            $province_list[$province_key] = $l10n->localise($province['name'], ['context' => 'province']);
         }
 
         return $province_list;
