@@ -688,7 +688,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // apply country limit
         $province_limit = CRM_Core_BAO_Country::provinceLimit();
         if (!empty($province_limit)) {
-            // contry limit is, for whatever reason, in ISO shorts
+            // country limit is, for whatever reason, in ISO shorts,
             //  so we have to resolve to country IDs first
             $province_limit_country_ids = [];
             $province_country_query = civicrm_api3('Country', 'get', [
