@@ -42,6 +42,44 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
     }
 
     /**
+     * Test to reproduce issue 16: translate country and state/province
+     *
+     * @see https://github.com/systopia/de.systopia.remoteevent/issues/16
+     */
+    public function testIssue16_CountryStateProvinceL10n()
+    {
+        // create an event
+        $event = $this->createRemoteEvent(
+            [
+                'event_remote_registration.remote_registration_default_profile' => 'Standard3',
+                'event_remote_registration.remote_registration_profiles' => ['Standard3'],
+            ]
+        );
+
+        // get the form data
+        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+            'event_id' => $event['id'],
+        ])['values'];
+
+        // check for Germany (English)
+        $this->assertTrue(isset($fields['country_id']['options']), "Field country_id incomplete");
+        $country_options = $fields['country_id']['options'];
+        $this->assertTrue(isset($country_options[1082]), "Country Germany [1082] not listed");
+        $this->assertEquals("Germany", $country_options[1082], "Country name not in the right language");
+
+        // check for Germany (German: Deutschland)
+        CRM_Core_I18n::singleton()->setLocale('de_DE'); // multi-language not yet implemented
+        $de_fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+            'event_id' => $event['id'],
+            'locale' => 'de'
+        ])['values'];
+        $this->assertTrue(isset($de_fields['country_id']['options']), "Field country_id incomplete");
+        $de_country_options = $de_fields['country_id']['options'];
+        $this->assertTrue(isset($de_country_options[1082]), "Country Germany [1082] not listed");
+        $this->assertEquals("Deutschland", $de_country_options[1082], "Country name not in the right language");
+    }
+
+    /**
      * Test to reproduce issue 17: state_province_id not working
      *
      * @see https://github.com/systopia/de.systopia.remoteevent/issues/17
