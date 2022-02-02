@@ -682,7 +682,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $countries = civicrm_api3('Country', 'get', $country_query);
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($countries['values'] as $country) {
-            $country_list[$country['id']] = $l10n->localise($country['name']);
+            $country_list[$country['id']] = $l10n->localise($country['name'], ['context' => 'country']);
         }
 
         return $country_list;
@@ -705,7 +705,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // apply country limit
         $province_limit = CRM_Core_BAO_Country::provinceLimit();
         if (!empty($province_limit)) {
-            // contry limit is, for whatever reason, in ISO shorts
+            // country limit is, for whatever reason, in ISO shorts,
             //  so we have to resolve to country IDs first
             $province_limit_country_ids = [];
             $province_country_query = civicrm_api3('Country', 'get', [
@@ -725,7 +725,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($provinces['values'] as $province) {
             $province_key = "{$province['country_id']}-{$province['id']}";
-            $province_list[$province_key] = $l10n->localise($province['name']);
+            $province_list[$province_key] = $l10n->localise($province['name'], ['context' => 'province']);
         }
 
         return $province_list;
