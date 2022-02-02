@@ -9,7 +9,9 @@
       "phone"
     ],
     "fill_details_primary": null,
-    "override_details": [],
+    "override_details": [
+      "address"
+    ],
     "override_details_primary": null,
     "default_location_type": "1",
     "primary_phone_type": "1",

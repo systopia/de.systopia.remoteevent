@@ -132,6 +132,18 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
+    /**
+     * Give the profile a chance to manipulate the contact data before it's being sent off to
+     *   the contact creation/update
+     *
+     * @param array $contact_data
+     *   contact data
+     */
+    protected function adjustContactData(&$contact_data)
+    {
+        // this is just a stub. for now.
+    }
+
     /*************************************************************
      *                HELPER / INFRASTRUCTURE                   **
      *************************************************************/
@@ -392,6 +404,11 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 $contact_data[$field_key] = $submission_data[$field_key];
             }
         }
+
+        // give the profile a chance to adjust contact data
+        $profile->adjustContactData($contact_data);
+
+        // finally, set the result
         $registration->setContactData($contact_data);
     }
 

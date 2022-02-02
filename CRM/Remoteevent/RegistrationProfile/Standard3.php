@@ -158,6 +158,25 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
     }
 
     /**
+     * Give the profile a chance to manipulate the contact data before it's being sent off to
+     *   the contact creation/update
+     *
+     * @param array $contact_data
+     *   contact data
+     */
+    protected function adjustContactData(&$contact_data)
+    {
+        // fix the combined state_province_id value
+        if (!empty($contact_data['state_province_id'])) {
+            $country_and_state = explode('-', $contact_data['state_province_id']);
+            $contact_data['state_province_id'] = end($country_and_state);
+        }
+
+        // don't forget other adjustments
+        parent::adjustContactData($contact_data);
+    }
+
+    /**
      * Add the default values to the form data, so people using this profile
      *  don't have to enter everything themselves
      *
@@ -173,7 +192,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
         // add address data (primary?)
         $contact_id = $resultsEvent->getContactID();
         if ($contact_id) {
-            $address_fields = ['street_address', 'supplemental_address_1', 'supplemental_address_2', 'postal_code', 'city', 'country_id'];
+            $address_fields = ['street_address', 'supplemental_address_1', 'supplemental_address_2', 'postal_code', 'city', 'country_id', 'state_province_id'];
             try {
                 $address = civicrm_api3(
                     'Address',
