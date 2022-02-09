@@ -275,7 +275,7 @@ class CRM_Remoteevent_Registration
             return E::ts("This event does not allow participants to update their registration.");
         }
 
-        // contact CAN edit regisration (can not not edit)
+        // contact CAN edit registration (can not not edit)
         return false;
     }
 
