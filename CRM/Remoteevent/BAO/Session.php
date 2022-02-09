@@ -172,7 +172,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
                 return [];
             }
         }
-        $start_date = strtotime($start_date);
+        $start_day = strtotime(substr($start_date, 0, 10));
 
         // now load all sessions
         $session_list = [];
@@ -184,7 +184,8 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
 
         foreach ($sessions_raw as $session) {
             // calculate day of event
-            $session['day'] = 1 + (int) ((strtotime($session['start_date']) - $start_date) / (60 * 60 * 24));
+            $session_day = strtotime(substr($session['start_date'], 0, 10));
+            $session['day'] = 1 + (int) (($session_day - $start_day) / (60 * 60 * 24));
 
             // store
             $session_list[$session['id']] = $session;
