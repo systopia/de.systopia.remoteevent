@@ -618,6 +618,9 @@ class CRM_Remoteevent_Registration
                         'status_id' => $new_status
                     ]
                 );
+                // mark as updated to avoid additional calls
+                // see also: https://github.com/systopia/de.systopia.remoteevent/issues/19
+                $registration->setParticipantUpdated();
             } else {
                 // there is no pre-existing participant, just add to the general to-be-created one
                 if (empty($submission['confirm'])) {
@@ -699,7 +702,9 @@ class CRM_Remoteevent_Registration
         if ($registration->getParticipantID()) {
             // this is updating an existing participant
             $participant_data['id'] = $registration->getParticipantID();
-            $participant_data['force_trigger_eventmessage'] = 1;
+            if (!$registration->isParticipantUpdated()) {
+                $participant_data['force_trigger_eventmessage'] = 1;
+            }
 
         } else {
             // we're creating an all new participant
@@ -711,6 +716,7 @@ class CRM_Remoteevent_Registration
         // run create/update
         CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
         $creation = civicrm_api3('Participant', 'create', $participant_data);
+        $registration->setParticipantUpdated();
         $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
         CRM_Remoteevent_CustomData::labelCustomFields($participant);
         $registration->setParticipant($participant);
