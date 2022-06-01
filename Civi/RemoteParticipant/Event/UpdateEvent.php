@@ -46,7 +46,7 @@ class UpdateEvent extends ChangingEvent
     public function __construct($submission_data)
     {
         $this->submission = $submission_data;
-        $this->token_usages = ['update'];
+        $this->token_usages = ['update', 'invite'];
     }
 
     /**

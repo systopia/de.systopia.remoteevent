@@ -41,15 +41,15 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
         $this->result = [];
         $this->contact_id = null;
         $this->participant_id = null;
-        $this->token_usages = [$this->getTokenUsage()];
+        $this->token_usages = $this->getTokenUsages();
     }
 
     /**
      * Get the token usage key for this event type
      *
-     * @return string
+     * @return array
      */
-    abstract protected function getTokenUsage();
+    abstract protected function getTokenUsages();
 
     /**
      * Returns the original parameters that were submitted to RemoteEvent.get
@@ -87,11 +87,15 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
 
                 } else {
                     // see if there is contact token, use that
-                    $contact_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
-                        'Contact',
-                        $this->params['token'],
-                        $this->getTokenUsage()
-                    );
+                    foreach ($this->getTokenUsages() as $usage) {
+                        if ($contact_id = \CRM_Remotetools_SecureToken::decodeEntityToken(
+                            'Contact',
+                            $this->params['token'],
+                            $usage
+                        )) {
+                            break;
+                        }
+                    }
                     if ($contact_id) {
                         $this->setContactID($contact_id);
                     }
