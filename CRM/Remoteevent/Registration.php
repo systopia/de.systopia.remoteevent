@@ -501,41 +501,26 @@ class CRM_Remoteevent_Registration
 
         if (!$registration->isContactUpdated()) {
             if ($registration->getContactID()) {
-                // the contact creation job has been done already -> check if want to do an upgrade
-                $xcm_profile = Civi::settings()->get('remote_registration_xcm_profile_update');
-                if ($xcm_profile) {
-                    // in this case we use the XCM with the update profile with the ID set
-                    $contact_identification['xcm_profile'] = $xcm_profile;
-                    $contact_identification['id'] = $registration->getContactID();
-                    CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
-                    civicrm_api3('Contact', 'getorcreate', $contact_identification);
-                    $registration->setContactUpdated();
-                }
+                // in this case we use the XCM with the update profile with the ID set
+                $contact_identification['id'] = $registration->getContactID();
+            }
 
-            } else {
-
-                // this is a yet unidentified contact => run 'normal' xcm
-                // add xcm profile, if one given
-                if (empty($contact_identification['xcm_profile'])) {
-                    $xcm_profile = $registration->getXcmMatchProfile();
-                    if ($xcm_profile) {
-                        $contact_identification['xcm_profile'] = $xcm_profile;
-                    }
-                }
-
+            try {
                 // run through the contact matcher
-                try {
-                    CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
-                    $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
+                $contact_identification['xcm_profile'] = $registration->getXcmMatchProfile();
+                CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
+                $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
+
+                // make sure a badly configured xcm call doesn't change the current contact
+                if (!$registration->getContactID()) {
                     $registration->setContactID($match['id']);
-                    $registration->setContactUpdated();
-                } catch (Exception $ex) {
-                    throw new Exception(
-                        E::ts("Couldn't find or create contact: ") . $ex->getMessage());
                 }
+                $registration->setContactUpdated();
+            } catch (Exception $ex) {
+                throw new Exception(
+                    E::ts("Couldn't find or create contact: ") . $ex->getMessage());
             }
         }
-
     }
 
     /**

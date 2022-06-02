@@ -51,7 +51,6 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $available_registration_profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles();
         $intro_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'intro_text') + ['class' => 'collapsed', 'preset' => 'civievent'];
         $event_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event');
-        $available_xcm_profiles = $this->getAvailableXcmProfiles();
 
         // add form elements
         $this->add(
@@ -69,19 +68,19 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         );
         $this->add(
             'select',
-            'remote_registration_xcm_profile',
-            E::ts("Registration Contact Matching (XCM)"),
-            $available_xcm_profiles,
-            false,
-            ['class' => 'crm-select2']
-        );
-        $this->add(
-            'select',
             'remote_registration_profiles',
             E::ts("Allowed Registration Profiles"),
             $available_registration_profiles,
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+        $this->add(
+            'select',
+            'remote_registration_xcm_profile',
+            E::ts("Registration Contact Matching (XCM)"),
+            $this->getAvailableXcmProfiles(false),
+            false,
+            ['class' => 'crm-select2']
         );
         $this->add(
             'select',
@@ -103,7 +102,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'select',
             'remote_registration_update_xcm_profile',
             E::ts("Update Contact Matching (XCM)"),
-            $available_xcm_profiles,
+            $this->getAvailableXcmProfiles(true),
             false,
             ['class' => 'crm-select2']
         );
@@ -330,13 +329,19 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     /**
      * Get a list of the available XCM profiles plus the default option
      *
+     * @param bool $can_be_off
+     *   if this is true, an 'off' option will be added to prevent XCM to run
+     *
      * @return array
      *   list of string(key) => string(label)
      */
-    protected function getAvailableXcmProfiles()
+    protected function getAvailableXcmProfiles($can_be_off = false)
     {
         $profiles = CRM_Xcm_Configuration::getProfileList();
-        $profiles[''] = E::ts("Default (RemoteEvent Settings)");
+        $profiles[''] = E::ts("Default (global RemoteEvent settings)");
+        if ($can_be_off) {
+            $profiles['off'] = E::ts("No Contact Updates");
+        }
         return $profiles;
     }
 }

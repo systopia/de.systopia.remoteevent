@@ -96,11 +96,16 @@
 {/htxt}
 
 {htxt id='id-remote-registration-xcm-profile'}
-  <p>{ts}TODO{/ts}</p>
+  <p>{ts}The XCM tool will be used to identify and update an existing contact with the submitted data, or to create a new one.{/ts}</p>
+  <p>{ts}A whole host of additional options like tagging the contacts, or recording/flagging differences are also available in the <a href="{crmURL p='civicrm/admin/setting/xcm'}">XCM configuration</a>.{/ts}</p>
+  <p>{ts}If you can't find a profile that meets your requirements, feel free to add another profile there.{/ts}</p>
 {/htxt}
 
 {htxt id='id-remote-update-xcm-profile'}
-  <p>{ts}TODO{/ts}</p>
+  <p>{ts}The XCM tool can be used to update and process the registered contact.{/ts}</p>
+  <p>{ts}A whole host of additional options like tagging the contacts, or recording/flagging differences are also available in the <a href="{crmURL p='civicrm/admin/setting/xcm'}">XCM configuration</a>.{/ts}</p>
+  <p>{ts}If you can't find a profile that meets your requirements, feel free to add another profile there.{/ts}</p>
 {/htxt}
+
 
 {/crmScope}

@@ -87,7 +87,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             'select',
             'remote_registration_xcm_profile_update',
             E::ts("Default Update Profile (XCM)"),
-            ['' => E::ts("No Updates")] + CRM_Xcm_Configuration::getProfileList(),
+            ['off' => E::ts("No Updates")] + CRM_Xcm_Configuration::getProfileList(),
             false,
             ['class' => 'crm-select2']
         );
