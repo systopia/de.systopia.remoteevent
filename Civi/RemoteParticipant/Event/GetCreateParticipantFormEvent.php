@@ -74,10 +74,10 @@ class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
     /**
      * Get the token usage key for this event type
      *
-     * @return string
+     * @return array
      */
-    protected function getTokenUsage()
+    protected function getTokenUsages()
     {
-        return 'invite';
+        return ['invite'];
     }
 }

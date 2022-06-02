@@ -95,11 +95,19 @@ function civicrm_api3_remote_participant_get_form($params)
     if (!empty($params['token'])) {
         // identify event via participant
         $usage_map = [
-                'create' => 'invite',
-                'cancel' => 'cancel',
-                'update' => 'update'];
-
-        $participant_id = CRM_Remotetools_SecureToken::decodeEntityToken('Participant', trim($params['token']), $usage_map[$params['context']]);
+            'create' => ['invite'],
+            'update' => ['update', 'invite'],
+            'cancel' => ['cancel'],
+        ];
+        foreach ($usage_map[$params['context']] as $context) {
+            if ($participant_id = CRM_Remotetools_SecureToken::decodeEntityToken(
+                'Participant',
+                trim($params['token']),
+                $context
+            )) {
+                break;
+            }
+        }
         if (empty($participant_id)) {
             // token is invalid
             if (empty($params['event_id'])) {

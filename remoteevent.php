@@ -149,6 +149,9 @@ function remoteevent_civicrm_config(&$config)
         ['CRM_Remoteevent_RegistrationUpdate', 'updateContact'], CRM_Remoteevent_RegistrationUpdate::STAGE2_APPLY_CONTACT_CHANGES);
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.update',
+        ['CRM_Remoteevent_Registration', 'confirmExistingParticipant'], CRM_Remoteevent_RegistrationUpdate::STAGE3_APPLY_PARTICIPANT_CHANGES + 20);
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.update',
         ['CRM_Remoteevent_RegistrationUpdate', 'updateParticipant'], CRM_Remoteevent_RegistrationUpdate::STAGE3_APPLY_PARTICIPANT_CHANGES);
     $dispatcher->addUniqueListener(
         'civi.remoteevent.registration.update',
