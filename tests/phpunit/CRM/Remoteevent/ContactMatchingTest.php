@@ -89,12 +89,13 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase
      */
     public function testRegistrationContactUpdate()
     {
-        // add an update XCM profile
+
+        // set up an XCM update profile
         $update_profile_data = json_decode(file_get_contents(E::path('tests/resources/xcm_profile_testing_update.json')), 1);
         $this->assertNotEmpty($update_profile_data, "Couldn't load update profile data");
         $this->setUpXCMProfile('remoteevent_test_registration_update', $update_profile_data);
-        Civi::settings()->set('remote_registration_xcm_profile', 'remoteevent_test_registration_update');
         Civi::settings()->set('remote_registration_xcm_profile_update', 'remoteevent_test_registration_update');
+        Civi::settings()->set('remote_registration_xcm_profile', 'remoteevent_test_registration_update');
         CRM_Xcm_Configuration::flushProfileCache();
 
         // FIRST TEST: REGISTRATION
@@ -112,7 +113,7 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase
         $registration_result = $this->registerRemote(
             $event['id'],
             [
-                'first_name' => 'Testinho',
+                'first_name' => $contact['first_name'],
                 'prefix_id' => $contact['prefix_id'],
                 'last_name' => $contact['last_name'],
                 'email' => $contact['email'],
@@ -123,7 +124,7 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase
 
         // find + load contact
         $current_contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contact['id']]);
-        $this->assertEquals('Testinho', $current_contact['first_name'], "The name should've been updated");
+        $this->assertNotEquals('Testinho', $current_contact['first_name'], "The name should not have been updated");
 
 
         // SECOND TEST: UPDATE
@@ -134,7 +135,7 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase
         $registration_result2 = $this->registerRemote(
             $event['id'],
             [
-                'first_name' => 'Not Testinho',
+                'first_name' => 'Testinho',
                 'prefix_id' => $contact2['prefix_id'],
                 'last_name' => $contact2['last_name'],
                 'email' => $contact2['email'],
@@ -145,7 +146,6 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase
 
         // find + load contact
         $current_contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contact2['id']]);
-        $this->assertNotEquals('Testinho', $current_contact['first_name'], "The name should've been updated, an update profile was set");
+        $this->assertEquals('Testinho', $current_contact['first_name'], "The name should've been updated, an update profile was set");
     }
-
 }

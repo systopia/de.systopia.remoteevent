@@ -50,6 +50,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     public function setUp()
     {
         parent::setUp();
+        CRM_Xcm_Configuration::flushProfileCache();
         $this->transaction = new CRM_Core_Transaction();
         $this->setUpXCMProfile('default');
 
@@ -351,18 +352,12 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
      */
     public function setUpXCMProfile($profile_name, $profile_data_override = null)
     {
-        // load XCM profile data
-        static $profile_data = null;
-        if ($profile_data === null) {
-            $profile_data = json_decode(file_get_contents(E::path('tests/resources/xcm_profile_testing.json')), 1);
-        }
-
         // set profile
         $profiles = Civi::settings()->get('xcm_config_profiles');
         if ($profile_data_override) {
             $profiles[$profile_name] = $profile_data_override;
         } else {
-            $profiles[$profile_name] = $profile_data;
+            $profiles[$profile_name] = json_decode(file_get_contents(E::path('tests/resources/xcm_profile_testing.json')), 1);
         }
         Civi::settings()->set('xcm_config_profiles', $profiles);
     }

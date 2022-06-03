@@ -86,7 +86,11 @@ abstract class ChangingEvent extends RemoteEvent
         // get context
         $xcm_context = null;
         if ($this instanceof RegistrationEvent) {
-            $xcm_context = 'registration';
+            if ($this->getParticipantID()) {
+                $xcm_context = 'update';
+            } else {
+                $xcm_context = 'registration';
+            }
         } elseif ($this instanceof UpdateEvent) {
             $xcm_context = 'update';
         } elseif ($this instanceof CancelEvent) {
