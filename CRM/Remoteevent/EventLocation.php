@@ -123,6 +123,7 @@ class CRM_Remoteevent_EventLocation
 
         // process all that have an alternative event location
         $event_id_list = implode(',', array_keys($events));
+        CRM_Core_DAO::disableFullGroupByMode();
         $alternative_location_query = "
             SELECT
               event.id                                AS event_id,
@@ -151,6 +152,7 @@ class CRM_Remoteevent_EventLocation
               AND settings.use_custom_event_location = 1
             GROUP BY event.id";
         $query = CRM_Core_DAO::executeQuery($alternative_location_query);
+        CRM_Core_DAO::reenableFullGroupByMode();
         while ($query->fetch()) {
             $event = &$events[$query->event_id];
             foreach (self::FIELDS as $field_name) {
@@ -162,6 +164,7 @@ class CRM_Remoteevent_EventLocation
         // for the remaining events, get the default event data
         $remaining_event_list = implode(',', array_keys($events));
         if (!empty($remaining_event_list)) {
+            CRM_Core_DAO::disableFullGroupByMode();
             $native_location_query = "
             SELECT
               event.id                                AS event_id,
@@ -184,6 +187,7 @@ class CRM_Remoteevent_EventLocation
             WHERE event.id IN ({$remaining_event_list})
             GROUP BY event.id";
             $query = CRM_Core_DAO::executeQuery($native_location_query);
+            CRM_Core_DAO::reenableFullGroupByMode();
             while ($query->fetch()) {
                 $event = &$events[$query->event_id];
                 foreach (self::FIELDS as $field_name) {
