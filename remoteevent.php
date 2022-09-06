@@ -401,6 +401,7 @@ function remoteevent_civicrm_copy($objectName, &$object)
                     // this should be it:
                     $original_event_id = $call['args'][0];
                     CRM_Remoteevent_BAO_Session::copySessions($original_event_id, $new_event_id);
+                    break;
                 }
             }
         }
