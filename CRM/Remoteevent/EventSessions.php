@@ -20,6 +20,7 @@ use \Civi\RemoteParticipant\Event\ValidateEvent;
 use \Civi\RemoteParticipant\Event\ChangingEvent;
 use \Civi\RemoteEvent\Event\GetResultEvent;
 use \Civi\EventMessages\MessageTokens;
+use \Civi\EventMessages\MessageTokenList;
 
 /**
  * RemoteEvent logic for sessions
