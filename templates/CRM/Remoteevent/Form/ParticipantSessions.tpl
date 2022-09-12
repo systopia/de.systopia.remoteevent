@@ -14,10 +14,10 @@
 
 {crmScope extensionKey='de.systopia.remoteevent'}
 <div class="remote-session remote-session-main-container">
+<table class="remote-session remote-session-day">
   <h2>{$event_header}</h2>
   {foreach from=$sessions key=day item=day_sessions}
   {if $day_sessions|@count gt 0}
-  <table class="remote-session remote-session-day">
     <caption class="remote-session remote-session-day">{$day}</caption>
     <thead>
       <tr>
@@ -49,9 +49,9 @@
         {/foreach}
       {/foreach}
     </tbody>
-  </table>
   {/if}
   {/foreach}
+</table>
 
   <br/>
 
