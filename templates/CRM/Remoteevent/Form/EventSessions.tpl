@@ -30,7 +30,7 @@
 </div>
 {/if}
 
-  <table class="remote-session remote-session-day">
+<table class="remote-session remote-session-day">
 {foreach from=$sessions key=day item=day_sessions}
   <thead>
   <tr>
