@@ -64,6 +64,18 @@ class ValidateEvent extends RemoteEvent
     }
 
     /**
+     * Modify Validation Errors
+     *
+     * @return array
+     *  $validation error list (reference!)
+     */
+    public function &modifyValidationErrors()
+    {
+        // just pass to the underlying error system
+        return $this->error_list;
+    }
+
+    /**
      * Get the complete submission
      *
      * @return array
