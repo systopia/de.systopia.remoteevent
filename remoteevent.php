@@ -391,7 +391,8 @@ function remoteevent_civicrm_copy($objectName, &$object)
 {
     if ($objectName == 'Event') {
         // we have the new event ID...
-        $new_event_id = $object->id;
+        $new_event_id = (int) $object->id;
+        $original_event_id = null;
 
         // ...unfortunately, we have to dig up the original event ID:
         $callstack = debug_backtrace();
@@ -399,10 +400,28 @@ function remoteevent_civicrm_copy($objectName, &$object)
             if (isset($call['class']) && isset($call['function'])) {
                 if ($call['class'] == 'CRM_Event_BAO_Event' && $call['function'] == 'copy') {
                     // this should be it:
-                    $original_event_id = $call['args'][0];
+                    $original_event_id = (int) $call['args'][0];
                     CRM_Remoteevent_BAO_Session::copySessions($original_event_id, $new_event_id);
                     break;
                 }
+            }
+        }
+
+        // mitigation for RE-28, where the remote event data is not copied
+        // @see https://github.com/systopia/de.systopia.remoteevent/issues/28
+        if ($original_event_id && $new_event_id) {
+            !$remote_registration_entry_exists = CRM_Core_DAO::singleValueQuery(
+                "SELECT id FROM civicrm_value_remote_registration WHERE entity_id = %1",
+                [1 => [$new_event_id, 'Integer']]);
+            if ($remote_registration_entry_exists) {
+                // this *should* have been copied with the clone/copy routine, but it wasn't. So, we clone the line via SQL:
+                CRM_Core_DAO::executeQuery("
+                    CREATE TEMPORARY TABLE _tmp_clone_remote_registration AS SELECT * FROM civicrm_value_remote_registration WHERE entity_id = {$original_event_id};
+                    UPDATE _tmp_clone_remote_registration SET entity_id = {$new_event_id};
+                    UPDATE _tmp_clone_remote_registration SET id = (1 + (SELECT MAX(id) FROM civicrm_value_remote_registration));
+                    INSERT INTO civicrm_value_remote_registration SELECT * FROM _tmp_clone_remote_registration;
+                    DROP TABLE _tmp_clone_remote_registration;"
+                );
             }
         }
     }
