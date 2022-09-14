@@ -14,14 +14,13 @@
 
 {crmScope extensionKey='de.systopia.remoteevent'}
 <div class="remote-session remote-session-main-container">
+<table class="remote-session remote-session-day">
   <h2>{$event_header}</h2>
   {foreach from=$sessions key=day item=day_sessions}
   {if $day_sessions|@count gt 0}
-  <table class="remote-session remote-session-day">
-    <caption class="remote-session remote-session-day">{$day}</caption>
     <thead>
       <tr>
-        <th></th>
+        <th>{$day}</th>
         <th>{ts}Title{/ts}</th>
         <th>{ts}Category{/ts}</th>
         <th>{ts}Type{/ts}</th>
@@ -31,8 +30,8 @@
       </tr>
     </thead>
 
-    <tbody>
       {foreach from=$day_sessions key=slot item=slot_sessions name=slot_sessions}
+        <tbody>
         {foreach from=$slot_sessions item=session name=sessions}
         <tr class="remote-session remote-session-session {cycle values="odd-row,even-row"} {foreach from=$session.classes item=htmlclass}{$htmlclass}{/foreach}">
         {if $smarty.foreach.sessions.first}
@@ -47,11 +46,11 @@
           <td class="remote-session remote-session-registered">{$form.$session_field.html}</td>
         </tr>
         {/foreach}
+        </tbody>
       {/foreach}
-    </tbody>
-  </table>
   {/if}
   {/foreach}
+</table>
 
   <br/>
 

@@ -30,23 +30,23 @@
 </div>
 {/if}
 
-{foreach from=$sessions key=day item=day_sessions}
-{if $day_sessions|@count gt 0}
 <table class="remote-session remote-session-day">
-  <caption class="remote-session remote-session-day">{$day}</caption>
+{foreach from=$sessions key=day item=day_sessions}
   <thead>
-    <tr>
-      <th></th>
-      <th>{ts}Category{/ts}</th>
-      <th>{ts}Type{/ts}</th>
-      <th>{ts}Time{/ts}</th>
-      <th>{ts}Title{/ts}</th>
-      <th>{ts}Participants{/ts}</th>
-      <th>{ts}Info{/ts}</th>
-      <th>{ts}Actions{/ts}</th>
-    </tr>
+  <tr>
+    <th class="header-dark" colspan="100%">{$day}</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th>{ts}Category{/ts}</th>
+    <th>{ts}Type{/ts}</th>
+    <th>{ts}Time{/ts}</th>
+    <th>{ts}Title{/ts}</th>
+    <th>{ts}Participants{/ts}</th>
+    <th>{ts}Info{/ts}</th>
+    <th>{ts}Actions{/ts}</th>
+  </tr>
   </thead>
-
   <tbody>
     {foreach from=$day_sessions key=slot item=slot_sessions name=slot_sessions}
       {foreach from=$slot_sessions item=session name=sessions}
@@ -65,8 +65,7 @@
       {/foreach}
     {/foreach}
   </tbody>
-</table>
-{/if}
 {/foreach}
+</table>
 </div>
 {/crmScope}
