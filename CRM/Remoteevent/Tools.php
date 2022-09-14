@@ -70,7 +70,35 @@ class CRM_Remoteevent_Tools
     }
 
     /**
-     * There seems to be an issue with cloning custom data from event templates (through the UI)
+     * There seems to be an issue with cloning custom data from event templates (through the UI),
+     *   so this function makes sure, that all custom tables have been copied
+     *
+     * @param int $original_event_id
+     *   the original event ID
+     *
+     * @param int $new_event_id
+     *   the new cloned/copied event ID
+     *
+     * @param array $exclude_tables
+     *   table names to exclude
+     *
+     * @see https://github.com/systopia/de.systopia.remoteevent/issues/28
+     */
+    public static function cloneEventCustomDataTables($original_event_id, $new_event_id, $exclude_tables = [])
+    {
+        $all_tables = CRM_Core_DAO::executeQuery("SELECT table_name FROM civicrm_custom_group WHERE extends = 'Event';");
+        while ($all_tables->fetch()) {
+            $table_name = $all_tables->table_name;
+            if (!in_array($table_name, $exclude_tables)) {
+                self::cloneEventCustomDataTable($table_name, $original_event_id, $new_event_id);
+            }
+        }
+    }
+
+
+    /**
+     * There seems to be an issue with cloning custom data from event templates (through the UI),
+     *  so this function copies everything from the given event custom table to the new event
      *
      * @param string $custom_event_table_name
      *   the table name of a custom data table

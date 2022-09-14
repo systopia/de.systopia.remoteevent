@@ -410,8 +410,7 @@ function remoteevent_civicrm_copy($objectName, &$object)
         // mitigation for RE-28, where the remote event data is not copied
         // @see https://github.com/systopia/de.systopia.remoteevent/issues/28
         if ($original_event_id && $new_event_id) {
-            CRM_Remoteevent_Tools::cloneEventCustomDataTable('civicrm_value_remote_registration', $original_event_id, $new_event_id);
-            CRM_Remoteevent_Tools::cloneEventCustomDataTable('civicrm_value_event_alternative_location', $original_event_id, $new_event_id);
+            CRM_Remoteevent_Tools::cloneEventCustomDataTables($original_event_id, $new_event_id);
         }
     }
 }
