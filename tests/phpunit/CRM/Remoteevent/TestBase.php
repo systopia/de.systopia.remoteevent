@@ -123,6 +123,32 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         return $event;
     }
 
+    /**
+     * Create a new remote event TEMPLATE
+     *
+     * @param array $event_details
+     *   list of event parameters
+     *
+     * @param boolean $use_remote_api
+     *   use the exposed RemoteEvent.create API instead of the internal (Event.create)
+     */
+    public function createRemoteEventTemplate($event_details = [], $use_remote_api = false)
+    {
+        // create a standard event
+        $event_template = $this->createRemoteEvent($event_details, $use_remote_api);
+
+        // turn it into a template
+        $this->traitCallAPISuccess('Event', 'create',[
+            'id'             => $event_template['id'],
+            'is_template'    => 1,
+            'template_title' => 'Template ' . $event_template['title'],
+        ]);
+
+        // reload the event
+        $event_template = $this->traitCallAPISuccess('Event', 'getsingle', ['id' => $event_template['id']]);
+        CRM_Remoteevent_CustomData::labelCustomFields($event_template);
+        return $event_template;
+    }
 
     /**
      * Create a new session
