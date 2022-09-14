@@ -92,3 +92,4 @@ This extension uses a series of Symfony events to extend and customise the behav
 1. ``civi.remoteevent.registration.getform``modify / extend registration form
 1. ``civi.remoteevent.cancellation.getform``modify / extend cancellation form
 1. ``civi.remoteevent.registration_update.getform``modify / extend update form
+1. ``civi.remoteevent.label`` modify or override certain labels (e.g. workshop groups)

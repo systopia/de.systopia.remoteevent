@@ -37,7 +37,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
         // load days
         $event_days = self::getEventDays($event);
         $this->assign('event_days', $event_days);
-        $this->assign('is_single_day', $event_days == 1);
+        $this->assign('is_single_day', count($event_days) == 1);
 
         // load slots
         $slots = self::getSlots();
@@ -147,6 +147,13 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
             $sessions_by_day_and_slot[$session_day][$slot][] = $session;
         }
 
+        // strip empty days
+        foreach ($sessions_by_day_and_slot as $key => $entry) {
+            if (empty($entry)) {
+                unset ($sessions_by_day_and_slot[$key]);
+            }
+        }
+
         // beautify / improve list
         $categories = self::getCategories();
         $types = self::getTypes();
@@ -155,8 +162,18 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent
             $new_key = E::ts("Day %1 (%2)", [
                 1 => $day_index + 1,
                 2 => date('d.m.Y', strtotime($day))]);
-            $sessions_by_day_and_slot[$new_key] = $sessions_by_day_and_slot[$day];
+            $new_key = \Civi\LabelEvent::renderLabel($new_key, \Civi\LabelEvent::CONTEXT_SESSION_GROUP_TITLE, [
+                'day' => $day,
+                'day_index' => $day_index,
+                'sessions' => $sessions,
+                'event_id' => $event_id,
+                'sessions_by_day_and_slot' => $sessions_by_day_and_slot,
+                'is_backend' => true,
+            ]);
+            // move to new "location"
+            $my_sessions = $sessions_by_day_and_slot[$day];
             unset($sessions_by_day_and_slot[$day]);
+            $sessions_by_day_and_slot[$new_key] = $my_sessions;
         }
 
         // enrich data

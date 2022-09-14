@@ -20,6 +20,7 @@ use \Civi\RemoteParticipant\Event\ValidateEvent;
 use \Civi\RemoteParticipant\Event\ChangingEvent;
 use \Civi\RemoteEvent\Event\GetResultEvent;
 use \Civi\EventMessages\MessageTokens;
+use \Civi\EventMessages\MessageTokenList;
 
 /**
  * RemoteEvent logic for sessions
@@ -238,6 +239,13 @@ class CRM_Remoteevent_EventSessions
                     $group_label = count($sessions_by_day_and_slot) > 1 ? // i.e. multi-day event
                         E::ts("Workshops - Day %1 - %2", [1 => $day, 2 => $slot_name]) :
                         E::ts("Workshops - %1", [1 => $slot_name]);
+                    $group_label = \Civi\LabelEvent::renderLabel($group_label, \Civi\LabelEvent::CONTEXT_SESSION_GROUP_TITLE, [
+                        'day' => $day,
+                        'sessions' => $sessions,
+                        'event_id' => $event['id'],
+                        'sessions_by_day_and_slot' => $sessions_by_day_and_slot,
+                        'is_backend' => 0,
+                    ]);
 
                     // add group
                     $get_form_results->addFields(
@@ -258,6 +266,13 @@ class CRM_Remoteevent_EventSessions
                     $group_label = count($sessions_by_day_and_slot) > 1 ? // i.e. multi-day event
                         E::ts("Workshops - Day %1", [1 => $day]) :
                         E::ts("Workshops");
+                    $group_label = \Civi\LabelEvent::renderLabel($group_label, \Civi\LabelEvent::CONTEXT_SESSION_GROUP_TITLE, [
+                        'day' => $day,
+                        'sessions' => $sessions,
+                        'event_id' => $event['id'],
+                        'sessions_by_day_and_slot' => $sessions_by_day_and_slot,
+                        'is_backend' => 0,
+                    ]);
 
                     // add group
                     $get_form_results->addFields(

@@ -30,9 +30,6 @@ class RenderEvent extends Event
     /** @var string the full path to the template */
     protected $current_template_file;
 
-    /** @var string the full path to the template originally queried */
-    protected $original_template_file;
-
     /** @var array the list of smarty variables to be passed to the renderer */
     protected $smarty_variables;
 
@@ -145,7 +142,7 @@ class RenderEvent extends Event
     /**
      * Utility function: render the given template
      *
-     * @param string $template_file
+     * @param string|null $template_path
      *   full file path to the (intended) template snippet
      *
      * @param array $smarty_variables

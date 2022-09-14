@@ -90,3 +90,4 @@ Diese Erweiterung nutzt eine Reihe von Symfony-Events, um das Verhalten dieser A
 1. ``civi.remoteevent.registration.geform``Anmeldeformular modifizieren / erweitern
 1. ``civi.remoteevent.cancellation.geform``Abmeldeformular modifizieren / erweitern
 1. ``civi.remoteevent.registration_update.geform``Ändern / Erweitern des Update-Formulars
+1. ``civi.remoteevent.label`` Ändern / Anpassen von bestimmten Benamungen (z.B. Workshop Gruppierung)
