@@ -260,19 +260,27 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getRegistrationProfile($profile_name)
     {
-        $profiles = self::getAvailableRegistrationProfiles('name');
-        if (in_array($profile_name, $profiles)) {
-            // get class
-            $class_candidate = "CRM_Remoteevent_RegistrationProfile_{$profile_name}";
-            if (class_exists($class_candidate)) {
-                return new $class_candidate();
-            } else {
-                // todo: extend to use Symfony hooks
-                throw new Exception(E::ts("Implementation for profile '%1' not found.", [1 => $profile_name]));
-            }
-        } else {
-            throw new Exception(E::ts("Registration profile '%1' is not available (any more).", [1 => $profile_name]));
-        }
+        $profile_list = new RemoteEvent\Event\RegistrationProfileListEvent();
+        // dispatch Registration Profile Event and try to instanciate a profile class from $profile_name
+        Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $profile_list);
+        return $profile_list->getProfileClass($profile_name);
+
+//        return $class_instance;
+
+//        $profiles = self::getAvailableRegistrationProfiles('name');
+//
+//        if (in_array($profile_name, $profiles)) {
+//            // get class
+//            $class_candidate = "CRM_Remoteevent_RegistrationProfile_{$profile_name}";
+//            if (class_exists($class_candidate)) {
+//                return new $class_candidate();
+//            } else {
+//                // todo: extend to use Symfony hooks
+//                throw new Exception(E::ts("Implementation for profile '%1' not found.", [1 => $profile_name]));
+//            }
+//        } else {
+//            throw new Exception(E::ts("Registration profile '%1' is not available (any more).", [1 => $profile_name]));
+//        }
     }
 
     /**
@@ -307,6 +315,32 @@ abstract class CRM_Remoteevent_RegistrationProfile
             $profiles[$profile['value']] = $profile[$name_field];
         }
         return $profiles;
+    }
+
+
+    /**
+     * @param \Civi\RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event
+     *
+     * @return void
+     */
+    public static function addOptionValueProfiles(
+        RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event)
+    {
+        // TODO: Do we use API4?
+        $profile_data = civicrm_api3(
+            'OptionValue',
+            'get',
+            [
+                'option.limit'      => 0,
+                'option_group_id'   => 'remote_registration_profiles',
+                'is_active'         => 1,
+                'check_permissions' => false
+            ]
+        );
+        foreach ($profile_data['values'] as $profile) {
+            $classname = "CRM_Remoteevent_RegistrationProfile_{$profile['name']}";
+            $registration_profile_list_event->addProfile($classname, $profile['name'], $profile);
+        }
     }
 
     /**

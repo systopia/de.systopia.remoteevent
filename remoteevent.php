@@ -187,6 +187,11 @@ function remoteevent_civicrm_config(&$config)
         'civi.eventmessages.tokenlist',
         ['CRM_Remoteevent_EventLocation', 'listTokens']
     );
+
+    $dispatcher->addUniqueListener(
+        'civi.remoteevent.registration.profile.list',
+        ['CRM_Remoteevent_RegistrationProfile','addOptionValueProfiles']
+    );
 }
 
 /**
