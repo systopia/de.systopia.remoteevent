@@ -27,7 +27,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
      *
      * @return string name
      */
-    public function getName()
+    public function getName($name = NULL)
     {
         return 'Standard1';
     }
@@ -40,7 +40,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
      * @see CRM_Remoteevent_RegistrationProfile::getFields()
      *
      */
-    public function getFields($locale = null)
+    public function getFields($name = NULL, $locale = null)
     {
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         return [
@@ -72,7 +72,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
+    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent, $name = NULL)
     {
         $contact_id = $resultsEvent->getContactID();
         if ($contact_id) {

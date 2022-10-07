@@ -33,14 +33,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      * @return string name
      */
-    abstract public function getName();
+    abstract public function getName($name = NULL);
 
     /**
      * Get the human-readable name of the profile represented
      *
      * @return string label
      */
-    public function getLabel()
+    public function getLabel($name = NULl)
     {
         // default is the internal name
         return $this->getName();
@@ -69,7 +69,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *                             the main validation will go through the RemoteParticipant.validate function
      *   ]
      */
-    abstract public function getFields($locale = null);
+    abstract public function getFields($name = NULL, $locale = null);
 
     /**
      * Add the default values to the form data, so people using this profile
@@ -79,7 +79,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    abstract public function addDefaultValues(GetParticipantFormEventBase $resultsEvent);
+    abstract public function addDefaultValues(GetParticipantFormEventBase $resultsEvent, $name = NULL);
 
     /**
      * Validate the profile fields individually.
@@ -260,6 +260,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getRegistrationProfile($profile_name)
     {
+        // DEBUG Code
+//        $tmp = new CRM_Remoteevent_RegistrationProfile_FormEditor();
+//        $field_list = $tmp->getFields("test_local_pba");
+
         $profile_list = new RemoteEvent\Event\RegistrationProfileListEvent();
         // dispatch Registration Profile Event and try to instanciate a profile class from $profile_name
         Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $profile_list);

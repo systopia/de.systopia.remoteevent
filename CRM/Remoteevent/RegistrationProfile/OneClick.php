@@ -27,7 +27,7 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      *
      * @return string name
      */
-    public function getName()
+    public function getName($name = NULL)
     {
         return 'OneClick';
     }
@@ -40,7 +40,7 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      * @see CRM_Remoteevent_RegistrationProfile::getFields()
      *
      */
-    public function getFields($locale = null)
+    public function getFields($name = NULL, $locale = null)
     {
         return [];
     }
@@ -53,7 +53,7 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
+    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent, $name = NULL)
     {
         // nothing to do here
     }
