@@ -18,22 +18,27 @@ use CRM_Remoteevent_ExtensionUtil as E;
 /**
  * Data Container for RemoteEventFormBuilder Data
  */
-class CRM_Remoteevent_FormEditorProfile
+class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProfile
 {
+
+    private static $classname = 'CRM_Remoteevent_RegistrationProfile_FormEditor';
     /**
      * profile id in remoteventformeditor
-     * @var
+     *
+     * @var int
      */
-    private $id;
+    private int $id;
 
     /**
      * profile name in remoteventformeditor
-     * @var
+     *
+     * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * form values in object notation
+     *
      * @var mixed
      */
     private $form_values;
@@ -50,6 +55,23 @@ class CRM_Remoteevent_FormEditorProfile
         'description' => 'description',
         'maxlength' => 'maxlength',
     ];
+
+    public function getName($name = null)
+    {
+        // TODO: Implement getName() method.
+    }
+
+    public function getFields($name = null, $locale = null)
+    {
+        // TODO: Implement getFields() method.
+    }
+
+    public function addDefaultValues(
+        \Civi\RemoteParticipant\Event\GetParticipantFormEventBase $resultsEvent,
+        $name = null
+    ) {
+        // TODO: Implement addDefaultValues() method.
+    }
 
     /**
      * @param $id
@@ -72,11 +94,26 @@ class CRM_Remoteevent_FormEditorProfile
     }
 
     /**
+     * @return string
+     */
+    public function get_class_name(): string
+    {
+        return self::$classname;
+    }
+
+    /**
      * @return mixed
      */
     public function get_name()
     {
         return $this->name;
+    }
+
+    /**
+     * @return void
+     */
+    public function get_unique_identifier() {
+        // TODO implement unique identifier
     }
 
     /**
@@ -191,4 +228,5 @@ class CRM_Remoteevent_FormEditorProfile
         }
         return $allowed_options;
     }
+
 }

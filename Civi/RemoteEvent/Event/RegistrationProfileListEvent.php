@@ -32,8 +32,11 @@ class RegistrationProfileListEvent extends Event
 
     protected $profiles;
 
+    protected int $id_counter;
+
     public function __construct()
     {
+        $this->id_counter = 0;
     }
 
     public function getProfiles()
@@ -47,11 +50,11 @@ class RegistrationProfileListEvent extends Event
      * @return mixed
      * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
      */
-    public function getProfileClass($name)
+    public function getProfileInstance($name)
     {
         foreach ($this->profiles as $profile) {
             if ($profile->getProfileName() == $name) {
-                return $profile->getProfileInstance();
+                return $profile->getInstance();
             }
         }
         throw new \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException(
@@ -82,9 +85,9 @@ class RegistrationProfileListEvent extends Event
      *
      * @return void
      */
-    public function addProfile($classname, $profile_name, $params = null)
+    public function addProfile($classname, $profile_name, $internal_id, $params = null)
     {
-        $profile_data = new \CRM_Remoteevent_EventProfile($classname, $profile_name, $params);
+        $profile_data = new \CRM_Remoteevent_EventProfile($classname, $profile_name, $internal_id, ++$this->id_counter, $params);
         $this->profiles[] = $profile_data;
     }
 

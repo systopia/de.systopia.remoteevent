@@ -22,7 +22,13 @@ class CRM_Remoteevent_EventProfile
 {
     private $classname;
 
+    private int $internal_id;
+
+    private int $select_id;
+
     private $profile_name;
+
+    private string $unique_id;
 
     /**
      * @var Additional information. For option value this is the information that
@@ -35,11 +41,19 @@ class CRM_Remoteevent_EventProfile
      * @param $profile_name
      * @param $additional_params
      */
-    public function __construct($classname, $profile_name, $additional_params)
+    public function __construct($classname, $profile_name, $internal_id, $select_id, $additional_params = null)
     {
         $this->classname = $classname;
         $this->profile_name = $profile_name;
+        $this->internal_id = $internal_id;
         $this->params = $additional_params;
+        $this->unique_id = $classname . "--" . $internal_id;
+        $this->select_id = $select_id;
+    }
+
+    public function get_uniquie_id()
+    {
+        return $this->unique_id;
     }
 
     /**
@@ -70,12 +84,22 @@ class CRM_Remoteevent_EventProfile
         return $this->params;
     }
 
+    public function get_select_counter()
+    {
+        return $this->select_id;
+    }
+
     /**
      *
      * @return class instance of $this->classname if it exists
      */
-    public function getProfileInstance()
+    public function getInstance()
     {
+        if (class_exists($this->classname) && $this->classname == "CRM_Remoteevent_RegistrationProfile_FormEditor") {
+            // we have a FormBuilder Profile
+            return new $this->classname($this->internal_id);
+        }
+        // check if we have unique params, if so use them for instance, otherwise try normal instance
         if (class_exists($this->classname)) {
             return new $this->classname();
         }

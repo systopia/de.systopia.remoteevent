@@ -261,13 +261,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
     public static function getRegistrationProfile($profile_name)
     {
         // DEBUG Code
-//        $tmp = new CRM_Remoteevent_RegistrationProfile_FormEditor();
-//        $field_list = $tmp->getFields("test_local_pba");
+        $tmp = new CRM_Remoteevent_RegistrationProfile_FormEditor();
+        $field_list = $tmp->getFields("test_local_pba");
 
         $profile_list = new RemoteEvent\Event\RegistrationProfileListEvent();
         // dispatch Registration Profile Event and try to instanciate a profile class from $profile_name
         Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $profile_list);
-        return $profile_list->getProfileClass($profile_name);
+        $tmp = $profile_list->getProfileInstance($profile_name);
+        return $tmp;
 
 //        return $class_instance;
 
@@ -298,27 +299,40 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getAvailableRegistrationProfiles($name_field = 'label')
     {
-        $profile_data = null;
-        if ($profile_data === null) {
-            $profile_data = [];
-            $profile_data = civicrm_api3(
-                'OptionValue',
-                'get',
-                [
-                    'option.limit'      => 0,
-                    'option_group_id'   => 'remote_registration_profiles',
-                    'is_active'         => 1,
-                    'check_permissions' => false
-                ]
-            );
-        }
+        // TODO Use Symfony Event here as well
+        $remote_event_profiles = new RemoteEvent\Event\RegistrationProfileListEvent();
+        // dispatch Registration Profile Event and try to instantiate a profile class from $profile_name
+        Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $remote_event_profiles);
 
-        // compile response
         $profiles = [];
-        foreach ($profile_data['values'] as $profile) {
-            $profiles[$profile['value']] = $profile[$name_field];
+        foreach ($remote_event_profiles->getProfiles() as $profile) {
+            $profiles[$profile->get_select_counter()] = $profile->getProfileName();
+//            $profiles[$profile->get_uniquie_id()] = $profile->getProfileName();
         }
         return $profiles;
+//
+//        // use Profile Export List
+//        $profile_data = null;
+//        if ($profile_data === null) {
+//            $profile_data = [];
+//            $profile_data = civicrm_api3(
+//                'OptionValue',
+//                'get',
+//                [
+//                    'option.limit'      => 0,
+//                    'option_group_id'   => 'remote_registration_profiles',
+//                    'is_active'         => 1,
+//                    'check_permissions' => false
+//                ]
+//            );
+//        }
+//
+//        // compile response
+//        $profiles = [];
+//        foreach ($profile_data['values'] as $profile) {
+//            $profiles[$profile['value']] = $profile[$name_field];
+//        }
+//        return $profiles;
     }
 
 
@@ -343,7 +357,17 @@ abstract class CRM_Remoteevent_RegistrationProfile
         );
         foreach ($profile_data['values'] as $profile) {
             $classname = "CRM_Remoteevent_RegistrationProfile_{$profile['name']}";
-            $registration_profile_list_event->addProfile($classname, $profile['name'], $profile);
+            // TODO instead of 'id' do we rather use value here?
+            $registration_profile_list_event->addProfile($classname, $profile['name'], $profile['id']);
+        }
+    }
+
+    public static function addOFormBuilderProfiles(
+        RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event)
+    {
+        $form_editor_profiles = CRM_Remoteevent_RegistrationProfile_FormEditor::get_formeditor_profiles();
+        foreach ($form_editor_profiles as $profile) {
+            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->get_name(), $profile->get_id());
         }
     }
 
