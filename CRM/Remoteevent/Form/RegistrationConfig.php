@@ -184,9 +184,17 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                     'return' => implode(',', array_merge(array_keys($field_list), self::NATIVE_ATTRIBUTES_USED)),
                 ]
             );
+
             foreach ($field_list as $custom_key => $form_key) {
-                $tmp = CRM_Utils_Array::value($custom_key, $values, '');
-                $this->setDefaults([$form_key => CRM_Utils_Array::value($custom_key, $values, '')]);
+                // extract array from remote_registration_profiles_generic & remote_registration_update_profiles_generic manually
+                if ($form_key == "remote_registration_profiles" || $form_key == "remote_registration_update_profiles" ) {
+                    $tmp_values = CRM_Utils_Array::value($custom_key, $values, '');
+                    foreach ($tmp_values as $value) {
+                        $this->setDefaults([$form_key => json_decode($value, TRUE)]);
+                    }
+                } else {
+                    $this->setDefaults([$form_key => CRM_Utils_Array::value($custom_key, $values, '')]);
+                }
             }
         }
 
@@ -275,9 +283,9 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 0
             ),
             // uncomment for debugging
-            'event_remote_registration.remote_registration_default_profile_generic'        => json_encode($values['remote_registration_default_profile']),
+            'event_remote_registration.remote_registration_default_profile_generic'        => $values['remote_registration_default_profile'],
             'event_remote_registration.remote_registration_update_profiles_generic'        => json_encode($values['remote_registration_update_profiles']),
-            'event_remote_registration.remote_registration_default_update_profile_generic' => json_encode($values['remote_registration_default_update_profile']),
+            'event_remote_registration.remote_registration_default_update_profile_generic' => $values['remote_registration_default_update_profile'],
             'event_remote_registration.remote_registration_profiles_generic'               => json_encode($values['remote_registration_profiles']),
             'event_remote_registration.remote_registration_external_identifier'    => $values['remote_registration_external_identifier'],
             'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac'],
