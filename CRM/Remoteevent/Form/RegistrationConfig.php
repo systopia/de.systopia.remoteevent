@@ -47,6 +47,13 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 
     public function buildQuickForm()
     {
+        // test
+//        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+//        $customData->syncOptionGroup(E::path('resources/option_group_remote_registration_profiles.json'));
+//        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+//        $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
+//        $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
+
         // gather data
         $available_registration_profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles();
         $intro_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'intro_text') + ['class' => 'collapsed', 'preset' => 'civievent'];
@@ -178,6 +185,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 ]
             );
             foreach ($field_list as $custom_key => $form_key) {
+                $tmp = CRM_Utils_Array::value($custom_key, $values, '');
                 $this->setDefaults([$form_key => CRM_Utils_Array::value($custom_key, $values, '')]);
             }
         }
@@ -266,10 +274,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 $values,
                 0
             ),
-            'event_remote_registration.remote_registration_default_profile'        => $values['remote_registration_default_profile'],
-            'event_remote_registration.remote_registration_update_profiles'        => $values['remote_registration_update_profiles'],
-            'event_remote_registration.remote_registration_default_update_profile' => $values['remote_registration_default_update_profile'],
-            'event_remote_registration.remote_registration_profiles'               => $values['remote_registration_profiles'],
+            // uncomment for debugging
+            'event_remote_registration.remote_registration_default_profile_generic'        => json_encode($values['remote_registration_default_profile']),
+            'event_remote_registration.remote_registration_update_profiles_generic'        => json_encode($values['remote_registration_update_profiles']),
+            'event_remote_registration.remote_registration_default_update_profile_generic' => json_encode($values['remote_registration_default_update_profile']),
+            'event_remote_registration.remote_registration_profiles_generic'               => json_encode($values['remote_registration_profiles']),
             'event_remote_registration.remote_registration_external_identifier'    => $values['remote_registration_external_identifier'],
             'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac'],
             'event_remote_registration.remote_registration_xcm_profile'            => $values['remote_registration_xcm_profile'],
@@ -343,5 +352,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             $profiles['off'] = E::ts("No Contact Updates");
         }
         return $profiles;
+    }
+
+
+    private function isJson($string) {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
     }
 }

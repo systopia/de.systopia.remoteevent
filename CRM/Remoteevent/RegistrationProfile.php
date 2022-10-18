@@ -306,8 +306,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         $profiles = [];
         foreach ($remote_event_profiles->getProfiles() as $profile) {
-            $profiles[$profile->get_select_counter()] = $profile->getProfileName();
-//            $profiles[$profile->get_uniquie_id()] = $profile->getProfileName();
+//            $profiles[$profile->get_select_counter()] = $profile->getProfileName();
+            $profiles[$profile->get_uniquie_id()] = $profile->getProfileName();
         }
         return $profiles;
 //
@@ -367,7 +367,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     {
         $form_editor_profiles = CRM_Remoteevent_RegistrationProfile_FormEditor::get_formeditor_profiles();
         foreach ($form_editor_profiles as $profile) {
-            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->get_name(), $profile->get_id());
+            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->get_name(), $profile->get_id(), "fb");
         }
     }
 

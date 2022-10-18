@@ -30,7 +30,7 @@ class RegistrationProfileListEvent extends Event
 
     const NAME = 'civi.remoteevent.registration.profile.list';
 
-    protected $profiles;
+    protected $profiles; // array[CRM_Remoteevent_EventProfile]
 
     protected int $id_counter;
 
@@ -85,9 +85,9 @@ class RegistrationProfileListEvent extends Event
      *
      * @return void
      */
-    public function addProfile($classname, $profile_name, $internal_id, $params = null)
+    public function addProfile($classname, $profile_name, $internal_id, $id_prefix = null, $params = null)
     {
-        $profile_data = new \CRM_Remoteevent_EventProfile($classname, $profile_name, $internal_id, ++$this->id_counter, $params);
+        $profile_data = new \CRM_Remoteevent_EventProfile($classname, $profile_name, $internal_id, ++$this->id_counter, $id_prefix, $params);
         $this->profiles[] = $profile_data;
     }
 

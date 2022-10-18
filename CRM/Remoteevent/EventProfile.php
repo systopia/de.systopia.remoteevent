@@ -41,13 +41,19 @@ class CRM_Remoteevent_EventProfile
      * @param $profile_name
      * @param $additional_params
      */
-    public function __construct($classname, $profile_name, $internal_id, $select_id, $additional_params = null)
+    public function __construct($classname, $profile_name, $internal_id, $select_id, $id_prefix = null, $additional_params = null)
     {
         $this->classname = $classname;
         $this->profile_name = $profile_name;
         $this->internal_id = $internal_id;
         $this->params = $additional_params;
-        $this->unique_id = $classname . "--" . $internal_id;
+        if (empty($id_prefix)) {
+            // default prefix is Option Group (og)
+            $this->unique_id = 'og' . "-" . $internal_id;
+        } else {
+            $this->unique_id = $id_prefix . "-" . $internal_id;
+        }
+
         $this->select_id = $select_id;
     }
 
