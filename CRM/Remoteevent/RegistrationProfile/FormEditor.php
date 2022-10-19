@@ -17,15 +17,31 @@ use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 
-
+/**
+ * Registration profile Class for all Registration Profiles. Needs an *internal* id to instanciate
+ */
 class CRM_Remoteevent_RegistrationProfile_FormEditor extends CRM_Remoteevent_RegistrationProfile
 {
+    /**
+     * @var array
+     */
     private array $profile_list;
 
-    public function __construct()
+    /**
+     * @var int
+     */
+    private int $default_id;
+
+    /**
+     * default id is the internal formeditor ID
+     *
+     * @param $default_id
+     */
+    public function __construct($default_id)
     {
         // TODO check if remoteeventformeditor is installed!
         $this->profile_list = self::get_formeditor_profiles();
+        $this->default_id = $default_id;
     }
 
     /**
@@ -34,39 +50,28 @@ class CRM_Remoteevent_RegistrationProfile_FormEditor extends CRM_Remoteevent_Reg
      * @return mixed|string
      * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
      */
-    public function getName($name = null)
+    public function getName()
     {
-        // TODO: Implement getName() method.
-        foreach ($this->profile_list as $profile) {
-            // if name is null return the first one. Dirty
-            if (empty($name)) {
-                return $profile;
-            }
-            if ($profile->get_name() == $name) {
-                return $profile;
-            }
-        }
-        throw new CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException("Unknown Profile {$name}");
+        return $this->get_profile()->getName();
     }
-
 
     /**
-     * @param $name
+     * @param $locale
      *
-     * @return mixed
+     * @return array
      * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
      */
-    public function get_profile_name($name)
+    public function getFields($locale = null): array
     {
-        return $this->get_profile($name)->name();
+        return $this->get_profile()->getFields($locale);
     }
 
-    public function getFields($name = null, $locale = null)
-    {
-        // TODO: Implement getFields() method.
-        return $this->get_profile($name)->get_fields($locale);
-    }
-
+    /**
+     * @param \Civi\RemoteParticipant\Event\GetParticipantFormEventBase $resultsEvent
+     * @param $name
+     *
+     * @return void
+     */
     public function addDefaultValues(GetParticipantFormEventBase $resultsEvent, $name = null)
     {
         // TODO: Implement addDefaultValues() method.
@@ -76,7 +81,12 @@ class CRM_Remoteevent_RegistrationProfile_FormEditor extends CRM_Remoteevent_Reg
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // internal helper
-    public static function get_formeditor_profiles()
+
+    /**
+     * Get all Form Editor profiles. Array of CRM_Remoteevent_FormEditorProfile
+     * @return array
+     */
+    public static function get_formeditor_profiles(): array
     {
         $profiles = CRM_RemoteEventFormEditor_BAO_RemoteEventFormEditorForm::get_remoteevent_profiles();
         $profile_list = [];
@@ -96,16 +106,16 @@ class CRM_Remoteevent_RegistrationProfile_FormEditor extends CRM_Remoteevent_Reg
      * @return mixed
      * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
      */
-    private function get_profile($name)
+    private function get_profile() : CRM_Remoteevent_FormEditorProfile
     {
         foreach ($this->profile_list as $profile) {
-            if ($profile->get_name() == $name) {
+            if ($profile->get_id() == $this->default_id) {
                 return $profile;
             }
         }
-//        throw new CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException(
-//            "Invalid Profile Name {$name}. Couldn't find profile"
-//        );
+        throw new CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException(
+            "Invalid Profile Name {$name}. Couldn't find profile"
+        );
     }
 
 }

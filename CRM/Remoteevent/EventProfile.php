@@ -57,7 +57,7 @@ class CRM_Remoteevent_EventProfile
         $this->select_id = $select_id;
     }
 
-    public function get_uniquie_id()
+    public function get_unique_id()
     {
         return $this->unique_id;
     }
@@ -99,7 +99,7 @@ class CRM_Remoteevent_EventProfile
      *
      * @return class instance of $this->classname if it exists
      */
-    public function getInstance()
+    public function getInstance($profile_id = null)
     {
         if (class_exists($this->classname) && $this->classname == "CRM_Remoteevent_RegistrationProfile_FormEditor") {
             // we have a FormBuilder Profile

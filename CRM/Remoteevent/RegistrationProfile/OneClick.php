@@ -27,7 +27,7 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      *
      * @return string name
      */
-    public function getName($name = NULL)
+    public function getName()
     {
         return 'OneClick';
     }
@@ -40,7 +40,7 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      * @see CRM_Remoteevent_RegistrationProfile::getFields()
      *
      */
-    public function getFields($name = NULL, $locale = null)
+    public function getFields($locale = null)
     {
         return [];
     }

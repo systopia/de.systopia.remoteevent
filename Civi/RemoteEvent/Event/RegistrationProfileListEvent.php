@@ -53,8 +53,8 @@ class RegistrationProfileListEvent extends Event
     public function getProfileInstance($name)
     {
         foreach ($this->profiles as $profile) {
-            if ($profile->getProfileName() == $name) {
-                return $profile->getInstance();
+            if ($profile->get_unique_id() == $name) {
+                return $profile->getInstance($name);
             }
         }
         throw new \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException(

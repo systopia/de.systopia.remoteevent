@@ -33,7 +33,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      * @return string name
      */
-    abstract public function getName($name = NULL);
+    abstract public function getName();
 
     /**
      * Get the human-readable name of the profile represented
@@ -69,7 +69,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *                             the main validation will go through the RemoteParticipant.validate function
      *   ]
      */
-    abstract public function getFields($name = NULL, $locale = null);
+    abstract public function getFields($locale = null);
 
     /**
      * Add the default values to the form data, so people using this profile
@@ -167,17 +167,17 @@ abstract class CRM_Remoteevent_RegistrationProfile
             case 'create':
                 if (empty($params['profile'])) {
                     // use default profile
-                    $params['profile'] = $event['default_profile'];
+                    $params['profile'] = $event['event_remote_registration.remote_registration_default_profile_generic'];
                 }
-                $allowed_profiles = explode(',', $event['enabled_profiles']);
+                $allowed_profiles = $event['event_remote_registration.remote_registration_profiles_generic'];
                 break;
 
             case 'update':
                 if (empty($params['profile'])) {
                     // use default profile
-                    $params['profile'] = $event['default_update_profile'];
+                    $params['profile'] = $event['event_remote_registration.remote_registration_default_update_profile_generic'];
                 }
-                $allowed_profiles = explode(',', $event['enabled_update_profiles']);
+                $allowed_profiles = $event['event_remote_registration.remote_registration_update_profiles_generic'];
                 break;
 
             default:
@@ -219,6 +219,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // add default values
         $profile->addDefaultValues($get_form_results);
 
+        $name = $profile->getName();
+        $label = $profile->getLabel();
         // add profile "field"
         $get_form_results->addFields([
              'profile' => [
@@ -260,10 +262,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getRegistrationProfile($profile_name)
     {
-        // DEBUG Code
-        $tmp = new CRM_Remoteevent_RegistrationProfile_FormEditor();
-        $field_list = $tmp->getFields("test_local_pba");
-
         $profile_list = new RemoteEvent\Event\RegistrationProfileListEvent();
         // dispatch Registration Profile Event and try to instanciate a profile class from $profile_name
         Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $profile_list);
@@ -307,7 +305,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $profiles = [];
         foreach ($remote_event_profiles->getProfiles() as $profile) {
 //            $profiles[$profile->get_select_counter()] = $profile->getProfileName();
-            $profiles[$profile->get_uniquie_id()] = $profile->getProfileName();
+            $profiles[$profile->get_unique_id()] = $profile->getProfileName();
         }
         return $profiles;
 //
@@ -367,7 +365,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     {
         $form_editor_profiles = CRM_Remoteevent_RegistrationProfile_FormEditor::get_formeditor_profiles();
         foreach ($form_editor_profiles as $profile) {
-            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->get_name(), $profile->get_id(), "fb");
+            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->getName(), $profile->get_id(), "fb");
         }
     }
 

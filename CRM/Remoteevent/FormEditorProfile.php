@@ -22,6 +22,7 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
 {
 
     private static $classname = 'CRM_Remoteevent_RegistrationProfile_FormEditor';
+
     /**
      * profile id in remoteventformeditor
      *
@@ -58,12 +59,7 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
 
     public function getName($name = null)
     {
-        // TODO: Implement getName() method.
-    }
-
-    public function getFields($name = null, $locale = null)
-    {
-        // TODO: Implement getFields() method.
+        return $this->name;
     }
 
     public function addDefaultValues(
@@ -102,26 +98,11 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
     }
 
     /**
-     * @return mixed
-     */
-    public function get_name()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return void
-     */
-    public function get_unique_identifier() {
-        // TODO implement unique identifier
-    }
-
-    /**
      * @param $locale
      *
      * @return array
      */
-    public function get_fields($locale = null)
+    public function getFields($locale = null)
     {
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         $form = [];

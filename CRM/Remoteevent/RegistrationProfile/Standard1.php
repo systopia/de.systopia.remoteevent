@@ -27,7 +27,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
      *
      * @return string name
      */
-    public function getName($name = NULL)
+    public function getName()
     {
         return 'Standard1';
     }
@@ -40,7 +40,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
      * @see CRM_Remoteevent_RegistrationProfile::getFields()
      *
      */
-    public function getFields($name = NULL, $locale = null)
+    public function getFields($locale = null)
     {
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         return [
