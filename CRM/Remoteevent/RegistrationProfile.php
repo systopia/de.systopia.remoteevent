@@ -40,7 +40,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      * @return string label
      */
-    public function getLabel($name = NULl)
+    public function getLabel()
     {
         // default is the internal name
         return $this->getName();

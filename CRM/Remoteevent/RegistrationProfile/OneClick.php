@@ -29,7 +29,24 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      */
     public function getName()
     {
-        return 'OneClick';
+        // we need the new identifier og-id here
+        $result = civicrm_api3('OptionValue', 'getsingle', [
+            'option_group_id' => "remote_registration_profiles",
+            'name' => "OneClick",
+        ]);
+        return 'og-' . $result['id'];
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getLabel()
+    {
+        $result = civicrm_api3('OptionValue', 'getsingle', [
+            'option_group_id' => "remote_registration_profiles",
+            'name' => "OneClick",
+        ]);
+        return $result['label'];
     }
 
     /**

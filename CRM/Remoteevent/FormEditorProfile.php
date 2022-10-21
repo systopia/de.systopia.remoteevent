@@ -59,6 +59,11 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
 
     public function getName($name = null)
     {
+        return 'fb-' . $this->id;
+    }
+
+    public function getLabel()
+    {
         return $this->name;
     }
 
