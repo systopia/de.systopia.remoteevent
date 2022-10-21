@@ -365,7 +365,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     {
         $form_editor_profiles = CRM_Remoteevent_RegistrationProfile_FormEditor::get_formeditor_profiles();
         foreach ($form_editor_profiles as $profile) {
-            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->getName(), $profile->get_id(), "fb");
+            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->getLabel(), $profile->get_id(), "fb");
         }
     }
 
