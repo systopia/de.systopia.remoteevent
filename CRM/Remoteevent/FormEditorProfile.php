@@ -23,7 +23,7 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
 {
 
     /**
-     * @var string 
+     * @var string
      */
     private static $classname = 'CRM_Remoteevent_RegistrationProfile_FormEditor';
 
@@ -52,7 +52,7 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
      * @var string[]
      */
     private $field_mapping = [
-        'name' => 'target',
+//        'name' => 'target',
         'type' => 'validation',
         'validation' => 'validation',
         'required' => 'required',
@@ -130,28 +130,26 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
                 // TODO parse fieldset
                 // move to function
                 // replace spaces with underscores for name
-                $fieldset_name = str_replace(" ", "_", $field->label);
-                $form[$fieldset_name] = [];
-                $this->set_fieldSet($form[$fieldset_name], $field, $l10n, $current_weight, $fieldset_name);
+                $field_name = str_replace(" ", "_", $field->label);
+                $form[$field_name] = [];
+                $this->set_fieldSet($form[$field_name], $field, $l10n, $current_weight, $field_name);
                 ++$current_weight;
                 // iterate over items array for fieldset content
                 foreach ($field->items as $fieldset_items) {
-                    $group_index = $fieldset_items->type;
-                    $form[$group_index] = [];
-                    $this->set_fields($form[$group_index], $fieldset_items, $fieldset_name);
+                    $field_name = $this->resolve_target($fieldset_items->target);
+                    $form[$field_name] = [];
+                    $this->set_fields($form[$field_name], $fieldset_items, $field_name, $field_name);
                     ++$current_weight;
                 }
             } else {
                 // parse normal data
-                $fieldset_name = $field->type;
-                $form[$fieldset_name] = [];
-                $tmp = \Civi::service(\Civi\RemoteEventFormEditor\FieldType\FieldTypeContainer::class);
-                $test = $tmp->getFieldType($field->type);
-                $this->set_fields($form[$fieldset_name], $field);
+                $field_name = $this->resolve_target($field->target);
+                $form[$field_name] = [];
+                $this->set_fields($form[$field_name], $field, $field_name);
                 // Setting weight currently just counting up, since the order is already set in the JSON data
                 // but no real weight attribute  is present
                 // TODO: Check what is required here
-                $form[$fieldset_name]['weight'] = $current_weight;
+                $form[$field_name]['weight'] = $current_weight;
                 ++$current_weight;
             }
         }
@@ -184,9 +182,11 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
      *
      * @return void
      */
-    private function set_fields(&$form, $values, $parent = null)
+    private function set_fields(&$form, $values, $target, $parent = null)
     {
         $type = $values->type;
+        $form['target'] = $target;
+        
         foreach ($this->field_mapping as $field => $form_value) {
             if (isset($values->{$form_value})) {
                 $form[$field] = $values->{$form_value};
@@ -209,6 +209,39 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
         if (!empty($parent)) {
             $form['parent'] = $parent;
         }
+    }
+
+    /**
+     * @param $target
+     *
+     * @return string
+     */
+    private function resolve_target($target)
+    {
+        $internal_data = explode('.', $target);
+        if (count($internal_data) == 1) {
+            // nothing to do here
+            return $target;
+        }
+        $custom_group = $internal_data['0'];
+        $custom_field_name = $internal_data['1'];
+        $customGroups = \Civi\Api4\CustomGroup::get()
+            ->addSelect('id')
+            ->addWhere('name', '=', $custom_group)
+            ->execute();
+        foreach ($customGroups as $customGroup) {
+            $custom_group_id = $customGroup['id'];
+        }
+
+        $customFields = \Civi\Api4\CustomField::get()
+            ->addSelect('id')
+            ->addWhere('custom_group_id', '=', $custom_group_id)
+            ->addWhere('name', '=', $custom_field_name)
+            ->execute();
+        foreach ($customFields as $customField) {
+            $custom_field_id = $customField['id'];
+        }
+        return "custom_" . $custom_field_id;
     }
 
 }
