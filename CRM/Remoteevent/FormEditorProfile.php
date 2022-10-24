@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\RemoteEventFormEditor\FieldType\FieldTypeGroupContainer;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -21,6 +22,9 @@ use CRM_Remoteevent_ExtensionUtil as E;
 class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProfile
 {
 
+    /**
+     * @var string 
+     */
     private static $classname = 'CRM_Remoteevent_RegistrationProfile_FormEditor';
 
     /**
@@ -57,11 +61,19 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
         'maxlength' => 'maxlength',
     ];
 
+    /**
+     * @param $name
+     *
+     * @return string
+     */
     public function getName($name = null)
     {
         return 'fb-' . $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function getLabel()
     {
         return $this->name;
@@ -133,6 +145,8 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
                 // parse normal data
                 $fieldset_name = $field->type;
                 $form[$fieldset_name] = [];
+                $tmp = \Civi::service(\Civi\RemoteEventFormEditor\FieldType\FieldTypeContainer::class);
+                $test = $tmp->getFieldType($field->type);
                 $this->set_fields($form[$fieldset_name], $field);
                 // Setting weight currently just counting up, since the order is already set in the JSON data
                 // but no real weight attribute  is present
@@ -172,47 +186,29 @@ class CRM_Remoteevent_FormEditorProfile extends CRM_Remoteevent_RegistrationProf
      */
     private function set_fields(&$form, $values, $parent = null)
     {
+        $type = $values->type;
         foreach ($this->field_mapping as $field => $form_value) {
             if (isset($values->{$form_value})) {
                 $form[$field] = $values->{$form_value};
             }
-            // TODO handle allowed options!
         }
         // set allowed options
         if (isset($values->allowedOptions)) {
-            $form['options'] = $this->parse_allowed_options($form, $values->allowedOptions, $values->target);
+            $field_container = \Civi::service(\Civi\RemoteEventFormEditor\FieldType\FieldTypeContainer::class);
+            $container_type = $field_container->getFieldType($type);
+            $extra_data = $container_type->getExtraData();
+            $form['options'] = array_flip($extra_data['options']);
+            // Overwrite html_type
+            if (isset($extra_data['multiple'])) {
+                $form['type'] = "Multi-Select";
+            } else {
+                $form['type'] = "Select";
+            }
         }
         // set parent for group entries
         if (!empty($parent)) {
             $form['parent'] = $parent;
         }
-    }
-
-    /**
-     * @param $form
-     * @param $allowed_options_array
-     * @param $option_group_name
-     *
-     * @return array
-     */
-    private function parse_allowed_options(&$form, $allowed_options_array, $option_group_name)
-    {
-        // normalize option_group name
-        $normalized_option_group_name = str_replace(".", "_", $option_group_name);
-        $allowed_options = [];
-        // get option values
-        $optionValues = \Civi\Api4\OptionValue::get()
-            ->addWhere('option_group_id:name', '=', 'Test_Local_multiselect')
-            ->execute();
-        foreach ($allowed_options_array as $allowed_option) {
-            foreach ($optionValues as $optionValue) {
-                if ($optionValue['value'] == $allowed_option) {
-                    // TODO how
-                    $allowed_options[$optionValue['value']] = $optionValue['name'];
-                }
-            }
-        }
-        return $allowed_options;
     }
 
 }
