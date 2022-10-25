@@ -83,12 +83,12 @@ class GetResultEvent extends RemoteEvent
      *
      * @param integer $limit
      *   the limit to trim to. if 0, no trimming will be done
+     * @param int $offset
+     *   The offset to start from when trimming.
      */
-    public function trimToLimit($limit)
+    public function trimToLimit($limit, $offset = 0)
     {
-        if ($limit) {
-            $this->event_data = array_slice($this->event_data, 0, $limit, true);
-        }
+        $this->event_data = array_slice($this->event_data, $offset, $limit ?: null, true);
     }
 
     /**
@@ -142,6 +142,28 @@ class GetResultEvent extends RemoteEvent
 
         // default is '25' (by general API contract)
         return 25;
+    }
+
+    /**
+     * Get the offset parameter of the original request
+     *
+     * @return integer
+     *   returned result count or 0 for 'no offset'
+     */
+    public function getOriginalOffset()
+    {
+        // check the options array
+        if (isset($this->original_params['options']['offset'])) {
+            return (int) $this->original_params['options']['offset'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->original_params['option.offset'])) {
+            return (int) $this->original_params['option.offset'];
+        }
+
+        // default is '0'
+        return 0;
     }
 
 }

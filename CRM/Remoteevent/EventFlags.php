@@ -139,6 +139,7 @@ class CRM_Remoteevent_EventFlags
         if (!empty($flag_filters_applied)) {
             // there some flag filters active, we have to remove any limit
             $get_parameters->setLimit(0);
+            $get_parameters->setOffset(0);
 
             // check if we should apply performance enhancements
             $performance_enhancement_enabled = (boolean) Civi::settings()->get('remote_event_get_performance_enhancement');
@@ -241,7 +242,8 @@ class CRM_Remoteevent_EventFlags
 
         // now, finally we can apply the limit
         $requested_limit = $result->getOriginalLimit();
-        $result->trimToLimit($requested_limit);
+        $requested_offset = $result->getOriginalOffset();
+        $result->trimToLimit($requested_limit, $requested_offset);
     }
 
     /**

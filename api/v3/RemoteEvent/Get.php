@@ -115,7 +115,8 @@ function civicrm_api3_remote_event_get($params)
 
     // finally, apply the limit
     $limit = $get_params->getOriginalLimit();
-    $result->trimToLimit($limit);
+    $offset = $get_params->getOriginalOffset();
+    $result->trimToLimit($limit, $offset);
 
     // return the result
     if ($result->hasErrors()) {
