@@ -102,6 +102,38 @@ abstract class RemoteParamsEvent extends RemoteEvent
         return $this->request;
     }
 
+    public function getLimit()
+    {
+        // check the options array
+        if (isset($this->request['options']['limit'])) {
+            return (int)$this->request['options']['limit'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->request['option.limit'])) {
+            return (int)$this->request['option.limit'];
+        }
+
+        // default is '25' (by general API contract)
+        return 25;
+    }
+
+    public function getOffset()
+    {
+        // check the options array
+        if (isset($this->request['options']['offset'])) {
+            return (int)$this->request['options']['offset'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->request['option.offset'])) {
+            return (int)$this->request['option.offset'];
+        }
+
+        // default is '0'
+        return 0;
+    }
+
     /**
      * Get the limit parameter of the original reuqest
      *

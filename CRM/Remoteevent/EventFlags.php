@@ -240,10 +240,7 @@ class CRM_Remoteevent_EventFlags
             }
         }
 
-        // now, finally we can apply the limit
-        $requested_limit = $result->getOriginalLimit();
-        $requested_offset = $result->getOriginalOffset();
-        $result->trimToLimit($requested_limit, $requested_offset);
+        // Note: the original limit/offset are being applied in the API if they differ from the current values.
     }
 
     /**
