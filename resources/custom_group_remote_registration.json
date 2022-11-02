@@ -135,14 +135,14 @@
       "column_name": "profiles_generic",
       "label": "Allowed Profiles",
       "data_type": "String",
-      "html_type": "Multi-Select",
+      "html_type": "Multi-Select",   // Text
       "text_length": "2048",
       "is_required": "0",
       "is_searchable": "1",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "0",
-      "in_selector": "1"
+      "is_view": "0",     // 1
+      "in_selector": "1" // raus
     },
     {
       "_lookup": ["column_name", "custom_group_id"],

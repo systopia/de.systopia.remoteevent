@@ -194,10 +194,6 @@ function remoteevent_civicrm_config(&$config)
         ['CRM_Remoteevent_RegistrationProfile','addOptionValueProfiles']
     );
 
-    $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.profile.list',
-        ['CRM_Remoteevent_RegistrationProfile','addOFormBuilderProfiles']
-    );
 }
 
 /**

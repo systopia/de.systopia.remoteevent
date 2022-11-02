@@ -20,14 +20,29 @@
  */
 class CRM_Remoteevent_EventProfile
 {
-    private $classname;
+    /**
+     * @var string
+     */
+    private string $classname;
 
+    /**
+     * @var int
+     */
     private int $internal_id;
 
+    /**
+     * @var int
+     */
     private int $select_id;
 
-    private $profile_name;
+    /**
+     * @var string
+     */
+    private string $profile_name;
 
+    /**
+     * @var string
+     */
     private string $unique_id;
 
     /**
@@ -41,8 +56,14 @@ class CRM_Remoteevent_EventProfile
      * @param $profile_name
      * @param $additional_params
      */
-    public function __construct($classname, $profile_name, $internal_id, $select_id, $id_prefix = null, $additional_params = null)
-    {
+    public function __construct(
+        $classname,
+        $profile_name,
+        $internal_id,
+        $select_id,
+        $id_prefix = null,
+        $additional_params = null
+    ) {
         $this->classname = $classname;
         $this->profile_name = $profile_name;
         $this->internal_id = $internal_id;
@@ -57,7 +78,10 @@ class CRM_Remoteevent_EventProfile
         $this->select_id = $select_id;
     }
 
-    public function get_unique_id()
+    /**
+     * @return string
+     */
+    public function get_unique_id(): string
     {
         return $this->unique_id;
     }
@@ -77,7 +101,7 @@ class CRM_Remoteevent_EventProfile
      *
      * @return mixed
      */
-    public function getProfileName()
+    public function getProfileName(): string
     {
         return $this->profile_name;
     }
@@ -90,6 +114,9 @@ class CRM_Remoteevent_EventProfile
         return $this->params;
     }
 
+    /**
+     * @return int
+     */
     public function get_select_counter()
     {
         return $this->select_id;
@@ -101,8 +128,8 @@ class CRM_Remoteevent_EventProfile
      */
     public function getInstance($profile_id = null)
     {
-        if (class_exists($this->classname) && $this->classname == "CRM_Remoteevent_RegistrationProfile_FormEditor") {
-            // we have a FormBuilder Profile
+        if (class_exists($this->classname) && !empty($profile_id)) {
+            // we have an external Profile (e.g. FormBuilder)
             return new $this->classname($this->internal_id);
         }
         // check if we have unique params, if so use them for instance, otherwise try normal instance

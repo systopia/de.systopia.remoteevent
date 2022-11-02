@@ -360,15 +360,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
-    public static function addOFormBuilderProfiles(
-        RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event)
-    {
-        $form_editor_profiles = CRM_Remoteevent_RegistrationProfile_FormEditor::get_formeditor_profiles();
-        foreach ($form_editor_profiles as $profile) {
-            $registration_profile_list_event->addProfile($profile->get_class_name(), $profile->getLabel(), $profile->get_id(), "fb");
-        }
-    }
-
     /**
      * Update the profile data in the event info as returned by the API
      * @param array $event
