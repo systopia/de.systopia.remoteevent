@@ -62,6 +62,11 @@
       <div class="content">{$form.remote_registration_profiles.html}</div>
       <div class="clear"></div>
     </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_xcm_profile.label}&nbsp;{help id="id-remote-registration-xcm-profile" title=$form.remote_registration_xcm_profile.label}</div>
+      <div class="content">{$form.remote_registration_xcm_profile.html}</div>
+      <div class="clear"></div>
+    </div>
     <div class="crm-section crm-event-manage-registration-form-block-registration_start_date">
       <div class="label">{$form.registration_start_date.label}</div>
       <div class="content">{$form.registration_start_date.html}</div>
@@ -100,6 +105,11 @@
     <div class="crm-section">
       <div class="label">{$form.remote_registration_update_profiles.label}&nbsp;{help id="id-remote-registration-update-profiles" title=$form.remote_registration_update_profiles.label}</div>
       <div class="content">{$form.remote_registration_update_profiles.html}</div>
+      <div class="clear"></div>
+    </div>
+    <div class="crm-section">
+      <div class="label">{$form.remote_registration_update_xcm_profile.label}&nbsp;{help id="id-remote-update-xcm-profile" title=$form.remote_registration_update_xcm_profile.label}</div>
+      <div class="content">{$form.remote_registration_update_xcm_profile.html}</div>
       <div class="clear"></div>
     </div>
     <div class="crm-section crm-event-manage-registration-form-block-registration_end_date">

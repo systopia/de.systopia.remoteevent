@@ -76,6 +76,14 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         );
         $this->add(
             'select',
+            'remote_registration_xcm_profile',
+            E::ts("Registration Contact Matching (XCM)"),
+            $this->getAvailableXcmProfiles(false),
+            false,
+            ['class' => 'crm-select2']
+        );
+        $this->add(
+            'select',
             'remote_registration_default_update_profile',
             E::ts("Default Registration Profile for Updates"),
             $available_registration_profiles,
@@ -89,6 +97,14 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             $available_registration_profiles,
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+        $this->add(
+            'select',
+            'remote_registration_update_xcm_profile',
+            E::ts("Update Contact Matching (XCM)"),
+            $this->getAvailableXcmProfiles(true),
+            false,
+            ['class' => 'crm-select2']
         );
         $this->add(
             'checkbox',
@@ -149,6 +165,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_external_identifier'    => 'remote_registration_external_identifier',
                 'event_remote_registration.remote_disable_civicrm_registration'        => 'remote_disable_civicrm_registration',
                 'event_remote_registration.remote_registration_suspended'              => 'remote_registration_suspended',
+                'event_remote_registration.remote_registration_xcm_profile'            => 'remote_registration_xcm_profile',
+                'event_remote_registration.remote_registration_update_xcm_profile'     => 'remote_registration_update_xcm_profile',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
             $values = civicrm_api3(
@@ -253,7 +271,9 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'event_remote_registration.remote_registration_default_update_profile' => $values['remote_registration_default_update_profile'],
             'event_remote_registration.remote_registration_profiles'               => $values['remote_registration_profiles'],
             'event_remote_registration.remote_registration_external_identifier'    => $values['remote_registration_external_identifier'],
-            'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac']
+            'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac'],
+            'event_remote_registration.remote_registration_xcm_profile'            => $values['remote_registration_xcm_profile'],
+            'event_remote_registration.remote_registration_update_xcm_profile'     => $values['remote_registration_update_xcm_profile'],
         ];
 
         // disable civicrm native online registration
@@ -304,5 +324,24 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->_action = CRM_Core_Action::UPDATE;
 
         parent::endPostProcess();
+    }
+
+    /**
+     * Get a list of the available XCM profiles plus the default option
+     *
+     * @param bool $can_be_off
+     *   if this is true, an 'off' option will be added to prevent XCM to run
+     *
+     * @return array
+     *   list of string(key) => string(label)
+     */
+    protected function getAvailableXcmProfiles($can_be_off = false)
+    {
+        $profiles = CRM_Xcm_Configuration::getProfileList();
+        $profiles[''] = E::ts("Default (global RemoteEvent settings)");
+        if ($can_be_off) {
+            $profiles['off'] = E::ts("No Contact Updates");
+        }
+        return $profiles;
     }
 }

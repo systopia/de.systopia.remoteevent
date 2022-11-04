@@ -123,9 +123,9 @@ class CRM_Remoteevent_RegistrationUpdate
             $contact_updates['id'] = $registration_update->getContactID();
             CRM_Remoteevent_CustomData::resolveCustomFields($contact_updates);
             try {
-                $xcm_profile = $registration_update->getXcmUpdateProfile();
-                if ($xcm_profile) {
-                    // if there is an xcm profile -> use that
+                $xcm_profile = $registration_update->getXcmMatchProfile();
+                if ($xcm_profile && $xcm_profile != 'off') {
+                    // if there is an XCM profile -> let's run it
                     // in this case we use the XCM with the update profile with the ID set
                     $contact_updates['xcm_profile'] = $xcm_profile;
                     CRM_Remoteevent_CustomData::resolveCustomFields($contact_updates);
