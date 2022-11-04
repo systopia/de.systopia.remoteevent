@@ -162,8 +162,15 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $this->ctx->log->info('Updating data structures');
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+
+        // clean template cache
+        $config = CRM_Core_Config::singleton();
+        $config->cleanup(1, false);
+
         return true;
     }
+
+
 
 
     /****************************************************************
