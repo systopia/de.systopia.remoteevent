@@ -47,13 +47,6 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 
     public function buildQuickForm()
     {
-        // test
-//        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-//        $customData->syncOptionGroup(E::path('resources/option_group_remote_registration_profiles.json'));
-//        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-//        $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
-//        $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
-
         // gather data
         $available_registration_profiles = CRM_Remoteevent_RegistrationProfile::getAvailableRegistrationProfiles();
         $intro_attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event', 'intro_text') + ['class' => 'collapsed', 'preset' => 'civievent'];
