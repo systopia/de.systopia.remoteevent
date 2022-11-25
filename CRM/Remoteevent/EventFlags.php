@@ -146,7 +146,7 @@ class CRM_Remoteevent_EventFlags
             $requested_event_ids = $get_parameters->getRequestedEventIDs();
 
             // apply performance enhancements if there isn't already a restriction on event _IDs_ (<=25)
-            if ($performance_enhancement_enabled && ($requested_event_ids != 'fail' || $requested_event_ids > 25)) {
+            if ($performance_enhancement_enabled && ($requested_event_ids != 'fail' || count($requested_event_ids) > 25)) {
 
                 // if it's about registration modalities...
                 if (   !empty($get_parameters->getParameter('can_register'))
