@@ -151,15 +151,18 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
     }
 
     /**
+     * Adjusting Registration Profile fields
+     *
      * @return TRUE on success
      * @throws Exception
      */
-    public function upgrade0012()
+    public function upgrade_0012()
     {
         $this->ctx->log->info('Updating RegistrationProfile data structures');
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
         $this->migrate_profiles();
+        return true;
     }
     
     /**
@@ -233,11 +236,11 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
             $update_values[$all_event_registration_profiles->id] = [];
             $update_values[$all_event_registration_profiles->id]['default_profile_generic'] = $values[$all_event_registration_profiles->default_profile_generic];
             $update_values[$all_event_registration_profiles->id]['default_update_profile_generic'] = $values[$all_event_registration_profiles->default_update_profile_generic];
-            $update_values[$all_event_registration_profiles->id]['profiles_generic'] = parse_profiles(
+            $update_values[$all_event_registration_profiles->id]['profiles_generic'] = $this->parse_profiles(
                 $values,
                 $all_event_registration_profiles->profiles_generic
             );
-            $update_values[$all_event_registration_profiles->id]['update_profiles_generic'] = parse_profiles(
+            $update_values[$all_event_registration_profiles->id]['update_profiles_generic'] = $this->parse_profiles(
                 $values,
                 $all_event_registration_profiles->update_profiles_generic
             );

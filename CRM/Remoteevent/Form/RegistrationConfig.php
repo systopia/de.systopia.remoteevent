@@ -294,7 +294,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         if (!in_array($values['remote_registration_default_profile'], $enabled_profiles)) {
             $enabled_profiles[] = $values['remote_registration_default_profile'];
         }
-        $event_update['event_remote_registration.remote_registration_profiles_generic'] = $enabled_profiles;
+        $event_update['event_remote_registration.remote_registration_profiles_generic'] = CRM_Utils_Array::implodePadded($enabled_profiles);
 
         // make sure the default UPDATE profile is part of the enabled profiles
         $enabled_profiles = $values['remote_registration_update_profiles'];
@@ -308,7 +308,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         if (!in_array($values['remote_registration_default_update_profile'], $enabled_profiles)) {
             $enabled_profiles[] = $values['remote_registration_default_update_profile'];
         }
-        $event_update['event_remote_registration.remote_registration_update_profiles_generic'] = $enabled_profiles;
+        $event_update['event_remote_registration.remote_registration_update_profiles_generic'] = CRM_Utils_Array::implodePadded($enabled_profiles);
 
         // resolve custom fields
         CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
