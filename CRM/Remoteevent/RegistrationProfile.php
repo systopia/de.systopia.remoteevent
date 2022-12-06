@@ -297,40 +297,15 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getAvailableRegistrationProfiles($name_field = 'label')
     {
-        // TODO Use Symfony Event here as well
         $remote_event_profiles = new RemoteEvent\Event\RegistrationProfileListEvent();
-        // dispatch Registration Profile Event and try to instantiate a profile class from $profile_name
+        // Collect Profiles via Symfony Event
         Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $remote_event_profiles);
 
         $profiles = [];
         foreach ($remote_event_profiles->getProfiles() as $profile) {
-//            $profiles[$profile->get_select_counter()] = $profile->getProfileName();
             $profiles[$profile->get_unique_id()] = $profile->getProfileName();
         }
         return $profiles;
-//
-//        // use Profile Export List
-//        $profile_data = null;
-//        if ($profile_data === null) {
-//            $profile_data = [];
-//            $profile_data = civicrm_api3(
-//                'OptionValue',
-//                'get',
-//                [
-//                    'option.limit'      => 0,
-//                    'option_group_id'   => 'remote_registration_profiles',
-//                    'is_active'         => 1,
-//                    'check_permissions' => false
-//                ]
-//            );
-//        }
-//
-//        // compile response
-//        $profiles = [];
-//        foreach ($profile_data['values'] as $profile) {
-//            $profiles[$profile['value']] = $profile[$name_field];
-//        }
-//        return $profiles;
     }
 
 
