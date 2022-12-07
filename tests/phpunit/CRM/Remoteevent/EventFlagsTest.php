@@ -259,6 +259,61 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase
         $this->assertGreaterThan($runtime_with_boost, $runtime_without_boost, "The runtime boost doesn't seem to improve the runtime.");
     }
 
+    /**
+     * Test flag performance improvements using the offset value
+     */
+    public function testFlagFilterOptimisationWithOffset()
+    {
+        // create 50 events
+        $EVENT_COUNT = 50;
+        $events = [];
+        foreach (range(0, $EVENT_COUNT-1) as $index) {
+            $new_event = $this->createRemoteEvent();
+            $events[$new_event['id']] = $new_event;
+        }
+
+        // register contacts for random subset of the events
+        foreach ([false, true] as $performance_enhancement) {
+            $timestamp = microtime(true);
+            // enable/disable performance enhancement
+            Civi::settings()->set('remote_event_get_performance_enhancement', $performance_enhancement);
+
+            foreach ([10, 25, 49] as $limit) {
+                // get a random subset of events
+                $random_event_ids = array_rand($events, $limit);
+                sort($random_event_ids);
+
+                // create a new contact, and register to them
+                $contact = $this->createContact();
+                $remote_key = $this->getRemoteContactKey($contact['id']);
+                foreach ($random_event_ids as $event_id) {
+                    $this->registerRemote($event_id, ['email' => $contact['email']]);
+                }
+
+                // now get all the events the contact is registered to
+                $registered_event_ids = [];
+                $offset = 0;
+                foreach (range(0, ($EVENT_COUNT / $limit) + 1) as $iteration) {
+                    $registered_events = $this->findRemoteEvents([
+                        'is_registered' => 1,
+                        'remote_contact_id' => $remote_key,
+                        'option.limit' => $limit,
+                        'option.offset' => $offset]);
+                    foreach ($registered_events['values'] as $event) {
+                        $registered_event_ids[] = $event['id'];
+                    }
+                    $offset += $limit;
+                }
+
+                // and finally compare
+                $registered_event_ids = array_unique($registered_event_ids);
+                sort($registered_event_ids);
+                $this->assertEquals($random_event_ids, $registered_event_ids, "Registered events incorrect [performance-enhancement: {$performance_enhancement}, offset {$offset}, limit {$limit}]");
+            }
+            $runtime = (int) (microtime(true) - $timestamp);
+            print_r("Runtime " . ($performance_enhancement ? "with" : "without") . " performance enhancement: " . $runtime . "s\n");
+        }
+    }
 
 
     /**
