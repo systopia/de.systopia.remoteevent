@@ -34,7 +34,7 @@
 {foreach from=$sessions key=day item=day_sessions}
   <thead>
   <tr>
-    <th class="header-dark" colspan="100%">{$day}</th>
+    <th class="column-header" colspan="100%">{$day}</th>
   </tr>
   <tr>
     <th></th>
