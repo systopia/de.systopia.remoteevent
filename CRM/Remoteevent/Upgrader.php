@@ -215,7 +215,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         );
 
         // Add option value prefix to IDs
-        $optionValues = \Civi\Api4\OptionValue::get()
+        $optionValues = \Civi\Api4\OptionValue::get(false)
             ->addSelect('id', 'value')
             ->addWhere('option_group_id:name', '=', 'remote_registration_profiles')
             ->execute();
