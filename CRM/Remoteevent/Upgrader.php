@@ -149,21 +149,6 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
         return true;
     }
-
-    /**
-     * Adjusting Registration Profile fields
-     *
-     * @return TRUE on success
-     * @throws Exception
-     */
-    public function upgrade_0012()
-    {
-        $this->ctx->log->info('Updating RegistrationProfile data structures');
-        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-        $this->migrate_profiles();
-        return true;
-    }
     
     /**
      * Adding configurable XCM profiles
@@ -182,6 +167,21 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $config = CRM_Core_Config::singleton();
         $config->cleanup(1, false);
 
+        return true;
+    }
+
+    /**
+     * Adjusting Registration Profile fields
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0014()
+    {
+        $this->ctx->log->info('Updating RegistrationProfile data structures');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        $this->migrate_profiles();
         return true;
     }
 
