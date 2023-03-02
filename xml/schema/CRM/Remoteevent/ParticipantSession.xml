@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Remoteevent</base>
+  <class>ParticipantSession</class>
+  <name>civicrm_participant_session</name>
+  <comment>Participant of an event session/workshop</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique Session Participant ID</comment>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>session_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Session</comment>
+  </field>
+  <foreignKey>
+    <name>session_id</name>
+    <table>civicrm_session</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>participant_id</name>
+    <uniqueName>session_participant_id</uniqueName>
+    <type>int unsigned</type>
+    <title>Session Participant</title>
+    <import>true</import>
+    <required>true</required>
+    <comment>FK to Participant ID</comment>
+    <add>1.7</add>
+  </field>
+  <foreignKey>
+    <name>participant_id</name>
+    <table>civicrm_participant</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+</table>

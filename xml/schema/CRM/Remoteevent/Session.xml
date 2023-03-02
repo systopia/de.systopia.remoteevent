@@ -173,6 +173,12 @@
     <comment>FK to Contact ID</comment>
     <add>1.7</add>
   </field>
+  <foreignKey>
+    <name>presenter_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
 
   <field>
     <name>presenter_title</name>
