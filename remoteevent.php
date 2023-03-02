@@ -263,6 +263,11 @@ function remoteevent_civicrm_entityTypes(&$entityTypes)
         'class' => 'CRM_Remoteevent_DAO_Session',
         'table' => 'civicrm_session'
     ];
+    $entityTypes['CRM_Remoteevent_DAO_ParticipantSession'] = [
+        'name' => 'ParticipantSession',
+        'class' => 'CRM_Remoteevent_DAO_ParticipantSession',
+        'table' => 'civicrm_participant_session'
+    ];
     _remoteevent_civix_civicrm_entityTypes($entityTypes);
 }
 
