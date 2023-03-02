@@ -41,6 +41,7 @@
     <add>1.7</add>
   </field>
   <foreignKey>
+    <required>true</required>
     <name>participant_id</name>
     <table>civicrm_participant</table>
     <key>id</key>
