@@ -21,9 +21,20 @@
   <field>
     <name>session_id</name>
     <type>int unsigned</type>
+    <required>true</required>
     <comment>FK to Session</comment>
+    <html>
+      <type>EntityRef</type>
+    </html>
+    <pseudoconstant>
+      <table>civicrm_session</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>title</labelColumn>
+      <prefetch>false</prefetch>
+    </pseudoconstant>
   </field>
   <foreignKey>
+    <required>true</required>
     <name>session_id</name>
     <table>civicrm_session</table>
     <key>id</key>
@@ -32,13 +43,18 @@
 
   <field>
     <name>participant_id</name>
-    <uniqueName>session_participant_id</uniqueName>
     <type>int unsigned</type>
-    <title>Session Participant</title>
-    <import>true</import>
     <required>true</required>
-    <comment>FK to Participant ID</comment>
-    <add>1.7</add>
+    <comment>FK to Participant</comment>
+    <html>
+      <type>EntityRef</type>
+    </html>
+    <pseudoconstant>
+      <table>civicrm_participant</table>
+      <keyColumn>id</keyColumn>
+      <!--labelColumn>title</labelColumn-->
+      <prefetch>false</prefetch>
+    </pseudoconstant>
   </field>
   <foreignKey>
     <required>true</required>
