@@ -22,4 +22,11 @@ namespace Civi\Api4;
  */
 class Session extends Generic\DAOEntity {
 
+    public static function permissions() {
+        return [
+            'meta' => ['access CiviEvent'],
+            'default' => ['access CiviEvent'],
+            'create' => ['access CiviEvent', 'edit all events'],
+        ];
+    }
 }
