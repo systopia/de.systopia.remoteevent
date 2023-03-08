@@ -296,16 +296,16 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
     $permissions['remote_event']['getfields'] = ['view public Remote Events', 'view all Remote Events'];
 
     // Session entity
-    $permissions['session']['get']       = ['Access CiviEvent', 'view all events'];
+    $permissions['session']['get']       = ['Access CiviEvent'];
     $permissions['session']['create']    = ['Access CiviEvent', 'edit all events'];
-    $permissions['session']['getcount']  = ['Access CiviEvent', 'view all events'];
-    $permissions['session']['getfields'] = ['Access CiviEvent', 'view all events'];
+    $permissions['session']['getcount']  = ['Access CiviEvent'];
+    $permissions['session']['getfields'] = ['Access CiviEvent'];
 
     // ParticipantSession entity
-    $permissions['participant_session']['get']       = ['Access CiviEvent', 'view all events'];
+    $permissions['participant_session']['get']       = ['Access CiviEvent'];
     $permissions['participant_session']['create']    = ['Access CiviEvent', 'edit all events'];
-    $permissions['participant_session']['getcount']  = ['Access CiviEvent', 'view all events'];
-    $permissions['participant_session']['getfields'] = ['Access CiviEvent', 'view all events'];
+    $permissions['participant_session']['getcount']  = ['Access CiviEvent'];
+    $permissions['participant_session']['getfields'] = ['Access CiviEvent'];
 
     // RemoteParticipant entity
     $permissions['remote_participant']['get_form'] = ['view public Remote Events', 'view all Remote Events'];
