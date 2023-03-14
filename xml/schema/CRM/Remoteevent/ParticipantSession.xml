@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Remoteevent</base>
+  <class>ParticipantSession</class>
+  <name>civicrm_participant_session</name>
+  <comment>Participant of an event session/workshop</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique Session Participant ID</comment>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>session_id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>FK to Session</comment>
+    <html>
+      <type>EntityRef</type>
+    </html>
+    <pseudoconstant>
+      <table>civicrm_session</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>title</labelColumn>
+      <prefetch>false</prefetch>
+    </pseudoconstant>
+  </field>
+  <foreignKey>
+    <required>true</required>
+    <name>session_id</name>
+    <table>civicrm_session</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>participant_id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>FK to Participant</comment>
+    <html>
+      <type>EntityRef</type>
+    </html>
+    <pseudoconstant>
+      <table>civicrm_participant</table>
+      <keyColumn>id</keyColumn>
+      <!--labelColumn>title</labelColumn-->
+      <prefetch>false</prefetch>
+    </pseudoconstant>
+  </field>
+  <foreignKey>
+    <required>true</required>
+    <name>participant_id</name>
+    <table>civicrm_participant</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+</table>
