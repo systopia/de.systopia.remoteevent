@@ -190,16 +190,6 @@ function remoteevent_civicrm_config(&$config)
 }
 
 /**
- * Implements hook_civicrm_xmlMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_xmlMenu
- */
-function remoteevent_civicrm_xmlMenu(&$files)
-{
-    _remoteevent_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implements hook_civicrm_install().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
@@ -260,58 +250,6 @@ function remoteevent_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
 }
 
 /**
- * Implements hook_civicrm_managed().
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
- */
-function remoteevent_civicrm_managed(&$entities)
-{
-    _remoteevent_civix_civicrm_managed($entities);
-}
-
-/**
- * Implements hook_civicrm_caseTypes().
- *
- * Generate a list of case-types.
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
- */
-function remoteevent_civicrm_caseTypes(&$caseTypes)
-{
-    _remoteevent_civix_civicrm_caseTypes($caseTypes);
-}
-
-/**
- * Implements hook_civicrm_angularModules().
- *
- * Generate a list of Angular modules.
- *
- * Note: This hook only runs in CiviCRM 4.5+. It may
- * use features only available in v4.6+.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
- */
-function remoteevent_civicrm_angularModules(&$angularModules)
-{
-    _remoteevent_civix_civicrm_angularModules($angularModules);
-}
-
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterSettingsFolders
- */
-function remoteevent_civicrm_alterSettingsFolders(&$metaDataFolders = null)
-{
-    _remoteevent_civix_civicrm_alterSettingsFolders($metaDataFolders);
-}
-
-/**
  * Implements hook_civicrm_entityTypes().
  *
  * Declare entity types provided by this module.
@@ -329,14 +267,6 @@ function remoteevent_civicrm_entityTypes(&$entityTypes)
 }
 
 /**
- * Implements hook_civicrm_themes().
- */
-function remoteevent_civicrm_themes(&$themes)
-{
-    _remoteevent_civix_civicrm_themes($themes);
-}
-
-/**
  * Define custom (Drupal) permissions
  */
 function remoteevent_civicrm_permission(&$permissions)
@@ -348,7 +278,6 @@ function remoteevent_civicrm_permission(&$permissions)
     $permissions['edit Remote Event registrations']    = E::ts('RemoteEventRegistration: edit');
     $permissions['cancel Remote Events registrations'] = E::ts('RemoteEventRegistration: cancel');
 }
-
 
 /**
  * Set permissions RemoteEvent API
@@ -424,7 +353,6 @@ function remoteevent_civicrm_pre($op, $objectName, $id, &$params)
         CRM_Remoteevent_ChangeActivity::recordPre($id, $params);
     }
 }
-
 
 function remoteevent_civicrm_custom( $op, $groupID, $entityID, &$params )
 {
