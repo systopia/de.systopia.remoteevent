@@ -51,7 +51,7 @@ class CRM_Remoteevent_EventCache
     }
 
     /**
-     * Cache a given event
+     * Cache a given event (within the same request)
      *
      * @param array $event_data
      *   event data. Must contain 'id'
