@@ -715,6 +715,12 @@ class CRM_Remoteevent_Registration
             }
         }
 
+        // Modify Participant Data Event here. This can be used to maybe manually update/set participant data
+        $update_participant_event = new \Civi\RemoteParticipant\Event\UpdateParticipantEvent($participant_data);
+        // dispatch Registration Profile Event and try to instantiate a profile class from $profile_name
+        Civi::dispatcher()->dispatch(\Civi\RemoteParticipant\Event\UpdateParticipantEvent::NAME, $update_participant_event);
+        $participant_data = $update_participant_event->get_participant_data();
+
         // run create/update
         CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
         $creation = civicrm_api3('Participant', 'create', $participant_data);
