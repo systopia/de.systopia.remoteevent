@@ -16,7 +16,7 @@
 
 namespace Civi;
 
-use \Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class LabelEvent
