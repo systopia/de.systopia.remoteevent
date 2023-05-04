@@ -16,7 +16,7 @@
 
 namespace Civi\RemoteEvent\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use \Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Class RegistrationProfileListEvent
