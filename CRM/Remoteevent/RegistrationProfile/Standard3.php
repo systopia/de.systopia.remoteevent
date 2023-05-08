@@ -27,7 +27,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
      *
      * @return string name
      */
-    public function getName($name = NULL)
+    public function getName()
     {
         // we need the new identifier og-id here
         $result = civicrm_api3('OptionValue', 'getsingle', [
