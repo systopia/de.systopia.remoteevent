@@ -79,7 +79,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    abstract public function addDefaultValues(GetParticipantFormEventBase $resultsEvent, $name = NULL);
+    abstract public function addDefaultValues(GetParticipantFormEventBase $resultsEvent);
 
     /**
      * Validate the profile fields individually.
