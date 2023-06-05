@@ -22,13 +22,22 @@
     <name>event_id</name>
     <type>int unsigned</type>
     <comment>FK to Event</comment>
+    <foreignKey>
+      <name>event_id</name>
+      <table>civicrm_event</table>
+      <key>id</key>
+      <onDelete>CASCADE</onDelete>
+    </foreignKey>
+    <html>
+      <type>EntityRef</type>
+    </html>
+    <pseudoconstant>
+      <table>civicrm_event</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>title</labelColumn>
+      <prefetch>false</prefetch>
+    </pseudoconstant>
   </field>
-  <foreignKey>
-    <name>event_id</name>
-    <table>civicrm_event</table>
-    <key>id</key>
-    <onDelete>CASCADE</onDelete>
-  </foreignKey>
 
   <field>
     <name>is_active</name>
@@ -172,7 +181,22 @@
     <required>true</required>
     <comment>FK to Contact ID</comment>
     <add>1.7</add>
+    <html>
+      <type>EntityRef</type>
+    </html>
+    <pseudoconstant>
+      <table>civicrm_contact</table>
+      <keyColumn>id</keyColumn>
+      <labelColumn>display_name</labelColumn>
+      <prefetch>false</prefetch>
+    </pseudoconstant>
   </field>
+  <foreignKey>
+    <name>presenter_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
 
   <field>
     <name>presenter_title</name>

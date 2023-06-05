@@ -102,6 +102,38 @@ abstract class RemoteParamsEvent extends RemoteEvent
         return $this->request;
     }
 
+    public function getLimit()
+    {
+        // check the options array
+        if (isset($this->request['options']['limit'])) {
+            return (int)$this->request['options']['limit'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->request['option.limit'])) {
+            return (int)$this->request['option.limit'];
+        }
+
+        // default is '25' (by general API contract)
+        return 25;
+    }
+
+    public function getOffset()
+    {
+        // check the options array
+        if (isset($this->request['options']['offset'])) {
+            return (int)$this->request['options']['offset'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->request['option.offset'])) {
+            return (int)$this->request['option.offset'];
+        }
+
+        // default is '0'
+        return 0;
+    }
+
     /**
      * Get the limit parameter of the original reuqest
      *
@@ -125,6 +157,28 @@ abstract class RemoteParamsEvent extends RemoteEvent
     }
 
     /**
+     * Get the offset parameter of the original request
+     *
+     * @return integer
+     *   returned result count or 0 for 'no offset'
+     */
+    public function getOriginalOffset()
+    {
+        // check the options array
+        if (isset($this->original_request['options']['offset'])) {
+            return (int) $this->original_request['options']['offset'];
+        }
+
+        // check the old-fashioned parameter style
+        if (isset($this->original_request['option.offset'])) {
+            return (int) $this->original_request['option.offset'];
+        }
+
+        // default is '0'
+        return 0;
+    }
+
+    /**
      * Set the query limit
      *
      * @param $limit integer
@@ -135,5 +189,18 @@ abstract class RemoteParamsEvent extends RemoteEvent
         unset($this->request['option.limit']);
         unset($this->request['options']['limit']);
         $this->request['option.limit'] = (int) $limit;
+    }
+
+    /**
+     * Set the query offset
+     *
+     * @param $offset integer
+     *   the new query offset
+     */
+    public function setOffset($offset)
+    {
+        unset($this->request['option.offset']);
+        unset($this->request['options']['offset']);
+        $this->request['option.offset'] = (int) $offset;
     }
 }

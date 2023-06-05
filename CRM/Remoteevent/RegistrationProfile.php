@@ -67,6 +67,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
      *                       NOTE: this is just for the optional 'inline' validation in the form,
      *                             the main validation will go through the RemoteParticipant.validate function
+     *      'confirm_required' => bool If true, the same value has to be entered again for confirmation. This flag is
+     *                            handled by the frontend, so the data received by this extension is unaffected.
+     *                            (false, if not set.)
      *   ]
      */
     abstract public function getFields($locale = null);

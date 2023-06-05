@@ -197,16 +197,6 @@ function remoteevent_civicrm_config(&$config)
 }
 
 /**
- * Implements hook_civicrm_xmlMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_xmlMenu
- */
-function remoteevent_civicrm_xmlMenu(&$files)
-{
-    _remoteevent_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implements hook_civicrm_install().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
@@ -267,58 +257,6 @@ function remoteevent_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
 }
 
 /**
- * Implements hook_civicrm_managed().
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
- */
-function remoteevent_civicrm_managed(&$entities)
-{
-    _remoteevent_civix_civicrm_managed($entities);
-}
-
-/**
- * Implements hook_civicrm_caseTypes().
- *
- * Generate a list of case-types.
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
- */
-function remoteevent_civicrm_caseTypes(&$caseTypes)
-{
-    _remoteevent_civix_civicrm_caseTypes($caseTypes);
-}
-
-/**
- * Implements hook_civicrm_angularModules().
- *
- * Generate a list of Angular modules.
- *
- * Note: This hook only runs in CiviCRM 4.5+. It may
- * use features only available in v4.6+.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
- */
-function remoteevent_civicrm_angularModules(&$angularModules)
-{
-    _remoteevent_civix_civicrm_angularModules($angularModules);
-}
-
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterSettingsFolders
- */
-function remoteevent_civicrm_alterSettingsFolders(&$metaDataFolders = null)
-{
-    _remoteevent_civix_civicrm_alterSettingsFolders($metaDataFolders);
-}
-
-/**
  * Implements hook_civicrm_entityTypes().
  *
  * Declare entity types provided by this module.
@@ -332,15 +270,12 @@ function remoteevent_civicrm_entityTypes(&$entityTypes)
         'class' => 'CRM_Remoteevent_DAO_Session',
         'table' => 'civicrm_session'
     ];
+    $entityTypes['CRM_Remoteevent_DAO_ParticipantSession'] = [
+        'name' => 'ParticipantSession',
+        'class' => 'CRM_Remoteevent_DAO_ParticipantSession',
+        'table' => 'civicrm_participant_session'
+    ];
     _remoteevent_civix_civicrm_entityTypes($entityTypes);
-}
-
-/**
- * Implements hook_civicrm_themes().
- */
-function remoteevent_civicrm_themes(&$themes)
-{
-    _remoteevent_civix_civicrm_themes($themes);
 }
 
 /**
@@ -356,19 +291,37 @@ function remoteevent_civicrm_permission(&$permissions)
     $permissions['cancel Remote Events registrations'] = E::ts('RemoteEventRegistration: cancel');
 }
 
-
 /**
  * Set permissions RemoteEvent API
  */
 function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions)
 {
     // RemoteEvent entity
+    $permissions['remote_event']['meta']      = ['access CiviEvent'];
     $permissions['remote_event']['get']       = ['view public Remote Events', 'view all Remote Events'];
     $permissions['remote_event']['spawn']     = ['spawn Remote Events'];
     $permissions['remote_event']['getcount']  = ['view public Remote Events', 'view all Remote Events'];
     $permissions['remote_event']['getfields'] = ['view public Remote Events', 'view all Remote Events'];
 
+    // Session entity
+    $permissions['session']['meta']      = ['access CiviEvent'];
+    $permissions['session']['get']       = ['access CiviEvent'];
+    $permissions['session']['create']    = ['access CiviEvent', 'edit all events'];
+    $permissions['session']['update']    = ['access CiviEvent', 'edit all events'];
+    $permissions['session']['getcount']  = ['access CiviEvent'];
+    $permissions['session']['getfields'] = ['access CiviEvent'];
+
+    // ParticipantSession entity
+    $permissions['participant_session']['meta']      = ['access CiviEvent'];
+    $permissions['participant_session']['get']       = ['access CiviEvent'];
+    $permissions['participant_session']['create']    = ['access CiviEvent', 'edit all events'];
+    $permissions['participant_session']['update']    = ['access CiviEvent', 'edit all events'];
+    $permissions['participant_session']['delete']    = ['access CiviEvent', 'edit all events'];
+    $permissions['participant_session']['getcount']  = ['access CiviEvent'];
+    $permissions['participant_session']['getfields'] = ['access CiviEvent'];
+
     // RemoteParticipant entity
+    $permissions['remote_participant']['meta']      = ['access CiviEvent'];
     $permissions['remote_participant']['get_form'] = ['view public Remote Events', 'view all Remote Events'];
     $permissions['remote_participant']['get']      = ['edit Remote Event registrations'];
     $permissions['remote_participant']['create']   = ['register to Remote Events'];
@@ -431,7 +384,6 @@ function remoteevent_civicrm_pre($op, $objectName, $id, &$params)
         CRM_Remoteevent_ChangeActivity::recordPre($id, $params);
     }
 }
-
 
 function remoteevent_civicrm_custom( $op, $groupID, $entityID, &$params )
 {

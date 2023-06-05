@@ -139,13 +139,14 @@ class CRM_Remoteevent_EventFlags
         if (!empty($flag_filters_applied)) {
             // there some flag filters active, we have to remove any limit
             $get_parameters->setLimit(0);
+            $get_parameters->setOffset(0);
 
             // check if we should apply performance enhancements
             $performance_enhancement_enabled = (boolean) Civi::settings()->get('remote_event_get_performance_enhancement');
             $requested_event_ids = $get_parameters->getRequestedEventIDs();
 
             // apply performance enhancements if there isn't already a restriction on event _IDs_ (<=25)
-            if ($performance_enhancement_enabled && ($requested_event_ids != 'fail' || $requested_event_ids > 25)) {
+            if ($performance_enhancement_enabled && ($requested_event_ids != 'fail' || count($requested_event_ids) > 25)) {
 
                 // if it's about registration modalities...
                 if (   !empty($get_parameters->getParameter('can_register'))
@@ -239,9 +240,7 @@ class CRM_Remoteevent_EventFlags
             }
         }
 
-        // now, finally we can apply the limit
-        $requested_limit = $result->getOriginalLimit();
-        $result->trimToLimit($requested_limit);
+        // Note: the original limit/offset are being applied in the API if they differ from the current values.
     }
 
     /**
