@@ -20,122 +20,53 @@
  */
 class CRM_Remoteevent_EventProfile
 {
-    /**
-     * @var string
-     */
-    private string $classname;
+    private string $class_name;
+
+    private string $name;
+
+    private string $label;
+
+    private $new_instance_callback;
 
     /**
-     * @var int
-     */
-    private int $internal_id;
-
-    /**
-     * @var int
-     */
-    private int $select_id;
-
-    /**
-     * @var string
-     */
-    private string $profile_name;
-
-    /**
-     * @var string
-     */
-    private string $unique_id;
-
-    /**
-     * @var Additional information. For option value this is the information that
-     *      is available from the API
-     */
-    private $params;
-
-    /**
-     * @param $classname
-     * @param $profile_name
-     * @param $additional_params
+     * @param callable|null $new_instance_callback
+     *   Callback to create a new profile instance. If not specified the class
+     *   constructor is used.
      */
     public function __construct(
-        $classname,
-        $profile_name,
-        $internal_id,
-        $select_id,
-        $id_prefix = null,
-        $additional_params = null
+        string $class_name,
+        string $name,
+        string $label,
+        $new_instance_callback = NULL
     ) {
-        $this->classname = $classname;
-        $this->profile_name = $profile_name;
-        $this->internal_id = $internal_id;
-        $this->params = $additional_params;
-        if (empty($id_prefix)) {
-            // default prefix is Option Group (og)
-            $this->unique_id = 'og' . "-" . $internal_id;
-        } else {
-            $this->unique_id = $id_prefix . "-" . $internal_id;
+        $this->class_name = $class_name;
+        $this->name = $name;
+        $this->label = $label;
+        $this->new_instance_callback = $new_instance_callback;
+    }
+
+    public function getClassName(): string
+    {
+        return $this->class_name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function getInstance(): CRM_Remoteevent_RegistrationProfile
+    {
+        if ($this->new_instance_callback !== NULL) {
+            return call_user_func($this->new_instance_callback);
         }
 
-        $this->select_id = $select_id;
-    }
-
-    /**
-     * @return string
-     */
-    public function get_unique_id(): string
-    {
-        return $this->unique_id;
-    }
-
-    /**
-     * Get Classname
-     *
-     * @return mixed
-     */
-    public function getClassname()
-    {
-        return $this->classname;
-    }
-
-    /**
-     * Get the profile Name
-     *
-     * @return mixed
-     */
-    public function getProfileName(): string
-    {
-        return $this->profile_name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getParams()
-    {
-        return $this->params;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_select_counter()
-    {
-        return $this->select_id;
-    }
-
-    /**
-     *
-     * @return class instance of $this->classname if it exists
-     */
-    public function getInstance($profile_id = null)
-    {
-        if (class_exists($this->classname) && !empty($profile_id)) {
-            // we have an external Profile (e.g. FormBuilder)
-            return new $this->classname($this->internal_id);
-        }
-        // check if we have unique params, if so use them for instance, otherwise try normal instance
-        if (class_exists($this->classname)) {
-            return new $this->classname();
-        }
+        return new $this->class_name();
     }
 
 }

@@ -30,65 +30,57 @@ class RegistrationProfileListEvent extends Event
 
     const NAME = 'civi.remoteevent.registration.profile.list';
 
-    protected $profiles; // array[CRM_Remoteevent_EventProfile]
+    /**
+     * @var  \CRM_Remoteevent_EventProfile[]
+     */
+    protected array $profiles = [];
 
-    protected int $id_counter;
-
-    public function __construct()
-    {
-        $this->id_counter = 0;
-    }
-
-    public function getProfiles()
+    /**
+     * @return \CRM_Remoteevent_EventProfile[]
+     */
+    public function getProfiles(): array
     {
         return $this->profiles;
     }
 
     /**
-     * @param $name
-     *
-     * @return mixed
      * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
      */
-    public function getProfileInstance($name)
+    public function getProfileInstance(string $name): \CRM_Remoteevent_RegistrationProfile
     {
-        foreach ($this->profiles as $profile) {
-            if ($profile->get_unique_id() == $name) {
-                return $profile->getInstance($name);
-            }
-        }
-        throw new \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException(
-            "Profile '{$name}' isn't available."
-        );
+        return $this->getProfile($name)->getInstance();
     }
 
     /**
-     * @param $name
-     *
-     * @return \CRM_Remoteevent_EventProfile
      * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
      */
-    public function getProfile($name): \CRM_Remoteevent_EventProfile
+    public function getProfile(string $name): \CRM_Remoteevent_EventProfile
     {
-        foreach ($this->profiles as $profile) {
-            if ($profile->getProfileName() == $name) {
-                return $profile;
-            }
+        if (isset($this->profiles[$name])) {
+          return $this->profiles[$name];
         }
+
         throw new \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException("Profile {$name} is not available");
     }
 
     /**
-     * @param $classname
-     * @param $profile_name
-     * @param $params
-     *
-     * @return void
+     * @param string $class_name
+     *   FQCN that extends CRM_Remoteevent_RegistrationProfile.
+     * @param string $name
+     *   Unique profile name. Must be the same as returned by getName() in
+     *   profile class.
+     * @param callable|null $new_instance_callback
+     *   Callback to create a new profile instance. If not specified the class
+     *   constructor is used.
      */
-    public function addProfile($classname, $profile_name, $internal_id, $id_prefix = null, $params = null)
+    public function addProfile(string $class_name, string $name, string $label, $new_instance_callback = NULL): void
     {
-        $profile_data = new \CRM_Remoteevent_EventProfile($classname, $profile_name, $internal_id, ++$this->id_counter, $id_prefix, $params);
-        $this->profiles[] = $profile_data;
+        if (isset($this->profiles[$name])) {
+            \Civi::log()->error(sprintf('A profile named "%s" is already registered.', $name));
+        } else {
+           $profile_data = new \CRM_Remoteevent_EventProfile($class_name, $name, $label, $new_instance_callback);
+           $this->profiles[$name] = $profile_data;
+        }
     }
 
 }

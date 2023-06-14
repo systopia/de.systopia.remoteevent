@@ -292,13 +292,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Get a list of all currently available registration profiles
      *
-     * @param string $name_field
-     *   should the name be the 'label' (default) or the 'name'
-     *
      * @return array
-     *   profile id => profile name
+     *   profile name => profile label
      */
-    public static function getAvailableRegistrationProfiles($name_field = 'label')
+    public static function getAvailableRegistrationProfiles()
     {
         $remote_event_profiles = new RemoteEvent\Event\RegistrationProfileListEvent();
         // Collect Profiles via Symfony Event
@@ -306,7 +303,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         $profiles = [];
         foreach ($remote_event_profiles->getProfiles() as $profile) {
-            $profiles[$profile->get_unique_id()] = $profile->getProfileName();
+            $profiles[$profile->getName()] = $profile->getLabel();
         }
         return $profiles;
     }
@@ -333,8 +330,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         );
         foreach ($profile_data['values'] as $profile) {
             $classname = "CRM_Remoteevent_RegistrationProfile_{$profile['name']}";
-            // TODO instead of 'id' do we rather use value here?
-            $registration_profile_list_event->addProfile($classname, $profile['name'], $profile['id']);
+            $registration_profile_list_event->addProfile($classname, $profile['name'], $profile['label']);
         }
     }
 
