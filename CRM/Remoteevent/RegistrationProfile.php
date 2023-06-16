@@ -45,14 +45,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public function getLabel()
     {
-      $result = civicrm_api3('OptionValue', 'get', [
-              'return' => ['label'],
-              'option_group_id' => 'remote_registration_profiles',
-              'name' => $this->getName(),
-              'sequential' => 1,
-      ]);
+        $result = civicrm_api3('OptionValue', 'get', [
+                'return' => ['label'],
+                'option_group_id' => 'remote_registration_profiles',
+                'name' => $this->getName(),
+                'sequential' => 1,
+        ]);
 
-      return $result['values'][0]['label'] ?? $this->getName();
+        return $result['values'][0]['label'] ?? $this->getName();
     }
 
     /**
