@@ -72,7 +72,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent, $name = NULL)
+    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
     {
         $contact_id = $resultsEvent->getContactID();
         if ($contact_id) {

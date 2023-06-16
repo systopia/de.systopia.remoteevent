@@ -53,7 +53,7 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
      *   the locale to use, defaults to null none. Use 'default' for current
      *
      */
-    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent, $name = NULL)
+    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
     {
         // nothing to do here
     }
