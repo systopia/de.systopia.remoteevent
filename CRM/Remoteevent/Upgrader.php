@@ -170,10 +170,96 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         return true;
     }
 
+    /**
+     * Adjusting Registration Profile fields
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0014()
+    {
+        $this->ctx->log->info('Updating RegistrationProfile data structures');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        $this->migrate_profiles();
+        return true;
+    }
+
 
     /****************************************************************
      **                       HELPER FUNCTIONS                      **
      ****************************************************************/
+
+    /**
+     * Migrate previous profiles to the new columns:
+     * default_profile -> default_profile_generic
+     * profiles -> profiles_generic
+     * default_update_profile -> default_update_profile_generic
+     * update_profiles -> update_profiles_generic
+     *
+     *
+     * @return void
+     */
+    protected function migrate_profiles()
+    {
+        // first copy existing values
+        CRM_Core_DAO::executeQuery(
+            "UPDATE civicrm_value_remote_registration SET default_profile_generic=default_profile;"
+        );
+        CRM_Core_DAO::executeQuery("UPDATE civicrm_value_remote_registration SET profiles_generic=profiles;");
+        CRM_Core_DAO::executeQuery(
+            "UPDATE civicrm_value_remote_registration SET default_update_profile_generic=default_update_profile;"
+        );
+        CRM_Core_DAO::executeQuery(
+            "UPDATE civicrm_value_remote_registration SET update_profiles_generic=update_profiles;"
+        );
+
+        // Add option value prefix to IDs
+        $optionValues = \Civi\Api4\OptionValue::get(false)
+            ->addSelect('id', 'value')
+            ->addWhere('option_group_id:name', '=', 'remote_registration_profiles')
+            ->execute();
+        $values = [];
+        foreach ($optionValues as $optionValue) {
+            // do something
+            $values[$optionValue['value']] = "og-" . $optionValue['id'];
+        }
+        // Replace current values
+        $all_event_registration_profiles = CRM_Core_DAO::executeQuery(
+            "
+            SELECT
+                id, default_profile_generic, profiles_generic, default_update_profile_generic,  update_profiles_generic
+            FROM civicrm_value_remote_registration"
+        );
+        $update_values = [];
+        while ($all_event_registration_profiles->fetch()) {
+            $update_values[$all_event_registration_profiles->id] = [];
+            $update_values[$all_event_registration_profiles->id]['default_profile_generic'] = $values[$all_event_registration_profiles->default_profile_generic];
+            $update_values[$all_event_registration_profiles->id]['default_update_profile_generic'] = $values[$all_event_registration_profiles->default_update_profile_generic];
+            $update_values[$all_event_registration_profiles->id]['profiles_generic'] = $this->parse_profiles(
+                $values,
+                $all_event_registration_profiles->profiles_generic
+            );
+            $update_values[$all_event_registration_profiles->id]['update_profiles_generic'] = $this->parse_profiles(
+                $values,
+                $all_event_registration_profiles->update_profiles_generic
+            );
+        }
+        foreach ($update_values as $id => $value) {
+            // update current values
+            CRM_Core_DAO::executeQuery(
+                "
+            UPDATE civicrm_value_remote_registration
+            SET
+                default_profile_generic = '{$value['default_profile_generic']}',
+                default_update_profile_generic = '{$value['default_update_profile_generic']}',
+                profiles_generic = '{$value['profiles_generic']}',
+                update_profiles_generic = '{$value['update_profiles_generic']}'
+            WHERE id = '{$id}';
+        "
+            );
+        }
+    }
 
     /**
      * @param $mapping
