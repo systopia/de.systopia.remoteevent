@@ -333,7 +333,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function setProfileDataInEventData(&$event)
     {
-        $profiles = self::getAvailableRegistrationProfiles('name');
+        $profiles = self::getAvailableRegistrationProfiles();
 
         // set default profile
         if (isset($event['event_remote_registration.remote_registration_default_profile'])) {
