@@ -149,7 +149,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
         return true;
     }
-    
+
     /**
      * Adding configurable XCM profiles
      *
@@ -176,12 +176,20 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
      * @return TRUE on success
      * @throws Exception
      */
-    public function upgrade_0014()
+    public function upgrade_0015()
     {
         $this->ctx->log->info('Updating RegistrationProfile data structures');
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-        $this->migrate_profiles();
+        // Attribute "text_length" is dropped by CRM_Remoteevent_CustomData.
+        // It only updates fields that are set in the current field API get
+        // result. NULL values are dropped by APIv3.
+        \Civi\Api4\CustomField::update()
+          ->addValue('text_length', 1024)
+          ->addWhere('custom_group_id:name', '=', 'event_remote_registration')
+          ->addWhere('name', 'IN', ['remote_registration_profiles', 'remote_registration_update_profiles'])
+          ->execute();
+        $this->migrate_profile_option_values_to_option_names();
         return true;
     }
 
@@ -191,89 +199,63 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
      ****************************************************************/
 
     /**
-     * Migrate previous profiles to the new columns:
-     * default_profile -> default_profile_generic
-     * profiles -> profiles_generic
-     * default_update_profile -> default_update_profile_generic
-     * update_profiles -> update_profiles_generic
-     *
-     *
-     * @return void
+     * Migrate previous profile option values to profile option names.
      */
-    protected function migrate_profiles()
+    protected function migrate_profile_option_values_to_option_names(): void
     {
-        // first copy existing values
-        CRM_Core_DAO::executeQuery(
-            "UPDATE civicrm_value_remote_registration SET default_profile_generic=default_profile;"
-        );
-        CRM_Core_DAO::executeQuery("UPDATE civicrm_value_remote_registration SET profiles_generic=profiles;");
-        CRM_Core_DAO::executeQuery(
-            "UPDATE civicrm_value_remote_registration SET default_update_profile_generic=default_update_profile;"
-        );
-        CRM_Core_DAO::executeQuery(
-            "UPDATE civicrm_value_remote_registration SET update_profiles_generic=update_profiles;"
-        );
-
-        // Add option value prefix to IDs
-        $optionValues = \Civi\Api4\OptionValue::get(false)
-            ->addSelect('id', 'value')
+        // Mapping of option value to option name of profiles.
+        $profile_names = \Civi\Api4\OptionValue::get(false)
+            ->addSelect('value', 'name')
             ->addWhere('option_group_id:name', '=', 'remote_registration_profiles')
-            ->execute();
-        $values = [];
-        foreach ($optionValues as $optionValue) {
-            // do something
-            $values[$optionValue['value']] = "og-" . $optionValue['id'];
-        }
+            ->execute()
+            ->indexBy('value')
+            ->column('name');
+
         // Replace current values
-        $all_event_registration_profiles = CRM_Core_DAO::executeQuery(
-            "
+        $remote_registration_query = CRM_Core_DAO::executeQuery("
             SELECT
-                id, default_profile_generic, profiles_generic, default_update_profile_generic,  update_profiles_generic
-            FROM civicrm_value_remote_registration"
-        );
-        $update_values = [];
-        while ($all_event_registration_profiles->fetch()) {
-            $update_values[$all_event_registration_profiles->id] = [];
-            $update_values[$all_event_registration_profiles->id]['default_profile_generic'] = $values[$all_event_registration_profiles->default_profile_generic];
-            $update_values[$all_event_registration_profiles->id]['default_update_profile_generic'] = $values[$all_event_registration_profiles->default_update_profile_generic];
-            $update_values[$all_event_registration_profiles->id]['profiles_generic'] = $this->parse_profiles(
-                $values,
-                $all_event_registration_profiles->profiles_generic
+                id, default_profile, profiles, default_update_profile, update_profiles
+            FROM civicrm_value_remote_registration
+        ");
+        while ($remote_registration_query->fetch()) {
+            $default_profile = $profile_names[$remote_registration_query->default_profile] ?? NULL;
+            $default_update_profile = $profile_names[$remote_registration_query->default_update_profile] ?? NULL;
+            $profiles = $this->convertOptionValuesToNames(
+                    $remote_registration_query->profiles,
+                    $profile_names
             );
-            $update_values[$all_event_registration_profiles->id]['update_profiles_generic'] = $this->parse_profiles(
-                $values,
-                $all_event_registration_profiles->update_profiles_generic
+            $update_profiles = $this->convertOptionValuesToNames(
+                    $remote_registration_query->update_profiles,
+                    $profile_names
             );
-        }
-        foreach ($update_values as $id => $value) {
-            // update current values
-            CRM_Core_DAO::executeQuery(
-                "
-            UPDATE civicrm_value_remote_registration
-            SET
-                default_profile_generic = '{$value['default_profile_generic']}',
-                default_update_profile_generic = '{$value['default_update_profile_generic']}',
-                profiles_generic = '{$value['profiles_generic']}',
-                update_profiles_generic = '{$value['update_profiles_generic']}'
-            WHERE id = '{$id}';
-        "
-            );
+
+            CRM_Core_DAO::executeQuery("
+                UPDATE civicrm_value_remote_registration
+                SET
+                    default_profile = '{$default_profile}',
+                    default_update_profile = '{$default_update_profile}',
+                    profiles = '{$profiles}',
+                    update_profiles = '{$update_profiles}'
+                WHERE id = '{$remote_registration_query->id}';
+            ");
         }
     }
 
     /**
-     * @param $mapping
-     * @param $profiles
+     * @param string|null $values Padded option values.
+     * @param array $mapping Option value to option name mapping.
      *
-     * @return mixed
+     * @return string Padded option names.
      */
-    protected function parse_profiles($mapping, $profiles)
+    protected function convertOptionValuesToNames(?string $values, array $mapping): string
     {
-        $profile_ids = \CRM_Utils_Array::explodePadded($profiles);
-        foreach ($profile_ids as $key => $profile_id) {
-            $profile_ids[$key] = $mapping[$profile_id];
+        $names = [];
+        foreach (\CRM_Utils_Array::explodePadded($values) ?? [] as $value) {
+            if (isset($mapping[$value])) {
+                $names[] = $mapping[$value];
+            }
         }
-        return \CRM_Utils_Array::implodePadded($profile_ids);
+        return \CRM_Utils_Array::implodePadded($names);
     }
 
     /**
