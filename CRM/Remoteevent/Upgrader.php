@@ -195,7 +195,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
 
 
     /****************************************************************
-     **                       HELPER FUNCTIONS                      **
+     **                       HELPER FUNCTIONS                     **
      ****************************************************************/
 
     /**
