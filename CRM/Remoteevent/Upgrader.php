@@ -174,7 +174,22 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
     /****************************************************************
      **                       HELPER FUNCTIONS                      **
      ****************************************************************/
-    
+
+    /**
+     * @param $mapping
+     * @param $profiles
+     *
+     * @return mixed
+     */
+    protected function parse_profiles($mapping, $profiles)
+    {
+        $profile_ids = \CRM_Utils_Array::explodePadded($profiles);
+        foreach ($profile_ids as $key => $profile_id) {
+            $profile_ids[$key] = $mapping[$profile_id];
+        }
+        return \CRM_Utils_Array::implodePadded($profile_ids);
+    }
+
     /**
      * Add a unique index on the event external identifiers
      */
