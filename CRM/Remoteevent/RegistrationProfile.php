@@ -266,27 +266,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
     public static function getRegistrationProfile($profile_name)
     {
         $profile_list = new RemoteEvent\Event\RegistrationProfileListEvent();
-        // dispatch Registration Profile Event and try to instanciate a profile class from $profile_name
+        // dispatch Registration Profile Event and try to instantiate a profile class from $profile_name
         Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $profile_list);
-        $tmp = $profile_list->getProfileInstance($profile_name);
-        return $tmp;
 
-//        return $class_instance;
-
-//        $profiles = self::getAvailableRegistrationProfiles('name');
-//
-//        if (in_array($profile_name, $profiles)) {
-//            // get class
-//            $class_candidate = "CRM_Remoteevent_RegistrationProfile_{$profile_name}";
-//            if (class_exists($class_candidate)) {
-//                return new $class_candidate();
-//            } else {
-//                // todo: extend to use Symfony hooks
-//                throw new Exception(E::ts("Implementation for profile '%1' not found.", [1 => $profile_name]));
-//            }
-//        } else {
-//            throw new Exception(E::ts("Registration profile '%1' is not available (any more).", [1 => $profile_name]));
-//        }
+        return $profile_list->getProfileInstance($profile_name);
     }
 
     /**
