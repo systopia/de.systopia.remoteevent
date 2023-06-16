@@ -66,6 +66,10 @@ class CRM_Remoteevent_EventProfile
             return call_user_func($this->new_instance_callback);
         }
 
+        if (!class_exists($this->class_name)) {
+            throw new \RuntimeException(sprintf('Class "%s" for profile "%s" not found', $this->class_name, $this->name));
+        }
+
         return new $this->class_name();
     }
 
