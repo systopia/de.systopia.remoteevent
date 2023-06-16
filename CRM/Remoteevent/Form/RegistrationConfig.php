@@ -268,9 +268,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 0
             ),
             'event_remote_registration.remote_registration_default_profile'        => $values['remote_registration_default_profile'],
-            'event_remote_registration.remote_registration_update_profiles'        => $values['remote_registration_update_profiles'],
             'event_remote_registration.remote_registration_default_update_profile' => $values['remote_registration_default_update_profile'],
-            'event_remote_registration.remote_registration_profiles'               => json_encode($values['remote_registration_profiles']),
             'event_remote_registration.remote_registration_external_identifier'    => $values['remote_registration_external_identifier'],
             'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac'],
             'event_remote_registration.remote_registration_xcm_profile'            => $values['remote_registration_xcm_profile'],
