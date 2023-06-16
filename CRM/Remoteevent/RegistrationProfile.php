@@ -172,7 +172,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     // use default profile
                     $params['profile'] = $event['default_profile'];
                 }
-                $allowed_profiles = explode(",", $event['enabled_profiles']);
+                $allowed_profiles = explode(',', $event['enabled_profiles']);
                 break;
 
             case 'update':
@@ -180,7 +180,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     // use default profile
                     $params['profile'] = $event['default_update_profile'];
                 }
-                $allowed_profiles = explode(",", $event['enabled_update_profiles']);
+                $allowed_profiles = explode(',', $event['enabled_update_profiles']);
                 break;
 
             default:
