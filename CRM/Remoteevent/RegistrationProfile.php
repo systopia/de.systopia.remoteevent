@@ -312,8 +312,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
             ]
         );
         foreach ($profile_data['values'] as $profile) {
-            $classname = "CRM_Remoteevent_RegistrationProfile_{$profile['name']}";
-            $registration_profile_list_event->addProfile($classname, $profile['name'], $profile['label']);
+            $class_name = "CRM_Remoteevent_RegistrationProfile_{$profile['name']}";
+            $registration_profile_list_event->addProfile($class_name, $profile['name'], $profile['label']);
         }
     }
 
