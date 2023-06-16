@@ -36,14 +36,23 @@ abstract class CRM_Remoteevent_RegistrationProfile
     abstract public function getName();
 
     /**
-     * Get the human-readable name of the profile represented
+     * Get the human-readable name of the profile represented. By default, the
+     * option value label is returned, if registered as option value, else the
+     * profile name. Subclasses that aren't registered as option value should
+     * override it.
      *
      * @return string label
      */
     public function getLabel()
     {
-        // default is the internal name
-        return $this->getName();
+      $result = civicrm_api3('OptionValue', 'get', [
+              'return' => ['label'],
+              'option_group_id' => 'remote_registration_profiles',
+              'name' => $this->getName(),
+              'sequential' => 1,
+      ]);
+
+      return $result['values'][0]['label'] ?? $this->getName();
     }
 
     /**

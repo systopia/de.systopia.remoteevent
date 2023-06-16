@@ -33,18 +33,6 @@ class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_Regis
     }
 
     /**
-     * @return mixed|string
-     */
-    public function getLabel()
-    {
-        $result = civicrm_api3('OptionValue', 'getsingle', [
-            'option_group_id' => "remote_registration_profiles",
-            'name' => "OneClick",
-        ]);
-        return $result['label'];
-    }
-
-    /**
      * @param string $locale
      *   the locale to use, defaults to null (current locale)
      *

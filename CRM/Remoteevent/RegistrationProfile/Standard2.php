@@ -32,18 +32,6 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
     }
 
     /**
-     * @return mixed|string
-     */
-    public function getLabel()
-    {
-        $result = civicrm_api3('OptionValue', 'getsingle', [
-            'option_group_id' => "remote_registration_profiles",
-            'name' => "Standard2",
-        ]);
-        return $result['label'];
-    }
-
-    /**
      * @param string $locale
      *   the locale to use, defaults to null (current locale)
      *
