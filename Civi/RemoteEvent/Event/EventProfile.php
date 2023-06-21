@@ -13,12 +13,13 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+namespace Civi\RemoteEvent\Event;
 
 /**
  * Data Container for EventProfile Information
  *   Used for Storing Event Information in RegistrationProfileListEvent
  */
-class CRM_Remoteevent_EventProfile
+class EventProfile
 {
     private string $class_name;
 

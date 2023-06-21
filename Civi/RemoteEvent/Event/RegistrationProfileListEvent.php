@@ -31,12 +31,12 @@ class RegistrationProfileListEvent extends Event
     const NAME = 'civi.remoteevent.registration.profile.list';
 
     /**
-     * @var  \CRM_Remoteevent_EventProfile[]
+     * @var  \Civi\RemoteEvent\Event\EventProfile[]
      */
     protected array $profiles = [];
 
     /**
-     * @return \CRM_Remoteevent_EventProfile[]
+     * @return \Civi\RemoteEvent\Event\EventProfile[]
      */
     public function getProfiles(): array
     {
@@ -54,7 +54,7 @@ class RegistrationProfileListEvent extends Event
     /**
      * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
      */
-    public function getProfile(string $name): \CRM_Remoteevent_EventProfile
+    public function getProfile(string $name): \Civi\RemoteEvent\Event\EventProfile
     {
         if (isset($this->profiles[$name])) {
           return $this->profiles[$name];
@@ -78,7 +78,7 @@ class RegistrationProfileListEvent extends Event
         if (isset($this->profiles[$name])) {
             \Civi::log()->error(sprintf('A profile named "%s" is already registered.', $name));
         } else {
-           $profile_data = new \CRM_Remoteevent_EventProfile($class_name, $name, $label, $new_instance_callback);
+           $profile_data = new \Civi\RemoteEvent\Event\EventProfile($class_name, $name, $label, $new_instance_callback);
            $this->profiles[$name] = $profile_data;
         }
     }
