@@ -61,7 +61,7 @@ class EventProfile
         return $this->label;
     }
 
-    public function getInstance(): CRM_Remoteevent_RegistrationProfile
+    public function getInstance(): \CRM_Remoteevent_RegistrationProfile
     {
         if ($this->new_instance_callback !== NULL) {
             return call_user_func($this->new_instance_callback);
