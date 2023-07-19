@@ -36,14 +36,23 @@ abstract class CRM_Remoteevent_RegistrationProfile
     abstract public function getName();
 
     /**
-     * Get the human-readable name of the profile represented
+     * Get the human-readable name of the profile represented. By default, the
+     * option value label is returned, if registered as option value, else the
+     * profile name. Subclasses that aren't registered as option value should
+     * override it.
      *
      * @return string label
      */
     public function getLabel()
     {
-        // default is the internal name
-        return $this->getName();
+        $result = civicrm_api3('OptionValue', 'get', [
+                'return' => ['label'],
+                'option_group_id' => 'remote_registration_profiles',
+                'name' => $this->getName(),
+                'sequential' => 1,
+        ]);
+
+        return $result['values'][0]['label'] ?? $this->getName();
     }
 
     /**
@@ -222,6 +231,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // add default values
         $profile->addDefaultValues($get_form_results);
 
+        $name = $profile->getName();
+        $label = $profile->getLabel();
         // add profile "field"
         $get_form_results->addFields([
              'profile' => [
@@ -263,53 +274,56 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getRegistrationProfile($profile_name)
     {
-        $profiles = self::getAvailableRegistrationProfiles('name');
-        if (in_array($profile_name, $profiles)) {
-            // get class
-            $class_candidate = "CRM_Remoteevent_RegistrationProfile_{$profile_name}";
-            if (class_exists($class_candidate)) {
-                return new $class_candidate();
-            } else {
-                // todo: extend to use Symfony hooks
-                throw new Exception(E::ts("Implementation for profile '%1' not found.", [1 => $profile_name]));
-            }
-        } else {
-            throw new Exception(E::ts("Registration profile '%1' is not available (any more).", [1 => $profile_name]));
-        }
+        $profile_list = new RemoteEvent\Event\RegistrationProfileListEvent();
+        // dispatch Registration Profile Event and try to instantiate a profile class from $profile_name
+        Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $profile_list);
+
+        return $profile_list->getProfileInstance($profile_name);
     }
 
     /**
      * Get a list of all currently available registration profiles
      *
-     * @param string $name_field
-     *   should the name be the 'label' (default) or the 'name'
-     *
      * @return array
-     *   profile id => profile name
+     *   profile name => profile label
      */
-    public static function getAvailableRegistrationProfiles($name_field = 'label')
+    public static function getAvailableRegistrationProfiles()
     {
-        $profile_data = null;
-        if ($profile_data === null) {
-            $profile_data = [];
-            $profile_data = civicrm_api3(
-                'OptionValue',
-                'get',
-                [
-                    'option.limit'      => 0,
-                    'option_group_id'   => 'remote_registration_profiles',
-                    'is_active'         => 1,
-                    'check_permissions' => false
-                ]
-            );
-        }
+        $remote_event_profiles = new RemoteEvent\Event\RegistrationProfileListEvent();
+        // Collect Profiles via Symfony Event
+        Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $remote_event_profiles);
 
-        // compile response
         $profiles = [];
-        foreach ($profile_data['values'] as $profile) {
-            $profiles[$profile['value']] = $profile[$name_field];
+        foreach ($remote_event_profiles->getProfiles() as $profile) {
+            $profiles[$profile->getName()] = $profile->getLabel();
         }
         return $profiles;
+    }
+
+
+    /**
+     * @param \Civi\RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event
+     *
+     * @return void
+     */
+    public static function addOptionValueProfiles(
+        RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event)
+    {
+        // TODO: Do we use API4?
+        $profile_data = civicrm_api3(
+            'OptionValue',
+            'get',
+            [
+                'option.limit'      => 0,
+                'option_group_id'   => 'remote_registration_profiles',
+                'is_active'         => 1,
+                'check_permissions' => false
+            ]
+        );
+        foreach ($profile_data['values'] as $profile) {
+            $class_name = "CRM_Remoteevent_RegistrationProfile_{$profile['name']}";
+            $registration_profile_list_event->addProfile($class_name, $profile['name'], $profile['label']);
+        }
     }
 
     /**
@@ -319,13 +333,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function setProfileDataInEventData(&$event)
     {
-        $profiles = self::getAvailableRegistrationProfiles('name');
+        $profiles = self::getAvailableRegistrationProfiles();
 
         // set default profile
         if (isset($event['event_remote_registration.remote_registration_default_profile'])) {
-            $default_profile_id = (int)$event['event_remote_registration.remote_registration_default_profile'];
-            if (isset($profiles[$default_profile_id])) {
-                $event['default_profile'] = $profiles[$default_profile_id];
+            $default_profile_name = $event['event_remote_registration.remote_registration_default_profile'];
+            if (isset($profiles[$default_profile_name])) {
+                $event['default_profile'] = $default_profile_name;
             } else {
                 $event['default_profile'] = '';
             }
@@ -336,20 +350,16 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $enabled_profiles      = $event['event_remote_registration.remote_registration_profiles'];
         $enabled_profile_names = [];
         if (is_array($enabled_profiles)) {
-            foreach ($enabled_profiles as $profile_id) {
-                if (isset($profiles[$profile_id])) {
-                    $enabled_profile_names[] = $profiles[$profile_id];
-                }
-            }
+            $enabled_profile_names = array_intersect($enabled_profiles, array_keys($profiles));
         }
         $event['enabled_profiles'] = implode(',', $enabled_profile_names);
         unset($event['event_remote_registration.remote_registration_profiles']);
 
         // set default UPDATE profile
         if (isset($event['event_remote_registration.remote_registration_default_update_profile'])) {
-            $default_profile_id = (int)$event['event_remote_registration.remote_registration_default_update_profile'];
-            if (isset($profiles[$default_profile_id])) {
-                $event['default_update_profile'] = $profiles[$default_profile_id];
+            $default_profile_name = $event['event_remote_registration.remote_registration_default_update_profile'];
+            if (isset($profiles[$default_profile_name])) {
+                $event['default_update_profile'] = $default_profile_name;
             } else {
                 $event['default_update_profile'] = '';
             }
@@ -361,11 +371,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
             $enabled_profiles      = $event['event_remote_registration.remote_registration_update_profiles'];
             $enabled_profile_names = [];
             if (is_array($enabled_profiles)) {
-                foreach ($enabled_profiles as $profile_id) {
-                    if (isset($profiles[$profile_id])) {
-                        $enabled_profile_names[] = $profiles[$profile_id];
-                    }
-                }
+                $enabled_profile_names = array_intersect($enabled_profiles, array_keys($profiles));
             }
             $event['enabled_update_profiles'] = implode(',', $enabled_profile_names);
             unset($event['event_remote_registration.remote_registration_update_profiles']);

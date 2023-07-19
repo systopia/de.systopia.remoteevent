@@ -170,12 +170,93 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         return true;
     }
 
-
+    /**
+     * Adjusting Registration Profile fields
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0015()
+    {
+        $this->ctx->log->info('Updating RegistrationProfile data structures');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        // Attribute "text_length" is dropped by CRM_Remoteevent_CustomData.
+        // It only updates fields that are set in the current field API get
+        // result. NULL values are dropped by APIv3.
+        \Civi\Api4\CustomField::update()
+          ->addValue('text_length', 1024)
+          ->addWhere('custom_group_id:name', '=', 'event_remote_registration')
+          ->addWhere('name', 'IN', ['remote_registration_profiles', 'remote_registration_update_profiles'])
+          ->execute();
+        $this->migrate_profile_option_values_to_option_names();
+        return true;
+    }
 
 
     /****************************************************************
-    **                       HELPER FUNCTIONS                      **
-    ****************************************************************/
+     **                       HELPER FUNCTIONS                     **
+     ****************************************************************/
+
+    /**
+     * Migrate previous profile option values to profile option names.
+     */
+    protected function migrate_profile_option_values_to_option_names(): void
+    {
+        // Mapping of option value to option name of profiles.
+        $profile_names = \Civi\Api4\OptionValue::get(false)
+            ->addSelect('value', 'name')
+            ->addWhere('option_group_id:name', '=', 'remote_registration_profiles')
+            ->execute()
+            ->indexBy('value')
+            ->column('name');
+
+        // Replace current values
+        $remote_registration_query = CRM_Core_DAO::executeQuery("
+            SELECT
+                id, default_profile, profiles, default_update_profile, update_profiles
+            FROM civicrm_value_remote_registration
+        ");
+        while ($remote_registration_query->fetch()) {
+            $default_profile = $profile_names[$remote_registration_query->default_profile] ?? NULL;
+            $default_update_profile = $profile_names[$remote_registration_query->default_update_profile] ?? NULL;
+            $profiles = $this->convertOptionValuesToNames(
+                    $remote_registration_query->profiles,
+                    $profile_names
+            );
+            $update_profiles = $this->convertOptionValuesToNames(
+                    $remote_registration_query->update_profiles,
+                    $profile_names
+            );
+
+            CRM_Core_DAO::executeQuery("
+                UPDATE civicrm_value_remote_registration
+                SET
+                    default_profile = '{$default_profile}',
+                    default_update_profile = '{$default_update_profile}',
+                    profiles = '{$profiles}',
+                    update_profiles = '{$update_profiles}'
+                WHERE id = '{$remote_registration_query->id}';
+            ");
+        }
+    }
+
+    /**
+     * @param string|null $values Padded option values.
+     * @param array $mapping Option value to option name mapping.
+     *
+     * @return string Padded option names.
+     */
+    protected function convertOptionValuesToNames(?string $values, array $mapping): string
+    {
+        $names = [];
+        foreach (\CRM_Utils_Array::explodePadded($values) ?? [] as $value) {
+            if (isset($mapping[$value])) {
+                $names[] = $mapping[$value];
+            }
+        }
+        return \CRM_Utils_Array::implodePadded($names);
+    }
 
     /**
      * Add a unique index on the event external identifiers
@@ -184,11 +265,17 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
     {
         // gather field / group info
         $external_identifier_field = CRM_Remoteevent_CustomData::getCustomField(
-            'event_remote_registration', 'remote_registration_external_identifier');
+            'event_remote_registration',
+            'remote_registration_external_identifier'
+        );
         if (empty($external_identifier_field)) {
-            throw new Exception("Field 'event_remote_registration.remote_registration_external_identifier' does not exist!");
+            throw new Exception(
+                "Field 'event_remote_registration.remote_registration_external_identifier' does not exist!"
+            );
         }
-        $external_identifier_group = CRM_Remoteevent_CustomData::getGroupSpecs($external_identifier_field['custom_group_id']);
+        $external_identifier_group = CRM_Remoteevent_CustomData::getGroupSpecs(
+            $external_identifier_field['custom_group_id']
+        );
 
         // add unique key (if not already there)
         $find_index_query = "SHOW INDEX FROM `{$external_identifier_group['table_name']}`
@@ -196,9 +283,11 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         $index = CRM_Core_DAO::executeQuery($find_index_query);
         if (!$index->fetch()) {
             // index missing: add unique key
-            CRM_Core_DAO::executeQuery("
+            CRM_Core_DAO::executeQuery(
+                "
                 ALTER TABLE `{$external_identifier_group['table_name']}`
-                ADD UNIQUE KEY `UI_external_identifier` (`{$external_identifier_field['column_name']}`)");
+                ADD UNIQUE KEY `UI_external_identifier` (`{$external_identifier_field['column_name']}`)"
+            );
         }
     }
 
@@ -219,7 +308,9 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         // check if it's already there
         $apiResult = civicrm_api3('ParticipantStatusType', 'get', ['name' => $name]);
         if ($apiResult['count'] == 0) {
-            $max_weight = (int) CRM_Core_DAO::singleValueQuery("SELECT MAX(weight) FROM civicrm_participant_status_type");
+            $max_weight = (int)CRM_Core_DAO::singleValueQuery(
+                "SELECT MAX(weight) FROM civicrm_participant_status_type"
+            );
             civicrm_api3(
                 'ParticipantStatusType',
                 'create',
