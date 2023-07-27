@@ -184,7 +184,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         // Attribute "text_length" is dropped by CRM_Remoteevent_CustomData.
         // It only updates fields that are set in the current field API get
         // result. NULL values are dropped by APIv3.
-        \Civi\Api4\CustomField::update()
+        \Civi\Api4\CustomField::update(FALSE)
           ->addValue('text_length', 1024)
           ->addWhere('custom_group_id:name', '=', 'event_remote_registration')
           ->addWhere('name', 'IN', ['remote_registration_profiles', 'remote_registration_update_profiles'])
