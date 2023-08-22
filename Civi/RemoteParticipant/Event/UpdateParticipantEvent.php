@@ -17,7 +17,7 @@
 namespace Civi\RemoteParticipant\Event;
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event class to modify participant data.
