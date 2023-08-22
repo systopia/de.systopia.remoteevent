@@ -523,7 +523,7 @@ class CRM_Remoteevent_Registration
                     $profile_name = $contact_identification['xcm_profile'];
                     $xcm_config = CRM_Xcm_Configuration::getConfigProfile($profile_name);
                     if (empty($xcm_config) || empty($xcm_config->getOptions()['match_contact_id'])) {
-                        Civi::log()->debug("RemoteEvent: maybe you should activate the 'Match contacts by contact ID' option for your '{$profile_name}' profile, so that contact updates could also be applied if the participant is only identified by ID.");
+                        Civi::log()->warning("RemoteEvent: maybe you should activate the 'Match contacts by contact ID' option for your '{$profile_name}' profile, so that contact updates could also be applied if the participant is only identified by ID.");
                     } else {
                         throw new Exception(E::ts("Error while updating contact %1: %2", [
                             1 => $contact_identification['id'],
