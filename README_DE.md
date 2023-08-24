@@ -19,7 +19,7 @@ In vielen Fällen möchte oder kann man die in CiviCRM eingebauten Formulare nic
 * Die eingebauten Formulare und die Verarbeitungslogik bieten nicht genügend Optionen, um an Ihre Bedürfnisse angepasst zu werden
 * Möglicherweise verfügen Sie bereits über ein externes System für Ihre Wähler (z.B. einen Mitgliederbereich auf Ihrer Website oder eine Kollaborationsplattform), das nicht ohne weiteres mit CiviCRM verbunden werden kann.
 
-Diese Erweiterung ist lizenziert unter [AGPL-3.0](LICENSE.txt).
+Diese Erweiterung ist lizenziert unter [AGPL-3.0](./LICENSE.txt).
 
 ## Funktionen
 

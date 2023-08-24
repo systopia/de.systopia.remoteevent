@@ -19,7 +19,7 @@ In many cases you may not want or be able to use CiviCRM's built in forms e.g.:
 * The built in forms and processing logic do not provide enough options to be customized to your needs
 * You may already have an external system for your constituents (such as a member area on your website or a collaboration platform) which cannot easily be connected to CiviCRM
 
-This extension is licensed under [AGPL-3.0](LICENSE.txt).
+This extension is licensed under [AGPL-3.0](./LICENSE.txt).
 
 ## Features
 
