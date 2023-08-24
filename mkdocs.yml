@@ -1,0 +1,26 @@
+site_name: 'Remote Event Extension'
+repo_url: https://github.com/systopia/de.systopia.remoteevent
+site_description: 'This extension provides a lot of additional features to CiviCRMs events.'
+site_author: 'systopia'
+theme:
+  name: material
+
+nav:
+  - 'Home': index.md
+
+markdown_extensions:
+  - attr_list
+  - admonition
+  - def_list
+  - codehilite
+  - toc:
+      permalink: True
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tilde
+  - pymdownx.betterem
+  - pymdownx.mark
+
+plugins:
+  - search:
+      lang: en
