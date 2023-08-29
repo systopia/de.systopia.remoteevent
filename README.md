@@ -155,3 +155,6 @@ behaviour of these calls:
 1. ``civi.remoteevent.registration_update.getform``modify / extend update form
 1. ``civi.remoteevent.label`` modify or override certain labels (e.g. workshop
    groups)
+
+## Documentation
+- EN: https://docs.civicrm.org/remoteevent/en/latest (automatic publishing)
