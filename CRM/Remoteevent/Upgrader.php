@@ -193,6 +193,22 @@ class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
         return true;
     }
 
+    /**
+     * Synchronizes custom fields for CiviRemote Event registration
+     * configuration fields, as two fields need to be marked as not searchable
+     * for avoiding exceeding index lengths with bigger VARCHAR lengths
+     * introduced with upgrade_0015().
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function upgrade_0016()
+    {
+        $this->ctx->log->info('Updating RegistrationProfile data structures');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+    }
+
 
     /****************************************************************
      **                       HELPER FUNCTIONS                     **
