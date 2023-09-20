@@ -58,8 +58,8 @@ class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase
                                     0 => $l10n->localise('Decline Invitation'),
                                 ],
                                 'validation' => '',
-                                'weight' => 10,
-                                'required' => 0,
+                                'weight' => -10,
+                                'required' => 1,
                                 'label' => $l10n->localise('Invitation Feedback'),
                             ],
                         ]
