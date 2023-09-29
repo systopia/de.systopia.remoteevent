@@ -26,6 +26,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         'requires_approval',
         'allow_selfcancelxfer',
         'selfcancelxfer_time',
+        'is_multiple_registrations',
+        'max_additional_participants',
         'intro_text',
         'footer_text',
         'confirm_title',
@@ -43,6 +45,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     {
         parent::preProcess();
         $this->setSelectedChild('registrationconfig');
+        Civi::resources()->addScriptFile(E::LONG_NAME, 'js/registration-config.js');
     }
 
     public function buildQuickForm()
@@ -64,7 +67,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Default Registration Profile"),
             $available_registration_profiles,
             false,
-            ['class' => 'crm-select2']
+            ['class' => 'crm-select2 required']
         );
         $this->add(
             'select',
@@ -72,7 +75,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Allowed Registration Profiles"),
             $available_registration_profiles,
             false,
-            ['class' => 'crm-select2', 'multiple' => 'multiple']
+            ['class' => 'crm-select2 required', 'multiple' => 'multiple']
         );
         $this->add(
             'select',
@@ -80,7 +83,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Registration Contact Matching (XCM)"),
             $this->getAvailableXcmProfiles(false),
             false,
-            ['class' => 'crm-select2']
+            ['class' => 'crm-select2 required']
         );
         $this->add(
             'select',
@@ -88,7 +91,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Default Registration Profile for Updates"),
             $available_registration_profiles,
             false,
-            ['class' => 'crm-select2']
+            ['class' => 'crm-select2 required']
         );
         $this->add(
             'select',
@@ -96,7 +99,23 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Allowed Registration Profiles for Updates"),
             $available_registration_profiles,
             false,
-            ['class' => 'crm-select2', 'multiple' => 'multiple']
+            ['class' => 'crm-select2 required', 'multiple' => 'multiple']
+        );
+        $this->add(
+          'select',
+          'remote_registration_additional_participants_profile',
+          E::ts("Registration Profile for Additional Participants"),
+          ['' => E::ts('- Select -')] + $available_registration_profiles,
+          FALSE,
+          ['class' => 'crm-select2 required']
+        );
+        $this->add(
+          'select',
+          'remote_registration_additional_participants_xcm_profile',
+          E::ts("Registration Contact Matching for Additional Participants"),
+          ['' => E::ts('- Select -')] + $this->getAvailableXcmProfiles(true),
+          FALSE,
+          ['class' => 'crm-select2 required']
         );
         $this->add(
             'select',
@@ -104,7 +123,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Update Contact Matching (XCM)"),
             $this->getAvailableXcmProfiles(true),
             false,
-            ['class' => 'crm-select2']
+            ['class' => 'crm-select2 required']
         );
         $this->add(
             'checkbox',
@@ -141,6 +160,10 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->addField('allow_selfcancelxfer', ['label' => ts('Allow self-service cancellation or transfer?'), 'type' => 'advcheckbox']);
         $this->add('text', 'selfcancelxfer_time', ts('Cancellation or transfer time limit (hours)'));
         $this->addRule('selfcancelxfer_time', ts('Please enter the number of hours (as an integer).'), 'integer');
+        $this->addElement('checkbox', 'is_multiple_registrations', E::ts('Register multiple participants?'));
+        // CRM-17745: Make maximum additional participants configurable
+        $numericOptions = ['' => E::ts('- Select -')] + CRM_Core_SelectValues::getNumericOptions(1, 9);
+        $this->add('select', 'max_additional_participants', E::ts('Maximum additional participants'), $numericOptions, FALSE, ['class' => 'crm-select2 required']);
 
         // add custom texts on the various forms
         $this->add('wysiwyg', 'intro_text',E::ts('Event Information'), $intro_attributes);
@@ -167,6 +190,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_suspended'              => 'remote_registration_suspended',
                 'event_remote_registration.remote_registration_xcm_profile'            => 'remote_registration_xcm_profile',
                 'event_remote_registration.remote_registration_update_xcm_profile'     => 'remote_registration_update_xcm_profile',
+                'event_remote_registration.remote_registration_additional_participants_profile' => 'remote_registration_additional_participants_profile',
+                'event_remote_registration.remote_registration_additional_participants_xcm_profile' => 'remote_registration_additional_participants_xcm_profile',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
             $values = civicrm_api3(
@@ -229,6 +254,19 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             }
         }
 
+        // Validate fields for additional participants.
+        if (!empty($this->_submitValues['is_multiple_registrations'])) {
+          if (empty($this->_submitValues['remote_registration_additional_participants_profile'])) {
+            $this->_errors['remote_registration_additional_participants_profile'] = E::ts('You must select a profile for registering additional participants.');
+          }
+          if (empty($this->_submitValues['max_additional_participants'])) {
+            $this->_errors['max_additional_participants'] = E::ts('You must select how many additional participants may be registered.');
+          }
+          if (empty($this->_submitValues['remote_registration_additional_participants_xcm_profile'])) {
+            $this->_errors['remote_registration_additional_participants_xcm_profile'] = E::ts('You must select an XCM matching profile for registering additional participants.');
+          }
+        }
+
         return (0 == count($this->_errors));
     }
 
@@ -273,6 +311,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac'],
             'event_remote_registration.remote_registration_xcm_profile'            => $values['remote_registration_xcm_profile'],
             'event_remote_registration.remote_registration_update_xcm_profile'     => $values['remote_registration_update_xcm_profile'],
+            'event_remote_registration.remote_registration_additional_participants_profile' => $values['remote_registration_additional_participants_profile'],
+            'event_remote_registration.remote_registration_additional_participants_xcm_profile' => $values['remote_registration_additional_participants_xcm_profile'],
         ];
 
         // disable civicrm native online registration
