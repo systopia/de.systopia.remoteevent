@@ -227,6 +227,28 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // add the fields
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
+        // Add fields for additional participants' profile.
+        $event = $get_form_results->getEvent();
+        if (!empty($event['is_multiple_registrations'])) {
+            $additional_participants_profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
+                $event['event_remote_registration.remote_registration_additional_participants_profile']
+            );
+            $additional_fields = $additional_participants_profile->getFields($locale);
+            for ($i = 1; $i <= $event['max_additional_participants']; $i++) {
+                $fields['additional_' . $i] = [
+                    'type' => 'fieldset',
+                    'name' => 'additional_' . $i,
+                    'label' => E::ts('Additional Participant %1', [1 => $i]),
+                    'weight' => 100,
+                    'description' => E::ts('Registration data for additional participant %1', [1 => $i]),
+                ];
+                foreach ($additional_fields as $additional_field_name => $additional_field) {
+                    $additional_field['name'] = 'additional_' . $i . '_' . $additional_field['name'];
+                    $additional_field['parent'] = empty($additional_field['parent']) ? 'additional_' . $i : 'additional_' . $i . '_' . $additional_field['parent'];
+                    $fields['additional_' . $i . '_' . $additional_field_name] = $additional_field;
+                }
+            }
+        }
         $get_form_results->addFields($fields);
 
         // add default values
