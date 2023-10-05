@@ -145,7 +145,17 @@ abstract class CRM_Remoteevent_RegistrationProfile
     public function validateSubmission($validationEvent)
     {
         $data = $validationEvent->getSubmission();
-        $fields = $this->getFields();
+        $event = $validationEvent->getEvent();
+        $additionalParticipantsCount = array_reduce(
+          preg_grep('#^additional_([0-9]+)(_|$)#', array_keys($data)),
+          function(int $carry, string $item) {
+            $currentCount = (int) preg_filter('#^additional_([0-9]+)(.*?)$#', '$1', $item);
+            return max($carry, $currentCount);
+          },
+          0
+        );
+        $fields = $this->getFields()
+          + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
         $l10n = $validationEvent->getLocalisation();
         foreach ($fields as $field_name => $field_spec) {
             $value = CRM_Utils_Array::value($field_name, $data);
