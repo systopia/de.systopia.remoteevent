@@ -102,6 +102,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             ['class' => 'crm-select2 required', 'multiple' => 'multiple']
         );
         $this->add(
+            'checkbox',
+            'remote_registration_additional_participants_waitlist',
+            E::ts("Allow registering additional participants on waiting list")
+        );
+        $this->add(
           'select',
           'remote_registration_additional_participants_profile',
           E::ts("Registration Profile for Additional Participants"),
@@ -189,6 +194,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_disable_civicrm_registration'        => 'remote_disable_civicrm_registration',
                 'event_remote_registration.remote_registration_suspended'              => 'remote_registration_suspended',
                 'event_remote_registration.remote_registration_xcm_profile'            => 'remote_registration_xcm_profile',
+                'event_remote_registration.remote_registration_additional_participants_waitlist' => 'remote_registration_additional_participants_waitlist',
                 'event_remote_registration.remote_registration_update_xcm_profile'     => 'remote_registration_update_xcm_profile',
                 'event_remote_registration.remote_registration_additional_participants_profile' => 'remote_registration_additional_participants_profile',
                 'event_remote_registration.remote_registration_additional_participants_xcm_profile' => 'remote_registration_additional_participants_xcm_profile',
@@ -311,6 +317,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac'],
             'event_remote_registration.remote_registration_xcm_profile'            => $values['remote_registration_xcm_profile'],
             'event_remote_registration.remote_registration_update_xcm_profile'     => $values['remote_registration_update_xcm_profile'],
+            'event_remote_registration.remote_registration_additional_participants_waitlist' => CRM_Utils_Array::value(
+              'remote_registration_additional_participants_waitlist',
+              $values,
+              0
+            ),
             'event_remote_registration.remote_registration_additional_participants_profile' => $values['remote_registration_additional_participants_profile'],
             'event_remote_registration.remote_registration_additional_participants_xcm_profile' => $values['remote_registration_additional_participants_xcm_profile'],
         ];

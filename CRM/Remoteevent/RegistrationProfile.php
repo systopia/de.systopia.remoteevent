@@ -154,9 +154,31 @@ abstract class CRM_Remoteevent_RegistrationProfile
           },
           0
         );
+        $l10n = $validationEvent->getLocalisation();
+
+        // Validate number of participants.
+        if (
+            !empty($event['max_participants'])
+            && ($excessParticipants = CRM_Remoteevent_Registration::getRegistrationCount($event['id']) + 1 + $additionalParticipantsCount - $event['max_participants']) > 0
+        ) {
+            if (
+              !empty($event['has_waitlist'])
+              && !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
+            ) {
+                $validationEvent->addWarning(
+                    $l10n->localise('Not enough vacancies for the number of requested participants.')
+                    . ' '
+                    . $l10n->localise('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
+                );
+            }
+            else {
+                $validationEvent->addValidationError('', $l10n->localise('Not enough vacancies for the number of requested participants.'));
+            }
+        }
+
+        // Validate field values.
         $fields = $this->getFields()
           + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
-        $l10n = $validationEvent->getLocalisation();
         foreach ($fields as $field_name => $field_spec) {
             $value = CRM_Utils_Array::value($field_name, $data);
             if (!empty($field_spec['required']) && ($value === null || $value === '')) {
