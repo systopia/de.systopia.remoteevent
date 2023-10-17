@@ -59,7 +59,7 @@ function civicrm_api3_remote_event_get($params)
     $get_params->setParameter('event_remote_registration.remote_registration_enabled', 1);
 
     // dispatch search parameters event
-    Civi::dispatcher()->dispatch('civi.remoteevent.get.params', $get_params);
+    Civi::dispatcher()->dispatch(GetParamsEvent::NAME, $get_params);
 
     // use the basic event API for queries
     $event_get = $get_params->getParameters();
@@ -111,7 +111,7 @@ function civicrm_api3_remote_event_get($params)
 
 
     // dispatch the event in case somebody else wants to add/remove something
-    Civi::dispatcher()->dispatch('civi.remoteevent.get.result', $result);
+    Civi::dispatcher()->dispatch(GetResultEvent::NAME, $result);
 
     // finally, apply the limit
     if ($get_params->getLimit() != $get_params->getOriginalLimit()) {

@@ -91,7 +91,7 @@ function civicrm_api3_remote_participant_create($params)
     // dispatch to the various handlers
     $registration_event = new RegistrationEvent($params);
     try {
-        Civi::dispatcher()->dispatch('civi.remoteevent.registration.submit', $registration_event);
+        Civi::dispatcher()->dispatch(RegistrationEvent::NAME, $registration_event);
     } catch (Exception $ex) {
         $registration_event->addError($ex->getMessage());
     }

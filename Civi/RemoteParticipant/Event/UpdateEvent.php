@@ -28,6 +28,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class UpdateEvent extends ChangingEvent
 {
+    public const NAME = 'civi.remoteevent.registration.update';
+
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
 

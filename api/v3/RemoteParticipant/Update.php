@@ -97,7 +97,7 @@ function civicrm_api3_remote_participant_update($params)
     // dispatch to the various handlers
     $update_event = new UpdateEvent($params);
     try {
-        Civi::dispatcher()->dispatch('civi.remoteevent.registration.update', $update_event);
+        Civi::dispatcher()->dispatch(UpdateEvent::NAME, $update_event);
     } catch (Exception $ex) {
         $update_event->addError($ex->getMessage());
     }

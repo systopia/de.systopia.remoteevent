@@ -16,6 +16,15 @@
 require_once 'remoteevent.civix.php';
 
 use CRM_Remoteevent_ExtensionUtil as E;
+use Civi\RemoteEvent\Event\GetParamsEvent;
+use Civi\RemoteEvent\Event\GetFieldsEvent;
+use Civi\RemoteEvent\Event\GetResultEvent;
+use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\ValidateEvent;
+use Civi\RemoteParticipant\Event\RegistrationEvent;
+use Civi\RemoteParticipant\Event\UpdateEvent;
+use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 
 /**
  * Implements hook_civicrm_config().
@@ -31,130 +40,130 @@ function remoteevent_civicrm_config(&$config)
 
     // EVENT GETFIELDS
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.getfields',
+          GetFieldsEvent::NAME,
         ['CRM_Remoteevent_EventLocation', 'addFieldSpecs']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.getfields',
+        GetFieldsEvent::NAME,
         ['CRM_Remoteevent_EventSpeaker', 'addFieldSpecs']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.getfields',
+        GetFieldsEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addFieldSpecs']);
 
     // EVENT GET PARAMETERS
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.params',
+        GetParamsEvent::NAME,
         ['CRM_Remoteevent_RemoteEvent', 'deriveEventID']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.params',
+        GetParamsEvent::NAME,
         ['CRM_Remoteevent_EventFlags', 'processFlagFilters']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.params',
+        GetParamsEvent::NAME,
         ['CRM_Remoteevent_EventCustomFields', 'processCustomFieldFilters']);
 
 
 
     // EVENT GET
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.result',
+        GetResultEvent::NAME,
         ['CRM_Remoteevent_EventFlags', 'calculateFlags'], 1000 /* at the very beginning */);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.result',
+        GetResultEvent::NAME,
         ['CRM_Remoteevent_EventFlags', 'applyFlagFilters'], -100 /** will trim entries */);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.result',
+        GetResultEvent::NAME,
         ['CRM_Remoteevent_EventLocation', 'addLocationData'], -1000 /** late */);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.result',
+        GetResultEvent::NAME,
         ['CRM_Remoteevent_EventSpeaker', 'addSpeakerData'], -1000 /** late */);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.get.result',
+        GetResultEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addSessionData'], -1000 /** late */);
 
     // EVENT REGISTRATION.GETFORM
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.getform',
+        GetCreateParticipantFormEvent::NAME,
             ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.getform',
+       GetCreateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_Registration', 'addGtacField']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.getform',
+       GetCreateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addSessionFields']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.getform',
+       GetCreateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addRegisteredSessions']);
 
     // EVENT REGISTRATION_UPDATE.GETFORM
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration_update.getform',
+        GetUpdateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_RegistrationProfile', 'addProfileData']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration_update.getform',
+        GetUpdateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addSessionFields']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration_update.getform',
+        GetUpdateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addRegisteredSessions']);
 
 
 
     // EVENT REGISTRATION.VALIDATE
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.validate',
+        ValidateEvent::NAME,
             ['CRM_Remoteevent_RegistrationProfile', 'validateProfileData']);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.validate',
+        ValidateEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'validateSessionSubmission']);
 
     // EVENT REGISTRATION.SUBMIT
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'extractSessions'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_RegistrationProfile', 'addProfileContactData'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_Registration', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_Registration', 'verifyContactNotRegistered'], CRM_Remoteevent_Registration::AFTER_CONTACT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_Registration', 'confirmExistingParticipant'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 40);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_Registration', 'determineParticipantStatus'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.submit',
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
 
     // EVENT REGISTRATION.UPDATE
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.update',
+        UpdateEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'extractSessions'], CRM_Remoteevent_RegistrationUpdate::STAGE1_PARTICIPANT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.update',
+        UpdateEvent::NAME,
         ['CRM_Remoteevent_RegistrationUpdate', 'loadParticipant'], CRM_Remoteevent_RegistrationUpdate::STAGE1_PARTICIPANT_IDENTIFICATION);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.update',
+        UpdateEvent::NAME,
         ['CRM_Remoteevent_RegistrationUpdate', 'addProfileData'], CRM_Remoteevent_RegistrationUpdate::BEFORE_APPLY_CONTACT_CHANGES + 100);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.update',
+        UpdateEvent::NAME,
         ['CRM_Remoteevent_RegistrationUpdate', 'updateContact'], CRM_Remoteevent_RegistrationUpdate::STAGE2_APPLY_CONTACT_CHANGES);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.update',
+        UpdateEvent::NAME,
         ['CRM_Remoteevent_Registration', 'confirmExistingParticipant'], CRM_Remoteevent_RegistrationUpdate::STAGE3_APPLY_PARTICIPANT_CHANGES + 20);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.update',
+        UpdateEvent::NAME,
         ['CRM_Remoteevent_RegistrationUpdate', 'updateParticipant'], CRM_Remoteevent_RegistrationUpdate::STAGE3_APPLY_PARTICIPANT_CHANGES);
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.update',
+        UpdateEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_RegistrationUpdate::AFTER_APPLY_PARTICIPANT_CHANGES);
 
     // EVENTMESSAGES.TOKENS
@@ -190,7 +199,7 @@ function remoteevent_civicrm_config(&$config)
 
     // TODO hier andere Profile hinzufügen
     $dispatcher->addUniqueListener(
-        'civi.remoteevent.registration.profile.list',
+        RegistrationProfileListEvent::NAME,
         ['CRM_Remoteevent_RegistrationProfile','addOptionValueProfiles']
     );
 

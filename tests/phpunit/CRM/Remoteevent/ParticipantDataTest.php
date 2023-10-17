@@ -62,7 +62,7 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase
         ]);
 
         Civi::dispatcher()->addListener(
-            'civi.remoteevent.registration.submit',
+            RegistrationEvent::NAME,
             ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
 
         // register one contact
@@ -91,7 +91,7 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase
           ]);
 
         Civi::dispatcher()->addListener(
-            'civi.remoteevent.registration.submit',
+            RegistrationEvent::NAME,
             ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
 
         // create invite participant

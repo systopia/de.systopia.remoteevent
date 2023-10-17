@@ -27,6 +27,8 @@ use Civi\RemoteEvent;
  */
 class CancelEvent extends ChangingEvent
 {
+    public const NAME = 'civi.remoteevent.registration.cancel';
+
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;
 

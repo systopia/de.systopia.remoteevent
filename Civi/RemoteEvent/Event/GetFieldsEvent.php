@@ -26,6 +26,8 @@ use Civi\RemoteEvent;
  */
 class GetFieldsEvent extends RemoteEvent
 {
+    public const NAME = 'civi.remoteevent.getfields';
+
     /** @var array holds the list of the RemoteEvent.get field specs */
     protected $field_specs;
 
