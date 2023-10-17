@@ -228,6 +228,21 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // this is just a stub. for now.
     }
 
+  /**
+   * Give the profile a chance to manipulate the contact data before it's being sent off to
+   * the contact creation/update
+   *
+   * This is a public interface method for adjusting contact data, as self::adjustContactData()
+   * has protected visibility.
+   *
+   * @param array $contact_data
+   *
+   * @return void
+   */
+    public function modifyContactData(array &$contact_data): void {
+        $this->adjustContactData($contact_data);
+    }
+
     /*************************************************************
      *                HELPER / INFRASTRUCTURE                   **
      *************************************************************/
