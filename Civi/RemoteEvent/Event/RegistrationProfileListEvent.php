@@ -28,7 +28,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class RegistrationProfileListEvent extends Event
 {
 
-    const NAME = 'civi.remoteevent.registration.profile.list';
+    public const NAME = 'civi.remoteevent.registration.profile.list';
 
     /**
      * @var  \Civi\RemoteEvent\Event\EventProfile[]

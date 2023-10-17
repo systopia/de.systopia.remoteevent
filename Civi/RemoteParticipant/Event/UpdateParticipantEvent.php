@@ -26,7 +26,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class UpdateParticipantEvent extends Event
 {
-    const NAME = 'civi.remoteparticipant.update.participant';
+    public const NAME = 'civi.remoteparticipant.update.participant';
 
     private $participant_data;
 

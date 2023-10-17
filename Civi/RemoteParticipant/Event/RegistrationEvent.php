@@ -27,7 +27,7 @@ use Civi\RemoteEvent;
  */
 class RegistrationEvent extends ChangingEvent
 {
-    const NAME = 'civi.remoteevent.registration.submit';
+    public const NAME = 'civi.remoteevent.registration.submit';
 
     /** @var array holds the original RemoteParticipant.submit data */
     protected $submission;

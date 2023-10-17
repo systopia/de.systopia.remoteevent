@@ -28,7 +28,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase
 {
-    const NAME = 'civi.remoteevent.registration_update.getform';
+    public const NAME = 'civi.remoteevent.registration_update.getform';
 
     /**
      * GetUpdateParticipantFormEvent constructor.

@@ -27,7 +27,7 @@ use \Symfony\Contracts\EventDispatcher\Event;
  */
 class LabelEvent extends Event
 {
-    const NAME = 'civi.remoteevent.label';
+    public const NAME = 'civi.remoteevent.label';
 
     /**
      * @var string context for adjusting the session group header, e.g. "Day 1"

@@ -27,7 +27,7 @@ use \Symfony\Contracts\EventDispatcher\Event;
  */
 class RenderEvent extends Event
 {
-    const NAME = 'civi.remoteevent.render';
+    public const NAME = 'civi.remoteevent.render';
 
     /** @var string the full path to the template */
     protected $current_template_file;
