@@ -103,12 +103,12 @@ function civicrm_api3_remote_participant_validate($params)
                 $validation->addError($cant_register_reason);
             } else {
                 // dispatch the validation event for other validations to weigh in
-                Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
+                Civi::dispatcher()->dispatch(ValidateEvent::NAME, $validation);
             }
             break;
 
         case 'update':
-            Civi::dispatcher()->dispatch('civi.remoteevent.registration.validate', $validation);
+            Civi::dispatcher()->dispatch(ValidateEvent::NAME, $validation);
             break;
 
         case 'cancel':

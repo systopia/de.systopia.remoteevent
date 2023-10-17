@@ -108,7 +108,7 @@ function civicrm_api3_remote_participant_cancel($params)
 
     // pick the one that we want to cancel
     $cancellation_event = new CancelEvent($params, $participants);
-    Civi::dispatcher()->dispatch('civi.remoteevent.registration.cancel', $cancellation_event);
+    Civi::dispatcher()->dispatch(CancelEvent::NAME, $cancellation_event);
 
     // now simply take out the ones that we should cancel
     $cancellations = $cancellation_event->getParticipantCancellations();

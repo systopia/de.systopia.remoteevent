@@ -140,7 +140,7 @@ function civicrm_api3_remote_event_getfields_get($params)
     ]);
 
     // dispatch to others
-    Civi::dispatcher()->dispatch('civi.remoteevent.getfields', $fields_collection);
+    Civi::dispatcher()->dispatch(GetFieldsEvent::NAME, $fields_collection);
 
     // finally: add options to all the relevant fields
     foreach ($fields_collection->getFieldSpecs() as $field_name => $fieldSpec) {

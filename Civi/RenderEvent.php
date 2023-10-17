@@ -27,6 +27,8 @@ use \Symfony\Contracts\EventDispatcher\Event;
  */
 class RenderEvent extends Event
 {
+    const NAME = 'civi.remoteevent.render';
+
     /** @var string the full path to the template */
     protected $current_template_file;
 
@@ -161,7 +163,7 @@ class RenderEvent extends Event
     {
         // step 1: trigger the event
         $render_event = new RenderEvent($template_path, $smarty_variables, $context, $trim_mode);
-        \Civi::dispatcher()->dispatch('civi.remoteevent.render', $render_event);
+        \Civi::dispatcher()->dispatch(RenderEvent::NAME, $render_event);
 
         // step 2: load the template
         static $template_cache = [];

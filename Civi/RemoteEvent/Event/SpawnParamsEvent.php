@@ -26,5 +26,5 @@ use Civi\RemoteParamsEvent;
  */
 class SpawnParamsEvent extends RemoteParamsEvent
 {
-
+    const NAME = 'civi.remoteevent.spawn.params';
 }

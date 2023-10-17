@@ -77,7 +77,7 @@ function civicrm_api3_remote_event_spawn($params)
     $create_params = new SpawnParamsEvent($params);
 
     // dispatch search parameters event and get parameters
-    Civi::dispatcher()->dispatch('civi.remoteevent.spawn.params', $create_params);
+    Civi::dispatcher()->dispatch(SpawnParamsEvent::NAME, $create_params);
     $event_create = $create_params->getParameters();
 
     // if there is a template_id id given, we want to clone that first

@@ -27,6 +27,7 @@ use Civi\RemoteEvent;
  */
 class GetResultEvent extends RemoteEvent
 {
+    const NAME = 'civi.remoteevent.get.result';
 
     /** @var array holds the original RemoteEvent.get parameters */
     protected $original_params;

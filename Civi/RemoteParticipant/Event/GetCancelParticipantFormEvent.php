@@ -27,6 +27,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class GetCancelParticipantFormEvent extends GetParticipantFormEventBase
 {
+    const NAME = 'civi.remoteevent.cancellation.getform';
+
     /**
      * Get the token usage key for this event type
      *

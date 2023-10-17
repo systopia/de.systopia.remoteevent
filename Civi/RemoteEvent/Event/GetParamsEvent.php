@@ -26,6 +26,8 @@ use Civi\RemoteParamsEvent;
  */
 class GetParamsEvent extends RemoteParamsEvent
 {
+    const NAME = 'civi.remoteevent.get.params';
+
     public function __construct($params)
     {
         parent::__construct($params);

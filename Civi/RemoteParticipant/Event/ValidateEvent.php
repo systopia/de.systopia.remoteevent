@@ -27,6 +27,9 @@ use Civi\RemoteEvent;
  */
 class ValidateEvent extends RemoteEvent
 {
+
+    const NAME = 'civi.remoteevent.registration.validate';
+
     /** @var array holds the original RemoteParticipant.validate submission */
     protected $submission;
 

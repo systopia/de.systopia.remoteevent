@@ -19,6 +19,7 @@ use Civi\RemoteEvent as RemoteEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 use Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
+use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 
 
 /**
@@ -274,9 +275,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getRegistrationProfile($profile_name)
     {
-        $profile_list = new RemoteEvent\Event\RegistrationProfileListEvent();
+        $profile_list = new RegistrationProfileListEvent();
         // dispatch Registration Profile Event and try to instantiate a profile class from $profile_name
-        Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $profile_list);
+        Civi::dispatcher()->dispatch(RegistrationProfileListEvent::NAME, $profile_list);
 
         return $profile_list->getProfileInstance($profile_name);
     }
@@ -289,9 +290,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public static function getAvailableRegistrationProfiles()
     {
-        $remote_event_profiles = new RemoteEvent\Event\RegistrationProfileListEvent();
+        $remote_event_profiles = new RegistrationProfileListEvent();
         // Collect Profiles via Symfony Event
-        Civi::dispatcher()->dispatch('civi.remoteevent.registration.profile.list', $remote_event_profiles);
+        Civi::dispatcher()->dispatch(RegistrationProfileListEvent::NAME, $remote_event_profiles);
 
         $profiles = [];
         foreach ($remote_event_profiles->getProfiles() as $profile) {
@@ -302,12 +303,12 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
 
     /**
-     * @param \Civi\RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event
+     * @param RegistrationProfileListEvent $registration_profile_list_event
      *
      * @return void
      */
     public static function addOptionValueProfiles(
-        RemoteEvent\Event\RegistrationProfileListEvent $registration_profile_list_event)
+        RegistrationProfileListEvent $registration_profile_list_event)
     {
         // TODO: Do we use API4?
         $profile_data = civicrm_api3(
