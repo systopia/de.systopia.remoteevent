@@ -29,6 +29,7 @@ class CRM_Remoteevent_EventFlags
         'can_edit_registration',
         'can_cancel_registration',
         'is_registered',
+        'has_active_waitlist',
     ];
 
     /** @var string[] list of flags in the event configuration relevant for the UI (full name => internal name) */
@@ -165,6 +166,9 @@ class CRM_Remoteevent_EventFlags
                         self::restrictToContactsEvents($contact_id, $get_parameters);
                     }
                 }
+
+              // TODO: Restrict to events with active waitlist when "has_active_waitlist" is given, for both,
+              //       registration and update.
             }
         }
     }
@@ -194,6 +198,11 @@ class CRM_Remoteevent_EventFlags
             $event['can_instant_register'] = (int)
                    ($event['can_register'] &&
                    CRM_Remoteevent_Registration::canOneClickRegister($event['id'], $event));
+
+            $event['has_active_waitlist'] = (int) (
+                    $event['can_register']
+                    && CRM_Remoteevent_RemoteEvent::hasActiveWaitingList($event['id'], $event)
+            );
 
             // add generic can_edit_registration/can_cancel_registration (might be overridden below)
             $cant_edit_reason = CRM_Remoteevent_Registration::cannotEditRegistration($event['id'], $contact_id, $event);

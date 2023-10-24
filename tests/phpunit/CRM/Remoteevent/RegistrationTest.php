@@ -83,6 +83,10 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         $registration1 = $this->registerRemote($event['id'], ['email' => $contactA['email']]);
         $this->assertEmpty($registration1['is_error'], "First Registration Failed");
 
+        // Retrieve the event.
+        $eventRetrieved = $this->getRemoteEvent($event['id']);
+        $this->assertNotEmpty($eventRetrieved['has_active_waitlist'], 'The flag "has_active_waitlist" should have the value "1".');
+
         // register another contact:
         $contactB = $this->createContact();
         $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
