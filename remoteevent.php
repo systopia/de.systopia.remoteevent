@@ -207,26 +207,6 @@ function remoteevent_civicrm_install()
 }
 
 /**
- * Implements hook_civicrm_postInstall().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
- */
-function remoteevent_civicrm_postInstall()
-{
-    _remoteevent_civix_civicrm_postInstall();
-}
-
-/**
- * Implements hook_civicrm_uninstall().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_uninstall
- */
-function remoteevent_civicrm_uninstall()
-{
-    _remoteevent_civix_civicrm_uninstall();
-}
-
-/**
  * Implements hook_civicrm_enable().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
@@ -234,26 +214,6 @@ function remoteevent_civicrm_uninstall()
 function remoteevent_civicrm_enable()
 {
     _remoteevent_civix_civicrm_enable();
-}
-
-/**
- * Implements hook_civicrm_disable().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_disable
- */
-function remoteevent_civicrm_disable()
-{
-    _remoteevent_civix_civicrm_disable();
-}
-
-/**
- * Implements hook_civicrm_upgrade().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_upgrade
- */
-function remoteevent_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
-{
-    return _remoteevent_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -275,7 +235,6 @@ function remoteevent_civicrm_entityTypes(&$entityTypes)
         'class' => 'CRM_Remoteevent_DAO_ParticipantSession',
         'table' => 'civicrm_participant_session'
     ];
-    _remoteevent_civix_civicrm_entityTypes($entityTypes);
 }
 
 /**
