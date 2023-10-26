@@ -52,7 +52,7 @@
     <pseudoconstant>
       <table>civicrm_participant</table>
       <keyColumn>id</keyColumn>
-      <!--labelColumn>title</labelColumn-->
+      <labelColumn>id</labelColumn>
       <prefetch>false</prefetch>
     </pseudoconstant>
   </field>
