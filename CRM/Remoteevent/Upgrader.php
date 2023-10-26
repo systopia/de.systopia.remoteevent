@@ -18,7 +18,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_Remoteevent_Upgrader extends CRM_Remoteevent_Upgrader_Base
+class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
 {
 
     /**
