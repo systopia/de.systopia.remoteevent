@@ -24,6 +24,7 @@ use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateEvent;
+use Civi\RemoteParticipant\Event\CancelEvent;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 
 /**
@@ -168,6 +169,12 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         UpdateEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_RegistrationUpdate::AFTER_APPLY_PARTICIPANT_CHANGES);
+
+    // EVENT REGISTRATION.CANCEL
+    $dispatcher->addUniqueListener(
+        CancelEvent::NAME,
+        [CRM_Remoteevent_RegistrationCancel::class, 'cancelAdditionalParticipants']
+    );
 
     // EVENTMESSAGES.TOKENS
     // 1) REMOTE EVENT TOKENS

@@ -52,10 +52,7 @@ class CancelEvent extends ChangingEvent
         $this->cancellation_calls = [];
         foreach ($this->participants_identified as $participant) {
             if ($this->participantCanBeCancelled($participant)) {
-                $this->cancellation_calls[] = [
-                    'id' => $participant['id'],
-                    'participant_status_id' => 4, // Cancelled
-                ];
+                $this->addCancellation((int) $participant['id']);
             }
         }
     }
@@ -174,7 +171,10 @@ class CancelEvent extends ChangingEvent
     {
         // check if status is not (already) negative
         $all_statuses = \CRM_Remoteevent_Registration::getParticipantStatusList();
-        $participant_status = \CRM_Utils_Array::value($participant['participant_status_id'], $all_statuses);
+        // APIv3 and v4 have different field names for the status ID.
+        $participant_status =
+            \CRM_Utils_Array::value($participant['participant_status_id'], $all_statuses)
+                ?: \CRM_Utils_Array::value($participant['status_id'], $all_statuses);
         if (empty($participant_status)) {
             $this->addError("Participant [{$participant['id']}] has no valid status");
             return false;
@@ -206,5 +206,20 @@ class CancelEvent extends ChangingEvent
         }
 
         return true;
+    }
+
+    /**
+     * @param int $participantId
+     * @param int $participantStatusId
+     *   Defaults to 4 ("Cancelled").
+     *
+     * @return void
+     */
+    public function addCancellation(int $participantId, int $participantStatusId = 4): void
+    {
+        $this->cancellation_calls[] = [
+            'id' => $participantId,
+            'participant_status_id' => $participantStatusId,
+        ];
     }
 }
