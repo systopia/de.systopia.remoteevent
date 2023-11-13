@@ -21,6 +21,7 @@ use Civi\RemoteEvent\Event\GetFieldsEvent;
 use Civi\RemoteEvent\Event\GetResultEvent;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateEvent;
@@ -104,6 +105,12 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         GetUpdateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addRegisteredSessions']);
+
+    // EVENT CANCELLATION.GETFORM
+    $dispatcher->addUniqueListener(
+        GetCancelParticipantFormEvent::NAME,
+        [CRM_Remoteevent_RegistrationCancel::class, 'addAdditionalParticipantInfo']
+    );
 
 
 
