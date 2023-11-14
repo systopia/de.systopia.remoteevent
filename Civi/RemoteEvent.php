@@ -105,7 +105,7 @@ abstract class RemoteEvent extends RemoteToolsRequest
                         $token_usage
                     );
                     if ($participant_id) {
-                        $this->participant_id = $participant_id;
+                        $this->participant_id = (int) $participant_id;
                         break;
                     }
                 }
@@ -124,7 +124,7 @@ abstract class RemoteEvent extends RemoteToolsRequest
                         'return'       => 'id',
                     ]);
                     if (!empty($participant_query['id'])) {
-                        $this->participant_id = $participant_query['id'];
+                        $this->participant_id = (int) $participant_query['id'];
                     }
                 }
             }

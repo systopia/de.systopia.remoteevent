@@ -48,26 +48,7 @@ class CRM_Remoteevent_RegistrationCancel {
   }
 
   public static function addAdditionalParticipantInfo(GetCancelParticipantFormEvent $event) {
-    $participant = Participant::get(FALSE)
-      ->addSelect('event_id', 'contact_id')
-      ->addWhere('id', '=', $event->getParticipantID())
-      ->execute()
-      ->single();
-    $participants = CRM_Remoteevent_Registration::getRegistrations($participant['event_id'], $participant['contact_id']);
-    $additional_participant_ids = Participant::get(FALSE)
-      ->addWhere(
-        'registered_by_id',
-        'IN',
-        array_column($participants, 'id')
-      )
-      ->execute()
-      ->column('id');
-
-    if (!empty($additional_participant_ids)) {
-      $additional_participants = Participant::autocomplete(FALSE)
-        ->setIds($additional_participant_ids)
-        ->execute()
-        ->getArrayCopy();
+    if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID()))) {
       $event->addWarning(E::ts(
         'Participants registered by you will also be cancelled: %1',
         [1 => '<ul><li>' . implode('</li><li>', array_column($additional_participants, 'label')) . '</li></ul>']

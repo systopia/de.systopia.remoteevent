@@ -105,6 +105,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         GetUpdateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addRegisteredSessions']);
+    $dispatcher->addUniqueListener(
+        GetUpdateParticipantFormEvent::NAME,
+        [CRM_Remoteevent_RegistrationUpdate::class, 'addAdditionalParticipantInfo']);
 
     // EVENT CANCELLATION.GETFORM
     $dispatcher->addUniqueListener(

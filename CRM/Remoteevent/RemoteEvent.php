@@ -17,6 +17,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\EventMessages\MessageTokens as MessageTokens;
 use \Civi\EventMessages\MessageTokenList as MessageTokenList;
 use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
+use Civi\Api4\Participant;
 
 /**
  * Basic function regarding remote events
@@ -316,5 +317,42 @@ class CRM_Remoteevent_RemoteEvent
             // event probably doesn't exist
             return 0;
         }
+    }
+
+    /**
+     * Retrieves information about additional participants registered by the
+     * given participant. The format is the result of a Participant.autocomplete
+     * APIv4 call.
+     *
+     * @param int $participantId
+     *   The ID of the participant to retrieve additionally registered
+     *   participants for
+     *
+     * @return array
+     */
+    public static function getAdditionalParticipantInfo(int $participantId): array
+    {
+        $participant = Participant::get(FALSE)
+            ->addSelect('event_id', 'contact_id')
+            ->addWhere('id', '=', $participantId)
+            ->execute()
+            ->single();
+        $participants = CRM_Remoteevent_Registration::getRegistrations($participant['event_id'], $participant['contact_id']);
+        $additional_participant_ids = Participant::get(FALSE)
+            ->addWhere(
+                'registered_by_id',
+                'IN',
+                array_column($participants, 'id')
+            )
+            ->execute()
+            ->column('id');
+
+        if (!empty($additional_participant_ids)) {
+            $additional_participants = Participant::autocomplete(FALSE)
+                ->setIds($additional_participant_ids)
+                ->execute()
+                ->getArrayCopy();
+        }
+        return $additional_participants ?? [];
     }
 }
