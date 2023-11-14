@@ -22,6 +22,7 @@
   </compatibility>
   <comments/>
   <requires>
+    <php>^7.4 || ^8</php>
     <ext>de.systopia.xcm</ext>
     <ext>de.systopia.remotetools</ext>
   </requires>
