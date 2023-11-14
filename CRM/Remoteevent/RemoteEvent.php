@@ -353,6 +353,18 @@ class CRM_Remoteevent_RemoteEvent
                 ->execute()
                 ->getArrayCopy();
         }
+
+        array_walk($additional_participants, function(&$participant) {
+            $participant['message'] = implode(
+                ' ',
+                [
+                    $participant['description'][0] ?? '#' . $participant['id'],
+                    $participant['label'],
+                    '[' . ($participant['description'][1] ?? E::ts('Unknown Status')) . ']'
+                ]
+            );
+        });
+
         return $additional_participants ?? [];
     }
 }
