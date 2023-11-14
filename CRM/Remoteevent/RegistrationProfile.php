@@ -88,12 +88,11 @@ abstract class CRM_Remoteevent_RegistrationProfile
     {
         if (!empty($event['is_multiple_registrations'])) {
             $fields = [];
-            if (!isset($maxParticipants)) {
-               $maxParticipants = $event['max_additional_participants'];
-            }
-            else {
-                $maxParticipants = min($maxParticipants, $event['max_additional_participants']);
-            }
+
+            $maxParticipants = min(
+              $maxParticipants ?? $event['max_additional_participants'],
+              $event['max_additional_participants']
+            );
             $additional_participants_profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
                 $event['event_remote_registration.remote_registration_additional_participants_profile']
             );
