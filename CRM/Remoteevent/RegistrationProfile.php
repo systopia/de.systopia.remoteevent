@@ -313,7 +313,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         // add the fields
         $locale = $get_form_results->getLocale();
-        $fields = $profile->getFields($locale) + $profile->getAdditionalParticipantsFields($event, NULL, $locale);
+        $fields = $profile->getFields($locale);
+        if ('create' === $get_form_results->getParams()['context']) {
+          $fields += $profile->getAdditionalParticipantsFields($event, NULL, $locale);
+        }
         $get_form_results->addFields($fields);
 
         // add default values
