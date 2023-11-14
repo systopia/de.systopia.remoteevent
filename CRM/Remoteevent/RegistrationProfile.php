@@ -84,43 +84,44 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     abstract public function getFields($locale = null);
 
-    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): ?array {
-      if (!empty($event['is_multiple_registrations'])) {
-        $fields = [];
-        if (!isset($maxParticipants)) {
-          $maxParticipants = $event['max_additional_participants'];
+    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): ?array
+    {
+        if (!empty($event['is_multiple_registrations'])) {
+            $fields = [];
+            if (!isset($maxParticipants)) {
+               $maxParticipants = $event['max_additional_participants'];
+            }
+            else {
+                $maxParticipants = min($maxParticipants, $event['max_additional_participants']);
+            }
+            $additional_participants_profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
+                $event['event_remote_registration.remote_registration_additional_participants_profile']
+            );
+            $additional_fields = $additional_participants_profile->getFields($locale);
+            $fields['additional_participants'] = [
+                'type' => 'fieldset',
+                'name' => 'additional_participants',
+                'label' => E::ts('Additional Participants'),
+                'weight' => 1000,
+                'description' => E::ts('Register up to %1 additional participants', [1 => $event['max_additional_participants']]),
+            ];
+            for ($i = 1; $i <= $maxParticipants; $i++) {
+                $fields['additional_' . $i] = [
+                    'type' => 'fieldset',
+                    'name' => 'additional_' . $i,
+                    'parent' => 'additional_participants',
+                    'label' => E::ts('Additional Participant %1', [1 => $i]),
+                    'weight' => 10,
+                    'description' => E::ts('Registration data for additional participant %1', [1 => $i]),
+                ];
+                foreach ($additional_fields as $additional_field_name => $additional_field) {
+                    $additional_field['name'] = 'additional_' . $i . '_' . $additional_field['name'];
+                    $additional_field['parent'] = empty($additional_field['parent']) ? 'additional_' . $i : 'additional_' . $i . '_' . $additional_field['parent'];
+                    $fields['additional_' . $i . '_' . $additional_field_name] = $additional_field;
+                }
+            }
         }
-        else {
-          $maxParticipants = min($maxParticipants, $event['max_additional_participants']);
-        }
-        $additional_participants_profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
-          $event['event_remote_registration.remote_registration_additional_participants_profile']
-        );
-        $additional_fields = $additional_participants_profile->getFields($locale);
-        $fields['additional_participants'] = [
-          'type' => 'fieldset',
-          'name' => 'additional_participants',
-          'label' => E::ts('Additional Participants'),
-          'weight' => 1000,
-          'description' => E::ts('Register up to %1 additional participants', [1 => $event['max_additional_participants']]),
-        ];
-        for ($i = 1; $i <= $maxParticipants; $i++) {
-          $fields['additional_' . $i] = [
-            'type' => 'fieldset',
-            'name' => 'additional_' . $i,
-            'parent' => 'additional_participants',
-            'label' => E::ts('Additional Participant %1', [1 => $i]),
-            'weight' => 10,
-            'description' => E::ts('Registration data for additional participant %1', [1 => $i]),
-          ];
-          foreach ($additional_fields as $additional_field_name => $additional_field) {
-            $additional_field['name'] = 'additional_' . $i . '_' . $additional_field['name'];
-            $additional_field['parent'] = empty($additional_field['parent']) ? 'additional_' . $i : 'additional_' . $i . '_' . $additional_field['parent'];
-            $fields['additional_' . $i . '_' . $additional_field_name] = $additional_field;
-          }
-        }
-      }
-      return $fields ?? NULL;
+        return $fields ?? NULL;
     }
 
     /**
