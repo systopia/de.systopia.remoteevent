@@ -58,6 +58,12 @@ function civicrm_api3_remote_event_get($params)
     // todo: only view the ones that are open for registration?
     $get_params->setParameter('event_remote_registration.remote_registration_enabled', 1);
 
+    // Translate event ID.
+    $original_params = $get_params->getOriginalParameters();
+    if (!empty($original_params['id'])) {
+      $get_params->setParameter('event_id', $original_params['id']);
+    }
+
     // dispatch search parameters event
     Civi::dispatcher()->dispatch(GetParamsEvent::NAME, $get_params);
 
