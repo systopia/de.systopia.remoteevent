@@ -25,14 +25,10 @@ msgid "Participant Updated"
 msgstr "Teilenehmerdaten Aktualisiert"
 
 #: CRM/Remoteevent/DAO/ParticipantSession.php
-#, fuzzy
-#| msgid "Participant Registration"
 msgid "Participant Sessions"
 msgstr "Workshop-Teilnahmen"
 
 #: CRM/Remoteevent/DAO/ParticipantSession.php
-#, fuzzy
-#| msgid "Participant Registration"
 msgid "Participant Session"
 msgstr "Workshop-Teilnahmen"
 
@@ -42,34 +38,24 @@ msgid "ID"
 msgstr "ID"
 
 #: CRM/Remoteevent/DAO/ParticipantSession.php
-#, fuzzy
-#| msgid "Session Participant Search"
 msgid "Unique Session Participant ID"
-msgstr "Suche nach Workshopteilnehmern"
+msgstr "Eindeutige Workshop-Teilnehmer-ID"
 
 #: CRM/Remoteevent/DAO/ParticipantSession.php
-#, fuzzy
-#| msgid "Session"
 msgid "Session ID"
-msgstr "Workshop"
+msgstr "Workshop-ID"
 
 #: CRM/Remoteevent/DAO/ParticipantSession.php
-#, fuzzy
-#| msgid "Session"
 msgid "FK to Session"
-msgstr "Workshop"
+msgstr "Fremdschlüssel zu Workshop (Session)"
 
 #: CRM/Remoteevent/DAO/ParticipantSession.php
-#, fuzzy
-#| msgid "Participants"
 msgid "Participant ID"
-msgstr "Teilnehmer"
+msgstr "Teilnehmer-ID"
 
 #: CRM/Remoteevent/DAO/ParticipantSession.php
-#, fuzzy
-#| msgid "Participants"
 msgid "FK to Participant"
-msgstr "Teilnehmer"
+msgstr "Fremdschlüssel zu Teilnehmer (Participant)"
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/Form/ParticipantSessions.php
 #: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
@@ -84,10 +70,8 @@ msgid "Session"
 msgstr "Workshop"
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Submit Session Data"
 msgid "Unique Session ID"
-msgstr "Workshop Informationen Übertragen"
+msgstr "Eindeutige Workshop-ID"
 
 #: CRM/Remoteevent/DAO/Session.php api/v3/RemoteParticipant/Cancel.php
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php
@@ -97,24 +81,18 @@ msgid "Event ID"
 msgstr "Veranstaltungs ID"
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Event"
 msgid "FK to Event"
-msgstr "Veranstaltung"
+msgstr "Fremdschlüssel zu Veranstaltung (Event)"
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Session Active"
 msgid "Is Active"
-msgstr "Workshop aktiviert?"
+msgstr "Workshop aktiviert"
 
 #: CRM/Remoteevent/DAO/Session.php
 msgid "Is this Session enabled or disabled/cancelled?"
 msgstr "Ist dieser Workshop aktiviert oder deaktiviert/storniert?"
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Session Start"
 msgid "Session Start Date"
 msgstr "Beginn des Workshops"
 
@@ -123,8 +101,6 @@ msgid "Date and time that sessions starts."
 msgstr "Startdatum und -uhrzeit des Workshops."
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Session End"
 msgid "Session End Date"
 msgstr "Ende des Workshops"
 
@@ -152,8 +128,6 @@ msgid "Session Title"
 msgstr "Workshop Titel"
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Session Description"
 msgid "session Description"
 msgstr "Beschreibung des Workshops"
 
@@ -175,16 +149,12 @@ msgid "Maximum number of registered participants to allow."
 msgstr "Erlaubte Höchstanzahl von Veranstaltungsteilnehmerregistrierungen."
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Additional Information for this Event"
 msgid "Location information for this session"
-msgstr "Zusatzinformationen für diese Veranstaltung"
+msgstr "Standortinformationen für diesen Workshop"
 
 #: CRM/Remoteevent/DAO/Session.php
-#, fuzzy
-#| msgid "Presenter Title"
 msgid "Presenter (Contact)"
-msgstr "Titel der/des Vortragenden"
+msgstr "Vortragende/r (Kontakt)"
 
 #: CRM/Remoteevent/DAO/Session.php
 msgid "FK to Contact ID"
@@ -584,7 +554,7 @@ msgstr "- Auswählen -"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Contact Matching for Additional Participants"
-msgstr "Kontaktabgleich für Anmeldung zusätzliche Teilnehmer"
+msgstr "Kontaktabgleich für Anmeldung zusätzlicher Teilnehmer"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Update Contact Matching (XCM)"
@@ -711,12 +681,12 @@ msgid ""
 "You must select an XCM matching profile for registering additional "
 "participants."
 msgstr ""
-"Sie müssen ein XCM-Profil zum Kontaktabgleich für die Anmeldung zusätzlicher "
+"Sie müssen ein XCM-Profil zum Kontaktabgleich bei der Anmeldung zusätzlicher "
 "Teilnehmer auswählen."
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
-msgid "Default (global RemoteEvent settings)"
-msgstr "Standard (globale Einstellung für CiviRemote Event)"
+msgid "Default (global CiviRemote Event settings)"
+msgstr "Standard (globale Einstellungen für CiviRemote Event)"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "No Contact Updates"
@@ -1005,10 +975,6 @@ msgstr "Sie wurden auf die Warteliste aufgenommen."
 msgid "Additional participant %1: %2"
 msgstr "Zusätzlicher Teilnehmer %1: %2"
 
-#: CRM/Remoteevent/RegistrationCancel.php
-msgid "Participants registered by you will also be cancelled: %1"
-msgstr "Von Ihnen registrierte Teilnehmer werden ebenso storniert: %1"
-
 #: CRM/Remoteevent/RegistrationProfile.php
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Additional Participants"
@@ -1033,12 +999,6 @@ msgstr "Profil [%2] kann für  RemoteEvent [%1] nicht verwendet werden."
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Value '%1' for field %2 is not valid"
 msgstr "'%1' ist kein gültiger Wert für das Feld %2"
-
-#: CRM/Remoteevent/RegistrationUpdate.php
-msgid "You registered additional participants which can not be updated: %1"
-msgstr ""
-"Sie haben zusätzliche Teilnehmer angemeldet, die nicht aktualisiert werden "
-"können: %1"
 
 #: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Couldn't update contact: "
@@ -1442,8 +1402,9 @@ msgid ""
 "Eg: if you choose '2' then the lead booker can bring 2 guests; there would "
 "be a limit of 3 participants in total per booking."
 msgstr ""
-"Wenn Sie z. B. '2' auswählen, kann der Teilnehmer bis zu 2 Gäste mitbringen; "
-"Es gäbe eine Beschränkung von insgesamt 3 Teilnehmern pro Buchung."
+"Wenn Sie z. B. \"2\" auswählen, kann der Teilnehmer bis zu 2 Gäste "
+"mitbringen; Es gäbe eine Beschränkung von insgesamt 3 Teilnehmern pro "
+"Buchung."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
@@ -1462,6 +1423,14 @@ msgid ""
 msgstr ""
 "Wenn aktiviert, könnten einige zusätzliche Teilnehmer zur Warteliste "
 "hinzugefügt werden, statt direkt angemeldet zu werden."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"When this is not active, the registration will be rejected for all "
+"participants if any of them can not be registered."
+msgstr ""
+"Wenn nicht aktiviert, werden Anmeldungen für alle Teilnehmer abgelehnt, wenn "
+"mindestens einer von ihnen nicht mit angemeldet werden kann."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
@@ -1746,6 +1715,14 @@ msgstr "Teilnehmerrolle"
 #: templates/CRM/Remoteevent/Page/SessionParticipantList.tpl
 msgid "(not counted)"
 msgstr "(nicht gezählt)"
+
+#~ msgid "Participants registered by you will also be cancelled: %1"
+#~ msgstr "Von Ihnen registrierte Teilnehmer werden ebenso storniert: %1"
+
+#~ msgid "You registered additional participants which can not be updated: %1"
+#~ msgstr ""
+#~ "Sie haben zusätzliche Teilnehmer angemeldet, die nicht aktualisiert "
+#~ "werden können: %1"
 
 #~ msgid "[FULL] "
 #~ msgstr "[AUSGEBUCHT] "

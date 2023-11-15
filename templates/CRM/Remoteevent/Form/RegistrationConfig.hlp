@@ -38,6 +38,7 @@
 {htxt id='id-remote_registration_additional_participants_waitlist'}
   <p>{ts}Whether to allow additional participants be added to a waiting list (if active) in case there are not enough vacancies for the total number of participants requested to be registered.{/ts}</p>
   <p>{ts}When this is active, some additional participants might be added to the waiting list instead of being registered.{/ts}</p>
+  <p>{ts}When this is not active, the registration will be rejected for all participants if any of them can not be registered.{/ts}</p>
 {/htxt}
 
 {htxt id='id-remote_registration_additional_participants_xcm_profile'}

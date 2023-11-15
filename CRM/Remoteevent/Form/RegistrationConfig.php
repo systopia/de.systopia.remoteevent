@@ -99,12 +99,12 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Allowed Registration Profiles for Updates"),
             $available_registration_profiles,
             false,
-            ['class' => 'crm-select2 required', 'multiple' => 'multiple']
+            ['class' => 'crm-select2', 'multiple' => 'multiple']
         );
         $this->add(
             'checkbox',
             'remote_registration_additional_participants_waitlist',
-            E::ts("Allow registering additional participants on waiting list")
+            E::ts('Allow registering additional participants on waiting list')
         );
         $this->add(
           'select',
@@ -388,7 +388,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     protected function getAvailableXcmProfiles($can_be_off = false)
     {
         $profiles = CRM_Xcm_Configuration::getProfileList();
-        $profiles[''] = E::ts("Default (global RemoteEvent settings)");
+        $profiles[''] = E::ts("Default (global CiviRemote Event settings)");
         if ($can_be_off) {
             $profiles['off'] = E::ts("No Contact Updates");
         }

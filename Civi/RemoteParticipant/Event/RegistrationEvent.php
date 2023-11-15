@@ -65,17 +65,17 @@ class RegistrationEvent extends ChangingEvent
 
         // create participant data based on submission
         $this->participant = array_filter(
-          $submission_data,
-          function($value, $key) {
-            return
-              !preg_match('#^additional_([0-9]+)(_|$)#', $key)
-              && !in_array($key, [
-                'profile',
-                'remote_contact_id',
-                'locale',
-              ]);
-          },
-          ARRAY_FILTER_USE_BOTH
+            $submission_data,
+            function($value, $key) {
+                return
+                    !preg_match('#^additional_([0-9]+)(_|$)#', $key)
+                    && !in_array($key, [
+                      'profile',
+                      'remote_contact_id',
+                      'locale',
+                  ]);
+            },
+            ARRAY_FILTER_USE_BOTH
         );
 
         // resolve custom fields
@@ -151,7 +151,7 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Sets additionally registered participant objects.
+     * Sets additionally registered participants.
      *
      * @param array $additionalParticipants
      *
@@ -174,7 +174,7 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Retrieves additionally registered participant objects.
+     * Retrieves additionally registered participants.
      *
      * @return array
      */

@@ -587,7 +587,7 @@ msgid "You must select an XCM matching profile for registering additional partic
 msgstr ""
 
 #: ./CRM/Remoteevent/Form/RegistrationConfig.php
-msgid "Default (global RemoteEvent settings)"
+msgid "Default (global CiviRemote Event settings)"
 msgstr ""
 
 #: ./CRM/Remoteevent/Form/RegistrationConfig.php
@@ -862,10 +862,6 @@ msgstr ""
 msgid "Additional participant %1: %2"
 msgstr ""
 
-#: ./CRM/Remoteevent/RegistrationCancel.php
-msgid "Participants registered by you will also be cancelled: %1"
-msgstr ""
-
 #: ./CRM/Remoteevent/RegistrationProfile.php ./templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Additional Participants"
 msgstr ""
@@ -888,10 +884,6 @@ msgstr ""
 
 #: ./CRM/Remoteevent/RegistrationProfile.php
 msgid "Value '%1' for field %2 is not valid"
-msgstr ""
-
-#: ./CRM/Remoteevent/RegistrationUpdate.php
-msgid "You registered additional participants which can not be updated: %1"
 msgstr ""
 
 #: ./CRM/Remoteevent/RegistrationUpdate.php
@@ -1204,6 +1196,10 @@ msgstr ""
 
 #: ./templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "When this is active, some additional participants might be added to the waiting list instead of being registered."
+msgstr ""
+
+#: ./templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "When this is not active, the registration will be rejected for all participants if any of them can not be registered."
 msgstr ""
 
 #: ./templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
