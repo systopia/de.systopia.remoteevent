@@ -16,6 +16,7 @@
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\EventMessages\MessageTokens as MessageTokens;
 use \Civi\EventMessages\MessageTokenList as MessageTokenList;
+use Civi\RemoteEvent;
 use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
 use Civi\Api4\Participant;
 
@@ -330,7 +331,7 @@ class CRM_Remoteevent_RemoteEvent
      *
      * @return array
      */
-    public static function getAdditionalParticipantInfo(int $participantId): array
+    public static function getAdditionalParticipantInfo(int $participantId, RemoteEvent $event): array
     {
         $participant = Participant::get(FALSE)
             ->addSelect('event_id', 'contact_id')
@@ -352,19 +353,18 @@ class CRM_Remoteevent_RemoteEvent
                 ->setIds($additional_participant_ids)
                 ->execute()
                 ->getArrayCopy();
+            array_walk($additional_participants, function(&$participant) use ($event) {
+                $participant['message'] = implode(
+                    ' ',
+                    [
+                        $participant['description'][0] ?? '#' . $participant['id'],
+                        $participant['label'],
+                        '[' . ($participant['description'][1] ?? $event->localise('Unknown status')) . ']'
+                    ]
+                );
+            });
         }
 
-        array_walk($additional_participants, function(&$participant) {
-            $participant['message'] = implode(
-                ' ',
-                [
-                    $participant['description'][0] ?? '#' . $participant['id'],
-                    $participant['label'],
-                    '[' . ($participant['description'][1] ?? E::ts('Unknown Status')) . ']'
-                ]
-            );
-        });
-
-        return $additional_participants ?? [];
+      return $additional_participants ?? [];
     }
 }

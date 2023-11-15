@@ -42,13 +42,13 @@ class RegistrationEvent extends ChangingEvent
      * @var array
      *   Data of additional participants.
      */
-    protected array $additional_participants_data;
+    protected array $additional_participants_data = [];
 
   /**
    * @var array
    *   Additionally registered participants.
    */
-    protected array $additional_participants;
+    protected array $additional_participants = [];
 
     /** @var array holds a list of (minor) errors */
     protected $error_list;
@@ -97,6 +97,9 @@ class RegistrationEvent extends ChangingEvent
                 [, $participantNo, $fieldName] = $additionalParticipantMatches;
                 if ($participantNo <= $event['max_additional_participants']) {
                     $this->additional_participants_data[$participantNo][$fieldName] = $value;
+                }
+                else {
+                    throw new \Exception('Maximum number of additional participants exceeded');
                 }
             }
         }
@@ -192,7 +195,7 @@ class RegistrationEvent extends ChangingEvent
         return $this->participant;
     }
 
-    public function &getAdditionalParticipantData() {
+    public function &getAdditionalParticipantsData() {
         return $this->additional_participants_data;
     }
 

@@ -14,8 +14,8 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
-use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
+use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateParticipantEvent;
 use Civi\Api4\Participant;
 
@@ -739,7 +739,7 @@ class CRM_Remoteevent_Registration
     public static function registerAdditionalParticipants(RegistrationEvent $registration) {
         if (
             $registration->hasErrors()
-            || empty($additionalParticipants = $registration->getAdditionalParticipantData())
+            || empty($additionalParticipants = $registration->getAdditionalParticipantsData())
         ) {
            return;
         }

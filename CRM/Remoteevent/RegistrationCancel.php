@@ -48,7 +48,7 @@ class CRM_Remoteevent_RegistrationCancel {
   }
 
   public static function addAdditionalParticipantInfo(GetCancelParticipantFormEvent $event) {
-    if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID()))) {
+    if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID(), $event))) {
       $event->addWarning($event->localise(
         'Participants registered by you will also be cancelled: %1',
         [1 => '<ul><li>' . implode('</li><li>', array_column($additional_participants, 'message')) . '</li></ul>']
