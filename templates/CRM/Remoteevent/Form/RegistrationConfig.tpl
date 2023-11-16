@@ -124,30 +124,32 @@
 
     <fieldset id="additional-participants" class="crm-collapsible">
       <legend class="collapsible-title">{ts}Additional Participants{/ts}</legend>
-      <div class="crm-section crm-event-manage-registration-form-block-is_multiple_registrations">
-        <div class="label">{$form.is_multiple_registrations.label}&nbsp;{help id="id-is_multiple_registrations" title=$form.is_multiple_registrations.label}</div>
-        <div class="content">{$form.is_multiple_registrations.html}</div>
-        <div class="clear"></div>
-      </div>
-      <div class="crm-section crm-event-manage-registration-form-block-is_multiple_registrations">
-        <div class="label">{$form.max_additional_participants.label}&nbsp;{help id="id-max_additional_participants" title=$form.max_additional_participants.label}</div>
-        <div class="content">{$form.max_additional_participants.html}</div>
-        <div class="clear"></div>
-      </div>
-      <div class="crm-section crm-event-manage-registration-form-block-remote_registration_additional_participants_waitlist">
-        <div class="label">{$form.remote_registration_additional_participants_waitlist.label}&nbsp;{help id="id-remote_registration_additional_participants_waitlist" title=$form.remote_registration_additional_participants_waitlist.label}</div>
-        <div class="content">{$form.remote_registration_additional_participants_waitlist.html}</div>
-        <div class="clear"></div>
-      </div>
-      <div class="crm-section">
-        <div class="label">{$form.remote_registration_additional_participants_profile.label}&nbsp;<span class="crm-marker">*</span>&nbsp;{help id="id-remote_registration_additional_participants_profile" title=$form.remote_registration_additional_participants_profile.label}</div>
-        <div class="content">{$form.remote_registration_additional_participants_profile.html}</div>
-        <div class="clear"></div>
-      </div>
-      <div class="crm-section">
-        <div class="label">{$form.remote_registration_additional_participants_xcm_profile.label}&nbsp;<span class="crm-marker">*</span>&nbsp;{help id="id-remote_registration_additional_participants_xcm_profile" title=$form.remote_registration_additional_participants_xcm_profile.label}</div>
-        <div class="content">{$form.remote_registration_additional_participants_xcm_profile.html}</div>
-        <div class="clear"></div>
+      <div>
+        <div class="crm-section crm-event-manage-registration-form-block-is_multiple_registrations">
+          <div class="label">{$form.is_multiple_registrations.label}&nbsp;{help id="id-is_multiple_registrations" title=$form.is_multiple_registrations.label}</div>
+          <div class="content">{$form.is_multiple_registrations.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section crm-event-manage-registration-form-block-is_multiple_registrations">
+          <div class="label">{$form.max_additional_participants.label}&nbsp;{help id="id-max_additional_participants" title=$form.max_additional_participants.label}</div>
+          <div class="content">{$form.max_additional_participants.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section crm-event-manage-registration-form-block-remote_registration_additional_participants_waitlist">
+          <div class="label">{$form.remote_registration_additional_participants_waitlist.label}&nbsp;{help id="id-remote_registration_additional_participants_waitlist" title=$form.remote_registration_additional_participants_waitlist.label}</div>
+          <div class="content">{$form.remote_registration_additional_participants_waitlist.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section">
+          <div class="label">{$form.remote_registration_additional_participants_profile.label}&nbsp;<span class="crm-marker">*</span>&nbsp;{help id="id-remote_registration_additional_participants_profile" title=$form.remote_registration_additional_participants_profile.label}</div>
+          <div class="content">{$form.remote_registration_additional_participants_profile.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section">
+          <div class="label">{$form.remote_registration_additional_participants_xcm_profile.label}&nbsp;<span class="crm-marker">*</span>&nbsp;{help id="id-remote_registration_additional_participants_xcm_profile" title=$form.remote_registration_additional_participants_xcm_profile.label}</div>
+          <div class="content">{$form.remote_registration_additional_participants_xcm_profile.html}</div>
+          <div class="clear"></div>
+        </div>
       </div>
     </fieldset>
 
