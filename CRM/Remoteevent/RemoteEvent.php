@@ -19,6 +19,7 @@ use \Civi\EventMessages\MessageTokenList as MessageTokenList;
 use Civi\RemoteEvent;
 use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
 use Civi\Api4\Participant;
+use Civi\Api4\ParticipantStatusType;
 
 /**
  * Basic function regarding remote events
@@ -339,12 +340,18 @@ class CRM_Remoteevent_RemoteEvent
             ->execute()
             ->single();
         $participants = CRM_Remoteevent_Registration::getRegistrations($participant['event_id'], $participant['contact_id']);
+        $nonNegativeParticipantStatusIds = ParticipantStatusType::get(FALSE)
+          ->addSelect('id')
+          ->addWhere('class:name', '!=', 'Negative')
+          ->execute()
+          ->column('id');
         $additional_participant_ids = Participant::get(FALSE)
             ->addWhere(
                 'registered_by_id',
                 'IN',
                 array_column($participants, 'id')
             )
+            ->addWhere('status_id', 'IN', $nonNegativeParticipantStatusIds)
             ->execute()
             ->column('id');
 
