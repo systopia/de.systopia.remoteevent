@@ -34,7 +34,6 @@
     </pseudoconstant>
   </field>
   <foreignKey>
-    <required>true</required>
     <name>session_id</name>
     <table>civicrm_session</table>
     <key>id</key>
@@ -57,7 +56,6 @@
     </pseudoconstant>
   </field>
   <foreignKey>
-    <required>true</required>
     <name>participant_id</name>
     <table>civicrm_participant</table>
     <key>id</key>

@@ -34,7 +34,6 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
 
         // install sessions
-        $this->executeSqlFile('sql/session_install.sql');
         $customData->syncOptionGroup(E::path('resources/option_group_session_slot.json'));
         $customData->syncOptionGroup(E::path('resources/option_group_session_type.json'));
         $customData->syncOptionGroup(E::path('resources/option_group_session_category.json'));
@@ -99,7 +98,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
     public function upgrade_0007()
     {
         $this->ctx->log->info('Installing Sessions');
-        $this->executeSqlFile('sql/session_install.sql');
+        $this->executeSqlFile('sql/session.sql');
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncOptionGroup(E::path('resources/option_group_session_slot.json'));
         $customData->syncOptionGroup(E::path('resources/option_group_session_type.json'));
@@ -207,6 +206,18 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
         $this->ctx->log->info('Updating RegistrationProfile data structures');
         $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        return true;
+    }
+
+    public function upgrade_0017(): bool
+    {
+        $this->ctx->log->info('Updating database schema');
+        $this->executeSql("ALTER TABLE civicrm_session
+        MODIFY `event_id` int unsigned NOT NULL COMMENT 'FK to Event'");
+        $this->executeSql("ALTER TABLE civicrm_participant_session
+        MODIFY `session_id` int unsigned NOT NULL COMMENT 'FK to Session'");
+        $this->executeSql("ALTER TABLE civicrm_participant_session
+        MODIFY `participant_id` int unsigned NOT NULL COMMENT 'FK to Participant'");
         return true;
     }
 
