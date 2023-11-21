@@ -22,6 +22,31 @@
   <p>{ts}Number of hours before the start of the event that a participant can edit or cancel it's registration.{/ts}</p>
 {/htxt}
 
+{htxt id='id-is_multiple_registrations'}
+  <p>{ts}Whether participants can register with themselves up to 9 other participants using the profile to be selected below.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote_registration_additional_participants_profile'}
+  <p>{ts}The registration profile to use for additional participants.{/ts}</p>
+{/htxt}
+
+{htxt id='id-max_additional_participants'}
+  <p>{ts}Limit the number of additional participants that can be registered in a single booking.{/ts}</p>
+  <p>{ts}Eg: if you choose '2' then the lead booker can bring 2 guests; there would be a limit of 3 participants in total per booking.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote_registration_additional_participants_waitlist'}
+  <p>{ts}Whether to allow additional participants be added to a waiting list (if active) in case there are not enough vacancies for the total number of participants requested to be registered.{/ts}</p>
+  <p>{ts}When this is active, some additional participants might be added to the waiting list instead of being registered.{/ts}</p>
+  <p>{ts}When this is not active, the registration will be rejected for all participants if any of them can not be registered.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote_registration_additional_participants_xcm_profile'}
+  <p>{ts}The XCM tool will be used to identify and update an existing contact with the submitted data, or to create a new one.{/ts}</p>
+  <p>{ts}A whole host of additional options like tagging the contacts, or recording/flagging differences are also available in the <a href="{crmURL p='civicrm/admin/setting/xcm'}">XCM configuration</a>.{/ts}</p>
+  <p>{ts}If you can't find a profile that meets your requirements, feel free to add another profile there.{/ts}</p>
+{/htxt}
+
 {htxt id='id-requires-approval'}
   <p>{ts}If you tick this box, registrations will be assigned the "Awaiting approval" status and you will need to manually review and approve each registration. Depending on your remote system's settings and/or your confirmation mail settings, registrants may be informed about the pending approval as well.{/ts}</p>
 {/htxt}

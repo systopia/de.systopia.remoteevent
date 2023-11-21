@@ -112,7 +112,8 @@ function civicrm_api3_remote_participant_create($params)
             'participant_id'     => $participant['id'],
             'participant_role'   => $participant['participant_role'],
             'participant_status' => $participant['participant_status'],
-            'participant_class'  => CRM_Remoteevent_Registration::getParticipantStatusClass($participant['participant_status_id'])
+            'participant_class'  => CRM_Remoteevent_Registration::getParticipantStatusClass($participant['participant_status_id']),
+            'additional_participants' => $registration_event->getAdditionalParticipants(),
         ]);
     }
 }

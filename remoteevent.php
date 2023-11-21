@@ -21,9 +21,11 @@ use Civi\RemoteEvent\Event\GetFieldsEvent;
 use Civi\RemoteEvent\Event\GetResultEvent;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateEvent;
+use Civi\RemoteParticipant\Event\CancelEvent;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 
 /**
@@ -103,6 +105,15 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         GetUpdateParticipantFormEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'addRegisteredSessions']);
+    $dispatcher->addUniqueListener(
+        GetUpdateParticipantFormEvent::NAME,
+        [CRM_Remoteevent_RegistrationUpdate::class, 'addAdditionalParticipantInfo']);
+
+    // EVENT CANCELLATION.GETFORM
+    $dispatcher->addUniqueListener(
+        GetCancelParticipantFormEvent::NAME,
+        [CRM_Remoteevent_RegistrationCancel::class, 'addAdditionalParticipantInfo']
+    );
 
 
 
@@ -141,6 +152,9 @@ function remoteevent_civicrm_config(&$config)
         ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
     $dispatcher->addUniqueListener(
         RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'registerAdditionalParticipants'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
 
     // EVENT REGISTRATION.UPDATE
@@ -165,6 +179,12 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         UpdateEvent::NAME,
         ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_RegistrationUpdate::AFTER_APPLY_PARTICIPANT_CHANGES);
+
+    // EVENT REGISTRATION.CANCEL
+    $dispatcher->addUniqueListener(
+        CancelEvent::NAME,
+        [CRM_Remoteevent_RegistrationCancel::class, 'cancelAdditionalParticipants']
+    );
 
     // EVENTMESSAGES.TOKENS
     // 1) REMOTE EVENT TOKENS

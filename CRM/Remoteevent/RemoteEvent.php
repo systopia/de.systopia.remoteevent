@@ -16,7 +16,10 @@
 use CRM_Remoteevent_ExtensionUtil as E;
 use \Civi\EventMessages\MessageTokens as MessageTokens;
 use \Civi\EventMessages\MessageTokenList as MessageTokenList;
+use Civi\RemoteEvent;
 use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
+use Civi\Api4\Participant;
+use Civi\Api4\ParticipantStatusType;
 
 /**
  * Basic function regarding remote events
@@ -316,5 +319,59 @@ class CRM_Remoteevent_RemoteEvent
             // event probably doesn't exist
             return 0;
         }
+    }
+
+    /**
+     * Retrieves information about additional participants registered by the
+     * given participant. The format is the result of a Participant.autocomplete
+     * APIv4 call.
+     *
+     * @param int $participantId
+     *   The ID of the participant to retrieve additionally registered
+     *   participants for
+     *
+     * @return array
+     */
+    public static function getAdditionalParticipantInfo(int $participantId, RemoteEvent $event): array
+    {
+        $participant = Participant::get(FALSE)
+            ->addSelect('event_id', 'contact_id')
+            ->addWhere('id', '=', $participantId)
+            ->execute()
+            ->single();
+        $participants = CRM_Remoteevent_Registration::getRegistrations($participant['event_id'], $participant['contact_id']);
+        $nonNegativeParticipantStatusIds = ParticipantStatusType::get(FALSE)
+          ->addSelect('id')
+          ->addWhere('class:name', '!=', 'Negative')
+          ->execute()
+          ->column('id');
+        $additional_participant_ids = Participant::get(FALSE)
+            ->addWhere(
+                'registered_by_id',
+                'IN',
+                array_column($participants, 'id')
+            )
+            ->addWhere('status_id', 'IN', $nonNegativeParticipantStatusIds)
+            ->execute()
+            ->column('id');
+
+        if (!empty($additional_participant_ids)) {
+            $additional_participants = Participant::autocomplete(FALSE)
+                ->setIds($additional_participant_ids)
+                ->execute()
+                ->getArrayCopy();
+            array_walk($additional_participants, function(&$participant) use ($event) {
+                $participant['message'] = implode(
+                    ' ',
+                    [
+                        $participant['description'][0] ?? '#' . $participant['id'],
+                        $participant['label'],
+                        '[' . ($participant['description'][1] ?? $event->localise('Unknown status')) . ']'
+                    ]
+                );
+            });
+        }
+
+      return $additional_participants ?? [];
     }
 }

@@ -14,7 +14,8 @@
 +--------------------------------------------------------*/
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use \Civi\RemoteParticipant\Event\UpdateEvent as UpdateEvent;
+use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\UpdateEvent as UpdateEvent;
 
 /**
  * Class to execute event registration updates (RemoteParticipant.update)
@@ -33,6 +34,22 @@ class CRM_Remoteevent_RegistrationUpdate
     const BEFORE_APPLY_PARTICIPANT_CHANGES  = self::STAGE3_APPLY_PARTICIPANT_CHANGES + 50;
     const AFTER_APPLY_PARTICIPANT_CHANGES   = self::STAGE3_APPLY_PARTICIPANT_CHANGES - 50;
 
+    /**
+     * Adds a warning message indicating that additionally registered
+     * participants can not be updated.
+     *
+     * @param \Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent $event
+     *
+     * @return void
+     */
+    public static function addAdditionalParticipantInfo(GetUpdateParticipantFormEvent $event): void {
+        if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID(), $event))) {
+            $event->addWarning($event->localise(
+                'You registered additional participants which can not be updated: %1',
+                [1 => '<ul><li>' . implode('</li><li>', array_column($additional_participants, 'message')) . '</li></ul>']
+            ));
+        }
+    }
 
     /**
      * Will load the participant data
