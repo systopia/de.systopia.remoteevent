@@ -209,17 +209,17 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
         return true;
     }
 
-  public function upgrade_0017(): bool
-  {
-    $this->ctx->log->info('Updating database schema');
-    $this->executeSql("ALTER TABLE civicrm_session
-    MODIFY `event_id` int unsigned NOT NULL COMMENT 'FK to Event'");
-    $this->executeSql("ALTER TABLE civicrm_participant_session
-    MODIFY `session_id` int unsigned NOT NULL COMMENT 'FK to Session'");
-    $this->executeSql("ALTER TABLE civicrm_participant_session
-    MODIFY `participant_id` int unsigned NOT NULL COMMENT 'FK to Participant'");
-    return true;
-  }
+    public function upgrade_0017(): bool
+    {
+        $this->ctx->log->info('Updating database schema');
+        $this->executeSql("ALTER TABLE civicrm_session
+        MODIFY `event_id` int unsigned NOT NULL COMMENT 'FK to Event'");
+        $this->executeSql("ALTER TABLE civicrm_participant_session
+        MODIFY `session_id` int unsigned NOT NULL COMMENT 'FK to Session'");
+        $this->executeSql("ALTER TABLE civicrm_participant_session
+        MODIFY `participant_id` int unsigned NOT NULL COMMENT 'FK to Participant'");
+        return true;
+    }
 
 
     /****************************************************************
