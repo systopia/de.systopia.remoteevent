@@ -739,7 +739,7 @@ class CRM_Remoteevent_Registration
     public static function registerAdditionalParticipants(RegistrationEvent $registration) {
         if (
             $registration->hasErrors()
-            || empty($additionalParticipants = $registration->getAdditionalParticipantsData())
+            || empty($registration->getAdditionalParticipantsData())
         ) {
            return;
         }
@@ -749,9 +749,32 @@ class CRM_Remoteevent_Registration
         $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
            $event['event_remote_registration.remote_registration_additional_participants_profile']
         );
-        foreach ($additionalParticipants as $additionalParticipantNo => &$additionalParticipant) {
+
+        $additionalContactsData = [];
+        $additionalParticipantsData = [];
+
+        foreach ($registration->getAdditionalParticipantsData() as $additionalParticipantNo => $additionalParticipantData) {
+            $additionalParticipantsData[$additionalParticipantNo]['role_id'] = $additionalParticipantData['role_id'];
+            foreach ($profile->getFields() as $fieldKey => $fieldSpec) {
+                if (isset($additionalParticipantData[$fieldKey])) {
+                    $entity_names = (array)($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
+                    $entity_field_name = $fieldSpec['entity_field_name'] ?? $fieldKey;
+                    $value = isset($fieldSpec['value_callback'])
+                      ? $fieldSpec['value_callback']($additionalParticipantData[$fieldKey], $additionalParticipantData)
+                      : $additionalParticipantData[$fieldKey];
+
+                    if (in_array('Contact', $entity_names, TRUE)) {
+                        $additionalContactsData[$additionalParticipantNo][$entity_field_name] = $value;
+                    }
+                    if (in_array('Participant', $entity_names, TRUE)) {
+                        $additionalParticipantsData[$additionalParticipantNo][$entity_field_name] = $value;
+                    }
+                }
+            }
+        }
+
+        foreach ($additionalContactsData as $additionalParticipantNo => &$contactData) {
             // Identify/Create contacts for additional participants.
-            $contactData = array_intersect_key($additionalParticipant, $profile->getFields());
             $profile->modifyContactData($contactData);
             $contactData['contact_type'] ??= 'Individual';
             $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
@@ -760,12 +783,12 @@ class CRM_Remoteevent_Registration
             if (!isset($match['id'])) {
                throw new Exception('Contact for additional participant could not be identified or created.');
             }
-            $additionalParticipant['contact_id'] = $match['id'];
+            $additionalParticipantsData[$additionalParticipantNo]['contact_id'] = $match['id'];
 
             // Check for existing participants for the identified contact.
             $cannotRegisterReason = CRM_Remoteevent_Registration::cannotRegister(
                 $registration->getEventID(),
-                $additionalParticipant['contact_id'],
+                $additionalParticipantsData[$additionalParticipantNo]['contact_id'],
                 $registration->getEvent()
             );
             if ($cannotRegisterReason) {
@@ -787,7 +810,7 @@ class CRM_Remoteevent_Registration
 
         // Create additional participants.
         $additionalParticipantsRegistered = [];
-        foreach ($additionalParticipants as $additionalParticipant) {
+        foreach ($additionalParticipantsData as $additionalParticipant) {
             $additionalParticipantsRegistered[] = Participant::create(FALSE)
                 ->setValues($additionalParticipant)
                 ->addValue('event_id', $event['id'])

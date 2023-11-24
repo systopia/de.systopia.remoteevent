@@ -89,7 +89,8 @@ function civicrm_api3_remote_participant_create($params)
     $registration_transaction = new CRM_Core_Transaction();
 
     // dispatch to the various handlers
-    $registration_event = new RegistrationEvent($params);
+    $registration_event_factory = new \Civi\RemoteParticipant\RegistrationEventFactory();
+    $registration_event = $registration_event_factory->createRegistrationEvent($params);
     try {
         Civi::dispatcher()->dispatch(RegistrationEvent::NAME, $registration_event);
     } catch (Exception $ex) {

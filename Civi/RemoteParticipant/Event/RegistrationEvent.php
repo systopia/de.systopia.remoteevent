@@ -33,10 +33,10 @@ class RegistrationEvent extends ChangingEvent
     protected $submission;
 
     /** @var array holds the participant data  */
-    protected $contact_data;
+    protected $contact_data = [];
 
     /** @var array holds the participant data  */
-    protected $participant;
+    protected $participant = [];
 
     /**
      * @var array
@@ -50,63 +50,9 @@ class RegistrationEvent extends ChangingEvent
    */
     protected array $additional_participants = [];
 
-    /** @var array holds a list of (minor) errors */
-    protected $error_list;
-
-    public function __construct($submission_data)
+    public function __construct(array $submission_data)
     {
-        $this->submission  = $submission_data;
-        $this->contact_id = null;
-        $this->participant_id = null;
-        $this->contact_data = [];
-        $this->error_list = [];
-
-        $event = $this->getEvent();
-
-        // create participant data based on submission
-        $this->participant = array_filter(
-            $submission_data,
-            function($value, $key) {
-                return
-                    !preg_match('#^additional_([0-9]+)(_|$)#', $key)
-                    && !in_array($key, [
-                      'profile',
-                      'remote_contact_id',
-                      'locale',
-                  ]);
-            },
-            ARRAY_FILTER_USE_BOTH
-        );
-
-        // resolve custom fields
-        \CRM_Remoteevent_CustomData::resolveCustomFields($this->participant);
-
-        // set some defaults
-        if (empty($this->participant['role_id'])) {
-            if (empty($event['default_role_id'])) {
-                $this->participant['role_id'] =  1; // Attendee
-            } else {
-                $this->participant['role_id'] =  $event['default_role_id'];
-            }
-        }
-
-        // Create additional participants' data based on submission.
-        foreach ($submission_data as $key => $value) {
-            $additionalParticipantMatches =  [];
-            if (preg_match('#^additional_([0-9]+)_(.*?)$#', $key, $additionalParticipantMatches)) {
-                [, $participantNo, $fieldName] = $additionalParticipantMatches;
-                if ($participantNo <= $event['max_additional_participants']) {
-                    $this->additional_participants_data[$participantNo][$fieldName] = $value;
-                }
-                else {
-                    throw new \Exception('Maximum number of additional participants exceeded');
-                }
-            }
-        }
-        foreach ($this->additional_participants_data as &$additional_participant) {
-            \CRM_Remoteevent_CustomData::resolveCustomFields($additional_participant);
-            $additional_participant['role_id'] ??= $event['default_role_id'] ?: 1; // Attendee
-        }
+        $this->submission = $submission_data;
     }
 
     /**
@@ -200,6 +146,14 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
+     * @phpstan-param array<array<string, mixed>> $additional_participants_data
+     */
+    public function setAdditionalParticipantsData(array $additional_participants_data): void
+    {
+        $this->additional_participants_data = $additional_participants_data;
+    }
+
+    /**
      * Set the contact_data object, which is used for
      *   contact identification / creation
      *
@@ -276,17 +230,6 @@ class RegistrationEvent extends ChangingEvent
     public function getEvent()
     {
         return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
-    }
-
-    /**
-     * Get a list of all errors
-     *
-     * @return array
-     *   complete error list
-     */
-    public function getErrors()
-    {
-        return $this->error_list;
     }
 
     /**
