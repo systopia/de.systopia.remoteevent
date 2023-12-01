@@ -94,11 +94,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     abstract public function getFields($locale = null);
 
-    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): ?array
+    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
     {
+        $fields = [];
         if (!empty($event['is_multiple_registrations'])) {
-            $fields = [];
-
             $maxParticipants = min(
               $maxParticipants ?? $event['max_additional_participants'],
               $event['max_additional_participants']
@@ -130,7 +129,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 }
             }
         }
-        return $fields ?? NULL;
+        return $fields;
     }
 
     /**

@@ -23,77 +23,103 @@ use Civi\RemoteParticipant\Event\RegistrationEvent;
 
 final class RegistrationEventFactory
 {
-    public function createRegistrationEvent(array $submission_data): RegistrationEvent {
-        $registrationEvent = new RegistrationEvent($submission_data);
+    public function createRegistrationEvent(array $submissionData): RegistrationEvent {
+        $registrationEvent = new RegistrationEvent($submissionData);
         $profile = \CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
         $event = $registrationEvent->getEvent();
 
         $contactData = [];
         $participantData = [];
         foreach ($profile->getFields() as $fieldKey => $fieldSpec) {
-            if (isset($submission_data[$fieldKey])) {
-                $entity_names = (array) ($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
-                $entity_field_name = $fieldSpec['entity_field_name'] ?? $fieldKey;
+            if (array_key_exists($fieldKey, $submissionData)) {
+                $entityNames = (array) ($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
+                $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
                 $value = isset($fieldSpec['value_callback'])
-                  ? $fieldSpec['value_callback']($submission_data[$fieldKey], $submission_data)
-                  : $submission_data[$fieldKey];
+                  ? $fieldSpec['value_callback']($submissionData[$fieldKey], $submissionData)
+                  : $submissionData[$fieldKey];
 
-                if (in_array('Contact', $entity_names, TRUE)) {
-                    $contactData[$entity_field_name] = $value;
+                if (in_array('Contact', $entityNames, TRUE)) {
+                    $contactData[$entityFieldName] = $value;
                 }
-                if (in_array('Participant', $entity_names, TRUE)) {
-                    $participantData[$entity_field_name] = $value;
+                if (in_array('Participant', $entityNames, TRUE)) {
+                    $participantData[$entityFieldName] = $value;
                 }
             }
         }
 
         $participantData['role_id'] ??= $this->getDefaultRoleId($event);
-        $participantData['event_id'] = $submission_data['event_id'];
+        $participantData['event_id'] = $submissionData['event_id'];
 
         $profile->modifyContactData($contactData);
 
         $registrationEvent->setContactData($contactData);
         $registrationEvent->setParticipant($participantData);
 
-        // Create additional participants' data based on submission.
-        $registrationEvent->setAdditionalParticipantsData(
-          $this->getAdditionalParticipantsData($submission_data, $event)
-        );
+        $this->handleAdditionalParticipants($registrationEvent);
 
         return $registrationEvent;
     }
 
     /**
-     * @phpstan-param array<string, mixed> $submissionData
-     * @phpstan-param array<string, mixed> $event
-     *
-     * @phpstan-return array<array<string, mixed>>
+     * Handles additional participants' data in the submission data and sets the
+     * resulting data in the event.
      */
-    private function getAdditionalParticipantsData(array $submissionData, array $event): array {
+    private function handleAdditionalParticipants(RegistrationEvent $registrationEvent): void {
+        // Create additional participants' data based on submission.
+        $event = $registrationEvent->getEvent();
+        // The profile configured to be used for additional participants.
+        $profile = \CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
+
+        $additionalContactsData = [];
         $additionalParticipantsData = [];
-        foreach ($submissionData as $key => $value) {
-            $additionalParticipantMatches =  [];
-            if (preg_match('#^additional_([0-9]+)_(.*?)$#', $key, $additionalParticipantMatches)) {
-                [, $participantNo, $fieldName] = $additionalParticipantMatches;
-                if ($participantNo <= $event['max_additional_participants']) {
-                    $additionalParticipantsData[$participantNo][$fieldName] = $value;
-                } else {
-                    throw new \Exception('Maximum number of additional participants exceeded');
+
+        $submissionData = $registrationEvent->getSubmission();
+        foreach ($profile->getAdditionalParticipantsFields($event) ?? [] as $fieldKey => $fieldSpec) {
+            $participantNo = $this->getAdditionalParticipantNo($fieldKey);
+            if (null !== $participantNo && array_key_exists($fieldKey, $submissionData)) {
+                $entityNames = (array)($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
+                $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
+                $value = isset($fieldSpec['value_callback'])
+                  ? $fieldSpec['value_callback']($submissionData[$fieldKey], $submissionData)
+                  : $submissionData[$fieldKey];
+
+                if (in_array('Contact', $entityNames, true)) {
+                    $additionalContactsData[$participantNo][$entityFieldName] = $value;
+                }
+                if (in_array('Participant', $entityNames, true)) {
+                    $additionalParticipantsData[$participantNo][$entityFieldName] = $value;
                 }
             }
         }
 
-        foreach ($additionalParticipantsData as &$additionalParticipantData) {
-            $additionalParticipantData['role_id'] ??= $this->getDefaultRoleId($event);
+        foreach ($additionalContactsData as &$contactData) {
+            $profile->modifyContactData($contactData);
+            $contactData['contact_type'] ??= 'Individual';
+            $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
         }
 
-        return $additionalParticipantsData;
+        foreach ($additionalParticipantsData as &$participantData) {
+            $participantData['role_id'] ??= $this->getDefaultRoleId($event);
+            $participantData['event_id'] = $submissionData['event_id'];
+        }
+
+        $registrationEvent->setAdditionalContactsData($additionalContactsData);
+        $registrationEvent->setAdditionalParticipantsData($additionalParticipantsData);
+    }
+
+    private function getAdditionalParticipantNo(string $fieldKey): ?int {
+        $matches = [];
+        if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return null;
     }
 
     /**
      * @param array<string, mixed> $event
      */
     private function getDefaultRoleId(array $event): int {
-        return (int) ($event['default_role_id'] ?: 1);  // 1 = Attendee
+        return (int) ($event['default_role_id'] ?: 1); // 1 = Attendee
     }
 }

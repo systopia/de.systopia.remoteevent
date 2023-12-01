@@ -39,16 +39,20 @@ class RegistrationEvent extends ChangingEvent
     protected $participant = [];
 
     /**
-     * @var array
+     * @phpstan-var array<int, array<string, mixed>>
+     *   Contact data of additional participants.
+     *
+     * @see $additional_participants_data
+     */
+    protected array $additional_contacts_data = [];
+
+    /**
+     * @phpstan-var array<int, array<string, mixed>>
      *   Data of additional participants.
+     *
+     * @see $additional_contacts_data
      */
     protected array $additional_participants_data = [];
-
-  /**
-   * @var array
-   *   Additionally registered participants.
-   */
-    protected array $additional_participants = [];
 
     public function __construct(array $submission_data)
     {
@@ -92,20 +96,8 @@ class RegistrationEvent extends ChangingEvent
      */
     public function setParticipant($participant)
     {
-        $this->participant_id = $participant['id'];
+        $this->participant_id = $participant['id'] ?? null;
         $this->participant = $participant;
-    }
-
-    /**
-     * Sets additionally registered participants.
-     *
-     * @param array $additionalParticipants
-     *
-     * @return void
-     */
-    public function setAdditionalParticipants(array $additionalParticipants): void
-    {
-        $this->additional_participants = $additionalParticipants;
     }
 
     /**
@@ -120,16 +112,6 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Retrieves additionally registered participants.
-     *
-     * @return array
-     */
-    public function getAdditionalParticipants()
-    {
-        return $this->additional_participants;
-    }
-
-    /**
      * Get the participant data BY REFERENCE, which is used for
      *   registration creation / updates
      *
@@ -141,7 +123,33 @@ class RegistrationEvent extends ChangingEvent
         return $this->participant;
     }
 
-    public function &getAdditionalParticipantsData() {
+    /**
+     * @phpstan-return array<int, array<string, mixed>>
+     *
+     * @see getAdditionalParticipantsData()
+     */
+    public function getAdditionalContactsData(): array
+    {
+        return $this->additional_contacts_data;
+    }
+
+    /**
+     * @phpstan-param array<int, array<string, mixed>> $additional_contacts_data
+     *
+     * @see setAdditionalParticipantsData()
+     */
+    public function setAdditionalContactsData(array $additional_contacts_data): void
+    {
+        $this->additional_contacts_data = $additional_contacts_data;
+    }
+
+    /**
+     * @phpstan-return array<int, array<string, mixed>>
+     *
+     * @see getAdditionalContactsData()
+     */
+    public function getAdditionalParticipantsData(): array
+    {
         return $this->additional_participants_data;
     }
 

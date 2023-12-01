@@ -13,11 +13,11 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use CRM_Remoteevent_ExtensionUtil as E;
+use Civi\Api4\Participant;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateParticipantEvent;
-use Civi\Api4\Participant;
+use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
  * Class to execute event registrations (RemoteParticipant.create)
@@ -736,65 +736,32 @@ class CRM_Remoteevent_Registration
         CRM_Remoteevent_RemoteEvent::invalidateRemoteEvent($registration->getEventID());
     }
 
-    public static function registerAdditionalParticipants(RegistrationEvent $registration) {
-        if (
-            $registration->hasErrors()
-            || empty($registration->getAdditionalParticipantsData())
-        ) {
+    public static function registerAdditionalParticipants(RegistrationEvent $registration): void {
+        if ($registration->hasErrors() || [] === $registration->getAdditionalParticipantsData()) {
            return;
         }
 
-        $event = $registration->getEvent();
-        // The profile configured to be used for additional participants.
-        $profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
-           $event['event_remote_registration.remote_registration_additional_participants_profile']
-        );
+        $additionalContactsData = $registration->getAdditionalContactsData();
+        $additionalParticipantsData = $registration->getAdditionalParticipantsData();
 
-        $additionalContactsData = [];
-        $additionalParticipantsData = [];
-
-        foreach ($registration->getAdditionalParticipantsData() as $additionalParticipantNo => $additionalParticipantData) {
-            $additionalParticipantsData[$additionalParticipantNo]['role_id'] = $additionalParticipantData['role_id'];
-            foreach ($profile->getFields() as $fieldKey => $fieldSpec) {
-                if (isset($additionalParticipantData[$fieldKey])) {
-                    $entity_names = (array)($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
-                    $entity_field_name = $fieldSpec['entity_field_name'] ?? $fieldKey;
-                    $value = isset($fieldSpec['value_callback'])
-                      ? $fieldSpec['value_callback']($additionalParticipantData[$fieldKey], $additionalParticipantData)
-                      : $additionalParticipantData[$fieldKey];
-
-                    if (in_array('Contact', $entity_names, TRUE)) {
-                        $additionalContactsData[$additionalParticipantNo][$entity_field_name] = $value;
-                    }
-                    if (in_array('Participant', $entity_names, TRUE)) {
-                        $additionalParticipantsData[$additionalParticipantNo][$entity_field_name] = $value;
-                    }
-                }
-            }
-        }
-
-        foreach ($additionalContactsData as $additionalParticipantNo => &$contactData) {
-            // Identify/Create contacts for additional participants.
-            $profile->modifyContactData($contactData);
-            $contactData['contact_type'] ??= 'Individual';
-            $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
-            CRM_Remoteevent_CustomData::resolveCustomFields($contactData);
+        foreach ($additionalContactsData as $participantNo => &$contactData) {
             $match = civicrm_api3('Contact', 'getorcreate', $contactData);
             if (!isset($match['id'])) {
-               throw new Exception('Contact for additional participant could not be identified or created.');
+               throw new \RuntimeException('Contact for additional participant could not be identified or created.');
             }
-            $additionalParticipantsData[$additionalParticipantNo]['contact_id'] = $match['id'];
+
+            $additionalParticipantsData[$participantNo]['contact_id'] = $contactData['id'] = $match['id'];
 
             // Check for existing participants for the identified contact.
             $cannotRegisterReason = CRM_Remoteevent_Registration::cannotRegister(
                 $registration->getEventID(),
-                $additionalParticipantsData[$additionalParticipantNo]['contact_id'],
+                $contactData['id'],
                 $registration->getEvent()
             );
             if ($cannotRegisterReason) {
                 $registration->addError(
                     E::ts('Additional participant %1: %2', [
-                        1 => $additionalParticipantNo,
+                        1 => $participantNo,
                         2 => $cannotRegisterReason,
                     ])
                 );
@@ -803,22 +770,25 @@ class CRM_Remoteevent_Registration
           // registering, and we want to collect all of them first.
         }
 
+        $registration->setAdditionalContactsData($additionalContactsData);
+
         // Abort if any additional participant can't be registered.
         if ($registration->hasErrors()) {
             return;
         }
 
         // Create additional participants.
-        $additionalParticipantsRegistered = [];
-        foreach ($additionalParticipantsData as $additionalParticipant) {
-            $additionalParticipantsRegistered[] = Participant::create(FALSE)
-                ->setValues($additionalParticipant)
-                ->addValue('event_id', $event['id'])
-                ->addValue('registered_by_id', $registration->getParticipantID())
+        foreach ($additionalParticipantsData as &$participantData) {
+            $participantData['registered_by_id'] = $registration->getParticipantID();
+            $participantRegistered = Participant::create(false)
+                ->setValues($participantData)
                 ->execute()
-                ->getArrayCopy();
+                ->single();
+
+            $participantData += $participantRegistered;
         }
-        $registration->setAdditionalParticipants($additionalParticipantsRegistered);
+
+        $registration->setAdditionalParticipantsData($additionalParticipantsData);
     }
 
     /**
