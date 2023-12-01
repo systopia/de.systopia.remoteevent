@@ -55,7 +55,7 @@ final class RegistrationEventFactory
         $registrationEvent->setContactData($contactData);
         $registrationEvent->setParticipant($participantData);
 
-        $this->handleAdditionalParticipants($registrationEvent);
+        $this->handleAdditionalParticipants($registrationEvent, $profile);
 
         return $registrationEvent;
     }
@@ -64,17 +64,14 @@ final class RegistrationEventFactory
      * Handles additional participants' data in the submission data and sets the
      * resulting data in the event.
      */
-    private function handleAdditionalParticipants(RegistrationEvent $registrationEvent): void {
-        // Create additional participants' data based on submission.
+    private function handleAdditionalParticipants(RegistrationEvent $registrationEvent, \CRM_Remoteevent_RegistrationProfile $profile): void {
         $event = $registrationEvent->getEvent();
-        // The profile configured to be used for additional participants.
-        $profile = \CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
 
         $additionalContactsData = [];
         $additionalParticipantsData = [];
 
         $submissionData = $registrationEvent->getSubmission();
-        foreach ($profile->getAdditionalParticipantsFields($event) ?? [] as $fieldKey => $fieldSpec) {
+        foreach ($profile->getAdditionalParticipantsFields($event) as $fieldKey => $fieldSpec) {
             $participantNo = $this->getAdditionalParticipantNo($fieldKey);
             if (null !== $participantNo && array_key_exists($fieldKey, $submissionData)) {
                 $entityNames = (array)($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
