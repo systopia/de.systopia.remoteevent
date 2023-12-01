@@ -89,15 +89,19 @@ final class RegistrationEventFactory
             }
         }
 
-        foreach ($additionalContactsData as &$contactData) {
-            $profile->modifyContactData($contactData);
-            $contactData['contact_type'] ??= 'Individual';
-            $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
+        if ([] === $additionalParticipantsData) {
+            return;
         }
 
-        foreach ($additionalParticipantsData as &$participantData) {
-            $participantData['role_id'] ??= $this->getDefaultRoleId($event);
-            $participantData['event_id'] = $submissionData['event_id'];
+        $additionalParticipantsProfile = \CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
+          $event['event_remote_registration.remote_registration_additional_participants_profile']
+        );
+        foreach ($additionalContactsData as $participantNo => &$contactData) {
+            $additionalParticipantsProfile->modifyContactData($contactData);
+            $contactData['contact_type'] ??= 'Individual';
+            $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
+            $additionalParticipantsData[$participantNo]['role_id'] ??= $this->getDefaultRoleId($event);
+            $additionalParticipantsData[$participantNo]['event_id'] = $submissionData['event_id'];
         }
 
         $registrationEvent->setAdditionalContactsData($additionalContactsData);
