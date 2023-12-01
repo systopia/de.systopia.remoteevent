@@ -744,13 +744,16 @@ class CRM_Remoteevent_Registration
         $additionalContactsData = $registration->getAdditionalContactsData();
         $additionalParticipantsData = $registration->getAdditionalParticipantsData();
 
-        foreach ($additionalContactsData as $participantNo => &$contactData) {
+        foreach ($additionalContactsData as $participantNo => $contactData) {
+            CRM_Remoteevent_CustomData::resolveCustomFields($contactData);
             $match = civicrm_api3('Contact', 'getorcreate', $contactData);
             if (!isset($match['id'])) {
                throw new \RuntimeException('Contact for additional participant could not be identified or created.');
             }
 
-            $additionalParticipantsData[$participantNo]['contact_id'] = $contactData['id'] = $match['id'];
+            $additionalParticipantsData[$participantNo]['contact_id']
+              = $additionalContactsData[$participantNo]['id']
+              = $contactData['id'] = $match['id'];
 
             // Check for existing participants for the identified contact.
             $cannotRegisterReason = CRM_Remoteevent_Registration::cannotRegister(
