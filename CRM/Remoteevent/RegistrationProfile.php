@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Api4\Participant;
+use Civi\RemoteParticipant\Event\Util\ParticipantFormEventUtil;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 use Civi\RemoteEvent as RemoteEvent;
@@ -65,7 +67,11 @@ abstract class CRM_Remoteevent_RegistrationProfile
      * @return array field specs
      *   format is field_key => [
      *      'name'        => field_key
-     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date'
+     *      'entity_name' => 'Contact' or 'Participant'.
+     *      'entity_field_name' => string, field_key if not set.
+     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date', 'Value', 'fieldset'.
+     *                       'Value' fields are not displayed and can be used for pre-defined values.
+     *                       'fieldset' is used to group fields.
      *      'weight'      => int,
      *      'options'     => [value => label (localised)] list  (optional)
      *      'required'    => 0/1
@@ -73,6 +79,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'description' => field description (localised)
      *      'parent'      => can link to parent element, which should be of type 'fieldset'
      *      'value'       => (optional) pre-filled value, typically set in a second pass (addDefaultValues, see below)
+     *      'value_callback' => (optional) callable(mixed, array<string, mixed>): mixed Called on submission for value conversion.
+     *         The first argument is the value itself, the second one the submission data.
+     *      'prefill_value_callback' => (optional) callable(mixed, array<string, mixed>): mixed Called when adding default values.
+     *         The first argument is the value itself, the second one the values of the same entity referenced by other fields.
      *      'maxlength'   => (optional) max length of the field content (as a string)
      *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
      *                       NOTE: this is just for the optional 'inline' validation in the form,
@@ -84,11 +94,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     abstract public function getFields($locale = null);
 
-    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): ?array
+    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
     {
+        $fields = [];
         if (!empty($event['is_multiple_registrations'])) {
-            $fields = [];
-
             $maxParticipants = min(
               $maxParticipants ?? $event['max_additional_participants'],
               $event['max_additional_participants']
@@ -120,18 +129,49 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 }
             }
         }
-        return $fields ?? NULL;
+        return $fields;
     }
 
     /**
      * Add the default values to the form data, so people using this profile
-     *  don't have to enter everything themselves
-     *
-     * @param GetParticipantFormEventBase $resultsEvent
-     *   the locale to use, defaults to null none. Use 'default' for current
-     *
+     * don't have to enter everything themselves.
      */
-    abstract public function addDefaultValues(GetParticipantFormEventBase $resultsEvent);
+    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
+    {
+        $contact_field_mapping = [];
+        $participant_field_mapping = [];
+        $participant_value_callbacks = [];
+
+        foreach ($this->getFields() as $field_key => $field_spec) {
+            if (in_array($field_spec['type'], ['Value', 'fieldset'], TRUE)) {
+                continue;
+            }
+
+            $entity_names = (array) ($field_spec['entity_name'] ?? $this->getFieldEntities($field_key));
+            $entity_field_name = $field_spec['entity_field_name'] ?? $field_key;
+            if (in_array('Contact', $entity_names, TRUE)) {
+                $contact_field_mapping[$entity_field_name] = $field_key;
+            }
+            if (in_array('Participant', $entity_names, TRUE)) {
+                $participant_field_mapping[$entity_field_name] = $field_key;
+                if (isset($field_spec['prefill_value_callback'])) {
+                    $participant_value_callbacks[$field_key] = $field_spec['prefill_value_callback'];
+                }
+            }
+        }
+
+        $this->addDefaultContactValues($resultsEvent, array_keys($contact_field_mapping), $contact_field_mapping);
+
+        if ([] !== $participant_field_mapping && $resultsEvent->getParticipantID() > 0) {
+            $participant = Participant::get(FALSE)
+                ->setSelect(array_keys($participant_field_mapping))
+                ->addWhere('id', '=', $resultsEvent->getParticipantID())
+                ->execute()
+                ->single();
+
+            ParticipantFormEventUtil::mapToPrefill($participant, $participant_field_mapping, $resultsEvent, $participant_value_callbacks);
+        }
+    }
 
     /**
      * Validate the profile fields individually.
@@ -203,6 +243,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      * @return array
      *   list of entities
+     *
+     * @deprecated Specify entity name in field spec instead.
      */
     public function getFieldEntities($field_key)
     {
@@ -477,43 +519,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
     /**
-     * Use profile data to identify the contact via XCM
-     *
-     * @param array $data
-     *      Input data
-     *
-     * @param RegistrationEvent $registration
-     *      registration data
-     *
-     * @return integer
-     *      CiviCRM contact ID
-     *
-     * @throws Exception
-     *      If not enough information is provided
-     */
-    public static function addProfileContactData($registration)
-    {
-        // get the profile (has already been validated)
-        $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registration);
-
-        // then simply add all fields from the profile
-        $contact_data = $registration->getContactData();
-        $submission_data = $registration->getSubmission();
-        foreach ($profile->getFields() as $field_key => $field_spec) {
-            if (isset($submission_data[$field_key])) {
-                $contact_data[$field_key] = $submission_data[$field_key];
-            }
-        }
-
-        // give the profile a chance to adjust contact data
-        $profile->adjustContactData($contact_data);
-
-        // finally, set the result
-        $registration->setContactData($contact_data);
-    }
-
-
-    /**
      * Does this profile have a dedicated XCM profile?
      *
      * @return string|null
@@ -710,34 +715,45 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Will set the default values for the given contact fields
      *
-     * @param GetParticipantFormEventBase $resultsEvent
-     *   the locale to use, defaults to null none. Use 'default' for current
-     *
-     * @param array $contact_fields
+     * @phpstan-param array<string> $contact_fields
      *   list of contact fields
      *
-     * @param array $attribute_mapping
+     * @phpstan-param array<string, string> $attribute_mapping
      *   maps the contact fields to the profile fields
      *
+     * @deprecated Overwrite addDefaultValues() if necessary.
      */
     public function addDefaultContactValues(GetParticipantFormEventBase $resultsEvent, $contact_fields, $attribute_mapping = [])
     {
         $contact_id = $resultsEvent->getContactID();
         if ($contact_id) {
+            $value_callbacks = [];
+            $profile = self::getProfile($resultsEvent);
+            $fields = $profile->getFields();
             // set contact data
+            $contact_fields = array_combine($contact_fields, $contact_fields);
+            // Assume that entity field name and profile field name are equal, if no mapping defined.
+            $attribute_mapping += $contact_fields;
+            foreach ($attribute_mapping as $field_key) {
+                if (isset($fields[$field_key]['prefill_value_callback'])) {
+                    $value_callbacks[$field_key] = $fields[$field_key]['prefill_value_callback'];
+                }
+            }
+            CRM_Remoteevent_CustomData::resolveCustomFields($contact_fields);
+            if (isset($contact_fields['country_id'])) {
+                // country_id is only returned if country is selected.
+                $contact_fields['country'] = 'country';
+            }
+            if (isset($contact_fields['state_province_id']) || isset($contact_fields['state_province_name'])) {
+                // state_province_id and state_province_name are only returned if state_province is selected
+                $contact_fields['state_province'] = 'state_province';
+            }
             try {
                 $contact_data = civicrm_api3('Contact', 'getsingle', [
                     'contact_id' => $contact_id,
-                    'return'     => implode(',', $contact_fields),
+                    'return'     => implode(',', array_keys($contact_fields)),
                 ]);
-                foreach ($contact_fields as $contact_field) {
-                    if (isset($attribute_mapping[$contact_field])) {
-                        $profile_field = $attribute_mapping[$contact_field];
-                    } else {
-                        $profile_field = $contact_field;
-                    }
-                    $resultsEvent->setPrefillValue($profile_field, $contact_data[$contact_field]);
-                }
+                ParticipantFormEventUtil::mapToPrefill($contact_data, $attribute_mapping, $resultsEvent, $value_callbacks);
             } catch (CiviCRM_API3_Exception $ex) {
                 // there is no (unique) primary email
             }
@@ -830,6 +846,5 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         return $province_list;
     }
-
 
 }

@@ -100,22 +100,18 @@ class CRM_Remoteevent_RegistrationUpdate
 
         $submission_data = $registration_update->getQueryParameters();
         foreach ($profile->getFields() as $field_key => $field_spec) {
-            $related_entities = $profile->getFieldEntities($field_key);
             if (isset($submission_data[$field_key])) {
-                foreach ($related_entities as $entity) {
-                    switch ($entity) {
-                        case 'Contact':
-                            $registration_update->addContactUpdate($field_key, $submission_data[$field_key]);
-                            break;
+                $entity_names = (array) ($field_spec['entity_name'] ?? $profile->getFieldEntities($field_key));
+                $entity_field_name = $field_spec['entity_field_name'] ?? $field_key;
+                $value = isset($field_spec['value_callback'])
+                    ? $field_spec['value_callback']($submission_data[$field_key], $submission_data)
+                    : $submission_data[$field_key];
 
-                        case 'Participant':
-                            $registration_update->addParticipantUpdate($field_key, $submission_data[$field_key]);
-                            break;
-
-                        default:
-                            // no action
-                            break;
-                    }
+                if (in_array('Contact', $entity_names, TRUE)) {
+                    $registration_update->addContactUpdate($entity_field_name, $value);
+                }
+                if (in_array('Participant', $entity_names, TRUE)) {
+                    $registration_update->addParticipantUpdate($entity_field_name, $value);
                 }
             }
         }
@@ -145,7 +141,6 @@ class CRM_Remoteevent_RegistrationUpdate
                     // if there is an XCM profile -> let's run it
                     // in this case we use the XCM with the update profile with the ID set
                     $contact_updates['xcm_profile'] = $xcm_profile;
-                    CRM_Remoteevent_CustomData::resolveCustomFields($contact_updates);
                     try {
                         civicrm_api3('Contact', 'getorcreate', $contact_updates);
                         $registration_update->setContactUpdated();
