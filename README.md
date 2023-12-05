@@ -56,7 +56,7 @@ TODO: Complete Feature List
 ## Requirements
 
 * PHP v7.0+
-* CiviCRM 5.0
+* CiviCRM 5.61
 * Dependency on CiviCRM Extension "Remote Tools" (de.systopia.remotetools)
 * Dependency on CiviCRM Extension "Extended Contact Matcher" (de.systopia.xcm)
 * A system that will serve as your public system such as an external website
