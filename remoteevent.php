@@ -370,10 +370,10 @@ function remoteevent_civicrm_pre($op, $objectName, $id, &$params)
     }
 }
 
-function remoteevent_civicrm_custom( $op, $groupID, $entityID, &$params )
+function remoteevent_civicrm_custom($op, $groupID, $entityID, &$params): void
 {
     foreach ($params as $param) {
-        if ($param['entity_table'] == 'civicrm_participant') {
+        if (($param['entity_table'] ?? null) === 'civicrm_participant') {
             CRM_Remoteevent_ChangeActivity::recordPost($entityID, true);
             break;
         }
