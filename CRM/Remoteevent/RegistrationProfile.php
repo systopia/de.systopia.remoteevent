@@ -69,9 +69,11 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'name'        => field_key
      *      'entity_name' => 'Contact' or 'Participant'.
      *      'entity_field_name' => string, field_key if not set.
-     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date', 'Value', 'fieldset'.
+     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date', 'Datetime', 'Value', 'fieldset'.
      *                       'Value' fields are not displayed and can be used for pre-defined values.
      *                       'fieldset' is used to group fields.
+     *                       'Date' fields should have 'validation' set to 'Date' (required for value formatting).
+     *                       'Datetime' fields should have 'validation' set to 'Timestamp' (required for value formatting).
      *      'weight'      => int,
      *      'options'     => [value => label (localised)] list  (optional)
      *      'required'    => 0/1
@@ -686,7 +688,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
             case 'Timestamp':
                 if ($value) {
-                    $value = date('YmdHiS', strtotime($value));
+                    $value = date('YmdHis', strtotime($value));
                 }
                 break;
 
