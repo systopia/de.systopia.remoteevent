@@ -99,10 +99,10 @@ function civicrm_api3_remote_event_spawn($params)
         // remove ids and merge additional data
         $event_create = array_merge($event_data, $event_create);
 
-        // remove template data
-        unset($event_create['id'], $event_create['template_id'], $event_create['created_id'], $event_create['created_date'], $event_create['version'], $event_create['prettyprint'], $event_create['title']);
+        // remove template data and api artifacts
+        unset($event_create['id'], $event_create['template_id'], $event_create['created_id'], $event_create['created_date'], $event_create['version'], $event_create['prettyprint']);
         if (empty($event_create['start_date'])) $event_create['start_date'] = date('YmdHis');
-        if (empty($event_create['title'])) $event_create['title'] = $event_create['template_title'] ?? E::ts("New Event");
+        $event_create['title'] = $event_data['title'] ?? $event_create['template_title'] ?? E::ts("New Event");
         $event_create['is_template'] = 0;
         $event_create['template_title'] = '';
 
