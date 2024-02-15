@@ -75,7 +75,12 @@ class CRM_Remoteevent_Localisation
             return $string;
         } else {
             // todo: implement
-            return E::ts($string, $context);
+            $currentLocale = CRM_Core_I18n::getLocale();
+            $locale = CRM_Core_I18n::singleton();
+            $locale->setLocale($this->locale);
+            $localizedString = E::ts($string, $context);
+            $locale->setLocale($currentLocale);
+            return $localizedString;
         }
     }
 }
