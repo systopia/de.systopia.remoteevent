@@ -82,19 +82,48 @@ function civicrm_api3_remote_event_spawn($params)
 
     // if there is a template_id id given, we want to clone that first
     if (!empty($event_create['template_id'])) {
-        // todo: error handling
-        $cloned_event = CRM_Event_BAO_Event::copy($event_create['template_id']);
-        $event_create['id'] = $cloned_event->id;
-        unset($event_create['template_id']);
+        $template_id = (int) $event_create['template_id'];
+        if (!$template_id) {
+          throw new Exception("Invalid template ID");
+        }
+
+        // use APIv4 to handle this
+        // @see https://github.com/systopia/de.systopia.remoteevent/issues/8
+        $event_data = civicrm_api4('Event', 'get', [
+          'select' => ['*', 'custom.*'],
+          'where' => [['id', '=', $template_id]],
+          'limit' => 1,
+          'checkPermissions' => false,
+        ])->getArrayCopy()[0];
+
+        // remove ids and merge additional data
+        $event_create = array_merge($event_data, $event_create);
+
+        // remove template data and api artifacts
+        unset($event_create['id'], $event_create['created_id'], $event_create['created_date'], $event_create['version'], $event_create['prettyprint']);
+        if (empty($event_create['start_date'])) $event_create['start_date'] = date('YmdHis');
+        $event_create['title'] = $event_create['title'] ?? $event_data['title'] ?? $event_data['template_title'] ?? E::ts("New Event");
         $event_create['is_template'] = 0;
         $event_create['template_title'] = '';
+        $event_create['template_id'] = $template_id;
 
+        $create_call = \Civi\Api4\Event::create(false);
+        foreach ($event_create as $name => $value) {
+          $create_call->addValue($name, $value);
+        }
+        $result = $create_call->execute();
+        $new_event = $result->first();
+
+        // copy sessions:
+        CRM_Remoteevent_BAO_Session::copySessions($template_id, $new_event['id']);
+
+    } else {
+        // this is the scenario where no 'template_id' is given, so we'll just run a create
+        CRM_Remoteevent_CustomData::resolveCustomFields($event_create);
+        //Civi::log()->debug("Event.create(via spawn) parameters: " . json_encode($event_create));
+        $new_event = civicrm_api3('Event', 'create', $event_create);
     }
 
-    // use the basic event API for the application of the requested data
-    CRM_Remoteevent_CustomData::resolveCustomFields($event_create);
-    $result = civicrm_api3('Event', 'create', $event_create);
-
     $null = null;
-    return civicrm_api3_create_success([], $params, 'RemoteEvent', 'spawn', $null, ['id' => $result['id']]);
+    return civicrm_api3_create_success([], $params, 'RemoteEvent', 'spawn', $null, ['id' => $new_event['id']]);
 }
