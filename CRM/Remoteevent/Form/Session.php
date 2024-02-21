@@ -254,7 +254,7 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
 
         // postprocess some values
         if (empty($update['presenter_id'])) {
-            unset($update['presenter_id']);
+          $update['presenter_id'] = '';
         }
         if (empty($update['max_participants'])) {
             $update['max_participants'] = 0;
