@@ -106,17 +106,4 @@ class CRM_Remoteevent_RegistrationProfile_Standard2 extends CRM_Remoteevent_Regi
             ],
         ];
     }
-
-    /**
-     * Add the default values to the form data, so people using this profile
-     *  don't have to enter everything themselves
-     *
-     * @param GetParticipantFormEventBase $resultsEvent
-     *   the locale to use, defaults to null none. Use 'default' for current
-     *
-     */
-    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
-    {
-        $this->addDefaultContactValues($resultsEvent, ['prefix_id', 'email', 'formal_title', 'first_name', 'last_name']);
-    }
 }
