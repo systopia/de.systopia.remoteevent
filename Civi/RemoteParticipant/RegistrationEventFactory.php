@@ -47,7 +47,10 @@ final class RegistrationEventFactory
             }
         }
 
-        $participantData['role_id'] ??= $this->getDefaultRoleId($event);
+        // Assign default role for new participants only.
+        if (NULL === $registrationEvent->getParticipantID()) {
+          $participantData['role_id'] ??= $this->getDefaultRoleId($event);
+        }
         $participantData['event_id'] = $submissionData['event_id'];
 
         $profile->modifyContactData($contactData);

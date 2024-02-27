@@ -88,10 +88,12 @@ abstract class RemoteEvent extends RemoteToolsRequest
     }
 
     /**
-     * Get the participant associated with this validation
-     *  (if any)
+     * Retrieves the ID of an existing participant.
+     *
+     * @return int|null
+     *    The participant ID, or NULL if this is a new participant.
      */
-    public function getParticipantID()
+    public function getParticipantID(): ?int
     {
         if ($this->participant_id === null) {
             $this->participant_id = 0; // don't look it up again
