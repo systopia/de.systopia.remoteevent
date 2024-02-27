@@ -66,16 +66,42 @@ class CRM_Remoteevent_Localisation
      * @return string
      *   localised result
      *
-     * @see CiviCRM's ts() function
+     * @see \ts()
+     *
+     * @deprecated 1.2.0 Deprecated in favor of self::ts().
+     * @see self::ts()
      */
     public function localise($string, $context = [])
     {
+        return self::ts($string, $context);
+    }
+
+    /**
+     * Localise a given string with this localisation.
+     *
+     * @param string $string
+     *   The (English) string to localise.
+     *
+     * @param array $context
+     *   Localisation parameters or variables.
+     *
+     * @return string
+     *   The localised version of the string.
+     *
+     * @see \ts()
+     */
+    public function ts($string, $context = []) {
         if (empty($this->locale)) {
-            // no changes, used for pot extraction
+            // No changes, used for pot extraction.
             return $string;
-        } else {
-            // todo: implement
-            return E::ts($string, $context);
+        }
+        else {
+            $currentLocale = CRM_Core_I18n::getLocale();
+            $locale = CRM_Core_I18n::singleton();
+            $locale->setLocale($this->locale);
+            $localizedString = E::ts($string, $context);
+            $locale->setLocale($currentLocale);
+            return $localizedString;
         }
     }
 }
