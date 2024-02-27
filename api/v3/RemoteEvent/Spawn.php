@@ -95,7 +95,7 @@ function civicrm_api3_remote_event_spawn($params)
           'where' => [['id', '=', $template_id]],
           'limit' => 1,
           'checkPermissions' => false,
-        ])->first();
+        ])->single();
 
         // remove ids and merge additional data
         $event_create = array_merge($event_data, $event_create);
