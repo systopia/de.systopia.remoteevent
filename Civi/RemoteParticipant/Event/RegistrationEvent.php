@@ -70,12 +70,9 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Get the participant ID
-     *
-     * @return integer
-     *    contact ID
+     * {@inheritDoc}
      */
-    public function getParticipantID()
+    public function getParticipantID(): ?int
     {
         if (empty($this->participant['id'])) {
             $participant_id = parent::getParticipantID();
