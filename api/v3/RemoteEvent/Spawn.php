@@ -89,12 +89,13 @@ function civicrm_api3_remote_event_spawn($params)
 
         // use APIv4 to handle this
         // @see https://github.com/systopia/de.systopia.remoteevent/issues/8
+        // @see https://github.com/systopia/de.systopia.remoteevent/issues/28
         $event_data = civicrm_api4('Event', 'get', [
           'select' => ['*', 'custom.*'],
           'where' => [['id', '=', $template_id]],
           'limit' => 1,
           'checkPermissions' => false,
-        ])->getArrayCopy()[0];
+        ])->first();
 
         // remove ids and merge additional data
         $event_create = array_merge($event_data, $event_create);
