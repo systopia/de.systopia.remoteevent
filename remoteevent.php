@@ -242,12 +242,30 @@ function remoteevent_civicrm_entityTypes(&$entityTypes)
  */
 function remoteevent_civicrm_permission(&$permissions)
 {
-    $permissions['view public Remote Events']          = E::ts('RemoteEvent: list public events');
-    $permissions['view all Remote Events']             = E::ts('RemoteEvent: list all events');
-    $permissions['spawn Remote Events']                = E::ts('RemoteEvent: spawn (create) events');
-    $permissions['register to Remote Events']          = E::ts('RemoteEventRegistration: register');
-    $permissions['edit Remote Event registrations']    = E::ts('RemoteEventRegistration: edit');
-    $permissions['cancel Remote Events registrations'] = E::ts('RemoteEventRegistration: cancel');
+  $permissions['view public Remote Events'] = [
+    'label' => E::ts('CiviRemote Event: List public events'),
+    'description' => E::ts('Allows listing remote events marked as public via the CiviRemote Event API.'),
+  ];
+  $permissions['view all Remote Events'] = [
+    'label' => E::ts('CiviRemote Event: List all events'),
+    'description' => E::ts('Allows listing all remote events via the CiviRemote Event API.'),
+  ];
+  $permissions['spawn Remote Events'] = [
+    'label' => E::ts('CiviRemote Event: Spawn (create) events'),
+    'description' => E::ts('Allows creating remote events via the CiviRemote Event API for further editing.'),
+  ];
+  $permissions['register to Remote Events'] = [
+    'label' => E::ts('CiviRemote Event: Register'),
+    'description' => E::ts('Allows registering for remote events via the CiviRemote Event API.'),
+  ];
+  $permissions['edit Remote Event registrations'] = [
+    'label' => E::ts('CiviRemote Event: Edit registration'),
+    'description' => E::ts('Allows updating registrations for remote events via the CiviRemote Event API.'),
+  ];
+  $permissions['cancel Remote Events registrations'] = [
+    'label' => E::ts('CiviRemote Event: Cancel registration'),
+    'description' => E::ts('Allows cancelling registrations for remote events via the CiviRemote Event API.'),
+  ];
 }
 
 /**
