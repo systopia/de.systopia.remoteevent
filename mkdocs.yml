@@ -6,7 +6,10 @@ theme:
   name: material
 
 nav:
-  - 'Home': index.md
+  - 'Introduction': index.md
+  - 'Configuration': configuration.md
+  - 'API': api.md
+  - 'Extensibility': extensibility.md
 
 markdown_extensions:
   - attr_list
