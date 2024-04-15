@@ -62,6 +62,7 @@ TODO: Complete Feature List
 * A system that will serve as your public system such as an external website
 
 TODO: List extensions that integrate with Remote Event Extensions
+For a comprehensive write-up in German on this, see [https://community.software-fuer-engagierte.de/t/fancy-events-mit-civicrm/250]([url](https://community.software-fuer-engagierte.de/t/fancy-events-mit-civicrm/250))
 
 ## Configuration
 
