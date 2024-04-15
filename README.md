@@ -61,7 +61,8 @@ TODO: Complete Feature List
 * Dependency on CiviCRM Extension "Extended Contact Matcher" (de.systopia.xcm)
 * A system that will serve as your public system such as an external website
 
-TODO: List extensions that integrate with Remote Event Extensions
+TODO: List extensions that integrate with Remote Event Extensions.
+
 For a comprehensive write-up in German on this, see [https://community.software-fuer-engagierte.de/t/fancy-events-mit-civicrm/250](https://community.software-fuer-engagierte.de/t/fancy-events-mit-civicrm/250).
 
 ## Configuration
