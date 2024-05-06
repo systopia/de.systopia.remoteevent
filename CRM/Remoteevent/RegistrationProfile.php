@@ -205,7 +205,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         ) {
             if (
               !empty($event['has_waitlist'])
-              && !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
+                && ($additionalParticipantsCount === 0 || !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist']))
             ) {
                 $validationEvent->addWarning(
                     $l10n->localise('Not enough vacancies for the number of requested participants.')
