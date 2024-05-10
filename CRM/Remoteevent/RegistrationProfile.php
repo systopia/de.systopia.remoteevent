@@ -179,19 +179,145 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     // @phpstan-ignore method.deprecated
     $this->addDefaultContactValues($resultsEvent, array_keys($contact_field_mapping), $contact_field_mapping);
 
-    if ([] !== $participant_field_mapping && $resultsEvent->getParticipantID() > 0) {
-      $participant = Participant::get(FALSE)
-        ->setSelect(array_keys($participant_field_mapping))
-        ->addWhere('id', '=', $resultsEvent->getParticipantID())
-        ->execute()
-        ->single();
+    /**
+     * @param array $event
+     * @param string|null $locale
+     *
+     * @return array<string,array<string,mixed>>
+     * @throws \CRM_Core_Exception
+     */
+    public function getPriceFields(array $event, ?string $locale = NULL): array
+    {
+        $fields = [];
 
-      ParticipantFormEventUtil::mapToPrefill(
-        $participant,
-        $participant_field_mapping,
-        $resultsEvent,
-        $participant_value_callbacks
-      );
+        if (!(bool) $event['is_monetary']) {
+            return $fields;
+        }
+
+        $priceFields = \Civi\Api4\Event::get(FALSE)
+            ->addSelect('price_field.*')
+            ->addJoin(
+                'PriceSetEntity AS price_set_entity',
+                'INNER',
+                ['price_set_entity.entity_table', '=', '"civicrm_event"'],
+                ['price_set_entity.entity_id', '=', 'id']
+            )
+            ->addJoin(
+                'PriceSet AS price_set',
+                'INNER',
+                ['price_set.id', '=', 'price_set_entity.price_set_id'],
+                ['price_set.is_active', '=', 1]
+            )
+            ->addJoin(
+                'PriceField AS price_field',
+                'LEFT',
+                ['price_field.price_set_id', '=', 'price_set.id']
+            )
+            ->addWhere('id', '=', $event['id'])
+            ->execute();
+
+        if (count($priceFields) === 0) {
+           return $fields;
+        }
+
+        $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+        $fields['price'] = [
+            'type' => 'fieldset',
+            'name' => 'price',
+            // TODO: Is the label correctly localised with the requested $locale?
+            'label' => $event['fee_label'],
+        ];
+        foreach ($priceFields as $priceField) {
+            $priceFieldValues = \Civi\Api4\PriceFieldValue::get(FALSE)
+                ->addSelect('id', 'label', 'amount')
+                ->addWhere('price_field_id', '=', $priceField['price_field.id'])
+                ->execute()
+                ->indexBy('id');
+            $field = [
+                // TODO: Validate types.
+                'type' => $priceField['price_field.html_type'],
+                'name' => $priceField['price_field.name'],
+                // TODO: Localize label with given $locale.
+                'label' => $priceField['price_field.label'],
+                'weight' => $priceField['price_field.weight'],
+                'required' => (bool) $priceField['price_field.is_required'],
+                'parent' => 'price',
+                'options' => $priceFieldValues->column('label'),
+            ];
+
+            // Append price field value amounts in option labels.
+            if ($priceField['price_field.is_display_amounts']) {
+                array_walk($field['options'], function(&$label, $id, $context) {
+                    $label .= sprintf(
+                        ' (%s)',
+                        CRM_Utils_Money::format(
+                          $context['priceFieldValues'][$id]['amount'],
+                          $context['event']['currency']
+                        )
+                    );
+                }, ['priceFieldValues' => $priceFieldValues, 'event' => $event]);
+            }
+
+            // Add prefixed help text.
+            if (isset($priceField['price_field.help_pre'])) {
+                // TODO: Localize with given $locale.
+                $field['prefix'] = $priceField['price_field.help_pre'];
+                $field['prefix_display'] = 'inline';
+            }
+
+            // Add suffixed help text.
+            if (isset($priceField['price_field.help_post'])) {
+                // TODO: Localize with given $locale.
+                $field['suffix'] = $priceField['price_field.help_post'];
+                $field['suffix_display'] = 'inline';
+            }
+
+            // TODO: Ids the price field name unique across all price fields for
+            //       this event?
+            $fields['price_' . $priceField['price_field.name']] = $field;
+        }
+
+        return $fields;
+    }
+
+    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
+    {
+        $fields = [];
+        if (!empty($event['is_multiple_registrations'])) {
+            $maxParticipants = min(
+              $maxParticipants ?? $event['max_additional_participants'],
+              $event['max_additional_participants']
+            );
+            $additional_participants_profile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
+                $event['event_remote_registration.remote_registration_additional_participants_profile']
+            );
+            $additional_fields = $additional_participants_profile->getFields($locale);
+            $additional_fields += $additional_participants_profile->getPriceFields($event, $locale);
+            $fields['additional_participants'] = [
+                'type' => 'fieldset',
+                'name' => 'additional_participants',
+                'label' => E::ts('Additional Participants'),
+                'weight' => 1000,
+                'description' => E::ts('Register up to %1 additional participants', [1 => $event['max_additional_participants']]),
+            ];
+            for ($i = 1; $i <= $maxParticipants; $i++) {
+                $fields['additional_' . $i] = [
+                    'type' => 'fieldset',
+                    'name' => 'additional_' . $i,
+                    'parent' => 'additional_participants',
+                    'label' => E::ts('Additional Participant %1', [1 => $i]),
+                    'weight' => 10,
+                    'description' => E::ts('Registration data for additional participant %1', [1 => $i]),
+                ];
+                foreach ($additional_fields as $additional_field_name => $additional_field) {
+                    $additional_field['entity_field_name'] ??= $additional_field['name'];
+                    $additional_field['name'] = 'additional_' . $i . '_' . $additional_field['name'];
+                    $additional_field['parent'] = empty($additional_field['parent']) ? 'additional_' . $i : 'additional_' . $i . '_' . $additional_field['parent'];
+                    $fields['additional_' . $i . '_' . $additional_field_name] = $additional_field;
+                }
+            }
+        }
+        return $fields;
     }
   }
 
@@ -250,16 +376,160 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     // Validate field values.
     $fields = $this->getFields()
           + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
-    foreach ($fields as $field_name => $field_spec) {
-      $value = $data[$field_name] ?? NULL;
-      if (!empty($field_spec['required']) && ($value === NULL || $value === '') &&
-      // Files are always optional on update.
-      ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')) {
-        $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
-      }
-      elseif ($field_spec['type'] === 'File') {
-        if ($value === NULL) {
-          continue;
+        foreach ($fields as $field_name => $field_spec) {
+            $value = $data[$field_name] ?? NULL;
+            if (!empty($field_spec['required']) && ($value === null || $value === '') &&
+              // Files are always optional on update.
+              ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')) {
+                $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
+            } else if ($field_spec['type'] === 'File') {
+                if ($value === NULL) {
+                  continue;
+                }
+
+                if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
+                  // File systems usually allow up to 255 characters.
+                  || strlen($value['filename']) > 255 || !is_string($value['content'] ?? NULL)
+                ) {
+                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+                    continue;
+                }
+
+                $maxFilesize = (int) ($field_spec['max_filesize'] ?? 0);
+                if ($maxFilesize > 0) {
+                    // The file might need up to 38 % more space through Base64 encoding.
+                    if (strlen($value['content']) > ceil($maxFilesize * 1.38)) {
+                        $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
+                    }
+                }
+            } else {
+                if (!$this->validateFieldValue($field_spec, $value)) {
+                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+                }
+                if (!$this->validateFieldLength($field_spec, $value)) {
+                    $validationEvent->addValidationError($field_name, $l10n->ts('Value too long'));
+                }
+            }
+        }
+
+        // Validate price fields.
+        if ((bool) $event['is_monetary']) {
+            foreach ($this->validatePriceFields($event, $data) as $field_name => $error) {
+                $validationEvent->addValidationError($field_name, $error);
+            }
+        }
+    }
+
+  /**
+   * @param array $event
+   * @param array $submission
+   * @param \CRM_Remoteevent_Localisation $l10n
+   *
+   * @return array<string, string>
+   *   An array with field names as keys and corresponding localised error
+   *   messages as values.
+   * @throws \CRM_Core_Exception
+   */
+    protected function validatePriceFields(array $event, array $submission, CRM_Remoteevent_Localisation $l10n): array
+    {
+        $errors = [];
+        foreach ($this->getPriceFields($event) as $priceField) {
+            // TODO: Validate price field values.
+        }
+        return $errors;
+    }
+
+    /**
+     * This function will tell you which entity/entities the given field
+     *   will relate to. It would mostly be Contact or Participant (or both)
+     *
+     * @param string $field_key
+     *   the field key as used by this profile
+     *
+     * @return array
+     *   list of entities
+     *
+     * @deprecated Specify entity name in field spec instead.
+     */
+    public function getFieldEntities($field_key)
+    {
+        // for now, we assume everything is contact, unless it's custom,
+        //   in which case we don't know - or more precisely are too lazy to find out.
+        if (preg_match('/^custom_/', $field_key)
+            || preg_match('/^\w+[.]\w+$/', $field_key)) {
+            return ['Contact', 'Participant'];
+        } else {
+            return ['Contact'];
+        }
+    }
+
+    /**
+     * Give the profile a chance to manipulate the contact data before it's being sent off to
+     *   the contact creation/update
+     *
+     * @param array $contact_data
+     *   contact data
+     *
+     * @return void
+     */
+    protected function adjustContactData(&$contact_data)
+    {
+        // this is just a stub. for now.
+    }
+
+    /**
+     * Give the profile a chance to manipulate the contact data before it's being sent off to
+     * the contact creation/update
+     *
+     * This is a public interface method for adjusting contact data, as self::adjustContactData()
+     * has protected visibility.
+     *
+     * @param array $contact_data
+     *
+     * @return void
+     */
+    public function modifyContactData(array &$contact_data): void {
+        $this->adjustContactData($contact_data);
+    }
+
+    /*************************************************************
+     *                HELPER / INFRASTRUCTURE                   **
+     *************************************************************/
+
+    /**
+     * Add the profile data to the get_form results
+     *
+     * @param RemoteEvent $remote_event
+     *      event triggered by the RemoteParticipant.get_form API call
+     *
+     * @return \CRM_Remoteevent_RegistrationProfile
+     *      the profile
+     */
+    public static function getProfile($remote_event)
+    {
+        $params = $remote_event->getQueryParameters();
+        $event  = $remote_event->getEvent();
+
+        // get profile
+        switch ($remote_event->getContext()) {
+            case 'create':
+                if (empty($params['profile'])) {
+                    // use default profile
+                    $params['profile'] = $event['default_profile'];
+                }
+                $allowed_profiles = explode(',', $event['enabled_profiles']);
+                break;
+
+            case 'update':
+                if (empty($params['profile'])) {
+                    // use default profile
+                    $params['profile'] = $event['default_update_profile'];
+                }
+                $allowed_profiles = explode(',', $event['enabled_update_profiles']);
+                break;
+
+            default:
+                $allowed_profiles = [];
         }
 
         if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
@@ -270,12 +540,31 @@ abstract class CRM_Remoteevent_RegistrationProfile {
           continue;
         }
 
-        $maxFilesize = (int) ($field_spec['max_filesize'] ?? 0);
-        if ($maxFilesize > 0) {
-          // The file might need up to 38 % more space through Base64 encoding.
-          if (strlen($value['content']) > ceil($maxFilesize * 1.38)) {
-            $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
-          }
+        // simply add the fields from the profile
+        return CRM_Remoteevent_RegistrationProfile::getRegistrationProfile($params['profile']);
+    }
+
+    /**
+     * Add the profile data to the get_form results
+     *
+     * @param GetParticipantFormEventBase $get_form_results
+     *      event triggered by the RemoteParticipant.get_form API call
+     *
+     * @return array|null
+     *      returns API error if there is an issue
+     */
+    public static function addProfileData($get_form_results)
+    {
+        // simply add the fields from the profile
+        $profile = self::getProfile($get_form_results);
+        $event = $get_form_results->getEvent();
+
+        // add the fields
+        $locale = $get_form_results->getLocale();
+        $fields = $profile->getFields($locale);
+        if ('create' === $get_form_results->getContext()) {
+          $fields += $profile->getPriceFields($event, $locale);
+          $fields += $profile->getAdditionalParticipantsFields($event, NULL, $locale);
         }
       }
       else {
