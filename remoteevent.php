@@ -263,15 +263,37 @@ function remoteevent_civicrm_config(&$config) {
     ['CRM_Remoteevent_RemoteEvent', 'listTokens']
   );
 
-  // 2) SESSION TOKENS
-  $dispatcher->addUniqueListener(
-    'civi.eventmessages.tokens',
-    ['CRM_Remoteevent_EventSessions', 'addTokens']
-  );
-  $dispatcher->addUniqueListener(
-    'civi.eventmessages.tokenlist',
-    ['CRM_Remoteevent_EventSessions', 'listTokens']
-  );
+    // EVENT REGISTRATION.SUBMIT
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_EventSessions', 'extractSessions'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'verifyContactNotRegistered'], CRM_Remoteevent_Registration::AFTER_CONTACT_IDENTIFICATION);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'confirmExistingParticipant'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 40);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'determineParticipantStatus'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'registerAdditionalParticipants'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
+
+    // TODO: Process price fields.
+
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
 
   // 2) EVENT LOCATION TOKENS
   $dispatcher->addUniqueListener(
