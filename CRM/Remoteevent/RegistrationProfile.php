@@ -741,7 +741,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     $value_callbacks[$field_key] = $fields[$field_key]['prefill_value_callback'];
                 }
             }
-            CRM_Remoteevent_CustomData::resolveCustomFields($contact_fields);
+
+            // TODO: $legacy_contact_fields and $legacy_contact_data include
+            //       APIv3-formatted custom fields (custom_x) which might be
+            //       expected by other extensions. Those should be removed for
+            //       the next major version (2.0).
+            $legacy_contact_fields = $contact_fields;
+            CRM_Remoteevent_CustomData::resolveCustomFields($legacy_contact_fields);
+            $contact_fields += $legacy_contact_fields;
             if (isset($contact_fields['country_id'])) {
                 // country_id is only returned if country is selected.
                 $contact_fields['country'] = 'country';
@@ -751,10 +758,16 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 $contact_fields['state_province'] = 'state_province';
             }
             try {
-                $contact_data = civicrm_api3('Contact', 'getsingle', [
+                $contact_data = \Civi\Api4\Contact::get()
+                  ->setSelect(array_keys($contact_fields))
+                  ->addWhere('id', '=', $contact_id)
+                  ->execute()
+                  ->single();
+                $legacy_contact_data = civicrm_api3('Contact', 'getsingle', [
                     'contact_id' => $contact_id,
-                    'return'     => implode(',', array_keys($contact_fields)),
+                    'return'     => implode(',', array_keys($legacy_contact_fields)),
                 ]);
+                $contact_data += $legacy_contact_data;
                 ParticipantFormEventUtil::mapToPrefill($contact_data, $attribute_mapping, $resultsEvent, $value_callbacks);
             } catch (CiviCRM_API3_Exception $ex) {
                 // there is no (unique) primary email
