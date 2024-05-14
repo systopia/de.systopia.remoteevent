@@ -251,7 +251,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
                 $event = $this->getEvent();
 
                 $l10n = $this->getLocalisation();
-                $this->addStatus($l10n->localise("Welcome %1. You are modifying your registration for event '%2'", [
+                $this->addStatus($l10n->ts("Welcome %1. You are modifying your registration for event '%2'", [
                     1 => $contact_name,
                     2 => $event['title']]));
             }
@@ -273,7 +273,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
                         $event = $this->getEvent();
 
                         $l10n = $this->getLocalisation();
-                        $this->addStatus($l10n->localise("Welcome %1. You may now confirm or decline your invitation to event '%2'", [
+                        $this->addStatus($l10n->ts("Welcome %1. You may now confirm or decline your invitation to event '%2'", [
                             1 => $contact_name,
                             2 => $event['title']]));
                         break;
@@ -292,7 +292,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
                 $event = $this->getEvent();
 
                 $l10n = $this->getLocalisation();
-                $this->addStatus($l10n->localise("Welcome %1. You are about to cancel your registration for the event '%2'", [
+                $this->addStatus($l10n->ts("Welcome %1. You are about to cancel your registration for the event '%2'", [
                     1 => $contact_name,
                     2 => $event['title']]));
             }

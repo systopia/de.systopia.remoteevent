@@ -211,13 +211,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     )
             ) {
                 $validationEvent->addWarning(
-                    $l10n->localise('Not enough vacancies for the number of requested participants.')
+                    $l10n->ts('Not enough vacancies for the number of requested participants.')
                     . ' '
-                    . $l10n->localise('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
+                    . $l10n->ts('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
                 );
             }
             else {
-                $validationEvent->addValidationError('', $l10n->localise('Not enough vacancies for the number of requested participants.'));
+                $validationEvent->addValidationError('', $l10n->ts('Not enough vacancies for the number of requested participants.'));
             }
         }
 
@@ -227,13 +227,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
         foreach ($fields as $field_name => $field_spec) {
             $value = CRM_Utils_Array::value($field_name, $data);
             if (!empty($field_spec['required']) && ($value === null || $value === '')) {
-                $validationEvent->addValidationError($field_name, $l10n->localise("Required"));
+                $validationEvent->addValidationError($field_name, $l10n->ts("Required"));
             } else {
                 if (!$this->validateFieldValue($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->localise("Invalid Value"));
+                    $validationEvent->addValidationError($field_name, $l10n->ts("Invalid Value"));
                 }
                 if (!$this->validateFieldLength($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->localise("Value too long"));
+                    $validationEvent->addValidationError($field_name, $l10n->ts("Value too long"));
                 }
             }
         }
@@ -816,7 +816,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $countries = civicrm_api3('Country', 'get', $country_query);
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($countries['values'] as $country) {
-            $country_list[$country['id']] = $l10n->localise($country['name'], ['context' => 'country']);
+            $country_list[$country['id']] = $l10n->ts($country['name'], ['context' => 'country']);
         }
 
         return $country_list;
@@ -859,7 +859,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($provinces['values'] as $province) {
             $province_key = "{$province['country_id']}-{$province['id']}";
-            $province_list[$province_key] = $l10n->localise($province['name'], ['context' => 'province']);
+            $province_list[$province_key] = $l10n->ts($province['name'], ['context' => 'province']);
         }
 
         return $province_list;

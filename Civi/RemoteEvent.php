@@ -282,7 +282,7 @@ abstract class RemoteEvent extends RemoteToolsRequest
      */
     public function localise(string $string, array $context = []): string
     {
-        return $this->getLocalisation()->localise($string, $context);
+        return $this->getLocalisation()->ts($string, $context);
     }
 
     /**

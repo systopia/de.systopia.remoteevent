@@ -178,7 +178,7 @@ class CRM_Remoteevent_EventSessions
     public static function addSessionFields($get_form_results)
     {
         $l10n = $get_form_results->getLocalisation();
-        $full_prefix = $l10n->localise("[FULL] ");
+        $full_prefix = $l10n->ts("[FULL] ");
 
         $event = $get_form_results->getEvent();
         $session_data = CRM_Remoteevent_BAO_Session::getSessions($event['id'], true, $event['start_date']);

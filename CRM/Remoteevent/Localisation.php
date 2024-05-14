@@ -73,7 +73,7 @@ class CRM_Remoteevent_Localisation
      */
     public function localise($string, $context = [])
     {
-        return self::ts($string, $context);
+        return $this->ts($string, $context);
     }
 
     /**
