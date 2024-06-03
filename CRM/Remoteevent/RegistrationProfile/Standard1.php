@@ -47,7 +47,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
             'contact_base' => [
                 'type'        => 'fieldset',
                 'name'        => 'contact_base',
-                'label'       => $l10n->localise("Contact Data"),
+                'label'       => $l10n->ts("Contact Data"),
                 'weight'      => 10,
                 'description' => '',
             ],
@@ -57,8 +57,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
                 'validation'  => 'Email',
                 'weight'      => 10,
                 'required'    => 1,
-                'label'       => $l10n->localise('Email'),
-                'description' => '', // $l10n->localise("Participant's email address"),
+                'label'       => $l10n->ts('Email'),
+                'description' => '', // $l10n->ts("Participant's email address"),
                 'parent'      => 'contact_base',
             ]
         ];

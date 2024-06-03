@@ -49,7 +49,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                 'contact_base' => [
                     'type'        => 'fieldset',
                     'name'        => 'contact_base',
-                    'label'       => $l10n->localise("Contact Data"),
+                    'label'       => $l10n->ts("Contact Data"),
                     'weight'      => 10,
                     'description' => '',
                 ],
@@ -60,15 +60,15 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'maxlength'   => 32,
                     'weight'      => 100,
                     'required'    => 0,
-                    'label'       => $l10n->localise('Phone Number'),
-                    'description' => $l10n->localise("Please include country code"),
+                    'label'       => $l10n->ts('Phone Number'),
+                    'description' => $l10n->ts("Please include country code"),
                     'parent'      => 'contact_base',
                 ],
 
                 'contact_address' => [
                     'type'        => 'fieldset',
                     'name'        => 'contact_base',
-                    'label'       => $l10n->localise("Contact Address"),
+                    'label'       => $l10n->ts("Contact Address"),
                     'weight'      => 20,
                     'description' => '',
                 ],
@@ -79,8 +79,8 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'maxlength'   => 96,
                     'weight'      => 10,
                     'required'    => 0,
-                    'label'       => $l10n->localise('Street Address'),
-                    'description' => $l10n->localise("Participant's street and house number"),
+                    'label'       => $l10n->ts('Street Address'),
+                    'description' => $l10n->ts("Participant's street and house number"),
                     'parent'      => 'contact_address',
                 ],
                 'supplemental_address_1' => [
@@ -90,7 +90,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'maxlength'   => 96,
                     'weight'      => 20,
                     'required'    => 0,
-                    'label'       => $l10n->localise('Supplemental Address'),
+                    'label'       => $l10n->ts('Supplemental Address'),
                     'parent'      => 'contact_address',
                 ],
                 'supplemental_address_2' => [
@@ -100,7 +100,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'maxlength'   => 96,
                     'weight'      => 30,
                     'required'    => 0,
-                    'label'       => $l10n->localise('Supplemental Address 2'),
+                    'label'       => $l10n->ts('Supplemental Address 2'),
                     'parent'      => 'contact_address',
                 ],
                 'postal_code'            => [
@@ -110,7 +110,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'maxlength'   => 64,
                     'weight'      => 40,
                     'required'    => 0,
-                    'label'       => $l10n->localise('Postal Code'),
+                    'label'       => $l10n->ts('Postal Code'),
                     'parent'      => 'contact_address',
                 ],
                 'city'                   => [
@@ -120,7 +120,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'maxlength'   => 64,
                     'weight'      => 50,
                     'required'    => 0,
-                    'label'       => $l10n->localise('City'),
+                    'label'       => $l10n->ts('City'),
                     'parent'      => 'contact_address',
                 ],
                 'country_id'             => [
@@ -130,7 +130,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'validation'  => '',
                     'weight'      => 60,
                     'required'    => 0,
-                    'label'       => $l10n->localise('Country'),
+                    'label'       => $l10n->ts('Country'),
                     'parent'      => 'contact_address',
                     'dependencies'=> [
                         [
@@ -150,7 +150,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                     'weight'      => 70,
                     'required'    => 0,
                     'options'     => $this->getStateProvinces($locale),
-                    'label'       => $l10n->localise('State or Province'),
+                    'label'       => $l10n->ts('State or Province'),
                     'parent'      => 'contact_address'
                 ],
             ]

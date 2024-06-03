@@ -285,15 +285,15 @@ class CRM_Remoteevent_RemoteEvent
             // look up the type
             if (isset($event_types[$event_type_id])) {
                 if ($locale) {
-                    return $locale->localise($event_types[$event_type_id]);
+                    return $locale->ts($event_types[$event_type_id]);
                 } else {
                     return $event_types[$event_type_id];
                 }
             } else {
                 if ($locale) {
-                    return $locale->localise("Unkown");
+                    return $locale->ts("Unknown");
                 } else {
-                    return E::ts("Unkown");
+                    return E::ts("Unknown");
                 }
             }
         } else {
