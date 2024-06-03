@@ -27,6 +27,8 @@ use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateEvent;
 use Civi\RemoteParticipant\Event\CancelEvent;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 
 /**
  * Implements hook_civicrm_config().
@@ -221,6 +223,18 @@ function remoteevent_civicrm_config(&$config)
     );
 
 }
+
+/**
+ * Implements hook_civicrm_container
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
+ *
+ * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+ */
+function remoteevent_civicrm_container(ContainerBuilder $container) {
+    $container->addCompilerPass(new Civi\RemoteEvent\CompilerPass());
+}
+
 
 /**
  * Implements hook_civicrm_install().
