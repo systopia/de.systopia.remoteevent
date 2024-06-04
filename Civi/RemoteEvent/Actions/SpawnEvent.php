@@ -27,7 +27,7 @@ class SpawnEvent extends AbstractAction {
   }
 
   /**
-   * Returns the specification of the configuration options for the actual action.
+   * @inheritDoc
    */
   public function getParameterSpecification(): SpecificationBag{
     $specs = new SpecificationBag(array(
@@ -98,7 +98,7 @@ class SpawnEvent extends AbstractAction {
 
     if ($this->configuration->doesParameterExists('template_id')) {
         $apiParams['template_id'] = $this->configuration->getParameter('template_id');
-    }elseif ($parameters->doesParameterExists('template_id')) {
+    } elseif ($parameters->doesParameterExists('template_id')) {
       $apiParams['template_id'] = $parameters->getParameter('template_id');
     }
     if ($parameters->doesParameterExists('event_id')) {
