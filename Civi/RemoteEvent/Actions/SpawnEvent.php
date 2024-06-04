@@ -97,7 +97,7 @@ class SpawnEvent extends AbstractAction {
     $apiParams = CustomField::getCustomFieldsApiParameter($parameters, $this->getParameterSpecification());
 
     if ($this->configuration->doesParameterExists('template_id')) {
-        $apiParams['template_id'] = $this->configuration->getParameter('template_id');
+      $apiParams['template_id'] = $this->configuration->getParameter('template_id');
     } elseif ($parameters->doesParameterExists('template_id')) {
       $apiParams['template_id'] = $parameters->getParameter('template_id');
     }
