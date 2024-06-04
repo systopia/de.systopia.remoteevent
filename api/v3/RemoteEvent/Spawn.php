@@ -108,6 +108,9 @@ function civicrm_api3_remote_event_spawn($params)
         $event_create['template_title'] = '';
         $event_create['template_id'] = $template_id;
 
+        // convert api3-style parameters to api4-style
+        CRM_Remoteevent_CustomData::labelCustomFields($event_create);
+
         $create_call = \Civi\Api4\Event::create(false);
         foreach ($event_create as $name => $value) {
           $create_call->addValue($name, $value);
