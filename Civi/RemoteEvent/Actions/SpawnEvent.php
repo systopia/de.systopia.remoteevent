@@ -2,14 +2,14 @@
 
 namespace Civi\RemoteEvent\Actions;
 
-use \Civi\ActionProvider\Action\AbstractAction;
+use Civi\ActionProvider\Action\AbstractAction;
 use Civi\ActionProvider\Action\Contact\ContactActionUtils;
 use Civi\ActionProvider\ConfigContainer;
-use \Civi\ActionProvider\Parameter\ParameterBagInterface;
-use \Civi\ActionProvider\Parameter\SpecificationBag;
-use \Civi\ActionProvider\Parameter\Specification;
-use \Civi\ActionProvider\Parameter\OptionGroupSpecification;
-use \Civi\ActionProvider\Utils\CustomField;
+use Civi\ActionProvider\Parameter\ParameterBagInterface;
+use Civi\ActionProvider\Parameter\SpecificationBag;
+use Civi\ActionProvider\Parameter\Specification;
+use Civi\ActionProvider\Parameter\OptionGroupSpecification;
+use Civi\ActionProvider\Utils\CustomField;
 
 use CRM_ActionProvider_ExtensionUtil as E;
 use Dompdf\Exception;
@@ -18,22 +18,18 @@ class SpawnEvent extends AbstractAction {
 
   /**
    * Returns the specification of the configuration options for the actual action.
-   *
-   * @return SpecificationBag
    */
-  public function getConfigurationSpecification() {
+  public function getConfigurationSpecification(): SpecificationBag {
 
-    return new SpecificationBag(array(
-        new Specification('template_id', 'Integer', E::ts('Event Template ID'), false, null, null, null, FALSE),
-    ));
+    return new SpecificationBag([
+        new Specification('template_id', 'Integer', E::ts('Event Template ID'), FALSE, NULL, NULL, NULL, FALSE),
+    ]);
   }
 
   /**
    * Returns the specification of the configuration options for the actual action.
-   *
-   * @return SpecificationBag
    */
-  public function getParameterSpecification() {
+  public function getParameterSpecification(): SpecificationBag{
     $specs = new SpecificationBag(array(
       /**
        * The parameters given to the Specification object are:
@@ -42,23 +38,23 @@ class SpawnEvent extends AbstractAction {
        * @param string $title
        * @param bool $required
        * @param mixed $defaultValue
-       * @param string|null $fkEntity
+       * @param string|NULL $fkEntity
        * @param array $options
        * @param bool $multiple
        */
-      new Specification('template_id', 'Integer', E::ts('Event Template ID'), false, null, null, null, FALSE),
-      new Specification('event_id', 'Integer', E::ts('Event ID'), false, null, null, null, FALSE),
-      new OptionGroupSpecification('event_type', 'event_type', E::ts('Event Type'), false),
-      new Specification('title', 'String', E::ts('Title'), true, null, null, null, FALSE),
-      new Specification('description', 'String', E::ts('Description'), false, null, null, null, FALSE),
-      new Specification('summary', 'String', E::ts('Summary'), false, null, null, null, FALSE),
-      new Specification('start_date', 'Timestamp', E::ts('Start date'), true, null, null, null, FALSE),
-      new Specification('end_date', 'Timestamp', E::ts('End date'), false, null, null, null, FALSE),
-      new Specification('is_active', 'Boolean', E::ts('Is active'), false, 1, null, null, FALSE),
-      new Specification('is_public', 'Boolean', E::ts('Is public'), false, 0, null, null, FALSE),
-      new Specification('max_participants', 'Integer', E::ts('Max. Participants'), false, null),
-      new Specification('event_full_text', 'String', E::ts('Text when event is full'), false, null),
-      new Specification('waitlist_text', 'String', E::ts('Waitlist Text'), false, null),
+      new Specification('template_id', 'Integer', E::ts('Event Template ID'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('event_id', 'Integer', E::ts('Event ID'), FALSE, NULL, NULL, NULL, FALSE),
+      new OptionGroupSpecification('event_type', 'event_type', E::ts('Event Type'), FALSE),
+      new Specification('title', 'String', E::ts('Title'), TRUE, NULL, NULL, NULL, FALSE),
+      new Specification('description', 'String', E::ts('Description'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('summary', 'String', E::ts('Summary'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('start_date', 'Timestamp', E::ts('Start Date'), TRUE, NULL, NULL, NULL, FALSE),
+      new Specification('end_date', 'Timestamp', E::ts('End Date'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('is_active', 'Boolean', E::ts('Is Active'), FALSE, 1, NULL, NULL, FALSE),
+      new Specification('is_public', 'Boolean', E::ts('Is Public'), FALSE, 0, NULL, NULL, FALSE),
+      new Specification('max_participants', 'Integer', E::ts('Max. Participants'), FALSE, NULL),
+      new Specification('event_full_text', 'String', E::ts('Text when event is full'), FALSE, NULL),
+      new Specification('waitlist_text', 'String', E::ts('Waitlist Text'), FALSE, NULL),
     ));
 
     $config = ConfigContainer::getInstance();
@@ -78,10 +74,8 @@ class SpawnEvent extends AbstractAction {
    * Returns the specification of the output parameters of this action.
    *
    * This function could be overridden by child classes.
-   *
-   * @return SpecificationBag
    */
-  public function getOutputSpecification() {
+  public function getOutputSpecification(): SpecificationBag {
     return new SpecificationBag(array(
       new Specification('id', 'Integer', E::ts('Event ID')),
     ));
@@ -97,8 +91,7 @@ class SpawnEvent extends AbstractAction {
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
-    $existingAddressId = false;
-    $locBlockId = false;
+    $locBlockId = FALSE;
 
     // Get the contact and the event.
     $apiParams = CustomField::getCustomFieldsApiParameter($parameters, $this->getParameterSpecification());
@@ -122,10 +115,9 @@ class SpawnEvent extends AbstractAction {
     if ($parameters->doesParameterExists('end_date')) {
       $apiParams['end_date'] = $parameters->getParameter('end_date');
     }
-    $apiParams['event_type_id'] = $parameters->getParameter('event_type');
-    if ($locBlockId) {
-      $apiParams['loc_block_id'] = $locBlockId;
-      $apiParams['is_show_location'] = '1';
+
+    if ($parameters->doesParameterExists('event_type')) {
+      $apiParams['event_type_id'] = $parameters->getParameter('event_type');
     }
     if ($parameters->doesParameterExists('is_active')) {
       $apiParams['is_active'] = $parameters->getParameter('is_active');

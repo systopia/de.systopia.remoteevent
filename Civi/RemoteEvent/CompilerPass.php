@@ -9,18 +9,16 @@ use CRM_RemoteEvent_ExtensionUtil as E;
 
 class CompilerPass implements CompilerPassInterface {
 
-    public function process(ContainerBuilder $container) {
-        if ($container->hasDefinition('action_provider')) {
-            $actionProviderDefinition = $container->getDefinition('action_provider');
-            $actionProviderDefinition->addMethodCall('addAction', array('RemoteEventSpawnEvent', 'Civi\RemoteEvent\Actions\SpawnEvent', E::ts('RemoteEvent spawn'), array()));
-
-/*            $actionProviderDefinition->addMethodCall('addAction', [
-                'RemoteEventSpawnEvent',
-                'Civi\RemoteEvent\Actions\SpawnEvent',
-                E::ts('RemoteEvent spawn'),
-                array()
-            ]);*/
-
-        }
+  public function process(ContainerBuilder $container) {
+    if ($container->hasDefinition('action_provider')) {
+      $actionProviderDefinition = $container->getDefinition('action_provider');
+      $actionProviderDefinition->addMethodCall('addAction',
+        ['RemoteEventSpawnEvent',
+         'Civi\RemoteEvent\Actions\SpawnEvent',
+         E::ts('RemoteEvent spawn'),
+         []
+        ]
+      );
     }
+  }
 }
