@@ -24,7 +24,7 @@ class SpawnEvent extends AbstractAction {
   public function getConfigurationSpecification() {
 
     return new SpecificationBag(array(
-        new Specification('template_id', 'Integer', E::ts('Event Template'), false, null, 'Event', null, FALSE),
+        new Specification('template_id', 'Integer', E::ts('Event Template ID'), false, null, null, null, FALSE),
     ));
   }
 
