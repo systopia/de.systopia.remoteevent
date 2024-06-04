@@ -65,8 +65,6 @@ class SpawnEvent extends AbstractAction {
       }
     }
 
-    ContactActionUtils::createAddressParameterSpecification($specs);
-
     return $specs;
   }
 
