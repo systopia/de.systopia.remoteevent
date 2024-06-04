@@ -76,9 +76,9 @@ class SpawnEvent extends AbstractAction {
    * This function could be overridden by child classes.
    */
   public function getOutputSpecification(): SpecificationBag {
-    return new SpecificationBag(array(
+    return new SpecificationBag([
       new Specification('id', 'Integer', E::ts('Event ID')),
-    ));
+    ]);
   }
 
   /**
@@ -91,8 +91,6 @@ class SpawnEvent extends AbstractAction {
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
-    $locBlockId = FALSE;
-
     // Get the contact and the event.
     $apiParams = CustomField::getCustomFieldsApiParameter($parameters, $this->getParameterSpecification());
 
@@ -140,7 +138,7 @@ class SpawnEvent extends AbstractAction {
       $result = civicrm_api3('RemoteEvent', 'spawn', $apiParams);
       $output->setParameter('id', $result['id']);
     } catch (Exception $e) {
-      throw new \Civi\ActionProvider\Exception\ExecutionException(E::ts('Could not update or create an event.'));
+      throw new ExecutionException(E::ts('Could not update or create an event.'), $e->getCode(), $e);
     }
   }
 
