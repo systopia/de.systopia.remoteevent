@@ -237,6 +237,19 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
         return true;
     }
 
+  /**
+   * Synchronizes custom fields for CiviRemote Event registration configuration
+   * adding a new field to require a user account for registration.
+   */
+  public function upgrade_0019(): bool
+  {
+      $this->ctx->log->info('Updating RegistrationProfile data structures');
+      $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+      $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+
+      return true;
+  }
+
 
     /****************************************************************
      **                       HELPER FUNCTIONS                     **

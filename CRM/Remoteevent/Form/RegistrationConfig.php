@@ -132,6 +132,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         );
         $this->add(
             'checkbox',
+            'require_user_account',
+            E::ts('Require user account for registration?')
+        );
+        $this->add(
+            'checkbox',
             'remote_use_custom_event_location',
             E::ts("Use Custom Event Location?")
         );
@@ -193,6 +198,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_external_identifier'    => 'remote_registration_external_identifier',
                 'event_remote_registration.remote_disable_civicrm_registration'        => 'remote_disable_civicrm_registration',
                 'event_remote_registration.remote_registration_suspended'              => 'remote_registration_suspended',
+                'event_remote_registration.require_user_account' => 'require_user_account',
                 'event_remote_registration.remote_registration_xcm_profile'            => 'remote_registration_xcm_profile',
                 'event_remote_registration.remote_registration_additional_participants_waitlist' => 'remote_registration_additional_participants_waitlist',
                 'event_remote_registration.remote_registration_update_xcm_profile'     => 'remote_registration_update_xcm_profile',
@@ -311,6 +317,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 $values,
                 0
             ),
+            'event_remote_registration.require_user_account' => $values['require_user_account'] ?? 0,
             'event_remote_registration.remote_registration_default_profile'        => $values['remote_registration_default_profile'],
             'event_remote_registration.remote_registration_default_update_profile' => $values['remote_registration_default_update_profile'],
             'event_remote_registration.remote_registration_external_identifier'    => $values['remote_registration_external_identifier'],

@@ -90,6 +90,11 @@
           <div class="content">{$form.requires_approval.html}</div>
           <div class="clear"></div>
         </div>
+        <div class="crm-section">
+          <div class="label">{$form.require_user_account.label}&nbsp;{help id="id-require-user-account" title=$form.require_user_account.label}</div>
+          <div class="content">{$form.require_user_account.html}</div>
+          <div class="clear"></div>
+        </div>
     </fieldset>
 
     <fieldset id="registration-update" class="crm-collapsible">

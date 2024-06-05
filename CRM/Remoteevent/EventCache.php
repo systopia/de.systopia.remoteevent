@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Api4\Event;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 
@@ -43,9 +44,11 @@ class CRM_Remoteevent_EventCache
         }
 
         if (!isset(self::$event_cache[$event_id])) {
-            self::$event_cache[$event_id] = civicrm_api3('Event', 'getsingle', [
-                'id' => $event_id
-            ]);
+            self::$event_cache[$event_id] = Event::get(FALSE)
+              ->addSelect('*', 'custom.*')
+              ->addWhere('id', '=', $event_id)
+              ->execute()
+              ->single();
         }
         return self::$event_cache[$event_id];
     }

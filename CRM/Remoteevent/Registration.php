@@ -162,6 +162,10 @@ class CRM_Remoteevent_Registration
             $event_data = CRM_Remoteevent_EventCache::getEvent($event_id);
         }
 
+        if ($event_data['event_remote_registration.require_user_account'] && $contact_id === null) {
+            return E::ts('You need to be logged in to register for this event.');
+        }
+
         // registration suspended?
         if (self::isRegistrationSuspended($event_id, $event_data)) {
             return E::ts("Registration Deactivated");

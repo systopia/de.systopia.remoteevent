@@ -120,6 +120,10 @@
   <p>{ts}With this flag you can suspend / disable the remote online registration for this event, regardless of the other restrictions.{/ts}</p>
 {/htxt}
 
+{htxt id='id-require-user-account'}
+  <p>{ts}If enabled, registration is only possible for logged in users.{/ts}</p>
+{/htxt}
+
 {htxt id='id-remote-registration-xcm-profile'}
   <p>{ts}The XCM tool will be used to identify and update an existing contact with the submitted data, or to create a new one.{/ts}</p>
   <p>{ts}A whole host of additional options like tagging the contacts, or recording/flagging differences are also available in the <a href="{crmURL p='civicrm/admin/setting/xcm'}">XCM configuration</a>.{/ts}</p>

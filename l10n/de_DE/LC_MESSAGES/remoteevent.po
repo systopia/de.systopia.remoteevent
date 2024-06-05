@@ -585,6 +585,10 @@ msgid "Update Contact Matching (XCM)"
 msgstr "Kontaktabgleich (XCM) für Aktualisierungen"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Require user account for registration?"
+msgstr "Benutzerkonto für Registrierung erforderlich?"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Use Custom Event Location?"
 msgstr "Alternativen Veranstaltungsort verwenden?"
 
@@ -927,6 +931,11 @@ msgstr "Teilnahmeliste für Workshop \"%1\""
 #: CRM/Remoteevent/Page/SessionParticipantList.php
 msgid "View"
 msgstr "Ansicht"
+
+#: CRM/Remoteevent/Registration.php
+msgid "You need to be logged in to register for this event."
+msgstr ""
+"Sie benötigen ein Benutzerkonto, um sich für diese Veranstaltung anzumelden."
 
 #: CRM/Remoteevent/Registration.php
 msgid "Registration Deactivated"
@@ -1790,6 +1799,12 @@ msgid ""
 msgstr ""
 "Mit dieser Einstellung können sie die Registrierung über die RemoteEvent "
 "Schnittstelle aussetzen, unabhängig von den anderen Einstellungen"
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "If enabled, registration is only possible for logged in users."
+msgstr ""
+"Wenn aktiviert, ist eine Veranstaltungsanmeldung nur für eingeloggte "
+"Benutzer möglich."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "The XCM tool can be used to update and process the registered contact."

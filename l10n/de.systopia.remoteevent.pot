@@ -491,6 +491,10 @@ msgid "Update Contact Matching (XCM)"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Require user account for registration?"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Use Custom Event Location?"
 msgstr ""
 
@@ -812,6 +816,10 @@ msgstr ""
 
 #: CRM/Remoteevent/Page/SessionParticipantList.php
 msgid "View"
+msgstr ""
+
+#: CRM/Remoteevent/Registration.php
+msgid "You need to be logged in to register for this event."
 msgstr ""
 
 #: CRM/Remoteevent/Registration.php
@@ -1452,6 +1460,10 @@ msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "With this flag you can suspend / disable the remote online registration for this event, regardless of the other restrictions."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "If enabled, registration is only possible for logged in users."
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
