@@ -935,7 +935,7 @@ msgstr "Ansicht"
 #: CRM/Remoteevent/Registration.php
 msgid "You need to be logged in to register for this event."
 msgstr ""
-"Sie müssen angemeldet sein, um sich für diese Veranstaltung anzumelden."
+"Sie benötigen ein Benutzerkonto, um sich für diese Veranstaltung anzumelden."
 
 #: CRM/Remoteevent/Registration.php
 msgid "Registration Deactivated"
