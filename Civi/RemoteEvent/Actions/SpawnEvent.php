@@ -86,9 +86,8 @@ class SpawnEvent extends AbstractAction {
    *   The parameters to this action.
    * @param ParameterBagInterface $output
    *   The parameters this action can send back
-   * @return void
    */
-  protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
+  protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output): void {
     // Get the contact and the event.
     $apiParams = CustomField::getCustomFieldsApiParameter($parameters, $this->getParameterSpecification());
 
