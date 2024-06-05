@@ -433,8 +433,13 @@ class CRM_Remoteevent_Registration
      * @return int
      *    number of registrations (participant objects)
      */
-    public static function getRegistrationCount($event_id, $contact_id = null, $class_list = ['Positive'], $status_id_list = [], $only_counted = true)
-    {
+    public static function getRegistrationCount(
+        $event_id,
+        $contact_id = null,
+        array $class_list = [],
+        array $status_id_list = [],
+        bool $only_counted = true
+    ): int {
         $event_id = (int) $event_id;
         $contact_id = (int) $contact_id;
 
