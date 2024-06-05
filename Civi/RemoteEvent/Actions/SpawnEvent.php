@@ -11,8 +11,7 @@ use Civi\ActionProvider\Parameter\Specification;
 use Civi\ActionProvider\Parameter\OptionGroupSpecification;
 use Civi\ActionProvider\Utils\CustomField;
 
-use CRM_ActionProvider_ExtensionUtil as E;
-use Dompdf\Exception;
+use CRM_Remoteevent_ExtensionUtil as E;
 
 class SpawnEvent extends AbstractAction {
 
