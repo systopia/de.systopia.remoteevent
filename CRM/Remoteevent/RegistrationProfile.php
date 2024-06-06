@@ -761,7 +761,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 $contact_fields['state_province'] = 'state_province';
             }
             try {
-                $contact_data = \Civi\Api4\Contact::get()
+                $contact_data = \Civi\Api4\Contact::get(FALSE)
                   ->setSelect(array_keys($contact_fields))
                   ->addWhere('id', '=', $contact_id)
                   ->execute()
@@ -774,6 +774,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 ParticipantFormEventUtil::mapToPrefill($contact_data, $attribute_mapping, $resultsEvent, $value_callbacks);
             } catch (CiviCRM_API3_Exception $ex) {
                 // there is no (unique) primary email
+                // @todo CiviCRM_API3_Exception is an alias of CRM_Core_Exception so this catch is too broad.
             }
         }
     }
