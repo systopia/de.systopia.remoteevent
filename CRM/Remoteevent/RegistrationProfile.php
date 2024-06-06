@@ -803,6 +803,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public function getCountries($locale)
     {
+        // TODO: Cache localised list of countries (by locale).
         $country_list  = [];
         $country_query = [
             'option.limit' => 0,
@@ -831,6 +832,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     public function getStateProvinces($locale)
     {
+        // TODO: Cache localised list of provinces (by locale).
         $province_list  = [];
         $province_query = [
             'option.limit' => 0,

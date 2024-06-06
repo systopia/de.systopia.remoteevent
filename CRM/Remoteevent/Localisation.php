@@ -96,6 +96,8 @@ class CRM_Remoteevent_Localisation
             return $string;
         }
         else {
+          // TODO: Implement a cache, as this gets slow for fields with many
+          //       options, e.g. countries and provinces
             $currentLocale = CRM_Core_I18n::getLocale();
             $locale = CRM_Core_I18n::singleton();
             $locale->setLocale($this->locale);
