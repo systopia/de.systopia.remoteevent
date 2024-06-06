@@ -10,7 +10,7 @@
   "style": "Tab",
   "table_name": "civicrm_value_remote_registration",
   "collapse_adv_display": "0",
-  "is_reserved": "0",
+  "is_reserved": "1",
   "_fields": [
     {
       "_lookup": ["column_name", "custom_group_id"],

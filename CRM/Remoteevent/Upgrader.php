@@ -246,10 +246,26 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
       $this->ctx->log->info('Updating RegistrationProfile data structures');
       $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
       $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-
+    
       return true;
   }
 
+  /**
+     * Synchronizes custom groups to make them reserved. This is necessary since
+     * CiviCRM 5.71.0 because of this change:
+     * https://github.com/civicrm/civicrm-core/commit/1f511cc1a07e0c5e9902b0c053f2c4e4bbf45784
+     *
+     * @throws \Exception
+     */
+    public function upgrade_0020(): bool
+    {
+        $this->ctx->log->info('Updating data structures');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+        $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
+
+        return true;
+    }
 
     /****************************************************************
      **                       HELPER FUNCTIONS                     **
