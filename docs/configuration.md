@@ -2,11 +2,12 @@
 
 After installing the extension, make sure your **Remote Tool settings** are
 according to your needs (refer to documentation provided in
-de.systopia.remotetools). Then head on to the general configuration:
+[de.systopia.remotetools](https://github.com/systopia/de.systopia.remotetools)). 
+Then head on to the general configuration:
 
 * Navigate to >>Administer >>CiviEvent >>Remote Events - General Configuration
   (/civicrm/admin/remoteevent/settings).
-* Define which participant statuses will block a re-registration to your
+* Define which participant status will block a re-registration to your
   events (e.g. rejected) and which roles you would like to assign to speakers.
 * Suppress workshop/session data if you do not use this feature
 * Select activity-type for changes in participation data
@@ -24,13 +25,12 @@ After general configuration visit the new tab "Remote Online Registration"
 within CiviCRM's event configuration UI. It will provide you with several
 options and settings, under the tabs "Online-Registration (CiviRemote)" and 
 "Workshops". Most notably if you would like to use the remote event features at 
-all, to disable native CiviCRM online registration, use alternative 
+all, or to disable native CiviCRM online registration, use alternative 
 event-locations or external identification to your event.
 
 Beneath you find two segments for registration profiles. One for the initial 
 registration and the other for editing registrations. We think that the labels 
-and help-pop-ups are telling you enough to understand your options. At least we 
-hope so :)
+and help-pop-ups are telling you enough to understand your options.
 
 The "Registration Restrictions" allow you configurations regarding when
 registration is available, if a registration requires manual review and if

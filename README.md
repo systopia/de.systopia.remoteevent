@@ -3,9 +3,10 @@
 ## Scope
 
 This extension provides a lot of additional features to CiviCRM's events. In
-particular, you will be able to configure events in CiviCRM, display/use that
-information in other remote systems and submit registrations for those events
-back to CiviCRM.
+particular, you will be able to 
++ configure events in CiviCRM
++ display/use that information in other remote systems and
++ submit registrations for those events back to CiviCRM.
 
 The general idea is that your organization's staff can do all relevant event
 configurations in CiviCRM. CiviCRM will then make this information available via
@@ -17,19 +18,19 @@ detailed event information, registration forms etc. (this could be a remote
 system or the CMS your CiviCRM runs on) and also submit information entered by
 your constituents back to CiviCRM.
 
-All of this requires that you have or set up an external system to act as a
+All of this requires that you set up an external system to act as a
 frontend for your event listings, registration forms etc. In case you would like
 to build your system based on Drupal 10 you will most likely want to have a look
-and/or use the **CiviRemote Drupal module** which includes a lot of pre-built
-features (https://github.com/systopia/civiremote).
+and/or use the **CiviRemote Drupal module** [which includes a lot of pre-built
+features](https://github.com/systopia/civiremote).
 
 Note that this extension may be used alongside regular CiviCRM event
-registrations - you can choose whether you would like to use the remote features
-or not for each event.
+registrations - you can choose for each event whether you would like to use the 
+remote features or not.
 
 ### Why this Extension?
 
-In many cases you may not want or be able to use CiviCRM's built in forms e.g.:
+In many cases you may not want or be able to use CiviCRM's built-in forms e.g.:
 
 * For security reasons your CiviCRM runs within a VPN
 * The builtin forms and processing logic do not provide enough options to be
@@ -43,22 +44,20 @@ This extension is licensed under
 
 ## Features
 
-* Connect another (remote) system to CiviCRM that can handle highly customizable
+* Connect a (remote) system to CiviCRM that can handle highly customizable
   event listings and registration features
 * Pre-defined registration profiles including a "one click registration" for
-  authenticated users (additional profiles can be added fairly easy)
+  authenticated users
 * Use different registration profiles within the same event
 * Allow participants to modify and/or cancel their own registrations
 * Alternative approach for defining an event's location
-* Event registration/update profiles be configured using a UI with the 
+* Event registration/update profiles to be configured using an UI with the 
 [Remote Event Form Editor](https://github.com/systopia/remoteeventformeditor) 
 extension
 * Have Sessions/Workshops within your event
-* Registering additional participants
+* Registering additional participants (coming)
 * Localizing event registration profiles with a locale given in the get_form 
 request (e.g. the current language of the frontend)
-
-TODO: Complete Feature List
 
 ## Requirements
 
