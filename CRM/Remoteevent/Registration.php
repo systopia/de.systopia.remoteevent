@@ -856,7 +856,7 @@ class CRM_Remoteevent_Registration
                 'gtacs' => [
                     'type'        => 'fieldset',
                     'name'        => 'gtacs',
-                    'label'       => $l10n->localise("General Terms and Conditions"),
+                    'label'       => $l10n->ts("General Terms and Conditions"),
                     'weight'      => 500, // this should be at the end
                 ],
                 'gtac' => [
@@ -865,12 +865,12 @@ class CRM_Remoteevent_Registration
                     'validation' => '',
                     'weight' => 100,
                     'required' => 1,
-                    'label' => $l10n->localise("I accept the following terms and conditions"),
-                    'description' => '', //$l10n->localise("You have to accept the terms and conditions to participate in this event"),
+                    'label' => $l10n->ts("I accept the following terms and conditions"),
+                    'description' => '', //$l10n->ts("You have to accept the terms and conditions to participate in this event"),
                     'parent' => 'gtacs',
                     'suffix' => $event['event_remote_registration.remote_registration_gtac'],
                     'suffix_display' => 'inline',
-                    'suffix_dialog_label' => $l10n->localise("Details"),
+                    'suffix_dialog_label' => $l10n->ts("Details"),
                 ]
             ]);
         }

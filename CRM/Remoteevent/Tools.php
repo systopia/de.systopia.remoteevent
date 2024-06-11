@@ -60,9 +60,9 @@ class CRM_Remoteevent_Tools
         $l10n   = CRM_Remoteevent_Localisation::getLocalisation($locale);
         foreach ($result['values'] as $entry) {
             if ($use_name) {
-                $option_list[$entry['name']] = $l10n->localise($entry['label']);
+                $option_list[$entry['name']] = $l10n->ts($entry['label']);
             } else {
-                $option_list[$entry['value']] = $l10n->localise($entry['label']);
+                $option_list[$entry['value']] = $l10n->ts($entry['label']);
             }
         }
 

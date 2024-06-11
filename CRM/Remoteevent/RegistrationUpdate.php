@@ -70,7 +70,7 @@ class CRM_Remoteevent_RegistrationUpdate
         if (empty($registration_update->getParticipant())) {
             $participant_id = $registration_update->getParticipantID();
             if (empty($participant_id)) {
-                $registration_update->addError($l10n->localise("Participant could not be identified."));
+                $registration_update->addError($l10n->ts("Participant could not be identified."));
             } else {
                 $registration_update->setParticipant(civicrm_api3('Participant', 'getsingle', ['id' => $participant_id]));
             }
@@ -80,7 +80,7 @@ class CRM_Remoteevent_RegistrationUpdate
         if (empty($registration_update->getContact())) {
             $contact_id = $registration_update->getContactID();
             if (empty($contact_id)) {
-                $registration_update->addError($l10n->localise("Contact could not be identified."));
+                $registration_update->addError($l10n->ts("Contact could not be identified."));
             } else {
                 $registration_update->setContact(civicrm_api3('Contact', 'getsingle', ['id' => $contact_id]));
             }
@@ -157,7 +157,7 @@ class CRM_Remoteevent_RegistrationUpdate
                 }
             } catch (CiviCRM_API3_Exception $ex) {
                 $l10n = $registration_update->getLocalisation();
-                $registration_update->addError($l10n->localise("Couldn't update contact: %1", [1 => $l10n->localise($ex->getMessage())]));
+                $registration_update->addError($l10n->ts("Couldn't update contact: %1", [1 => $l10n->ts($ex->getMessage())]));
             }
         }
     }
@@ -186,7 +186,7 @@ class CRM_Remoteevent_RegistrationUpdate
                 $registration_update->setParticipantUpdated();
             } catch (CiviCRM_API3_Exception $ex) {
                 $l10n = $registration_update->getLocalisation();
-                $registration_update->addError($l10n->localise("Couldn't update participant: %1", [1 => $l10n->localise($ex->getMessage())]));
+                $registration_update->addError($l10n->ts("Couldn't update participant: %1", [1 => $l10n->ts($ex->getMessage())]));
             }
         }
     }
