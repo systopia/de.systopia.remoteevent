@@ -134,13 +134,13 @@ class CRM_Remoteevent_Localisation
 
     protected static function getI18n(string $tsLocale): CRM_Core_I18n
     {
-        if (!isset(Civi::$statics[__CLASS__]['singleton'])) {
-            Civi::$statics[__CLASS__]['singleton'] = [];
+        if (!isset(Civi::$statics[CRM_Core_I18n::class]['singleton'])) {
+            Civi::$statics[CRM_Core_I18n::class]['singleton'] = [];
         }
-        if (!isset(Civi::$statics[__CLASS__]['singleton'][$tsLocale])) {
-            Civi::$statics[__CLASS__]['singleton'][$tsLocale] = new CRM_Core_I18n($tsLocale);
+        if (!isset(Civi::$statics[CRM_Core_I18n::class]['singleton'][$tsLocale])) {
+            Civi::$statics[CRM_Core_I18n::class]['singleton'][$tsLocale] = new CRM_Core_I18n($tsLocale);
         }
 
-        return Civi::$statics[__CLASS__]['singleton'][$tsLocale];
+        return Civi::$statics[CRM_Core_I18n::class]['singleton'][$tsLocale];
     }
 }
