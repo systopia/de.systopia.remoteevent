@@ -44,7 +44,7 @@ class CRM_Remoteevent_Localisation
     public static function getLocalisation($locale = null)
     {
         // default to current locale
-        if ($locale == 'default') {
+        if (!isset($locale) || 'default' === $locale) {
             $locale = CRM_Core_I18n::getLocale();
         }
 
@@ -79,10 +79,10 @@ class CRM_Remoteevent_Localisation
     /**
      * Localise a given string with this localisation.
      *
-     * @param string $string
+     * @param string $text
      *   The (English) string to localise.
      *
-     * @param array $context
+     * @param array $params
      *   Localisation parameters or variables.
      *
      * @return string
@@ -90,20 +90,56 @@ class CRM_Remoteevent_Localisation
      *
      * @see \ts()
      */
-    public function ts($string, $context = []) {
-        if (empty($this->locale)) {
-            // No changes, used for pot extraction.
-            return $string;
+    public function ts($text, $params = [])
+    {
+        if (!isset($this->locale)) {
+          // No changes, used for pot extraction.
+          return $text;
+        }
+
+        static $bootstrapReady = FALSE;
+        static $lastLocale = NULL;
+        static $i18n = NULL;
+        static $function = NULL;
+
+        // TODO: Actually, this is obsolete, as custom translation functions
+        //       don't take the locale as an argument.
+        // When the settings become available, lookup customTranslateFunction.
+        if (!$bootstrapReady) {
+            $bootstrapReady = (bool) \Civi\Core\Container::isContainerBooted();
+            if ($bootstrapReady) {
+                // just got ready: determine whether there is a working custom translation function
+                $config = CRM_Core_Config::singleton();
+                if (!empty($config->customTranslateFunction) && function_exists($config->customTranslateFunction)) {
+                  $function = $config->customTranslateFunction;
+                }
+            }
+        }
+
+        $params['domain'] ??= [E::LONG_NAME, NULL];
+        $requestedLocale = $this->locale;
+        if (!$i18n or $lastLocale != $requestedLocale) {
+            $i18n = self::getI18n($requestedLocale);
+            $lastLocale = $requestedLocale;
+        }
+
+        if ($function) {
+            return $function($text, $params);
         }
         else {
-          // TODO: Implement a cache, as this gets slow for fields with many
-          //       options, e.g. countries and provinces
-            $currentLocale = CRM_Core_I18n::getLocale();
-            $locale = CRM_Core_I18n::singleton();
-            $locale->setLocale($this->locale);
-            $localizedString = E::ts($string, $context);
-            $locale->setLocale($currentLocale);
-            return $localizedString;
+            return $i18n->crm_translate($text, $params);
         }
+    }
+
+    protected static function getI18n(string $tsLocale): CRM_Core_I18n
+    {
+        if (!isset(Civi::$statics[CRM_Core_I18n::class]['singleton'])) {
+            Civi::$statics[CRM_Core_I18n::class]['singleton'] = [];
+        }
+        if (!isset(Civi::$statics[CRM_Core_I18n::class]['singleton'][$tsLocale])) {
+            Civi::$statics[CRM_Core_I18n::class]['singleton'][$tsLocale] = new CRM_Core_I18n($tsLocale);
+        }
+
+        return Civi::$statics[CRM_Core_I18n::class]['singleton'][$tsLocale];
     }
 }
