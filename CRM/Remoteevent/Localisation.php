@@ -44,7 +44,7 @@ class CRM_Remoteevent_Localisation
     public static function getLocalisation($locale = null)
     {
         // default to current locale
-        if ($locale == 'default') {
+        if (!isset($locale) || 'default' === $locale) {
             $locale = CRM_Core_I18n::getLocale();
         }
 
@@ -92,27 +92,27 @@ class CRM_Remoteevent_Localisation
      */
     public function ts($text, $params = [])
     {
-        if (empty($this->locale)) {
-            // No changes, used for pot extraction.
-            return $text;
+        if (!isset($this->locale)) {
+          // No changes, used for pot extraction.
+          return $text;
         }
-        else {
-            static $bootstrapReady = FALSE;
-            static $lastLocale = NULL;
-            static $i18n = NULL;
-            static $function = NULL;
 
-            // TODO: Actually, this is obsolete, as custom translation functions
-            //       don't take the locale as an argument.
-            // When the settings become available, lookup customTranslateFunction.
-            if (!$bootstrapReady) {
-                $bootstrapReady = (bool) \Civi\Core\Container::isContainerBooted();
-                if ($bootstrapReady) {
-                    // just got ready: determine whether there is a working custom translation function
-                    $config = CRM_Core_Config::singleton();
-                    if (!empty($config->customTranslateFunction) && function_exists($config->customTranslateFunction)) {
-                        $function = $config->customTranslateFunction;
-                    }
+        static $bootstrapReady = FALSE;
+        static $lastLocale = NULL;
+        static $i18n = NULL;
+        static $function = NULL;
+
+        // TODO: Actually, this is obsolete, as custom translation functions
+        //       don't take the locale as an argument.
+        // When the settings become available, lookup customTranslateFunction.
+        if (!$bootstrapReady) {
+            $bootstrapReady = (bool) \Civi\Core\Container::isContainerBooted();
+            if ($bootstrapReady) {
+                // just got ready: determine whether there is a working custom translation function
+                $config = CRM_Core_Config::singleton();
+                if (!empty($config->customTranslateFunction) && function_exists($config->customTranslateFunction)) {
+                  $function = $config->customTranslateFunction;
+                }
             }
         }
 
@@ -120,15 +120,14 @@ class CRM_Remoteevent_Localisation
         $requestedLocale = $this->locale;
         if (!$i18n or $lastLocale != $requestedLocale) {
             $i18n = self::getI18n($requestedLocale);
-                $lastLocale = $requestedLocale;
-            }
+            $lastLocale = $requestedLocale;
+        }
 
-            if ($function) {
-                return $function($text, $params);
-            }
-            else {
-                return $i18n->crm_translate($text, $params);
-            }
+        if ($function) {
+            return $function($text, $params);
+        }
+        else {
+            return $i18n->crm_translate($text, $params);
         }
     }
 
