@@ -113,13 +113,13 @@ class CRM_Remoteevent_Localisation
                     if (!empty($config->customTranslateFunction) && function_exists($config->customTranslateFunction)) {
                         $function = $config->customTranslateFunction;
                     }
-                }
             }
+        }
 
-            $params['domain'] ??= E::LONG_NAME;
-            $requestedLocale = $this->locale;
-            if (!$i18n or $lastLocale != $requestedLocale) {
-                $i18n = self::getI18n($requestedLocale);
+        $params['domain'] ??= [E::LONG_NAME, NULL];
+        $requestedLocale = $this->locale;
+        if (!$i18n or $lastLocale != $requestedLocale) {
+            $i18n = self::getI18n($requestedLocale);
                 $lastLocale = $requestedLocale;
             }
 
