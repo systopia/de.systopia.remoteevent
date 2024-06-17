@@ -16,7 +16,7 @@
   </urls>
   <releaseDate>2024-06-14</releaseDate>
   <version>1.2-beta5</version>
-  <develStage>dev</develStage>
+  <develStage>beta</develStage>
   <compatibility>
     <ver>5.61</ver>
   </compatibility>
