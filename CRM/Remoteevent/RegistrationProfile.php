@@ -125,6 +125,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     'description' => E::ts('Registration data for additional participant %1', [1 => $i]),
                 ];
                 foreach ($additional_fields as $additional_field_name => $additional_field) {
+                    $additional_field['entity_field_name'] = $additional_field['name'];
                     $additional_field['name'] = 'additional_' . $i . '_' . $additional_field['name'];
                     $additional_field['parent'] = empty($additional_field['parent']) ? 'additional_' . $i : 'additional_' . $i . '_' . $additional_field['parent'];
                     $fields['additional_' . $i . '_' . $additional_field_name] = $additional_field;
