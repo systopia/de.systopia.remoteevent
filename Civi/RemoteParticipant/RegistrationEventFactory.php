@@ -92,7 +92,7 @@ final class RegistrationEventFactory
             }
         }
 
-        if ([] === $additionalParticipantsData) {
+        if ([] === $additionalParticipantsData && [] === $additionalContactsData) {
             return;
         }
 
