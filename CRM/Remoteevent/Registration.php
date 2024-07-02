@@ -196,21 +196,21 @@ class CRM_Remoteevent_Registration
         }
 
         // check if max_participants set and NO waitlist:
-        if (!empty($event_data['max_participants']) && empty($event_data['has_waitlist'])) {
-            $registered_count = self::getRegistrationCount($event_id);
-            if ($registered_count >= $event_data['max_participants']) {
-                if (empty($event_data['event_full_text'])) {
-                    return E::ts("Event is booked out");
-                } else {
-                    return $event_data['event_full_text'];
-                }
+        if (!empty($event_data['max_participants'])) {
+          $registered_count = self::getRegistrationCount($event_id);
+          if ($registered_count >= $event_data['max_participants']) {
+            if (empty($event_data['event_full_text'])) {
+              return E::ts("Event is booked out");
+            } else {
+              return $event_data['event_full_text'];
             }
+          }
         }
 
         // check if this contact already registered
         // todo: if this is an invite only event, then we need instead see if there _is_ a pending contribution
         if ($contact_id) {
-            $registered_count = self::getRegistrationCount($event_id, $contact_id, ['Positive', 'Pending']);
+            $registered_count = self::getRegistrationCount($event_id, $contact_id);
             if ($registered_count > 0) {
                 return E::ts("Contact is already registered");
             }
@@ -444,9 +444,9 @@ class CRM_Remoteevent_Registration
         $contact_id = (int) $contact_id;
 
         // compile query
-        $class_list = array_intersect(['Positive', 'Pending', 'Negative'], $class_list);
+        $class_list = array_intersect(['Positive', 'Pending', 'Negative', 'Waiting'], $class_list);
         if (empty($class_list)) {
-            $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative')";
+            $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative', 'Waiting')";
         } else {
             $REGISTRATION_CLASSES = "('" . implode("','", $class_list) . "')";
         }
