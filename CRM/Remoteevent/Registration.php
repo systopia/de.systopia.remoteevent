@@ -587,41 +587,41 @@ class CRM_Remoteevent_Registration {
       return;
     }
 
-    // now, after the contact has been identified, make sure (s)he's not already registered
-    $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister(
-      $registration->getEventID(),
-      $registration->getContactID(),
-      $registration->getEvent()
-    );
-    if ($cant_register_reason) {
-      $registration->addError($cant_register_reason);
+    public static function createOrder(RegistrationEvent $registration): void {
+      $event = $registration->getEvent();
+      if (
+        (bool) $event['is_monetary']
+        && class_exists('\Civi\Api4\Order')
+      ) {
+        $order = \Civi\Api4\Order::create(FALSE)
+          ->setContributionValues([
+            'contact_id' => $registration->getContactID(),
+            'financial_type_id' => $event['financial_type_id'],
+          ]);
+        foreach ($registration->getPriceFieldValues() as $value) {
+          $order->addLineItem([
+            'entity_table' => 'civicrm_participant',
+            'entity_id' => $value['participant_id'],
+            'price_field_value_id' => $value['price_field_value_id'],
+            'qty' => $value['qty']
+          ]);
+        }
+        $order->execute();
+      }
     }
-  }
 
-  /**
-   * If there is already an existing participant,
-   *  process the confirmation
-   *
-   * @param \Civi\RemoteParticipant\Event\RegistrationEvent $registration
-   *   registration event
-   */
-  public static function confirmExistingParticipant($registration) {
-    // of there is already an issue, don't waste any more time on this
-    if ($registration->hasErrors()) {
-      return;
-    }
-
-    $participant_id = $registration->getParticipantID();
-    $submission = $registration->getSubmission();
-    if (isset($submission['confirm'])) {
-      if ($participant_id) {
-        // there is already a (pre-existing) participant
-        //   ... and the 'confirm' flag has been submitted
-        //   then: update the participant right away
-        $new_status = '';
-        if (empty($submission['confirm'])) {
-          // participant want's out
-          $new_status = 'Rejected';
+    /**
+     * Get a (cached version) of ParticipantStatusType.get
+     */
+    public static function getParticipantStatusList()
+    {
+        static $status_list = null;
+        if ($status_list === null) {
+            $status_list = [];
+            $query = civicrm_api3('ParticipantStatusType', 'get', ['option.limit' => 0]);
+            foreach ($query['values'] as $status) {
+                $status_list[$status['id']] = $status;
+            }
         }
         else {
           // participant wants to confirm

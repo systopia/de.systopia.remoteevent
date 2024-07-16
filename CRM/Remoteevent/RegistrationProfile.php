@@ -179,6 +179,31 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     // @phpstan-ignore method.deprecated
     $this->addDefaultContactValues($resultsEvent, array_keys($contact_field_mapping), $contact_field_mapping);
 
+    public static function getPriceFields(array $event): array {
+      return \Civi\Api4\Event::get(FALSE)
+        ->addSelect('price_field.*')
+        ->addJoin(
+          'PriceSetEntity AS price_set_entity',
+          'INNER',
+          ['price_set_entity.entity_table', '=', '"civicrm_event"'],
+          ['price_set_entity.entity_id', '=', 'id']
+        )
+        ->addJoin(
+          'PriceSet AS price_set',
+          'INNER',
+          ['price_set.id', '=', 'price_set_entity.price_set_id'],
+          ['price_set.is_active', '=', 1]
+        )
+        ->addJoin(
+          'PriceField AS price_field',
+          'LEFT',
+          ['price_field.price_set_id', '=', 'price_set.id']
+        )
+        ->addWhere('id', '=', $event['id'])
+        ->execute()
+        ->getArrayCopy();
+    }
+
     /**
      * @param array $event
      * @param string|null $locale
@@ -186,7 +211,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
      * @return array<string,array<string,mixed>>
      * @throws \CRM_Core_Exception
      */
-    public function getPriceFields(array $event, ?string $locale = NULL): array
+    public function getProfilePriceFields(array $event, ?string $locale = NULL): array
     {
         $fields = [];
 
@@ -194,28 +219,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
             return $fields;
         }
 
-        $priceFields = \Civi\Api4\Event::get(FALSE)
-            ->addSelect('price_field.*')
-            ->addJoin(
-                'PriceSetEntity AS price_set_entity',
-                'INNER',
-                ['price_set_entity.entity_table', '=', '"civicrm_event"'],
-                ['price_set_entity.entity_id', '=', 'id']
-            )
-            ->addJoin(
-                'PriceSet AS price_set',
-                'INNER',
-                ['price_set.id', '=', 'price_set_entity.price_set_id'],
-                ['price_set.is_active', '=', 1]
-            )
-            ->addJoin(
-                'PriceField AS price_field',
-                'LEFT',
-                ['price_field.price_set_id', '=', 'price_set.id']
-            )
-            ->addWhere('id', '=', $event['id'])
-            ->execute();
-
+        $priceFields = self::getPriceFields($event);
         if (count($priceFields) === 0) {
            return $fields;
         }
@@ -236,17 +240,29 @@ abstract class CRM_Remoteevent_RegistrationProfile {
             $field = [
                 // TODO: Validate types.
                 'type' => $priceField['price_field.html_type'],
-                'name' => $priceField['price_field.name'],
+                'name' => 'price_' . $priceField['price_field.name'],
                 // TODO: Localize label with given $locale.
                 'label' => $priceField['price_field.label'],
                 'weight' => $priceField['price_field.weight'],
                 'required' => (bool) $priceField['price_field.is_required'],
                 'parent' => 'price',
-                'options' => $priceFieldValues->column('label'),
             ];
+            if ($priceField['price_field.is_enter_qty']) {
+                // Append price per unit.
+                $field['label'] .= sprintf(
+                  ' (%s)',
+                  CRM_Utils_Money::format(
+                    $priceFieldValues->first()['amount'],
+                    $event['currency']
+                  )
+                );
+            }
+            else {
+                $field['options'] = $priceFieldValues->column('label');
+            }
 
             // Append price field value amounts in option labels.
-            if ($priceField['price_field.is_display_amounts']) {
+            if (isset($field['options']) && $priceField['price_field.is_display_amounts']) {
                 array_walk($field['options'], function(&$label, $id, $context) {
                     $label .= sprintf(
                         ' (%s)',
@@ -272,7 +288,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
                 $field['suffix_display'] = 'inline';
             }
 
-            // TODO: Ids the price field name unique across all price fields for
+            // TODO: Is the price field name unique across all price fields for
             //       this event?
             $fields['price_' . $priceField['price_field.name']] = $field;
         }
@@ -292,7 +308,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
                 $event['event_remote_registration.remote_registration_additional_participants_profile']
             );
             $additional_fields = $additional_participants_profile->getFields($locale);
-            $additional_fields += $additional_participants_profile->getPriceFields($event, $locale);
+            $additional_fields += $additional_participants_profile->getProfilePriceFields($event, $locale);
             $fields['additional_participants'] = [
                 'type' => 'fieldset',
                 'name' => 'additional_participants',
@@ -414,7 +430,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
 
         // Validate price fields.
         if ((bool) $event['is_monetary']) {
-            foreach ($this->validatePriceFields($event, $data) as $field_name => $error) {
+            foreach ($this->validatePriceFields($event, $data, $l10n) as $field_name => $error) {
                 $validationEvent->addValidationError($field_name, $error);
             }
         }
@@ -433,7 +449,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     protected function validatePriceFields(array $event, array $submission, CRM_Remoteevent_Localisation $l10n): array
     {
         $errors = [];
-        foreach ($this->getPriceFields($event) as $priceField) {
+        foreach ($this->getProfilePriceFields($event) as $priceField) {
             // TODO: Validate price field values.
         }
         return $errors;
@@ -563,7 +579,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
         if ('create' === $get_form_results->getContext()) {
-          $fields += $profile->getPriceFields($event, $locale);
+          $fields += $profile->getProfilePriceFields($event, $locale);
           $fields += $profile->getAdditionalParticipantsFields($event, NULL, $locale);
         }
       }
