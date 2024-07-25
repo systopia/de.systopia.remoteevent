@@ -125,7 +125,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     'description' => E::ts('Registration data for additional participant %1', [1 => $i]),
                 ];
                 foreach ($additional_fields as $additional_field_name => $additional_field) {
-                    $additional_field['entity_field_name'] = $additional_field['name'];
+                    $additional_field['entity_field_name'] ??= $additional_field['name'];
                     $additional_field['name'] = 'additional_' . $i . '_' . $additional_field['name'];
                     $additional_field['parent'] = empty($additional_field['parent']) ? 'additional_' . $i : 'additional_' . $i . '_' . $additional_field['parent'];
                     $fields['additional_' . $i . '_' . $additional_field_name] = $additional_field;
@@ -270,23 +270,25 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      * @param array $contact_data
      *   contact data
+     *
+     * @return void
      */
     protected function adjustContactData(&$contact_data)
     {
         // this is just a stub. for now.
     }
 
-  /**
-   * Give the profile a chance to manipulate the contact data before it's being sent off to
-   * the contact creation/update
-   *
-   * This is a public interface method for adjusting contact data, as self::adjustContactData()
-   * has protected visibility.
-   *
-   * @param array $contact_data
-   *
-   * @return void
-   */
+    /**
+     * Give the profile a chance to manipulate the contact data before it's being sent off to
+     * the contact creation/update
+     *
+     * This is a public interface method for adjusting contact data, as self::adjustContactData()
+     * has protected visibility.
+     *
+     * @param array $contact_data
+     *
+     * @return void
+     */
     public function modifyContactData(array &$contact_data): void {
         $this->adjustContactData($contact_data);
     }
