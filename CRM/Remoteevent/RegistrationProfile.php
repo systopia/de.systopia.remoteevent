@@ -96,6 +96,123 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     abstract public function getFields($locale = null);
 
+    public static function getPriceFields(array $event): array {
+      return \Civi\Api4\Event::get(FALSE)
+        ->addSelect('price_field.*')
+        ->addJoin(
+          'PriceSetEntity AS price_set_entity',
+          'INNER',
+          ['price_set_entity.entity_table', '=', '"civicrm_event"'],
+          ['price_set_entity.entity_id', '=', 'id']
+        )
+        ->addJoin(
+          'PriceSet AS price_set',
+          'INNER',
+          ['price_set.id', '=', 'price_set_entity.price_set_id'],
+          ['price_set.is_active', '=', 1]
+        )
+        ->addJoin(
+          'PriceField AS price_field',
+          'LEFT',
+          ['price_field.price_set_id', '=', 'price_set.id']
+        )
+        ->addWhere('id', '=', $event['id'])
+        ->execute()
+        ->getArrayCopy();
+    }
+
+    /**
+     * @param array $event
+     * @param string|null $locale
+     *
+     * @return array<string,array<string,mixed>>
+     * @throws \CRM_Core_Exception
+     */
+    public function getProfilePriceFields(array $event, ?string $locale = NULL): array
+    {
+        $fields = [];
+
+        if (!(bool) $event['is_monetary']) {
+            return $fields;
+        }
+
+        $priceFields = self::getPriceFields($event);
+        if (count($priceFields) === 0) {
+           return $fields;
+        }
+
+        $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+        $fields['price'] = [
+            'type' => 'fieldset',
+            'name' => 'price',
+            // TODO: Is the label correctly localised with the requested $locale?
+            'label' => $event['fee_label'],
+        ];
+        foreach ($priceFields as $priceField) {
+            $priceFieldValues = \Civi\Api4\PriceFieldValue::get(FALSE)
+                ->addSelect('id', 'label', 'amount')
+                ->addWhere('price_field_id', '=', $priceField['price_field.id'])
+                ->execute()
+                ->indexBy('id');
+            $field = [
+                // TODO: Validate types.
+                'type' => $priceField['price_field.html_type'],
+                'name' => 'price_' . $priceField['price_field.name'],
+                // TODO: Localize label with given $locale.
+                'label' => $priceField['price_field.label'],
+                'weight' => $priceField['price_field.weight'],
+                'required' => (bool) $priceField['price_field.is_required'],
+                'parent' => 'price',
+            ];
+            if ($priceField['price_field.is_enter_qty']) {
+                // Append price per unit.
+                $field['label'] .= sprintf(
+                  ' (%s)',
+                  CRM_Utils_Money::format(
+                    $priceFieldValues->first()['amount'],
+                    $event['currency']
+                  )
+                );
+            }
+            else {
+                $field['options'] = $priceFieldValues->column('label');
+            }
+
+            // Append price field value amounts in option labels.
+            if (isset($field['options']) && $priceField['price_field.is_display_amounts']) {
+                array_walk($field['options'], function(&$label, $id, $context) {
+                    $label .= sprintf(
+                        ' (%s)',
+                        CRM_Utils_Money::format(
+                          $context['priceFieldValues'][$id]['amount'],
+                          $context['event']['currency']
+                        )
+                    );
+                }, ['priceFieldValues' => $priceFieldValues, 'event' => $event]);
+            }
+
+            // Add prefixed help text.
+            if (isset($priceField['price_field.help_pre'])) {
+                // TODO: Localize with given $locale.
+                $field['prefix'] = $priceField['price_field.help_pre'];
+                $field['prefix_display'] = 'inline';
+            }
+
+            // Add suffixed help text.
+            if (isset($priceField['price_field.help_post'])) {
+                // TODO: Localize with given $locale.
+                $field['suffix'] = $priceField['price_field.help_post'];
+                $field['suffix_display'] = 'inline';
+            }
+
+            // TODO: Is the price field name unique across all price fields for
+            //       this event?
+            $fields['price_' . $priceField['price_field.name']] = $field;
+        }
+
+        return $fields;
+    }
+
     public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
     {
         $fields = [];
@@ -108,6 +225,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 $event['event_remote_registration.remote_registration_additional_participants_profile']
             );
             $additional_fields = $additional_participants_profile->getFields($locale);
+            $additional_fields += $additional_participants_profile->getProfilePriceFields($event, $locale);
             $fields['additional_participants'] = [
                 'type' => 'fieldset',
                 'name' => 'additional_participants',
@@ -238,6 +356,32 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 }
             }
         }
+
+        // Validate price fields.
+        if ((bool) $event['is_monetary']) {
+            foreach ($this->validatePriceFields($event, $data, $l10n) as $field_name => $error) {
+                $validationEvent->addValidationError($field_name, $error);
+            }
+        }
+    }
+
+  /**
+   * @param array $event
+   * @param array $submission
+   * @param \CRM_Remoteevent_Localisation $l10n
+   *
+   * @return array<string, string>
+   *   An array with field names as keys and corresponding localised error
+   *   messages as values.
+   * @throws \CRM_Core_Exception
+   */
+    protected function validatePriceFields(array $event, array $submission, CRM_Remoteevent_Localisation $l10n): array
+    {
+        $errors = [];
+        foreach ($this->getProfilePriceFields($event) as $priceField) {
+            // TODO: Validate price field values.
+        }
+        return $errors;
     }
 
     /**
@@ -365,6 +509,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
         if ('create' === $get_form_results->getParams()['context']) {
+          $fields += $profile->getProfilePriceFields($event, $locale);
           $fields += $profile->getAdditionalParticipantsFields($event, NULL, $locale);
         }
         $get_form_results->addFields($fields);

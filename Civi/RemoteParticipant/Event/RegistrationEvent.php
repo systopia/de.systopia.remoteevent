@@ -247,4 +247,47 @@ class RegistrationEvent extends ChangingEvent
     {
         return $this->submission;
     }
+
+  /**
+   * @return array<string, mixed>
+   * @throws \CRM_Core_Exception
+   */
+    public function getPriceFieldValues(): array
+    {
+      $values = [];
+
+      $event = $this->getEvent();
+      if (!(bool) $event['is_monetary']) {
+        return $values;
+      }
+
+      foreach (\CRM_Remoteevent_RegistrationProfile::getPriceFields($event) as $priceField) {
+        $value = $this->submission['price_' . $priceField['price_field.name']] ?? NULL;
+        if (is_numeric($value)) {
+          $values[] = [
+            'participant_id' => $this->getParticipantID(),
+            'price_field_name' => $priceField['price_field.name'],
+            'price_field_value_id' => !(bool) $priceField['price_field.is_enter_qty'] ? $value : NULL,
+            'qty' => (bool) $priceField['price_field.is_enter_qty'] ? $value : 1,
+          ];
+        }
+      }
+
+      $additionalParticipantsPriceFields = \CRM_Remoteevent_RegistrationProfile::getPriceFields($event);
+      foreach ($this->getAdditionalParticipantsData() as $additionalParticipantNo => $additionalParticipant) {
+        foreach ($additionalParticipantsPriceFields as $priceField) {
+          $value = $this->submission['additional_' . $additionalParticipantNo . '_price_' . $priceField['price_field.name']] ?? NULL;
+          if (is_numeric($value)) {
+            $values[] = [
+              'participant_id' => $additionalParticipant['id'],
+              'price_field_name' => $priceField['price_field.name'],
+              'price_field_value_id' => !(bool) $priceField['price_field.is_enter_qty'] ? $value : NULL,
+              'qty' => (bool) $priceField['price_field.is_enter_qty'] ? $value : 1,
+            ];
+          }
+        }
+      }
+
+      return $values;
+    }
 }
