@@ -245,7 +245,11 @@ class CRM_Remoteevent_RemoteEvent
 
         if (!empty($event_data['has_waitlist']) && !empty($event_data['max_participants'])) {
             // there is an active waiting list, see if we need to get on it
-            $registered_count = CRM_Remoteevent_Registration::getRegistrationCount($event_id);
+            $registered_count = CRM_Remoteevent_Registration::getRegistrationCount(
+                $event_id,
+                NULL,
+                ['Positive', 'Pending']
+            );
             return ($registered_count >= $event_data['max_participants']);
         } else {
             return false;

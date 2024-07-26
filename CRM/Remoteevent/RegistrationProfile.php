@@ -202,7 +202,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // Validate number of participants.
         if (
             !empty($event['max_participants'])
-            && ($excessParticipants = CRM_Remoteevent_Registration::getRegistrationCount($event['id']) + 1 + $additionalParticipantsCount - $event['max_participants']) > 0
+            && ($excessParticipants =
+              CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
+              + 1 + $additionalParticipantsCount - $event['max_participants'])
+            > 0
         ) {
             if (
                 !empty($event['has_waitlist'])

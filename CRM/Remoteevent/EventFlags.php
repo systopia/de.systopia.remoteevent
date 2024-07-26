@@ -212,10 +212,15 @@ class CRM_Remoteevent_EventFlags
             if ($contact_id) {
                 // PERSONALISED OVERRIDES
                 $valid_participant_registrations_count =
-                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id);
-                $all_participant_registrations_count =
-                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive', 'Pending'], [], false);
-                $event['participant_registration_count'] = (int) $valid_participant_registrations_count;
+                    CRM_Remoteevent_Registration::getRegistrationCount($event['id'], $contact_id, ['Positive']);
+                $all_participant_registrations_count = CRM_Remoteevent_Registration::getRegistrationCount(
+                    $event['id'],
+                    $contact_id,
+                    ['Positive', 'Pending', 'Waiting'],
+                    [],
+                    FALSE
+                );
+                $event['participant_registration_count'] = $valid_participant_registrations_count;
                 $event['is_registered'] = (int) ($valid_participant_registrations_count > 0);
                 $event['can_edit_registration'] = (int)($event['can_edit_registration'] && ($all_participant_registrations_count > 0));
                 $event['can_cancel_registration'] = (int)($event['can_cancel_registration'] && ($all_participant_registrations_count > 0));
