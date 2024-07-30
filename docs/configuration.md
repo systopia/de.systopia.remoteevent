@@ -1,5 +1,4 @@
 ## Configuration
-
 After installing the extension, make sure your **Remote Tool settings** are 
 configured according to your needs (refer to the documentation provided in 
 [de.systopia.remotetools](https://github.com/systopia/de.systopia.remotetools)). 

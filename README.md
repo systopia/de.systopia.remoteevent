@@ -1,6 +1,5 @@
 # SYSTOPIA's Remote Event Extension
 ## Scope
-
 This extension adds numerous features to CiviCRM's events. Specifically, it 
 allows you to:
 + Configure events in CiviCRM
