@@ -28,20 +28,6 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase
 {
-    use Api3TestTrait {
-        callAPISuccess as protected traitCallAPISuccess;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /** event hook for testAnonymousRegistration */
     public static function registrationSetParticipantCampaign(RegistrationEvent $registration) {
         $campaign_id = CRM_Utils_Array::value('campaign_id', $registration->getSubmission());

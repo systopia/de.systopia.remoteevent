@@ -1,18 +1,41 @@
 <?xml version="1.0"?>
-<phpunit backupGlobals="false" backupStaticAttributes="false" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" bootstrap="tests/phpunit/bootstrap.php">
+<!-- convertWarningsToExceptions is disabled because of undefined array key access. -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         colors="true"
+         convertWarningsToExceptions="false"
+         failOnRisky="true"
+         failOnWarning="true"
+         forceCoversAnnotation="false"
+         bootstrap="tests/phpunit/bootstrap.php">
+
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[direct]=0&amp;baselineFile=./tests/ignored-deprecations.json"/>
+    <env name="SYMFONY_PHPUNIT_REQUIRE" value="dms/phpunit-arraysubset-asserts:^0.5"/>
+  </php>
+
   <testsuites>
     <testsuite name="Remote Event Test Suite">
       <directory>./tests/phpunit</directory>
     </testsuite>
   </testsuites>
-  <filter>
-    <whitelist>
-      <directory suffix=".php">./</directory>
-    </whitelist>
-  </filter>
+
+  <coverage>
+    <include>
+      <directory suffix=".php">api</directory>
+      <directory suffix=".php">CRM</directory>
+      <directory suffix=".php">Civi</directory>
+    </include>
+    <exclude>
+      <directory>CRM/Remoteevent/DAO</directory>
+    </exclude>
+  </coverage>
+
   <listeners>
     <listener class="Civi\Test\CiviTestListener">
       <arguments/>
     </listener>
   </listeners>
+
 </phpunit>

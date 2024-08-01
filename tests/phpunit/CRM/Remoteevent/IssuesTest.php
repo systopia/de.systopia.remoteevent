@@ -27,20 +27,6 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
 {
-    use Api3TestTrait {
-        callAPISuccess as protected traitCallAPISuccess;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Test to reproduce issue 16: translate country and state/province
      *
