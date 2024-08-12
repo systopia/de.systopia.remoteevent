@@ -111,7 +111,15 @@ function civicrm_api3_remote_event_get($params)
         // add counts and other data
         $event['event_type'] =
             CRM_Remoteevent_RemoteEvent::getEventType($event, $result->getLocalisation());
+        // Historically, "registration_count" only included registration with a
+        // "Positive" status, counting all participants that are "really"
+        // registered, which we want to keep that way.
         $event['registration_count'] =
+            CRM_Remoteevent_Registration::getRegistrationCount($event['id'], NULL, ['Positive']);
+        // "registration_count_all" denotes all registration with a status that
+        // has the "is_counted" flag, regardless of status classes, i.e.
+        // including waitlisted or pending registrations.
+        $event['registration_count_all'] =
             CRM_Remoteevent_Registration::getRegistrationCount($event['id']);
     }
 

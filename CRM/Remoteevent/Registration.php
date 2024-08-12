@@ -210,7 +210,7 @@ class CRM_Remoteevent_Registration
         // check if this contact already registered
         // todo: if this is an invite only event, then we need instead see if there _is_ a pending contribution
         if ($contact_id) {
-            $registered_count = self::getRegistrationCount($event_id, $contact_id, ['Positive', 'Pending']);
+            $registered_count = self::getRegistrationCount($event_id, $contact_id);
             if ($registered_count > 0) {
                 return E::ts("Contact is already registered");
             }
@@ -433,15 +433,20 @@ class CRM_Remoteevent_Registration
      * @return int
      *    number of registrations (participant objects)
      */
-    public static function getRegistrationCount($event_id, $contact_id = null, $class_list = ['Positive'], $status_id_list = [], $only_counted = true)
-    {
+    public static function getRegistrationCount(
+        $event_id,
+        $contact_id = null,
+        array $class_list = [],
+        array $status_id_list = [],
+        bool $only_counted = true
+    ): int {
         $event_id = (int) $event_id;
         $contact_id = (int) $contact_id;
 
         // compile query
-        $class_list = array_intersect(['Positive', 'Pending', 'Negative'], $class_list);
+        $class_list = array_intersect(['Positive', 'Pending', 'Negative', 'Waiting'], $class_list);
         if (empty($class_list)) {
-            $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative')";
+            $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative', 'Waiting')";
         } else {
             $REGISTRATION_CLASSES = "('" . implode("','", $class_list) . "')";
         }
