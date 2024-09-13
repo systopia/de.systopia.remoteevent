@@ -47,10 +47,14 @@ final class RegistrationEventFactory
             }
         }
 
-        // Assign default role for new participants only.
-        if (NULL === $registrationEvent->getParticipantID()) {
+        if (isset($submissionData['role_id'])) {
+          $participantData['role_id'] ??= $submissionData['role_id'];
+        }
+        elseif (NULL === $registrationEvent->getParticipantID()) {
+          // Assign default role for new participants only.
           $participantData['role_id'] ??= $this->getDefaultRoleId($event);
         }
+
         $participantData['event_id'] = $submissionData['event_id'];
 
         $profile->modifyContactData($contactData);
@@ -103,7 +107,8 @@ final class RegistrationEventFactory
             $additionalParticipantsProfile->modifyContactData($contactData);
             $contactData['contact_type'] ??= 'Individual';
             $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
-            $additionalParticipantsData[$participantNo]['role_id'] ??= $this->getDefaultRoleId($event);
+            $additionalParticipantsData[$participantNo]['role_id'] ??= $submissionData["additional_${participantNo}_role_id"]
+              ?? $this->getDefaultRoleId($event);
             $additionalParticipantsData[$participantNo]['event_id'] = $submissionData['event_id'];
         }
 
