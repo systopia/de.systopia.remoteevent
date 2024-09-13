@@ -97,13 +97,21 @@ function civicrm_api3_remote_event_spawn($params)
           'checkPermissions' => false,
         ])->single();
 
+        if (!isset($event_create['title'])) {
+          if (isset($event_data['title']) || isset($event_data['template_title'])) {
+            $event_create['title'] = E::ts('Copy of %1', [1 => $event_data['title'] ?? $event_data['template_title']]);
+          }
+          else {
+            $event_create['title'] = E::ts('New Event');
+          }
+        }
+
         // remove ids and merge additional data
         $event_create = array_merge($event_data, $event_create);
 
         // remove template data and api artifacts
         unset($event_create['id'], $event_create['created_id'], $event_create['created_date'], $event_create['version'], $event_create['prettyprint']);
         if (empty($event_create['start_date'])) $event_create['start_date'] = date('YmdHis');
-        $event_create['title'] = $event_create['title'] ?? $event_data['title'] ?? $event_data['template_title'] ?? E::ts("New Event");
         $event_create['is_template'] = 0;
         $event_create['template_title'] = '';
         $event_create['template_id'] = $template_id;
