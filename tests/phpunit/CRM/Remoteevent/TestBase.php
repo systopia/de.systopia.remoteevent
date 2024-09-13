@@ -403,16 +403,14 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     /**
      * Use the RemoteEvent.get API to event information
      *
-     * @param array $event_ids
+     * @phpstan-param list<int> $event_ids
      *   list of event_ids
+     *
+     * @phpstan-return list<array<string, mixed>>
      */
-    public function getRemoteEvents($event_ids)
+    public function getRemoteEvents(array $event_ids): array
     {
-        $result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'id'         => ['IN' => $event_ids],
-            'sequential' => 0
-        ]);
-        return $result['values'];
+        return array_map([$this, 'getRemoteEvent'], $event_ids);
     }
 
     /**
