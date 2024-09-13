@@ -79,11 +79,10 @@ function civicrm_api3_remote_participant_create($params)
         $validation_result = civicrm_api3('RemoteParticipant', 'validate', $params);
         if (!empty($validation_result['values'])) {
             $errors = $validation_result['values'];
-            return RemoteEvent::createStaticAPI3Error(reset($errors), ['errors' => $errors]);
+            return RemoteEvent::createStaticAPI3Error(reset($errors));
         }
     } catch (CiviCRM_API3_Exception $ex) {
-        $errors = $ex->getExtraParams()['values'];
-        return RemoteEvent::createStaticAPI3Error(reset($errors), ['errors' => $errors]);
+        return RemoteEvent::createStaticAPI3Error($ex->getUserMessage());
     }
 
     // create a transaction

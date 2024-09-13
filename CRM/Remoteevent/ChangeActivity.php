@@ -81,6 +81,10 @@ class CRM_Remoteevent_ChangeActivity
     public static function recordPost($participant_id, $custom_fields_done = false)
     {
         if (self::getActivityTypeID()) { // is this enabled?
+            if ([] === self::$record_stack) {
+              return;
+            }
+
             // if this change contains custom fields, we have to wait for that, too.
             $record = end(self::$record_stack);
             if ($record[self::RECORD_PARTICIPANT_UPDATE_HAS_NO_CUSTOM_FIELDS] || $custom_fields_done) {
