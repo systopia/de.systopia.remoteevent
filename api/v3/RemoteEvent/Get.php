@@ -61,7 +61,11 @@ function civicrm_api3_remote_event_get($params)
     // Translate event ID.
     $original_params = $get_params->getOriginalParameters();
     if (!empty($original_params['id'])) {
-      $get_params->setParameter('event_id', $original_params['id']);
+      if (!is_numeric($original_params['id'])) {
+        throw new \InvalidArgumentException('Only a single ID is allowed');
+      }
+
+      $get_params->setParameter('event_id', (int) $original_params['id']);
     }
 
     // dispatch search parameters event
