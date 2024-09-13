@@ -66,6 +66,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     {
         $this->transaction->rollback();
         $this->transaction = null;
+        CRM_Remoteevent_CustomData::flushCashes();
         parent::tearDown();
     }
 
