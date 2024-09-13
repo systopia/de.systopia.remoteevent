@@ -17,6 +17,7 @@ require_once 'remoteevent.civix.php';
 
 use Civi\RemoteEvent;
 use \Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
+use Civi\RemoteParticipant\RegistrationEventFactory;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -89,7 +90,8 @@ function civicrm_api3_remote_participant_create($params)
     $registration_transaction = new CRM_Core_Transaction();
 
     // dispatch to the various handlers
-    $registration_event_factory = new \Civi\RemoteParticipant\RegistrationEventFactory();
+    /** @var \Civi\RemoteParticipant\RegistrationEventFactory $registration_event_factory */
+    $registration_event_factory = \Civi::service(RegistrationEventFactory::class);;
     $registration_event = $registration_event_factory->createRegistrationEvent($params);
     try {
         Civi::dispatcher()->dispatch(RegistrationEvent::NAME, $registration_event);

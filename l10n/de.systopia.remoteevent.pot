@@ -50,7 +50,7 @@ msgstr ""
 msgid "Unique Session ID"
 msgstr ""
 
-#: CRM/Remoteevent/DAO/Session.php api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: CRM/Remoteevent/DAO/Session.php Civi/RemoteEvent/Actions/SpawnEvent.php api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Event ID"
 msgstr ""
 
@@ -62,7 +62,7 @@ msgstr ""
 msgid "Session Title"
 msgstr ""
 
-#: CRM/Remoteevent/DAO/Session.php
+#: CRM/Remoteevent/DAO/Session.php Civi/RemoteEvent/Actions/SpawnEvent.php
 msgid "Is Active"
 msgstr ""
 
@@ -210,11 +210,11 @@ msgstr ""
 msgid "Day"
 msgstr ""
 
-#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/RegistrationProfile/Standard2.php resources/remote_session_description.tpl templates/CRM/Remoteevent/Form/EventSessions.tpl templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/RegistrationProfile/Standard2.php Civi/RemoteEvent/Actions/SpawnEvent.php resources/remote_session_description.tpl templates/CRM/Remoteevent/Form/EventSessions.tpl templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Title"
 msgstr ""
 
-#: CRM/Remoteevent/EventSessions.php
+#: CRM/Remoteevent/EventSessions.php Civi/RemoteEvent/Actions/SpawnEvent.php
 msgid "Description"
 msgstr ""
 
@@ -983,7 +983,11 @@ msgid "Required"
 msgstr ""
 
 #: CRM/Remoteevent/RegistrationProfile.php
-msgid "Invalid Value"
+msgid "Invalid value"
+msgstr ""
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "File too large"
 msgstr ""
 
 #: CRM/Remoteevent/RegistrationProfile.php
@@ -1050,6 +1054,50 @@ msgstr ""
 msgid "Invited"
 msgstr ""
 
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Event Template ID"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php api/v3/RemoteEvent/Spawn.php
+msgid "Event Type"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Summary"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Start Date"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "End Date"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Is Public"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Max. Participants"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Text when event is full"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Waitlist Text"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Could not update or create an event."
+msgstr ""
+
+#: Civi/RemoteEvent/CompilerPass.php
+msgid "RemoteEvent spawn"
+msgstr ""
+
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
 msgid "Accept Invitation"
 msgstr ""
@@ -1084,10 +1132,6 @@ msgstr ""
 
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
 msgid "If the ID of an existing event or event template is given, the new event will be based on that."
-msgstr ""
-
-#: api/v3/RemoteEvent/Spawn.php
-msgid "Event Type"
 msgstr ""
 
 #: api/v3/RemoteEvent/Spawn.php

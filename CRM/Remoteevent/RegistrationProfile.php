@@ -69,11 +69,15 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'name'        => field_key
      *      'entity_name' => 'Contact' or 'Participant'.
      *      'entity_field_name' => string, field_key if not set.
-     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date', 'Datetime', 'Value', 'fieldset'.
-     *                       'Value' fields are not displayed and can be used for pre-defined values.
-     *                       'fieldset' is used to group fields.
-     *                       'Date' fields should have 'validation' set to 'Date' (required for value formatting).
-     *                       'Datetime' fields should have 'validation' set to 'Timestamp' (required for value formatting).
+     *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date', 'Datetime', 'File', 'Value', 'fieldset'.
+     *                       - 'File' doesn't support default values and is always optional on update.
+     *                          If no file is submitted on update, the previous one is kept.
+     *                          The 'validation' attribute is ignored. 'maxlength' can be used to specify
+     *                          the maximum allowed file size.
+     *                       - 'Value' fields are not displayed and can be used for pre-defined values.
+     *                       - 'fieldset' is used to group fields.
+     *                       - 'Date' fields should have 'validation' set to 'Date' (required for value formatting).
+     *                       - 'Datetime' fields should have 'validation' set to 'Timestamp' (required for value formatting).
      *      'weight'      => int,
      *      'options'     => [value => label (localised)] list  (optional)
      *      'required'    => 0/1
@@ -146,7 +150,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $participant_value_callbacks = [];
 
         foreach ($this->getFields() as $field_key => $field_spec) {
-            if (in_array($field_spec['type'], ['Value', 'fieldset'], TRUE)) {
+            if (in_array($field_spec['type'], ['Value', 'fieldset', 'File'], TRUE)) {
                 continue;
             }
 
@@ -229,15 +233,36 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $fields = $this->getFields()
           + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
         foreach ($fields as $field_name => $field_spec) {
-            $value = CRM_Utils_Array::value($field_name, $data);
-            if (!empty($field_spec['required']) && ($value === null || $value === '')) {
-                $validationEvent->addValidationError($field_name, $l10n->ts("Required"));
+            $value = $data[$field_name] ?? NULL;
+            if (!empty($field_spec['required']) && ($value === null || $value === '') &&
+              // Files are always optional on update.
+              ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')) {
+                $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
+            } else if ($field_spec['type'] === 'File') {
+                if ($value === NULL) {
+                  continue;
+                }
+
+                if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
+                  || strlen($value['filename']) > 255 || !is_string($value['content'] ?? NULL)
+                ) {
+                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+                    continue;
+                }
+
+                $maxLength = (int) ($field_spec['maxlength'] ?? 0);
+                if ($maxLength > 0) {
+                    // The file might need up to 37 % more space through Base64 encoding.
+                    if (strlen($value['content']) > $maxLength * 1.38) {
+                        $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
+                    }
+                }
             } else {
                 if (!$this->validateFieldValue($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts("Invalid Value"));
+                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
                 }
                 if (!$this->validateFieldLength($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts("Value too long"));
+                    $validationEvent->addValidationError($field_name, $l10n->ts('Value too long'));
                 }
             }
         }
@@ -367,7 +392,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // add the fields
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
-        if ('create' === $get_form_results->getParams()['context']) {
+        if ('create' === $get_form_results->getContext()) {
           $fields += $profile->getAdditionalParticipantsFields($event, NULL, $locale);
         }
         $get_form_results->addFields($fields);
@@ -375,8 +400,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // add default values
         $profile->addDefaultValues($get_form_results);
 
-        $name = $profile->getName();
-        $label = $profile->getLabel();
         // add profile "field"
         $get_form_results->addFields([
              'profile' => [
@@ -590,7 +613,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Validation the given value
      *
-     * @param array $field_spec
+     * @phpstan-param array<string, array<string, mixed>> $field_spec
      *    specs, see getFields()
      *
      * @param string $value
@@ -600,12 +623,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *   is the value valid
      *
      */
-    protected function validateFieldValue($field_spec, $value)
+    protected function validateFieldValue(array $field_spec, $value): bool
     {
-        $validation = CRM_Utils_Array::value('validation', $field_spec, '');
+        /** @var string $validation */
+        $validation = $field_spec['validation'] ?? '';
         switch ($validation) {
             case 'Email':
-                return preg_match('#^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$#', $value);
+                return preg_match('#^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$#', $value) > 0;
 
             case 'Integer':
             case 'Int':
@@ -631,7 +655,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 // check for regex
                 if (substr($validation, 0, 6) == 'regex:') {
                     if (strlen($value) > 0) {
-                        return preg_match(substr($validation, 6), $value);
+                        return preg_match(substr($validation, 6), $value) > 0;
                     } else {
                         return true;
                     }
@@ -657,7 +681,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     protected function validateFieldLength($field_spec, $value)
     {
-        $max_length = (int) CRM_Utils_Array::value('maxlength', $field_spec, 0);
+        $max_length = (int) ($field_spec['maxlength'] ?? 0);
         if ($max_length) {
             // there is a defined max_length -> test it
             if (!is_array($value) && !is_object($value)) {
@@ -682,7 +706,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *
      */
     public static function formatFieldValue($field_spec, $value) {
-        switch ($field_spec['validation']) {
+        switch ($field_spec['validation'] ?? NULL) {
             case 'Integer':
             case 'Int':
             case 'Positive':

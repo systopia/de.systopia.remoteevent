@@ -20,9 +20,16 @@ declare(strict_types=1);
 namespace Civi\RemoteParticipant;
 
 use Civi\RemoteParticipant\Event\RegistrationEvent;
+use Civi\RemoteTools\Helper\FilePersisterInterface;
 
 final class RegistrationEventFactory
 {
+    private FilePersisterInterface $filePersister;
+
+    public function __construct(FilePersisterInterface $filePersister) {
+      $this->filePersister = $filePersister;
+    }
+
     public function createRegistrationEvent(array $submissionData): RegistrationEvent {
         $registrationEvent = new RegistrationEvent($submissionData);
         $profile = \CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
@@ -37,6 +44,10 @@ final class RegistrationEventFactory
                 $value = isset($fieldSpec['value_callback'])
                   ? $fieldSpec['value_callback']($submissionData[$fieldKey], $submissionData)
                   : $submissionData[$fieldKey];
+
+                if ('File' === $fieldSpec['type'] && is_array($value)) {
+                    $value = $this->filePersister->persistFileFromForm($value, NULL, $registrationEvent->getContactId());
+                }
 
                 if (in_array('Contact', $entityNames, TRUE)) {
                     $contactData[$entityFieldName] = $value;
@@ -82,6 +93,10 @@ final class RegistrationEventFactory
                 $value = isset($fieldSpec['value_callback'])
                   ? $fieldSpec['value_callback']($submissionData[$fieldKey], $submissionData)
                   : $submissionData[$fieldKey];
+
+                if ('File' === $fieldSpec['type'] && NULL !== $value) {
+                    $value = $this->filePersister->persistFileFromForm($value, NULL, $registrationEvent->getContactId());
+                }
 
                 if (in_array('Contact', $entityNames, true)) {
                     $additionalContactsData[$participantNo][$entityFieldName] = $value;
