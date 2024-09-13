@@ -73,7 +73,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *                       - 'File' doesn't support default values and is always optional on update.
      *                          If no file is submitted on update, the previous one is kept.
      *                          The 'validation' attribute is ignored. 'maxlength' can be used to specify
-     *                          the maximum allowed file size.
+     *                          the maximum allowed file size. (This is only approximately because the
+     *                          validation is performed while the content is Base64 encoded.)
      *                       - 'Value' fields are not displayed and can be used for pre-defined values.
      *                       - 'fieldset' is used to group fields.
      *                       - 'Date' fields should have 'validation' set to 'Date' (required for value formatting).
@@ -252,8 +253,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
                 $maxLength = (int) ($field_spec['maxlength'] ?? 0);
                 if ($maxLength > 0) {
-                    // The file might need up to 37 % more space through Base64 encoding.
-                    if (strlen($value['content']) > $maxLength * 1.38) {
+                    // The file might need up to 38 % more space through Base64 encoding.
+                    if (strlen($value['content']) > ceil($maxLength * 1.38)) {
                         $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
                     }
                 }

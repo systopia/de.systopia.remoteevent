@@ -151,6 +151,93 @@ final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
     }
   }
 
+  public function testMaxLength(): void {
+    // Creating custom groups and custom fields changes the DB schema and thus flushes the transaction.
+    \Civi\Core\Transaction\Manager::singleton()->forceRollback();
+
+    $customGroup = CustomGroup::create(FALSE)
+      ->setValues([
+        'name' => 'test_participant_custom_group2',
+        'title' => 'Participant Custom Group',
+        'extends' => 'Participant',
+      ])->execute()->single();
+
+    try {
+      $customField = CustomField::create(FALSE)->setValues([
+        'custom_group_id.name' => 'test_participant_custom_group2',
+        'name' => 'file2',
+        'label' => 'File Test',
+        'data_type' => 'File',
+        'html_type' => 'File',
+      ])->execute()->single();
+
+      \Civi\Core\Transaction\Manager::singleton()->inc();
+      \Civi\Core\Transaction\Manager::singleton()->getFrame()->setRollbackOnly();
+
+      \CRM_Remoteevent_RegistrationProfile_Mock::register();
+      \CRM_Remoteevent_RegistrationProfile_Mock::$fields = [
+        'file' => [
+          'name' => 'file',
+          'entity_name' => 'Participant',
+          'entity_field_name' => 'test_participant_custom_group2.file2',
+          'type' => 'File',
+          'required' => 1,
+          'label' => 'File',
+          'maxlength' => 6,
+        ],
+      ];
+
+      $contact = ContactFixture::addIndividual();
+      $event = RemoteEventFixture::addFixture();
+      \CRM_Remotetools_Contact::storeRemoteKey('remoteId2', $contact['id']);
+
+      $e = NULL;
+      try {
+        civicrm_api3('RemoteParticipant', 'create', [
+          'event_id' => $event['id'],
+          'remote_contact_id' => 'remoteId2',
+          'file' => [
+            'filename' => 'test.txt',
+            'content' => base64_encode('this is too long'),
+          ],
+        ]);
+      } catch (\CRM_Core_Exception $e) {
+        static::assertSame('File too large', $e->getMessage());
+      }
+      static::assertNotNull($e);
+
+      $remoteParticipant = civicrm_api3('RemoteParticipant', 'create', [
+        'event_id' => $event['id'],
+        'remote_contact_id' => 'remoteId2',
+        'file' => [
+          'filename' => 'test.txt',
+          'content' => base64_encode('test'),
+        ],
+      ]);
+      static::assertEmpty($remoteParticipant['is_error']);
+
+      $participant = Participant::get(FALSE)
+        ->addSelect('*', 'test_participant_custom_group2.file2')
+        ->execute()
+        ->single();
+      static::assertIsInt($participant['test_participant_custom_group2.file2']);
+    }
+    finally {
+      \Civi\Core\Transaction\Manager::singleton()->forceRollback();
+
+      if (isset($customField)) {
+        CustomField::delete(FALSE)->addWhere('id', '=', $customField['id'])->execute();
+      }
+
+      CustomGroup::delete(FALSE)->addWhere('id', '=', $customGroup['id'])->execute();
+
+      // There needs to be an open transaction to prevent an error when the CiviCRM test listener tries to rollback a
+      // transaction.
+      \Civi\Core\Transaction\Manager::singleton()->inc();
+      \Civi\Core\Transaction\Manager::singleton()->getFrame()->setRollbackOnly();
+    }
+  }
+
   private static function assertCiviFileContentEquals(string $expected, int $fileId): void {
     $file = File::get(FALSE)
       ->addWhere('id', '=', $fileId)
