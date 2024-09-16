@@ -72,9 +72,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'type'        => field type, one of 'Text', 'Textarea', 'Select', 'Multi-Select', 'Checkbox', 'Date', 'Datetime', 'File', 'Value', 'fieldset'.
      *                       - 'File' doesn't support default values and is always optional on update.
      *                          If no file is submitted on update, the previous one is kept.
-     *                          The 'validation' attribute is ignored. 'maxlength' can be used to specify
-     *                          the maximum allowed file size. (This is only approximately because the
-     *                          validation is performed while the content is Base64 encoded.)
+     *                          The 'validation' attribute is ignored. 'max_filesize' can be used to specify
+     *                          the maximum allowed file size.
      *                       - 'Value' fields are not displayed and can be used for pre-defined values.
      *                       - 'fieldset' is used to group fields.
      *                       - 'Date' fields should have 'validation' set to 'Date' (required for value formatting).
@@ -91,6 +90,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *      'prefill_value_callback' => (optional) callable(mixed, array<string, mixed>): mixed Called when adding default values.
      *         The first argument is the value itself, the second one the values of the same entity referenced by other fields.
      *      'maxlength'   => (optional) max length of the field content (as a string)
+     *      'max_filesize' => (optional) maximum file size in bytes when 'type' is 'File'. (This is only approximately
+     *                       because the validation is performed while the content is Base64 encoded.)
      *      'validation'  => content validation, see CRM_Utils_Type strings, but also custom ones like 'Email'
      *                       NOTE: this is just for the optional 'inline' validation in the form,
      *                             the main validation will go through the RemoteParticipant.validate function
@@ -251,10 +252,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
                     continue;
                 }
 
-                $maxLength = (int) ($field_spec['maxlength'] ?? 0);
-                if ($maxLength > 0) {
+                $maxFilesize = (int) ($field_spec['max_filesize'] ?? 0);
+                if ($maxFilesize > 0) {
                     // The file might need up to 38 % more space through Base64 encoding.
-                    if (strlen($value['content']) > ceil($maxLength * 1.38)) {
+                    if (strlen($value['content']) > ceil($maxFilesize * 1.38)) {
                         $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
                     }
                 }

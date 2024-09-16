@@ -151,7 +151,7 @@ final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
     }
   }
 
-  public function testMaxLength(): void {
+  public function testMaxFilesize(): void {
     // Creating custom groups and custom fields changes the DB schema and thus flushes the transaction.
     \Civi\Core\Transaction\Manager::singleton()->forceRollback();
 
@@ -183,7 +183,7 @@ final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
           'type' => 'File',
           'required' => 1,
           'label' => 'File',
-          'maxlength' => 6,
+          'max_filesize' => 6,
         ],
       ];
 
