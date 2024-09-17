@@ -246,6 +246,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 }
 
                 if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
+                  // File systems usually allow up to 255 characters.
                   || strlen($value['filename']) > 255 || !is_string($value['content'] ?? NULL)
                 ) {
                     $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
