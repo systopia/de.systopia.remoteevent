@@ -160,6 +160,12 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
     public function addFields($field_list)
     {
         foreach ($field_list as $key => $field_spec) {
+            // Files are optional on update. If none is given, the previous one
+            // is kept.
+            if ($field_spec['type'] === 'File' && $this->getContext() === 'update') {
+                $field_spec['required'] = 0;
+            }
+
             $this->result[$key] = $field_spec;
         }
     }

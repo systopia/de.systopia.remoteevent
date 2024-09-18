@@ -15,6 +15,8 @@
 
 require_once 'remoteevent.civix.php';
 
+use Civi\RemoteParticipant\RegistrationEventFactory;
+use Civi\RemoteTools\Helper\FilePersisterInterface;
 use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\RemoteEvent\Event\GetParamsEvent;
 use Civi\RemoteEvent\Event\GetFieldsEvent;
@@ -27,6 +29,7 @@ use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateEvent;
 use Civi\RemoteParticipant\Event\CancelEvent;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 
@@ -232,7 +235,10 @@ function remoteevent_civicrm_config(&$config)
  * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function remoteevent_civicrm_container(ContainerBuilder $container) {
+    $container->addResource(new FileResource(__FILE__));
     $container->addCompilerPass(new Civi\RemoteEvent\CompilerPass());
+    $container->autowire(RegistrationEventFactory::class)->setPublic(TRUE);
+    $container->setAlias('remoteevent.file_persister', FilePersisterInterface::class)->setPublic(TRUE);
 }
 
 

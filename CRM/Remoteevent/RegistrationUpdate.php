@@ -107,6 +107,20 @@ class CRM_Remoteevent_RegistrationUpdate
                     ? $field_spec['value_callback']($submission_data[$field_key], $submission_data)
                     : $submission_data[$field_key];
 
+                if ($field_spec['type'] === 'File') {
+                    // Do nothing if no file is submitted on update.
+                    if (NULL === $value) {
+                        continue;
+                    }
+
+                    if (is_array($value)) {
+                        // The previous file, if any, might become orphaned.
+                        /** @var \Civi\RemoteTools\Helper\FilePersisterInterface $filePersister */
+                        $filePersister = \Civi::service('remoteevent.file_persister');
+                        $value = $filePersister->persistFileFromForm($value, NULL, $registration_update->getContactID());
+                    }
+                }
+
                 if (in_array('Contact', $entity_names, TRUE)) {
                     $registration_update->addContactUpdate($entity_field_name, $value);
                 }

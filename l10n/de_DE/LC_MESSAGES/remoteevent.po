@@ -73,10 +73,10 @@ msgstr "Workshop"
 msgid "Unique Session ID"
 msgstr "Eindeutige Workshop-ID"
 
-#: CRM/Remoteevent/DAO/Session.php api/v3/RemoteParticipant/Cancel.php
-#: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php
-#: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php
-#: api/v3/RemoteParticipant/Validate.php
+#: CRM/Remoteevent/DAO/Session.php Civi/RemoteEvent/Actions/SpawnEvent.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
+#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Event ID"
 msgstr "Veranstaltungs ID"
 
@@ -88,7 +88,7 @@ msgstr "Fremdschlüssel zu Veranstaltung (Event)"
 msgid "Session Title"
 msgstr "Workshop Titel"
 
-#: CRM/Remoteevent/DAO/Session.php
+#: CRM/Remoteevent/DAO/Session.php Civi/RemoteEvent/Actions/SpawnEvent.php
 msgid "Is Active"
 msgstr "Workshop aktiviert"
 
@@ -252,13 +252,14 @@ msgstr "Tag"
 
 #: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
 #: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
 #: resources/remote_session_description.tpl
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Title"
 msgstr "Titel"
 
-#: CRM/Remoteevent/EventSessions.php
+#: CRM/Remoteevent/EventSessions.php Civi/RemoteEvent/Actions/SpawnEvent.php
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -1109,8 +1110,12 @@ msgid "Required"
 msgstr "Erforderlich"
 
 #: CRM/Remoteevent/RegistrationProfile.php
-msgid "Invalid Value"
+msgid "Invalid value"
 msgstr "Ungültiger Wert"
+
+#: CRM/Remoteevent/RegistrationProfile.php
+msgid "File too large"
+msgstr "Datei zu groß"
 
 #: CRM/Remoteevent/RegistrationProfile.php
 msgid "Value too long"
@@ -1184,6 +1189,50 @@ msgstr "Online Anmeldung (CiviCRM)"
 msgid "Invited"
 msgstr "eingeladen"
 
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Event Template ID"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php api/v3/RemoteEvent/Spawn.php
+msgid "Event Type"
+msgstr "Veranstaltungstyp"
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Summary"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Start Date"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "End Date"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Is Public"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Max. Participants"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Text when event is full"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Waitlist Text"
+msgstr ""
+
+#: Civi/RemoteEvent/Actions/SpawnEvent.php
+msgid "Could not update or create an event."
+msgstr ""
+
+#: Civi/RemoteEvent/CompilerPass.php
+msgid "RemoteEvent spawn"
+msgstr ""
+
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
 #: Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
 msgid "Accept Invitation"
@@ -1236,10 +1285,6 @@ msgid ""
 msgstr ""
 "Die ID einer bestehenden Veranstaltung oder einer Veranstaltungsvorlage "
 "wurde übergeben, die Veranstaltung wird darauf basieren."
-
-#: api/v3/RemoteEvent/Spawn.php
-msgid "Event Type"
-msgstr "Veranstaltungstyp"
 
 #: api/v3/RemoteEvent/Spawn.php
 msgid "Type of the event"

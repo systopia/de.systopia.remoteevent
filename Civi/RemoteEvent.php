@@ -30,8 +30,7 @@ abstract class RemoteEvent extends RemoteToolsRequest
     /** @var integer participant ID */
     protected $participant_id = null;
 
-    /** @var integer contact ID */
-    protected $contact_id = null;
+    protected ?int $contact_id = null;
 
     /** @var integer event ID */
     protected $event_id = null;
@@ -159,7 +158,7 @@ abstract class RemoteEvent extends RemoteToolsRequest
             // check if there is a participant
             $participant_id = $this->getParticipantID();
             if ($participant_id) {
-                $this->contact_id = civicrm_api3('Participant', 'getvalue', [
+                $this->contact_id = (int) civicrm_api3('Participant', 'getvalue', [
                     'id'     => $participant_id,
                     'return' => 'contact_id']);
             }
