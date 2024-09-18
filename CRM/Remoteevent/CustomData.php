@@ -1,7 +1,7 @@
 <?php
 /*-------------------------------------------------------+
 | SYSTOPIA CUSTOM DATA HELPER                            |
-| Copyright (C) 2018-2023 SYSTOPIA                       |
+| Copyright (C) 2018-2024 SYSTOPIA                       |
 | Author: B. Endres (endres@systopia.de)                 |
 | Source: https://github.com/systopia/Custom-Data-Helper |
 +--------------------------------------------------------+
@@ -15,21 +15,31 @@
 +--------------------------------------------------------*/
 
 class CRM_Remoteevent_CustomData {
-  const CUSTOM_DATA_HELPER_VERSION   = '0.10';
+
+  const CUSTOM_DATA_HELPER_VERSION = '0.12.0';
+
   const CUSTOM_DATA_HELPER_LOG_LEVEL = 0;
+
   const CUSTOM_DATA_HELPER_LOG_DEBUG = 1;
-  const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
+
+  const CUSTOM_DATA_HELPER_LOG_INFO = 3;
+
   const CUSTOM_DATA_HELPER_LOG_ERROR = 5;
 
   /** caches custom field data, indexed by group name */
-  protected static $custom_group2name       = NULL;
+  protected static $custom_group2name = NULL;
+
   protected static $custom_group2table_name = NULL;
-  protected static $custom_group_cache      = array();
-  protected static $custom_group_spec_cache = array();
-  protected static $custom_field_cache      = array();
+
+  protected static $custom_group_cache = [];
+
+  protected static $custom_group_spec_cache = [];
+
+  protected static $custom_field_cache = [];
 
   protected $ts_domain = NULL;
-  protected $version   = self::CUSTOM_DATA_HELPER_VERSION;
+
+  protected $version = self::CUSTOM_DATA_HELPER_VERSION;
 
   public function __construct($ts_domain) {
     $this->ts_domain = $ts_domain;
@@ -51,7 +61,7 @@ class CRM_Remoteevent_CustomData {
   public function syncEntities($source_file) {
     $data = json_decode(file_get_contents($source_file), TRUE);
     if (empty($data)) {
-      throw new Exception("syncOptionGroup::syncOptionGroup: Invalid specs");
+      throw new Exception('syncOptionGroup::syncOptionGroup: Invalid specs');
     }
 
     foreach ($data['_entities'] as $entity_data) {
@@ -61,10 +71,15 @@ class CRM_Remoteevent_CustomData {
       if (empty($entity)) {
         // create OptionValue
         $entity = $this->createEntity($data['entity'], $entity_data);
-      } elseif ($entity == 'FAILED') {
+      }
+      elseif ($entity == 'FAILED') {
         // Couldn't identify:
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update {$data['entity']}: " . json_encode($entity_data));
-      } else {
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Couldn't create/update {$data['entity']}: " . json_encode($entity_data)
+        );
+      }
+      else {
         // update OptionValue
         $this->updateEntity($data['entity'], $entity_data, $entity);
       }
@@ -79,7 +94,7 @@ class CRM_Remoteevent_CustomData {
   public function syncOptionGroup($source_file) {
     $data = json_decode(file_get_contents($source_file), TRUE);
     if (empty($data)) {
-      throw new Exception("syncOptionGroup::syncOptionGroup: Invalid specs");
+      throw new Exception('syncOptionGroup::syncOptionGroup: Invalid specs');
     }
 
     // first: find or create option group
@@ -88,13 +103,16 @@ class CRM_Remoteevent_CustomData {
     if (empty($optionGroup)) {
       // create OptionGroup
       $optionGroup = $this->createEntity('OptionGroup', $data);
-    } elseif ($optionGroup == 'FAILED') {
+    }
+    elseif ($optionGroup == 'FAILED') {
       // Couldn't identify:
       $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update OptionGroup: " . json_encode($data));
+
       return;
-    } else {
+    }
+    else {
       // update OptionGroup
-      $this->updateEntity('OptionGroup', $data, $optionGroup, array('is_active'));
+      $this->updateEntity('OptionGroup', $data, $optionGroup, ['is_active']);
     }
 
     // now run the update for the OptionValues
@@ -107,16 +125,20 @@ class CRM_Remoteevent_CustomData {
       if (empty($optionValue)) {
         // create OptionValue
         $optionValue = $this->createEntity('OptionValue', $optionValueSpec);
-      } elseif ($optionValue == 'FAILED') {
+      }
+      elseif ($optionValue == 'FAILED') {
         // Couldn't identify:
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update OptionValue: " . json_encode($optionValueSpec));
-      } else {
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Couldn't create/update OptionValue: " . json_encode($optionValueSpec)
+        );
+      }
+      else {
         // update OptionValue
-        $this->updateEntity('OptionValue', $optionValueSpec, $optionValue, array('is_active'));
+        $this->updateEntity('OptionValue', $optionValueSpec, $optionValue, ['is_active']);
       }
     }
   }
-
 
   /**
    * will take a JSON source file and synchronise the
@@ -127,14 +149,14 @@ class CRM_Remoteevent_CustomData {
     $force_update = FALSE;
     $data = json_decode(file_get_contents($source_file), TRUE);
     if (empty($data)) {
-      throw new Exception("CRM_Utils_CustomData::syncCustomGroup: Invalid custom specs");
+      throw new Exception('CRM_Utils_CustomData::syncCustomGroup: Invalid custom specs');
     }
 
     // if extends_entity_column_value, make sure it's sensible data
     if (isset($data['extends_entity_column_value'])) {
       $force_update = TRUE; // this doesn't get returned by the API, so differences couldn't be detected
       if ($data['extends'] == 'Activity') {
-        $extends_list = array();
+        $extends_list = [];
         foreach ($data['extends_entity_column_value'] as $activity_type) {
           if (!is_numeric($activity_type)) {
             $activity_type = self::getOptionValue('activity_type', $activity_type, 'name');
@@ -151,20 +173,28 @@ class CRM_Remoteevent_CustomData {
       }
     }
 
-
     // first: find or create custom group
     $this->translateStrings($data);
     $customGroup = $this->identifyEntity('CustomGroup', $data);
     if (empty($customGroup)) {
       // create CustomGroup
       $customGroup = $this->createEntity('CustomGroup', $data);
-    } elseif ($customGroup == 'FAILED') {
+    }
+    elseif ($customGroup == 'FAILED') {
       // Couldn't identify:
       $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update CustomGroup: " . json_encode($data));
+
       return;
-    } else {
+    }
+    else {
       // update CustomGroup
-      $this->updateEntity('CustomGroup', $data, $customGroup, array('extends', 'style', 'is_active', 'title', 'extends_entity_column_value'), $force_update);
+      $this->updateEntity(
+        'CustomGroup',
+        $data,
+        $customGroup,
+        ['extends', 'style', 'is_active', 'title', 'extends_entity_column_value'],
+        $force_update
+      );
     }
 
     // now run the update for the CustomFields
@@ -174,9 +204,13 @@ class CRM_Remoteevent_CustomData {
       $customFieldSpec['_lookup'][] = 'custom_group_id';
       if (!empty($customFieldSpec['option_group_id']) && !is_numeric($customFieldSpec['option_group_id'])) {
         // look up custom group id
-        $optionGroup = $this->getEntityID('OptionGroup', array('name' => $customFieldSpec['option_group_id']));
-        if ($optionGroup == 'FAILED' || $optionGroup==NULL) {
-          $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update CustomField, bad option_group: {$customFieldSpec['option_group_id']}");
+        $optionGroup = $this->getEntityID('OptionGroup', ['name' => $customFieldSpec['option_group_id']]);
+        if ($optionGroup == 'FAILED' || $optionGroup == NULL) {
+          $this->log(
+            self::CUSTOM_DATA_HELPER_LOG_ERROR,
+            "Couldn't create/update CustomField, bad option_group: {$customFieldSpec['option_group_id']}"
+          );
+
           return;
         }
         $customFieldSpec['option_group_id'] = $optionGroup['id'];
@@ -185,12 +219,22 @@ class CRM_Remoteevent_CustomData {
       if (empty($customField)) {
         // create CustomField
         $customField = $this->createEntity('CustomField', $customFieldSpec);
-      } elseif ($customField == 'FAILED') {
+      }
+      elseif ($customField == 'FAILED') {
         // Couldn't identify:
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update CustomField: " . json_encode($customFieldSpec));
-      } else {
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Couldn't create/update CustomField: " . json_encode($customFieldSpec)
+        );
+      }
+      else {
         // update CustomField
-        $this->updateEntity('CustomField', $customFieldSpec, $customField, array('in_selector', 'is_view', 'is_searchable', 'html_type', 'data_type', 'custom_group_id'));
+        $this->updateEntity(
+          'CustomField',
+          $customFieldSpec,
+          $customField,
+          ['in_selector', 'is_view', 'is_searchable', 'html_type', 'data_type', 'custom_group_id']
+        );
       }
     }
   }
@@ -199,9 +243,11 @@ class CRM_Remoteevent_CustomData {
    * return the ID of the given entity (if exists)
    */
   protected function getEntityID($entity_type, $selector) {
-    if (empty($selector)) return NULL;
+    if (empty($selector)) {
+      return NULL;
+    }
     $selector['sequential'] = 1;
-    $selector['options'] = array('limit' => 2);
+    $selector['options'] = ['limit' => 2];
 
     $lookup_result = civicrm_api3($entity_type, 'get', $selector);
     switch ($lookup_result['count']) {
@@ -211,6 +257,7 @@ class CRM_Remoteevent_CustomData {
       default:
         // more than one found
         $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Bad {$entity_type} lookup selector: " . json_encode($selector));
+
         return 'FAILED';
       case 0:
         // not found
@@ -224,9 +271,10 @@ class CRM_Remoteevent_CustomData {
    * lookup attributes
    */
   protected function identifyEntity($entity_type, $data) {
-    $lookup_query = array(
-            'sequential' => 1,
-            'options'    => array('limit' => 2));
+    $lookup_query = [
+      'sequential' => 1,
+      'options' => ['limit' => 2]
+    ];
 
     foreach ($data['_lookup'] as $lookup_key) {
       $lookup_query[$lookup_key] = CRM_Utils_Array::value($lookup_key, $data, '');
@@ -245,7 +293,11 @@ class CRM_Remoteevent_CustomData {
 
       default:
         // bad lookup selector
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Bad {$entity_type} lookup selector: " . json_encode($lookup_query));
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Bad {$entity_type} lookup selector: " . json_encode($lookup_query)
+        );
+
         return 'FAILED';
     }
   }
@@ -263,14 +315,15 @@ class CRM_Remoteevent_CustomData {
 
     // then run query
     Civi::log()->debug("CustomDataHelper ({$this->ts_domain}): CREATE {$entity_type}: " . json_encode($data));
+
     return civicrm_api3($entity_type, 'create', $data);
   }
 
   /**
    * create a new entity
    */
-  protected function updateEntity($entity_type, $requested_data, $current_data, $required_fields = array(), $force = FALSE) {
-    $update_query = array();
+  protected function updateEntity($entity_type, $requested_data, $current_data, $required_fields = [], $force = FALSE) {
+    $update_query = [];
 
     // first: identify fields that need to be updated
     foreach ($requested_data as $field => $value) {
@@ -301,16 +354,20 @@ class CRM_Remoteevent_CustomData {
       foreach ($required_fields as $required_field) {
         if (isset($requested_data[$required_field])) {
           $update_query[$required_field] = $requested_data[$required_field];
-        } elseif (isset($current_data[$required_field])) {
+        }
+        elseif (isset($current_data[$required_field])) {
           $update_query[$required_field] = $current_data[$required_field];
-        } else {
+        }
+        else {
           // nothing we can do...
         }
       }
 
       $this->log(self::CUSTOM_DATA_HELPER_LOG_INFO, "UPDATE {$entity_type}: " . json_encode($update_query));
+
       return civicrm_api3($entity_type, 'create', $update_query);
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -319,13 +376,26 @@ class CRM_Remoteevent_CustomData {
    * translate all fields that are listed in the _translate list
    */
   protected function translateStrings(&$data) {
-    if (empty($data['_translate'])) return;
+    if (empty($data['_translate'])) {
+      return;
+    }
     foreach ($data['_translate'] as $translate_key) {
       $value = $data[$translate_key];
       if (is_string($value)) {
-        $data[$translate_key] = ts($value, array('domain' => $this->ts_domain));
+        $data[$translate_key] = ts($value, ['domain' => $this->ts_domain]);
       }
     }
+  }
+
+  /**
+   * Flush all internal caches
+   */
+  public static function flushCashes() {
+    self::$custom_group2name = NULL;
+    self::$custom_group2table_name = NULL;
+    self::$custom_group_cache = [];
+    self::$custom_group_spec_cache = [];
+    self::$custom_field_cache = [];
   }
 
   /**
@@ -337,10 +407,12 @@ class CRM_Remoteevent_CustomData {
    * @param $separator  string  separator to be used.
    *                            examples are '.' (default) or '__' to avoid drupal form field id issues
    */
-  public static function labelCustomFields(&$data, $depth=1, $separator = '.') {
-    if ($depth <= 0) return;
+  public static function labelCustomFields(&$data, $depth = 1, $separator = '.') {
+    if ($depth <= 0) {
+      return;
+    }
 
-    $custom_fields_used = array();
+    $custom_fields_used = [];
     foreach ($data as $key => $value) {
       if (preg_match('#^custom_(?P<field_id>\d+)$#', $key, $match)) {
         $custom_fields_used[] = $match['field_id'];
@@ -360,7 +432,7 @@ class CRM_Remoteevent_CustomData {
 
       // recursively look into that array
       if (is_array($value) && $depth > 0) {
-        self::labelCustomFields($value, $depth-1, $separator);
+        self::labelCustomFields($value, $depth - 1, $separator);
       }
     }
   }
@@ -379,32 +451,37 @@ class CRM_Remoteevent_CustomData {
    */
   public static function getFieldIdentifier($field_id, $separator = '.') {
     // just to be on the safe side
-    self::cacheCustomFields(array($field_id));
+    self::cacheCustomFields([$field_id]);
 
     // get custom field
     $custom_field = self::$custom_field_cache[$field_id];
     if ($custom_field) {
       $group_name = self::getGroupName($custom_field['custom_group_id']);
+
       return "{$group_name}{$separator}{$custom_field['name']}";
-    } else {
+    }
+    else {
       return 'FIELD_NOT_FOUND_' . $field_id;
     }
   }
 
   /**
    * Get the specs/definition of the field
+   *
    * @param int $field_id
+   *
    * @return array field specs
    */
   public static function getFieldSpecs($field_id) {
     // just to be on the safe side
-    self::cacheCustomFields(array($field_id));
+    self::cacheCustomFields([$field_id]);
 
     // get custom field
     $custom_field = self::$custom_field_cache[$field_id];
     if ($custom_field) {
       return $custom_field;
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -413,6 +490,7 @@ class CRM_Remoteevent_CustomData {
    * Get the specs/definition of the group
    *
    * @param int|string $group_id group id or string
+   *
    * @return array group specs
    */
   public static function getGroupSpecs($group_id) {
@@ -423,11 +501,11 @@ class CRM_Remoteevent_CustomData {
     $custom_group = self::$custom_group_spec_cache[$group_id];
     if ($custom_group) {
       return $custom_group;
-    } else {
+    }
+    else {
       return NULL;
     }
   }
-
 
   /**
    * internal function to replace "<custom_group_name>.<custom_field_name>"
@@ -439,7 +517,7 @@ class CRM_Remoteevent_CustomData {
    */
   public static function resolveCustomFields(&$data, $customgroups = NULL) {
     // first: find out which ones to cache
-    $customgroups_used = array();
+    $customgroups_used = [];
     foreach ($data as $key => $value) {
       if (preg_match('/^(?P<group_name>\w+)[.](?P<field_name>\w+)$/', $key, $match)) {
         if ($match['group_name'] == 'option' || $match['group_name'] == 'options') {
@@ -465,14 +543,14 @@ class CRM_Remoteevent_CustomData {
             $custom_key = 'custom_' . $custom_field['id'];
             $data[$custom_key] = $data[$key];
             unset($data[$key]);
-          } else {
+          }
+          else {
             // TODO: unknown data field $match['group_name'] . $match['field_name']
           }
         }
       }
     }
   }
-
 
   /**
    * Get CustomField entity (cached)
@@ -481,7 +559,8 @@ class CRM_Remoteevent_CustomData {
     $field = self::getCustomField($custom_group_name, $custom_field_name);
     if ($field) {
       return 'custom_' . $field['id'];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -490,11 +569,12 @@ class CRM_Remoteevent_CustomData {
    * Get CustomField entity (cached)
    */
   public static function getCustomField($custom_group_name, $custom_field_name) {
-    self::cacheCustomGroups(array($custom_group_name));
+    self::cacheCustomGroups([$custom_group_name]);
 
     if (isset(self::$custom_group_cache[$custom_group_name][$custom_field_name])) {
       return self::$custom_group_cache[$custom_group_name][$custom_field_name];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -506,13 +586,14 @@ class CRM_Remoteevent_CustomData {
     foreach ($custom_group_names as $custom_group_name) {
       if (!isset(self::$custom_group_cache[$custom_group_name])) {
         // set to empty array to indicate our intentions
-        self::$custom_group_cache[$custom_group_name] = array();
-        $fields = civicrm_api3('CustomField', 'get', array(
-                'custom_group_id' => $custom_group_name,
-                'option.limit'    => 0));
+        self::$custom_group_cache[$custom_group_name] = [];
+        $fields = civicrm_api3('CustomField', 'get', [
+          'custom_group_id' => $custom_group_name,
+          'option.limit' => 0
+        ]);
         foreach ($fields['values'] as $field) {
           self::$custom_group_cache[$custom_group_name][$field['name']] = $field;
-          self::$custom_group_cache[$custom_group_name][$field['id']]   = $field;
+          self::$custom_group_cache[$custom_group_name][$field['id']] = $field;
         }
       }
     }
@@ -523,7 +604,7 @@ class CRM_Remoteevent_CustomData {
    */
   public static function cacheCustomFields($custom_field_ids) {
     // first: check if they are already cached
-    $fields_to_load = array();
+    $fields_to_load = [];
     foreach ($custom_field_ids as $field_id) {
       if (!array_key_exists($field_id, self::$custom_field_cache)) {
         $fields_to_load[] = $field_id;
@@ -532,10 +613,10 @@ class CRM_Remoteevent_CustomData {
 
     // load missing fields
     if (!empty($fields_to_load)) {
-      $loaded_fields = civicrm_api3('CustomField', 'get', array(
-              'id'           => array('IN' => $fields_to_load),
-              'option.limit' => 0,
-      ));
+      $loaded_fields = civicrm_api3('CustomField', 'get', [
+        'id' => ['IN' => $fields_to_load],
+        'option.limit' => 0,
+      ]);
       foreach ($loaded_fields['values'] as $field) {
         self::$custom_field_cache[$field['id']] = $field;
       }
@@ -549,7 +630,7 @@ class CRM_Remoteevent_CustomData {
    */
   public static function cacheCustomGroupSpecs($custom_group_ids) {
     // first: check if they are already cached
-    $fields_to_load = array();
+    $fields_to_load = [];
     foreach ($custom_group_ids as $group_id) {
       if (!array_key_exists($group_id, self::$custom_group_spec_cache)) {
         $groups_to_load[] = $group_id;
@@ -558,17 +639,16 @@ class CRM_Remoteevent_CustomData {
 
     // load missing fields
     if (!empty($groups_to_load)) {
-      $loaded_groups = civicrm_api3('CustomGroup', 'get', array(
-              'id'           => array('IN' => $groups_to_load),
-              'option.limit' => 0,
-      ));
+      $loaded_groups = civicrm_api3('CustomGroup', 'get', [
+        'id' => ['IN' => $groups_to_load],
+        'option.limit' => 0,
+      ]);
       foreach ($loaded_groups['values'] as $group) {
         self::$custom_group_spec_cache[$group['id']] = $group;
         self::$custom_group_spec_cache[$group['name']] = $group;
       }
     }
   }
-
 
   /**
    * Get a mapping: custom_group_id => custom_group_name
@@ -580,6 +660,7 @@ class CRM_Remoteevent_CustomData {
     if (self::$custom_group2name === NULL) {
       self::loadGroups();
     }
+
     return self::$custom_group2name;
   }
 
@@ -590,22 +671,22 @@ class CRM_Remoteevent_CustomData {
     if (self::$custom_group2table_name === NULL) {
       self::loadGroups();
     }
+
     return self::$custom_group2table_name;
   }
-
 
   /**
    * Load group data (all groups)
    */
   protected static function loadGroups() {
-    self::$custom_group2name = array();
-    self::$custom_group2table_name = array();
-    $group_search = civicrm_api3('CustomGroup', 'get', array(
-            'return'       => 'name,table_name',
-            'option.limit' => 0,
-    ));
+    self::$custom_group2name = [];
+    self::$custom_group2table_name = [];
+    $group_search = civicrm_api3('CustomGroup', 'get', [
+      'return' => 'name,table_name',
+      'option.limit' => 0,
+    ]);
     foreach ($group_search['values'] as $customGroup) {
-      self::$custom_group2name[$customGroup['id']]       = $customGroup['name'];
+      self::$custom_group2name[$customGroup['id']] = $customGroup['name'];
       self::$custom_group2table_name[$customGroup['id']] = $customGroup['table_name'];
     }
   }
@@ -615,6 +696,7 @@ class CRM_Remoteevent_CustomData {
    */
   public static function getGroupName($custom_group_id) {
     $group2name = self::getGroup2Name();
+
     return $group2name[$custom_group_id];
   }
 
@@ -632,13 +714,14 @@ class CRM_Remoteevent_CustomData {
    *  (e.g. '%5B6%2C7%2C8%5D' for '[6,7,8]')
    *  they will be unpacked as well.
    *
-   * @todo make it more efficient?
-   *
    * @param array $params
    *   the parameter array as used by the API
    *
    * @param array $group_names
    *   list of group names to process. Default is: all
+   *
+   * @todo make it more efficient?
+   *
    */
   public static function unREST(&$params, $group_names = NULL) {
     if ($group_names == NULL || !is_array($group_names)) {
@@ -667,7 +750,8 @@ class CRM_Remoteevent_CustomData {
               // this is a strange behaviour in the API,
               //   but empty arrays are not processed properly
               $value = '';
-            } else {
+            }
+            else {
               $value = $unpacked_value;
             }
           }
@@ -689,6 +773,7 @@ class CRM_Remoteevent_CustomData {
         return $id2table[$group_id];
       }
     }
+
     return NULL;
   }
 
@@ -701,6 +786,7 @@ class CRM_Remoteevent_CustomData {
     if (isset($name2id[$group_name])) {
       return $name2id[$group_name];
     }
+
     return NULL;
   }
 
@@ -711,10 +797,9 @@ class CRM_Remoteevent_CustomData {
   public static function createSQLJoin($group_name, $table_alias, $join_entity_id) {
     // cache the groups used
     $group_table_name = self::getGroupTable($group_name);
+
     return "LEFT JOIN `{$group_table_name}` AS {$table_alias} ON {$table_alias}.entity_id = {$join_entity_id}";
   }
-
-
 
   /**
    * Get the current field value from CiviCRM's pre-hook structure
@@ -732,15 +817,17 @@ class CRM_Remoteevent_CustomData {
     if ($field_id) {
       if (!empty($params['custom'][$field_id][-1])) {
         $field_data = $params['custom'][$field_id][-1];
+
         return $field_data['value'];
-      } else {
+      }
+      else {
         // unlikely, but worth a shot:
         return CRM_Utils_Array::value("custom_{$field_id}", $params, NULL);
       }
     }
+
     return NULL;
   }
-
 
   /**
    * Set a field value in CiviCRM's pre-hook structure right in the pre hook data
@@ -760,11 +847,13 @@ class CRM_Remoteevent_CustomData {
         if (!empty($params['custom'][$field_id][-1])) {
           // update custom field data record
           $params['custom'][$field_id][-1]['value'] = $value;
-        } else {
+        }
+        else {
           // add custom field data record
           $params['custom'][$field_id][-1] = self::generatePreHookCustomDataRecord($field_id, $value);
         }
-      } else {
+      }
+      else {
         // this shouldn't happen based on the pre_hook...
         // not likely to succeed, but worth a shot:
         $params["custom_{$field_id}"] = $value;
@@ -775,22 +864,25 @@ class CRM_Remoteevent_CustomData {
   /**
    * @param $field_id
    * @param $value
+   *
    * @return array
    */
   protected static function generatePreHookCustomDataRecord($field_id, $value) {
     if ($field_id) {
       $field_specs = self::getFieldSpecs($field_id);
       $group_specs = self::getGroupSpecs($field_specs['custom_group_id']);
-      return               [
-              'value'           => $value,
-              'type'            => CRM_Utils_Array::value('data_type', $field_specs, 'String'),
-              'custom_field_id' => $field_id,
-              'custom_group_id' => CRM_Utils_Array::value('custom_group_id', $field_specs, NULL),
-              'table_name'      => CRM_Utils_Array::value('table_name', $group_specs, NULL),
-              'column_name'     => CRM_Utils_Array::value('column_name', $field_specs, NULL),
-              'is_multiple'     => CRM_Utils_Array::value('is_multiple', $group_specs, 0),
+
+      return [
+        'value' => $value,
+        'type' => CRM_Utils_Array::value('data_type', $field_specs, 'String'),
+        'custom_field_id' => $field_id,
+        'custom_group_id' => CRM_Utils_Array::value('custom_group_id', $field_specs, NULL),
+        'table_name' => CRM_Utils_Array::value('table_name', $group_specs, NULL),
+        'column_name' => CRM_Utils_Array::value('column_name', $field_specs, NULL),
+        'is_multiple' => CRM_Utils_Array::value('is_multiple', $group_specs, 0),
       ];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -808,6 +900,7 @@ class CRM_Remoteevent_CustomData {
         }
       }
     }
+
     return $fields;
   }
 
@@ -837,20 +930,31 @@ class CRM_Remoteevent_CustomData {
    *
    * @throws Exception
    */
-  public static function getOptionValue($group_name, $label, $label_field = 'label', $label_type = 'String', $value_field = 'value')
-  {
+  public static function getOptionValue(
+    $group_name,
+    $label,
+    $label_field = 'label',
+    $label_type = 'String',
+    $value_field = 'value'
+  ) {
     if (empty($label) || empty($group_name)) {
       return NULL;
     }
 
     // build/run API query
-    $value = civicrm_api3('OptionValue', 'getvalue', [
-            'option_group_id' => $group_name,
-            $label_field => $label,
-            'return' => $value_field
-    ]);
+    try {
+      $value = civicrm_api3('OptionValue', 'getvalue', [
+        'option_group_id' => $group_name,
+        $label_field => $label,
+        'return' => $value_field
+      ]);
+    }
+    catch (CRM_Core_Exception $exception) {
+      return NULL;
+    }
 
     // anything else to do here?
     return (string) $value;
   }
+
 }

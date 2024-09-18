@@ -17,6 +17,7 @@ use Civi\Test\Api3TestTrait;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -27,19 +28,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
 {
-    use Api3TestTrait {
-        callAPISuccess as protected traitCallAPISuccess;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
+    use ArraySubsetAsserts;
 
     /**
      * Test registration with a waiting list
