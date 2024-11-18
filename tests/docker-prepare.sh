@@ -50,6 +50,7 @@ else
   cv ext:download "de.systopia.xcm@https://github.com/systopia/de.systopia.xcm/archive/refs/heads/$XCM_BRANCH.zip"
   cv ext:download "de.systopia.identitytracker@https://github.com/systopia/de.systopia.identitytracker/archive/refs/heads/$IDENTITYTRACKER_BRANCH.zip"
   cv ext:download "de.systopia.remotetools@https://github.com/systopia/de.systopia.remotetools/archive/refs/heads/$REMOTETOOLS_BRANCH.zip"
+  composer --working-dir="$EXT_DIR/../de.systopia.remotetools" update --no-dev --no-progress --prefer-dist --optimize-autoloader
 
   cv ext:enable "$EXT_NAME"
 fi
