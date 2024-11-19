@@ -511,7 +511,15 @@ msgid "Registration Suspended?"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Mailing Lists Available for Subscription"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Terms and Conditions"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Label for Mailing List Subscriptions"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
@@ -982,7 +990,7 @@ msgstr ""
 msgid "Required"
 msgstr ""
 
-#: CRM/Remoteevent/RegistrationProfile.php
+#: CRM/Remoteevent/RegistrationProfile.php Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
 msgid "Invalid value"
 msgstr ""
 
@@ -1126,6 +1134,10 @@ msgstr ""
 msgid "Welcome %1. You are about to cancel your registration for the event '%2'"
 msgstr ""
 
+#: Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
+msgid "I want to subscribe to the following newsletters"
+msgstr ""
+
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
 msgid "Template ID"
 msgstr ""
@@ -1260,22 +1272,6 @@ msgstr ""
 
 #: api/v3/RemoteParticipant/Validate.php
 msgid "Context '%1' not implemented."
-msgstr ""
-
-#: js/event_sessions.js
-msgid "de.systopia.remoteevent"
-msgstr ""
-
-#: js/event_sessions.js
-msgid "Session [%1] was deleted."
-msgstr ""
-
-#: js/event_sessions.js
-msgid "Session deleted"
-msgstr ""
-
-#: js/event_sessions.js
-msgid "Do you really want to delete session [%1]?"
 msgstr ""
 
 #: remoteevent.php
@@ -1459,6 +1455,22 @@ msgid "Additional profiles that may be defined here for updating/changing an exi
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "The selected mailing lists will be available for subscription in the registration and update forms."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "It's not possible to unsubscribe or to see the current subscriptions."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Please note that there's no double opt-in."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "The label shown before the checkboxes for the selection of the mailing lists to subscribe."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "If checked an alternative approach to handle event locations will be used and CiviCRM's default tab will be replaced with a custom one. Please refer to documentation for more information."
 msgstr ""
 
@@ -1528,6 +1540,10 @@ msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Registration Updates"
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
+msgid "Mailing List Subscriptions"
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl

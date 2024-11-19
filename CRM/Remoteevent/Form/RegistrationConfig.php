@@ -158,10 +158,25 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             E::ts("Registration Suspended?")
         );
 
+        $this->add(
+          'select',
+          'remote_registration_mailing_list_group_ids',
+          E::ts('Mailing Lists Available for Subscription'),
+          $this->getMailinglistGroups(),
+          FALSE,
+          ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+
         $this->assign('profiles', $available_registration_profiles);
 
         // add GTAC field
         $this->add('wysiwyg', 'remote_registration_gtac', E::ts('Terms and Conditions'), $intro_attributes);
+
+        $this->add(
+          'text',
+          'remote_registration_mailing_list_subscriptions_label',
+          E::ts('Label for Mailing List Subscriptions')
+        );
 
         // add the fields that we share with the core data structure (copied from CRM_Event_Form_ManageEvent_Registration)
         $this->add('datepicker', 'registration_start_date', ts('Registration Start Date'), [], FALSE, ['time' => TRUE]);
@@ -204,6 +219,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_update_xcm_profile'     => 'remote_registration_update_xcm_profile',
                 'event_remote_registration.remote_registration_additional_participants_profile' => 'remote_registration_additional_participants_profile',
                 'event_remote_registration.remote_registration_additional_participants_xcm_profile' => 'remote_registration_additional_participants_xcm_profile',
+                'event_remote_registration.mailing_list_group_ids' => 'remote_registration_mailing_list_group_ids',
+                'event_remote_registration.mailing_list_subscriptions_label' => 'remote_registration_mailing_list_subscriptions_label',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
             $values = civicrm_api3(
@@ -216,7 +233,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             );
 
             foreach ($field_list as $custom_key => $form_key) {
-                $this->setDefaults([$form_key => CRM_Utils_Array::value($custom_key, $values, '')]);
+                $this->setDefaults([$form_key => $values[$custom_key] ?? NULL]);
             }
         }
 
@@ -331,6 +348,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             ),
             'event_remote_registration.remote_registration_additional_participants_profile' => $values['remote_registration_additional_participants_profile'],
             'event_remote_registration.remote_registration_additional_participants_xcm_profile' => $values['remote_registration_additional_participants_xcm_profile'],
+            'event_remote_registration.mailing_list_group_ids' => $values['remote_registration_mailing_list_group_ids'],
+            'event_remote_registration.mailing_list_subscriptions_label' => $values['remote_registration_mailing_list_subscriptions_label'],
         ];
 
         // disable civicrm native online registration
@@ -401,5 +420,22 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         }
         return $profiles;
     }
+
+  /**
+   * @phpstan-return array<int, string>
+   *   Mapping of group ID to title.
+   *
+   * @throws \CRM_Core_Exception
+   */
+  private function getMailinglistGroups(): array {
+    return \Civi\Api4\Group::get(FALSE)
+      ->addSelect('id', 'title')
+      ->addWhere('is_active', '=', TRUE)
+      ->addWhere('group_type:name', '=', 'Mailing List')
+      ->addGroupBy('title')
+      ->execute()
+      ->indexBy('id')
+      ->column('title');
+  }
 
 }

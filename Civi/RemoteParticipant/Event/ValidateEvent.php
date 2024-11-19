@@ -41,17 +41,6 @@ class ValidateEvent extends RemoteEvent
     }
 
     /**
-     * Get the event data
-     *
-     * @return array
-     *    event data
-     */
-    public function getEvent()
-    {
-        return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
-    }
-
-    /**
      * Add an error to the given field
      *
      * @param string $field_name

@@ -15,6 +15,7 @@
 
 require_once 'remoteevent.civix.php';
 
+use Civi\RemoteParticipant\EventSubscriber\MailingListSubscriptionSubscriber;
 use Civi\RemoteParticipant\RegistrationEventFactory;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
 use CRM_Remoteevent_ExtensionUtil as E;
@@ -239,6 +240,9 @@ function remoteevent_civicrm_container(ContainerBuilder $container) {
     $container->addCompilerPass(new Civi\RemoteEvent\CompilerPass());
     $container->autowire(RegistrationEventFactory::class)->setPublic(TRUE);
     $container->setAlias('remoteevent.file_persister', FilePersisterInterface::class)->setPublic(TRUE);
+
+    $container->autowire(MailingListSubscriptionSubscriber::class)
+      ->addTag('kernel.event_subscriber');
 }
 
 
