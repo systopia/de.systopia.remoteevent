@@ -67,6 +67,16 @@
   <p>{ts}Additional profiles that may be defined here for updating/changing an existing registration{/ts}</p>
 {/htxt}
 
+{htxt id='id-remote_registration_mailing_list_group_ids'}
+  <p>{ts}The selected mailing lists will be available for subscription in the registration and update forms.{/ts}</p>
+  <p>{ts}It's not possible to unsubscribe or to see the current subscriptions.{/ts}</p>
+  <p>{ts}Please note that there's no double opt-in.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote_registration_mailing_list_subscriptions_label'}
+  <p>{ts}The label shown before the checkboxes for the selection of the mailing lists to subscribe.{/ts}</p>
+{/htxt}
+
 {htxt id='id-use-custom-event-location'}
   <p>{ts}If checked an alternative approach to handle event locations will be used and CiviCRM's default tab will be replaced with a custom one. Please refer to documentation for more information.{/ts}</p>
 {/htxt}
@@ -135,6 +145,5 @@
   <p>{ts}A whole host of additional options like tagging the contacts, or recording/flagging differences are also available in the <a href="{crmURL p='civicrm/admin/setting/xcm'}">XCM configuration</a>.{/ts}</p>
   <p>{ts}If you can't find a profile that meets your requirements, feel free to add another profile there.{/ts}</p>
 {/htxt}
-
 
 {/crmScope}
