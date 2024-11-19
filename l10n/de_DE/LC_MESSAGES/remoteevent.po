@@ -1307,6 +1307,10 @@ msgid "Event End + Time"
 msgstr "Veranstaltungsende"
 
 #: api/v3/RemoteEvent/Spawn.php
+msgid "Copy of %1"
+msgstr "Kopie von %1"
+
+#: api/v3/RemoteEvent/Spawn.php
 msgid "New Event"
 msgstr "Neue Veranstaltung"
 
