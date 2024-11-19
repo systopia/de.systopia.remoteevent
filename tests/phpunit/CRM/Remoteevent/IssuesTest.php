@@ -57,7 +57,7 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
         CRM_Core_I18n::singleton()->setLocale('de_DE'); // multi-language not yet implemented
         $de_fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
             'event_id' => $event['id'],
-            'locale' => 'de'
+            'locale' => 'de_DE'
         ])['values'];
         $this->assertTrue(isset($de_fields['country_id']['options']), "Field country_id incomplete");
         $de_country_options = $de_fields['country_id']['options'];
