@@ -27,20 +27,6 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_CreateEventTest extends CRM_Remoteevent_TestBase
 {
-    use Api3TestTrait {
-        callAPISuccess as protected traitCallAPISuccess;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Search a set of values in a single value custom fields
      */

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Api4\StateProvince;
 use Civi\Test\Api3TestTrait;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
@@ -27,20 +28,6 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
 {
-    use Api3TestTrait {
-        callAPISuccess as protected traitCallAPISuccess;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Test to reproduce issue 16: translate country and state/province
      *
@@ -71,7 +58,7 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
         CRM_Core_I18n::singleton()->setLocale('de_DE'); // multi-language not yet implemented
         $de_fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
             'event_id' => $event['id'],
-            'locale' => 'de'
+            'locale' => 'de_DE'
         ])['values'];
         $this->assertTrue(isset($de_fields['country_id']['options']), "Field country_id incomplete");
         $de_country_options = $de_fields['country_id']['options'];
@@ -94,6 +81,12 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
             ]
         );
 
+      $stateProvince = StateProvince::get(FALSE)
+        ->addSelect('id', 'country_id')
+        ->setLimit(1)
+        ->execute()
+        ->single();
+
         // try to register with one ClickProfile
         $contact = $this->createContact();
         $result = $this->registerRemote(
@@ -103,8 +96,8 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
                 'last_name' => $contact['last_name'],
                 'email' => $contact['email'],
                 'prefix_id' => 1,
-                'country_id' => '1082',
-                'state_province_id' => '1082-2245'
+                'country_id' => $stateProvince['country_id'],
+                'state_province_id' => $stateProvince['country_id'] . '-' . $stateProvince['id'],
             ]
         );
         if (!empty($result['is_error'])) {

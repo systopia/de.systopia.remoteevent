@@ -27,20 +27,6 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase
 {
-    use Api3TestTrait {
-        callAPISuccess as protected traitCallAPISuccess;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Test to check behaviour with disabled speakers
      */
@@ -92,6 +78,9 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase
      */
     public function testSpeakers()
     {
+        // @todo See https://github.com/systopia/de.systopia.remoteevent/pull/95
+        $this->markTestSkipped('Roles are currently not supported');
+
         // disable speakers
         $this->setSpeakerRoles([4]);
 

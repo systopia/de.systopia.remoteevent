@@ -27,20 +27,6 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestBase
 {
-    use Api3TestTrait {
-        callAPISuccess as protected traitCallAPISuccess;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Test invited (with participant) with OneClick form.
      *
