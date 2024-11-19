@@ -573,8 +573,16 @@ msgid "Registration Suspended?"
 msgstr "Anmeldung Ausgesetzt?"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Mailing Lists Available for Subscription"
+msgstr "Zur Anmeldung verfügbare Mailing Listen"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Terms and Conditions"
 msgstr "Anmeldebedingungen"
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Label for Mailing List Subscriptions"
+msgstr "Bezeichner für Anmeldung zu Mailing Listen"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Registration Start Date"
@@ -1067,6 +1075,7 @@ msgid "Required"
 msgstr "Erforderlich"
 
 #: CRM/Remoteevent/RegistrationProfile.php
+#: Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
 msgid "Invalid value"
 msgstr "Ungültiger Wert"
 
@@ -1225,6 +1234,10 @@ msgid "Welcome %1. You are about to cancel your registration for the event '%2'"
 msgstr ""
 "Herzlich Willkommen %1. Mit diesem Formular stornieren Sie Ihre Anmeldung zur "
 "Veranstaltung \"%2\""
+
+#: Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
+msgid "I want to subscribe to the following newsletters"
+msgstr "I möchte mich zu folgenden Newslettern anmelden"
 
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
 msgid "Template ID"
@@ -1683,6 +1696,30 @@ msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
+"The selected mailing lists will be available for subscription in the registration and "
+"update forms."
+msgstr ""
+"Die ausgewählten Mailing Listen sind zur Anmeldung in den Registrierungs- und "
+"Aktualisierungsformularen verfügbar."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "It's not possible to unsubscribe or to see the current subscriptions."
+msgstr "Es ist nicht möglich, sich abzumelden oder die aktuellen Anmeldungen zu sehen."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "Please note that there's no double opt-in."
+msgstr "Bitte beachten Sie, dass es keinen Double-Opt-in gibt."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
+"The label shown before the checkboxes for the selection of the mailing lists to "
+"subscribe."
+msgstr ""
+"Der Bezeichner vor den Checkboxen zur Auswahl der Mailing Listen, zu denen eine "
+"Anmeldung erfolgen soll."
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid ""
 "If checked an alternative approach to handle event locations will be used and CiviCRM's "
 "default tab will be replaced with a custom one. Please refer to documentation for more "
 "information."
@@ -1789,6 +1826,10 @@ msgstr "Einstellungen zur Anmeldung"
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Registration Updates"
 msgstr "Bearbeitung Bestehender Anmeldungen"
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
+msgid "Mailing List Subscriptions"
+msgstr "Anmeldungen zu Mailing Listen"
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Public Event Text Blocks"

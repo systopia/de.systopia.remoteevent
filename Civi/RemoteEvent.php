@@ -32,6 +32,11 @@ abstract class RemoteEvent extends RemoteToolsRequest
 
     protected ?int $contact_id = null;
 
+    /**
+     * @phpstan-var array<string, mixed>|null
+     */
+    protected ?array $event = null;
+
     /** @var integer event ID */
     protected $event_id = null;
 
@@ -202,17 +207,19 @@ abstract class RemoteEvent extends RemoteToolsRequest
     /**
      * Get the given event data
      *
-     * @return array
+     * @phpstan-return array<string, mixed>|null
      *   event data
      */
     public function getEvent()
     {
-        $event_id = $this->getEventID();
-        if ($event_id) {
-            return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
-        } else {
-            return null;
+        if (null === $this->event_id) {
+          $event_id = $this->getEventID();
+          if ($event_id) {
+            $this->event = \CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
+          }
         }
+
+        return $this->event;
     }
 
     /**

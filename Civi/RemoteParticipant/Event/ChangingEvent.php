@@ -66,6 +66,23 @@ abstract class ChangingEvent extends RemoteEvent
     public abstract function &getParticipantData();
 
     /**
+     * @throws \Exception
+     *    if another contact ID has already been set
+     */
+    public function setContactID($contact_id): void
+    {
+        $contact_id = (int) $contact_id;
+        if (0 !== $contact_id) {
+            if ($this->getContactID() && $this->getContactID() !== $contact_id) {
+                throw new \Exception(
+                  'Conflicting contact IDs, there is a programming error'
+                );
+            }
+            $this->contact_id = $contact_id;
+        }
+    }
+
+    /**
      * Get the name of the XCM profile to be used
      *   for contact matching/creation
      *

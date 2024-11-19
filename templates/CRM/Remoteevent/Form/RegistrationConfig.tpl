@@ -56,7 +56,7 @@
       <legend class="collapsible-title">{ts}Registration Restrictions{/ts}</legend>
       <div class="remote-registration-restrictions">
         <div class="crm-section">
-          <div class="label">{$form.remote_registration_default_profile.label}&nbsp;<span class="crm-marker">*</span>&nbsp;{help id="id-remote-registration-default-profile" title=$form.remote_registration_default_profile.label}</div>
+          <div class="label">{$form.remote_registration_default_profile.label}&nbsp;{help id="id-remote-registration-default-profile" title=$form.remote_registration_default_profile.label}</div>
           <div class="content">{$form.remote_registration_default_profile.html}</div>
           <div class="clear"></div>
         </div>
@@ -158,6 +158,17 @@
       </div>
     </fieldset>
 
+    <fieldset id="mailing-list-subscriptions" class="crm-collapsible">
+      <legend class="collapsible-title">{ts}Mailing List Subscriptions{/ts}</legend>
+      <div>
+        <div class="crm-section crm-event-manage-registration-form-block-remote_registration_mailing_list_group_ids">
+          <div class="label">{$form.remote_registration_mailing_list_group_ids.label}&nbsp;{help id="id-remote_registration_mailing_list_group_ids" title=$form.remote_registration_mailing_list_group_ids.label}</div>
+          <div class="content">{$form.remote_registration_mailing_list_group_ids.html}</div>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </fieldset>
+
     <fieldset id="registration-texts" class="crm-collapsible collapsed">
         {capture assign=title_text}{ts}Public Event Text Blocks{/ts}{/capture}
       <legend class="collapsible-title">{$title_text}&nbsp;{help id="id-remote-registration-texts" title=$title_text}</legend>
@@ -205,6 +216,11 @@
         <div class="crm-section crm-event-manage-registration-thankyou_footer_text">
           <div class="label">{$form.thankyou_footer_text.label}&nbsp;{help id="id-thankyou-footer" title=$form.thankyou_footer_text.label}</div>
           <div class="content">{$form.thankyou_footer_text.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section crm-event-manage-registration-mailing_list_subscriptions_label">
+          <div class="label">{$form.remote_registration_mailing_list_subscriptions_label.label}&nbsp;{help id="id-remote_registration_mailing_list_subscriptions_label" title=$form.remote_registration_mailing_list_subscriptions_label.label}</div>
+          <div class="content">{$form.remote_registration_mailing_list_subscriptions_label.html}</div>
           <div class="clear"></div>
         </div>
       </div>

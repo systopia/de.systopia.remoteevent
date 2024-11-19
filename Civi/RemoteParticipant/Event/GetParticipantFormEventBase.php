@@ -28,13 +28,14 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
     /** @var array holds the original RemoteParticipant.get_form parameters */
     protected $params;
 
-    /** @var array holds the event data of the event involved */
-    protected $event;
-
     /** @var array holds the RemoteParticipant.get_form result to be modified/extended */
     protected $result;
 
-    public function __construct($params, $event)
+    /**
+     * @phpstan-param array<string, mixed> $params
+     * @phpstan-param array<string, mixed> $event
+     */
+    public function __construct(array $params, array $event)
     {
         $this->params = $params;
         $this->event  = $event;
@@ -132,21 +133,12 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
     }
 
     /**
-     * Returns the original parameters that were submitted to RemoteEvent.get
+     * @phpstan-return array<string, array<string, mixed>>
+     *   Mapping of field name to field spec.
      *
-     * @return array original parameters
+     * @see addFields()
      */
-    public function getEvent()
-    {
-        return $this->event;
-    }
-
-    /**
-     * Returns the original parameters that were submitted to RemoteEvent.get
-     *
-     * @return array original parameters
-     */
-    public function &getResult()
+    public function &getResult(): array
     {
         return $this->result;
     }

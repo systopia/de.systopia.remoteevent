@@ -194,26 +194,6 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Set the contact ID
-     *
-     * @return integer
-     *    contact ID
-     *
-     * @throws \Exception
-     *    if another contact ID has already been set
-     */
-    public function setContactID($contact_id)
-    {
-        $contact_id = (int) $contact_id;
-        if ($contact_id) {
-            if ($this->getContactID() && $this->getContactID() != $contact_id) {
-                throw new \Exception("Conflicting contact IDs, there is a programming error");
-            }
-            $this->contact_id = $contact_id;
-        }
-    }
-
-    /**
      * Get a submitted parameter
      *
      * @param string $value_name
@@ -223,18 +203,7 @@ class RegistrationEvent extends ChangingEvent
      */
     public function getSubmittedValue($value_name)
     {
-        return \CRM_Utils_Array::value($value_name, $this->submission);
-    }
-
-    /**
-     * Get the event data
-     *
-     * @return array
-     *    event data
-     */
-    public function getEvent()
-    {
-        return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
+        return $this->submission[$value_name] ?? NULL;
     }
 
     /**
