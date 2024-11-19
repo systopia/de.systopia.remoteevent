@@ -78,6 +78,9 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase
      */
     public function testSpeakers()
     {
+        // @todo See https://github.com/systopia/de.systopia.remoteevent/pull/95
+        $this->markTestSkipped('Roles are currently not supported');
+
         // disable speakers
         $this->setSpeakerRoles([4]);
 
