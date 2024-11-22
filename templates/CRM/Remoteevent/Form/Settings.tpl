@@ -16,9 +16,17 @@
 <div class="crm-block crm-form-block crm-event-manage-eventinfo-form-block">
 
   <div class="crm-section">
-
     <div class="label">{$form.remote_registration_blocking_status_list.label}&nbsp;{help id="id-blocking-status" title=$form.remote_registration_blocking_status_list.label}</div>
     <div class="content">{$form.remote_registration_blocking_status_list.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">
+      {$form.remote_registration_invitation_confirm_default_value.label}
+      {help id="id-remote_registration_invitation_confirm_default_value" title=$form.remote_registration_invitation_confirm_default_value.label}
+    </div>
+    <div class="content">{$form.remote_registration_invitation_confirm_default_value.html}</div>
     <div class="clear"></div>
   </div>
 
