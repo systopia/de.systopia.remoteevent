@@ -59,8 +59,8 @@
   </div>
   <!--
   <div class="crm-section">
-    <div class="label">{$form.remote_registration_link.label}</div>
-    <div class="content">{$form.remote_registration_link.html}</div>
+    <div class="label">{*$form.remote_registration_link.label*}</div>
+    <div class="content">{*$form.remote_registration_link.html*}</div>
     <div class="clear"></div>
   </div>
   -->
