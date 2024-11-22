@@ -53,8 +53,8 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             'remote_registration_invitation_confirm_default_value',
             E::ts('Default value for confirmation of invitations'),
             [
-                0 => E::ts('Decline'),
-                1 => E::ts('Accept'),
+                0 => E::ts('Decline Invitation'),
+                1 => E::ts('Accept Invitation'),
             ],
             true,
             ['class' => 'crm-select2']
