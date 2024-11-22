@@ -17,6 +17,10 @@
   <p>{ts}List of statuses the will prevent a contact from registering again.{/ts}</p>
 {/htxt}
 
+{htxt id='id-remote_registration_invitation_confirm_default_value'}
+  <p>{ts}Event registration forms for invited participants show a field for accepting/declining the invitation. Select which option should be pre-selected.{/ts}</p>
+{/htxt}
+
 {htxt id='id-speaker-roles'}
   <p>{ts}Any roles you select here will cause all participants with this role to be publicly listed as speakers at the event.{/ts}</p>
 {/htxt}

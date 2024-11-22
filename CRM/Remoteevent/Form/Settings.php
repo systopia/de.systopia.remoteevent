@@ -23,6 +23,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
 {
     const SETTINGS = [
         'remote_registration_blocking_status_list',
+        'remote_registration_invitation_confirm_default_value',
         'remote_registration_speaker_roles',
         'remote_registration_link',
         'remote_registration_modify_link',
@@ -45,6 +46,18 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             $this->getNegativeStatusList(),
             false,
             ['class' => 'crm-select2', 'multiple' => 'multiple']
+        );
+
+        $this->add(
+            'select',
+            'remote_registration_invitation_confirm_default_value',
+            E::ts('Default value for confirmation of invitations'),
+            [
+                0 => E::ts('Decline'),
+                1 => E::ts('Accept'),
+            ],
+            true,
+            ['class' => 'crm-select2']
         );
 
         $this->add(
@@ -102,7 +115,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         );
 
 
-        //        $this->add(
+//        $this->add(
 //            'text',
 //            'remote_registration_link',
 //            E::ts("Registration Link"),

@@ -53,8 +53,11 @@ class GetCreateParticipantFormEvent extends GetParticipantFormEventBase
                          'confirm' => [
                              'name'        => 'confirm',
                              'type'        => 'Select',
-                             'options'     => [1 => $l10n->ts('Accept Invitation'),
-                                               0 => $l10n->ts('Decline Invitation')],
+                             'options'     => [
+                                 1 => $l10n->ts('Accept Invitation'),
+                                 0 => $l10n->ts('Decline Invitation'),
+                             ],
+                             'value'       => \Civi::settings()->get('remote_registration_invitation_confirm_default_value') ?? 0,
                              'validation'  => '',
                              'weight'      => -10,
                              'required'    => 1,
