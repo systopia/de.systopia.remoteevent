@@ -151,7 +151,7 @@ msgid "Event Location"
 msgstr ""
 
 #: CRM/Remoteevent/EventLocation.php
-msgid "These contacts can be used as event locations by the RemoteEvents extension"
+msgid "These contacts can be used as event locations by the CiviRemote Event extension"
 msgstr ""
 
 #: CRM/Remoteevent/EventLocation.php
@@ -687,7 +687,7 @@ msgid "The end date of the session cannot be after the start date."
 msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
-msgid "Remote Events - General Configuration"
+msgid "CiviRemote Event - General Configuration"
 msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php

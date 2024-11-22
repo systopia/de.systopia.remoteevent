@@ -71,7 +71,7 @@ After installing the extension, make sure your Remote Tool settings are
 according to your needs (refer to docmunentation provided in
 de.systopia.remotetools). Then head on to the general configuration:
 
-* Navigate to >>Administer >>Remote Events - General Configuration.
+* Navigate to » Administer » CiviRemote Event - General Configuration.
 * Define which participant statuses will block a re-registration to your
   events (e.g. rejected) and which roles you would like to assign to speakers.
 * Configure which default matcher profile you would like to use (XCM-Extension).

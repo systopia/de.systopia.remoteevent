@@ -21,15 +21,15 @@
   <item>
     <path>civicrm/event/manage/sessions</path>
     <page_callback>CRM_Remoteevent_Form_EventSessions</page_callback>
-    <title>Remote Events - Sessions</title>
+    <title>CiviRemote Event - Sessions</title>
     <access_arguments>edit all events</access_arguments>
   </item>
   <item>
     <path>civicrm/admin/remoteevent/settings</path>
     <page_callback>CRM_Remoteevent_Form_Settings</page_callback>
-    <title>Remote Events - General Configuration</title>
+    <title>CiviRemote Event - General Configuration</title>
     <access_arguments>administer CiviCRM</access_arguments>
-    <desc>General configuration for RemoteEvents. However, most options would be defined with each individual event.</desc>
+    <desc>General configuration for CiviRemote Event. However, most options would be defined with each individual event.</desc>
     <adminGroup>CiviEvent</adminGroup>
   </item>
   <item>
