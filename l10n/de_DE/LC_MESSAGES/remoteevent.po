@@ -59,13 +59,11 @@ msgstr "Fremdschlüssel zu Teilnehmer (Participant)"
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/Form/ParticipantSessions.php
 #: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
-#: CRM/Remoteevent/Form/Task/ParticipantSession.php CRM/Remoteevent/UI.php
-#: remoteevent.php
+#: CRM/Remoteevent/Form/Task/ParticipantSession.php CRM/Remoteevent/UI.php remoteevent.php
 msgid "Sessions"
 msgstr "Workshops"
 
-#: CRM/Remoteevent/DAO/Session.php
-#: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
+#: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
 msgid "Session"
 msgstr "Workshop"
 
@@ -109,11 +107,10 @@ msgid "Session End Date"
 msgstr "Ende des Workshops"
 
 #: CRM/Remoteevent/DAO/Session.php
-msgid ""
-"Date and time that session ends. May be NULL if no defined end date/time"
+msgid "Date and time that session ends. May be NULL if no defined end date/time"
 msgstr ""
-"Enddatum und -uhrzeit des Workshops. Kann NULL sein, wenn kein/e Enddatum/-"
-"uhrzeit definiert ist."
+"Enddatum und -uhrzeit des Workshops. Kann NULL sein, wenn kein/e Enddatum/-uhrzeit "
+"definiert ist."
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/Form/Session.php
 msgid "Session Slot"
@@ -121,11 +118,11 @@ msgstr "Zeitfenster"
 
 #: CRM/Remoteevent/DAO/Session.php
 msgid ""
-"All sessions _can_ be assigned to slots. A participant can only register for "
-"one session per slot"
+"All sessions _can_ be assigned to slots. A participant can only register for one session "
+"per slot"
 msgstr ""
-"Jeder Workshop _kann_ Zeitfenstern zugewiesen werden. Teilnehmer können sich "
-"nur für einen Workshop pro Zeitfenster anmelden."
+"Jeder Workshop _kann_ Zeitfenstern zugewiesen werden. Teilnehmer können sich nur für "
+"einen Workshop pro Zeitfenster anmelden."
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/Form/Session.php
 msgid "Session Category"
@@ -149,11 +146,11 @@ msgstr "Beschreibung des Workshops"
 
 #: CRM/Remoteevent/DAO/Session.php
 msgid ""
-"Full description of the session. Text and html allowed. Displayed on built-"
-"in Event Information screens."
+"Full description of the session. Text and html allowed. Displayed on built-in Event "
+"Information screens."
 msgstr ""
-"Vollständige Beschreibung des Workshops. Text und HTML sind erlaubt. Wird "
-"auf eingebauten Veranstaltungs-Informationsanzeigen dargestellt."
+"Vollständige Beschreibung des Workshops. Text und HTML sind erlaubt. Wird auf "
+"eingebauten Veranstaltungs-Informationsanzeigen dargestellt."
 
 #: CRM/Remoteevent/DAO/Session.php CRM/Remoteevent/EventSessions.php
 #: CRM/Remoteevent/Form/EventSessions.php
@@ -190,9 +187,8 @@ msgid "Event Location"
 msgstr "Veranstaltungsort"
 
 #: CRM/Remoteevent/EventLocation.php
-msgid ""
-"These contacts can be used as event locations by the RemoteEvents extension"
-msgstr "Diese Kontakte können als Veranstaltungsorte verwendet werden"
+msgid "These contacts can be used as event locations by the CiviRemote Event extension"
+msgstr "Diese Kontakte können von CiviRemote Event als Veranstaltungsorte verwendet werden"
 
 #: CRM/Remoteevent/EventLocation.php
 msgid "Event Location Name"
@@ -252,8 +248,7 @@ msgstr "Tag"
 
 #: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
 #: CRM/Remoteevent/RegistrationProfile/Standard2.php
-#: Civi/RemoteEvent/Actions/SpawnEvent.php
-#: resources/remote_session_description.tpl
+#: Civi/RemoteEvent/Actions/SpawnEvent.php resources/remote_session_description.tpl
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Title"
@@ -264,8 +259,7 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
-#: resources/remote_session_description.tpl
-#: resources/remote_session_short_description.tpl
+#: resources/remote_session_description.tpl resources/remote_session_short_description.tpl
 msgid "Location"
 msgstr "Veranstaltungsort"
 
@@ -274,16 +268,14 @@ msgid "Slot"
 msgstr "Zeitfenster"
 
 #: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
-#: resources/remote_session_description.tpl
-#: resources/remote_session_short_description.tpl
+#: resources/remote_session_description.tpl resources/remote_session_short_description.tpl
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Category"
 msgstr "Kategorie"
 
 #: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
-#: resources/remote_session_description.tpl
-#: resources/remote_session_short_description.tpl
+#: resources/remote_session_description.tpl resources/remote_session_short_description.tpl
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Type"
@@ -327,8 +319,7 @@ msgstr "Workshop ist ausgebucht"
 #: CRM/Remoteevent/EventSessions.php
 msgid "You can't register for two sessions with overlapping time"
 msgstr ""
-"Sie können sich nicht für zwei Workshops anmelden, die zum gleichen "
-"Zeitpunkt stattfinden"
+"Sie können sich nicht für zwei Workshops anmelden, die zum gleichen Zeitpunkt stattfinden"
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "You can't register for two sessions in the same slot"
@@ -336,18 +327,15 @@ msgstr "Sie können sich immer nur für einen Workshop pro Zeitfenster anmelden"
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "List of sessions the participant is registered to (as array)"
-msgstr ""
-"Liste der Workshops für die sich der Teilnehmer angemeldet hat (als Array)"
+msgstr "Liste der Workshops für die sich der Teilnehmer angemeldet hat (als Array)"
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "List of sessions the participant is registered to (as html list)."
-msgstr ""
-"Liste der Workshops für die sich der Teilnehmer angemeldet hat (als HTML)"
+msgstr "Liste der Workshops für die sich der Teilnehmer angemeldet hat (als HTML)"
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "List of sessions the participant is registered to (as ascii list)."
-msgstr ""
-"Liste der Workshops für die sich der Teilnehmer angemeldet hat (als TXT)"
+msgstr "Liste der Workshops für die sich der Teilnehmer angemeldet hat (als TXT)"
 
 #: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
 #: CRM/Remoteevent/Form/ParticipantSessions.php
@@ -372,24 +360,19 @@ msgid "no category"
 msgstr "ohne Kategorie"
 
 #: CRM/Remoteevent/EventSessions.php
-msgid ""
-"The event has no start date, so the session dates are probably not right."
+msgid "The event has no start date, so the session dates are probably not right."
 msgstr ""
-"Die Veranstaltung hat kein Startdatum, daher sind die Workshop Tag "
-"wahrscheinlich nicht korrekt"
+"Die Veranstaltung hat kein Startdatum, daher sind die Workshop Tag wahrscheinlich nicht "
+"korrekt"
 
 #: CRM/Remoteevent/EventSessions.php
-msgid ""
-"The start or end date of session [%1] (%2) is outside of the event's time "
-"frame."
+msgid "The start or end date of session [%1] (%2) is outside of the event's time frame."
 msgstr ""
-"Das Start- oder Enddatum des Workshops [%1] (%2) liegt außerhalb der "
-"Veranstaltung."
+"Das Start- oder Enddatum des Workshops [%1] (%2) liegt außerhalb der Veranstaltung."
 
 #: CRM/Remoteevent/EventSessions.php
 msgid "%1 other sessions also violate the event's start or end date."
-msgstr ""
-"%1 weitere Workshops liegen außerhalb des Zeitrahmens der Veranstaltung."
+msgstr "%1 weitere Workshops liegen außerhalb des Zeitrahmens der Veranstaltung."
 
 #: CRM/Remoteevent/EventSpeaker.php
 msgid "Speaker List"
@@ -408,13 +391,11 @@ msgstr "Vortrangende/r"
 msgid "Contact ID"
 msgstr "Kontakt ID"
 
-#: CRM/Remoteevent/EventSpeaker.php
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: CRM/Remoteevent/EventSpeaker.php CRM/Remoteevent/RegistrationProfile/Standard2.php
 msgid "Last Name"
 msgstr "Nachname"
 
-#: CRM/Remoteevent/EventSpeaker.php
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: CRM/Remoteevent/EventSpeaker.php CRM/Remoteevent/RegistrationProfile/Standard2.php
 msgid "First Name"
 msgstr "Vorname"
 
@@ -426,69 +407,56 @@ msgstr "Vortrangende/r-Rollen"
 msgid "Additional Information for this Event"
 msgstr "Zusatzinformationen für diese Veranstaltung"
 
-#: CRM/Remoteevent/Form/EventLocation.php
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: CRM/Remoteevent/Form/EventLocation.php templates/CRM/Remoteevent/Form/EventSessions.tpl
 msgid "Add Session"
 msgstr "Workshop hinzufügen"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "Day %1 (%2)"
 msgstr "Tag %1 (%2)"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "H:i"
 msgstr "H:i"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "%1h - %2h"
 msgstr "%1 Uhr - %2 Uhr"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "%1 minutes"
 msgstr "%1 Minuten"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "No description"
 msgstr "Keine Beschreibung"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 #: resources/remote_session_description.tpl
 msgid "None"
 msgstr "Keine"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "%1 / %2"
 msgstr "%1 / %2"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "Session restricted to %1 participants"
 msgstr "Workshop auf %1 Teilnehmer begrenzt"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "This session is disabled"
 msgstr "Der Workshop ist deaktiviert"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "edit"
 msgstr "bearbeiten"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 msgid "delete"
 msgstr "löschen"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Participants"
@@ -498,8 +466,7 @@ msgstr "Teilnehmer"
 msgid "No Slot"
 msgstr "Ohne Zeitfenster"
 
-#: CRM/Remoteevent/Form/EventSessions.php
-#: templates/CRM/Remoteevent/Form/EventSessions.tpl
+#: CRM/Remoteevent/Form/EventSessions.php templates/CRM/Remoteevent/Form/EventSessions.tpl
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Time"
 msgstr "Zeit"
@@ -673,8 +640,7 @@ msgstr "Text Dankeschönbereich"
 msgid "Registration Thank You Footer"
 msgstr "Footer Dankeschönbereich"
 
-#: CRM/Remoteevent/Form/RegistrationConfig.php
-#: CRM/Remoteevent/Form/Settings.php
+#: CRM/Remoteevent/Form/RegistrationConfig.php CRM/Remoteevent/Form/Settings.php
 msgid "Save"
 msgstr "Speichern"
 
@@ -684,11 +650,11 @@ msgstr "Sie müssen ein Standardanmeldeprofil hinterlegen"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid ""
-"The external identifier can only contain basic characters, numbers, and the "
-"characters '_', '#', and '-'."
+"The external identifier can only contain basic characters, numbers, and the characters "
+"'_', '#', and '-'."
 msgstr ""
-"Die Externe Identifikation darf nur einfache Buchstaben, Zahlen, sowie die "
-"Zeichen '_', '#', und '-' enthalten."
+"Die Externe Identifikation darf nur einfache Buchstaben, Zahlen, sowie die Zeichen '_', "
+"'#', und '-' enthalten."
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "This external identifier is already in use"
@@ -696,22 +662,17 @@ msgstr "Diese externe Identifikation wird bereits verwendet"
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "You must select a profile for registering additional participants."
-msgstr ""
-"Sie müssen ein Profil für die Anmeldung zusätzlicher Teilnehmer auswählen."
+msgstr "Sie müssen ein Profil für die Anmeldung zusätzlicher Teilnehmer auswählen."
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "You must select how many additional participants may be registered."
-msgstr ""
-"Sie müssen auswählen, wieviele zusätzliche Teilnehmer angemeldet werden "
-"können."
+msgstr "Sie müssen auswählen, wieviele zusätzliche Teilnehmer angemeldet werden können."
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
-msgid ""
-"You must select an XCM matching profile for registering additional "
-"participants."
+msgid "You must select an XCM matching profile for registering additional participants."
 msgstr ""
-"Sie müssen ein XCM-Profil zum Kontaktabgleich bei der Anmeldung zusätzlicher "
-"Teilnehmer auswählen."
+"Sie müssen ein XCM-Profil zum Kontaktabgleich bei der Anmeldung zusätzlicher Teilnehmer "
+"auswählen."
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Default (global CiviRemote Event settings)"
@@ -728,8 +689,7 @@ msgstr "Suche nach Workshopteilnehmern"
 #: CRM/Remoteevent/Form/Search/SessionParticipantSearch.mgd.php
 msgid "Find contacts that registered for selected sessions"
 msgstr ""
-"Kontakte finden, die an bestimmten Workshops teilgenommen haben, oder "
-"angemeldet sind."
+"Kontakte finden, die an bestimmten Workshops teilgenommen haben, oder angemeldet sind."
 
 #: CRM/Remoteevent/Form/Search/SessionParticipantSearch.php
 msgid "Session Participant Search"
@@ -785,8 +745,7 @@ msgid "Create"
 msgstr "Erstellen"
 
 #: CRM/Remoteevent/Form/Session.php
-msgid ""
-"The start date of the session should not be before the start of the event."
+msgid "The start date of the session should not be before the start of the event."
 msgstr "Der Workshop kann nicht vor der Veranstaltung beginnen."
 
 #: CRM/Remoteevent/Form/Session.php
@@ -798,8 +757,8 @@ msgid "The end date of the session cannot be after the start date."
 msgstr "Der Workshop kann nicht enden bevor er begonnen hat."
 
 #: CRM/Remoteevent/Form/Settings.php
-msgid "Remote Events - General Configuration"
-msgstr "Remote Events - Konfiguration"
+msgid "CiviRemote Event - General Configuration"
+msgstr "CiviRemote Event - Konfiguration"
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Statuses blocking (re)registration"
@@ -863,11 +822,11 @@ msgstr "-- nicht aufzeichnen --"
 
 #: CRM/Remoteevent/Form/Task/ParticipantSession.php
 msgid ""
-"The selected participants belong to more than one event. This task only "
-"works on participants of the same event. Sorry"
+"The selected participants belong to more than one event. This task only works on "
+"participants of the same event. Sorry"
 msgstr ""
-"Die selektierten Teilnehmer beziehen sich auf mehrere Veranstaltungen, aber "
-"diese Funktion erlaubt immer nur eine einzige Veranstaltung."
+"Die selektierten Teilnehmer beziehen sich auf mehrere Veranstaltungen, aber diese "
+"Funktion erlaubt immer nur eine einzige Veranstaltung."
 
 #: CRM/Remoteevent/Form/Task/ParticipantSession.php
 msgid "Multiple Events Selected"
@@ -935,8 +894,7 @@ msgstr "Ansicht"
 
 #: CRM/Remoteevent/Registration.php
 msgid "You need to be logged in to register for this event."
-msgstr ""
-"Sie benötigen ein Benutzerkonto, um sich für diese Veranstaltung anzumelden."
+msgstr "Sie benötigen ein Benutzerkonto, um sich für diese Veranstaltung anzumelden."
 
 #: CRM/Remoteevent/Registration.php
 msgid "Registration Deactivated"
@@ -967,17 +925,16 @@ msgid "Contact is already registered"
 msgstr "Sie sind bereits angemeldet"
 
 #: CRM/Remoteevent/Registration.php
-msgid ""
-"Contact already has a registration record and can currently not register."
+msgid "Contact already has a registration record and can currently not register."
 msgstr ""
-"Es liegt bereits eine Anmeldunganfrage vor. Sie können sich derzeit nicht "
-"erneut anmelden."
+"Es liegt bereits eine Anmeldunganfrage vor. Sie können sich derzeit nicht erneut "
+"anmelden."
 
 #: CRM/Remoteevent/Registration.php
 msgid "Editing/cancelling registrations is not allowed for this event"
 msgstr ""
-"Das Stornieren oder Bearbeiten von Anmeldungen ist bei dieser Veranstaltung  "
-"nicht erlaubt"
+"Das Stornieren oder Bearbeiten von Anmeldungen ist bei dieser Veranstaltung  nicht "
+"erlaubt"
 
 #: CRM/Remoteevent/Registration.php
 msgid "The window for registration changes has passed."
@@ -990,8 +947,8 @@ msgstr "Es wurde keine bestehende Anmeldung zur Aktualisierung gefunden."
 #: CRM/Remoteevent/Registration.php
 msgid "This event does not allow participants to update their registration."
 msgstr ""
-"Bei dieser Veranstaltung ist das Berarbeiten einer Ameldung durch den "
-"Teilnehmer nicht erlaubt."
+"Bei dieser Veranstaltung ist das Berarbeiten einer Ameldung durch den Teilnehmer nicht "
+"erlaubt."
 
 #: CRM/Remoteevent/Registration.php
 msgid "Couldn't find or create contact: "
@@ -1155,11 +1112,11 @@ msgstr "Token für One-Click Abmeldung."
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid ""
-"URL for one-click cancellation, if available. This also requires the base "
-"url to set in the RemoteEvent general settings."
+"URL for one-click cancellation, if available. This also requires the base url to set in "
+"the RemoteEvent general settings."
 msgstr ""
-"Link für One-Click Abmeldung. Hierfür muss die Basis-URL für Abmeldungen in "
-"den RemoteEvent Einstellungen gesetzt sein."
+"Link für One-Click Abmeldung. Hierfür muss die Basis-URL für Abmeldungen in den "
+"RemoteEvent Einstellungen gesetzt sein."
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid "Token to edit/update participant's registration."
@@ -1167,11 +1124,11 @@ msgstr "Token für das Bearbeiten einer bestehenden Anmeldung."
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid ""
-"Link to a form to edit/update participant's registration. This also requires "
-"the base url to set in the RemoteEvent general settings."
+"Link to a form to edit/update participant's registration. This also requires the base "
+"url to set in the RemoteEvent general settings."
 msgstr ""
-"Link für das Bearbeiten einer Anmeldung. Hierfür muss die Basis-URL für das "
-"Barbeiten von Anmeldungen in den RemoteEvent Einstellungen gesetzt sein."
+"Link für das Bearbeiten einer Anmeldung. Hierfür muss die Basis-URL für das Barbeiten "
+"von Anmeldungen in den RemoteEvent Einstellungen gesetzt sein."
 
 #: CRM/Remoteevent/RemoteEvent.php
 msgid "Unknown"
@@ -1251,28 +1208,23 @@ msgstr "Rückmeldung zur Einladung"
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php
 #: Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
 msgid "The link or reference you're using is no longer valid."
-msgstr ""
-"Der Verweis oder die Referenz, die Sie verwenden, ist nicht mehr gültig."
+msgstr "Der Verweis oder die Referenz, die Sie verwenden, ist nicht mehr gültig."
 
 #: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
 msgid "Welcome %1. You are modifying your registration for event '%2'"
-msgstr ""
-"Herzlich Willkommen %1. Sie bearbeiten Ihre Anmeldung zur Veranstaltung "
-"\"%2\"."
+msgstr "Herzlich Willkommen %1. Sie bearbeiten Ihre Anmeldung zur Veranstaltung \"%2\"."
 
 #: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
-msgid ""
-"Welcome %1. You may now confirm or decline your invitation to event '%2'"
+msgid "Welcome %1. You may now confirm or decline your invitation to event '%2'"
 msgstr ""
-"Herzlich Willkommen %1. Sie können hier Ihre Einladung zur Veranstaltung "
-"\"%2\" annehmen oder auch ablehnen."
+"Herzlich Willkommen %1. Sie können hier Ihre Einladung zur Veranstaltung \"%2\" annehmen "
+"oder auch ablehnen."
 
 #: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
-msgid ""
-"Welcome %1. You are about to cancel your registration for the event '%2'"
+msgid "Welcome %1. You are about to cancel your registration for the event '%2'"
 msgstr ""
-"Herzlich Willkommen %1. Mit diesem Formular stornieren Sie Ihre Anmeldung "
-"zur Veranstaltung \"%2\""
+"Herzlich Willkommen %1. Mit diesem Formular stornieren Sie Ihre Anmeldung zur "
+"Veranstaltung \"%2\""
 
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
 msgid "Template ID"
@@ -1280,11 +1232,11 @@ msgstr "Vorlagen-ID"
 
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
 msgid ""
-"If the ID of an existing event or event template is given, the new event "
-"will be based on that."
+"If the ID of an existing event or event template is given, the new event will be based "
+"on that."
 msgstr ""
-"Die ID einer bestehenden Veranstaltung oder einer Veranstaltungsvorlage "
-"wurde übergeben, die Veranstaltung wird darauf basieren."
+"Die ID einer bestehenden Veranstaltung oder einer Veranstaltungsvorlage wurde übergeben, "
+"die Veranstaltung wird darauf basieren."
 
 #: api/v3/RemoteEvent/Spawn.php
 msgid "Type of the event"
@@ -1318,8 +1270,7 @@ msgstr "Neue Veranstaltung"
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
 #: api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Internal ID of the event the registration form is needed for"
-msgstr ""
-"Interne ID der Veranstaltung, für die das Anmeldeformular benötigt wird"
+msgstr "Interne ID der Veranstaltung, für die das Anmeldeformular benötigt wird"
 
 #: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
@@ -1328,8 +1279,7 @@ msgid "Remote Contact ID"
 msgstr "Remote-Kontakt-ID"
 
 #: api/v3/RemoteParticipant/Cancel.php
-msgid ""
-"You can cancel with a remote contact ID, to determine the CiviCRM contact"
+msgid "You can cancel with a remote contact ID, to determine the CiviCRM contact"
 msgstr ""
 "Sie können mit einer Remote-Kontakt-ID stornieren, um den CivICRM-Kontakt zu "
 "identifizieren"
@@ -1370,17 +1320,15 @@ msgstr "Falls nicht angegeben, wird das Standardprofil genutzt"
 #: api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Update.php
 #: api/v3/RemoteParticipant/Validate.php
 msgid "You can submit a remote contact ID, to determine the CiviCRM contact"
-msgstr ""
-"Sie können eine Remote-Kontakt-ID übermitteln, um den CiviCRM-Kontakt zu "
-"ermitteln"
+msgstr "Sie können eine Remote-Kontakt-ID übermitteln, um den CiviCRM-Kontakt zu ermitteln"
 
 #: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
 msgid ""
-"You can submit a remote contact, in which case the fields should come with "
-"the default data"
+"You can submit a remote contact, in which case the fields should come with the default "
+"data"
 msgstr ""
-"Sie können einen \"Remote Contact\" mit übermitteln, in diesem Fall wird das "
-"das Formular i.d.R. vorausgefüllt."
+"Sie können einen \"Remote Contact\" mit übermitteln, in diesem Fall wird das das "
+"Formular i.d.R. vorausgefüllt."
 
 #: api/v3/RemoteParticipant/Get.php
 msgid "Token to view your registration"
@@ -1393,8 +1341,8 @@ msgstr "Kontext"
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
 msgid "Which context/action is the form for (create/cancel/update)"
 msgstr ""
-"Für welchen Kontext bzw. welche Aktion ist das Formular gedacht (anlegen/"
-"stornieren/aktualisieren)"
+"Für welchen Kontext bzw. welche Aktion ist das Formular gedacht (anlegen/stornieren/"
+"aktualisieren)"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "Token"
@@ -1402,13 +1350,13 @@ msgstr "Token"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid ""
-"You can submit an invite token that can be used to identify the contact, in "
-"which case the fields should come with the default data. This takes "
-"preference over the remote_contact_id"
+"You can submit an invite token that can be used to identify the contact, in which case "
+"the fields should come with the default data. This takes preference over the "
+"remote_contact_id"
 msgstr ""
-"Sie können einen Einladungstoken übermitteln um den Kontakt zu "
-"identifizieren. In diesem Fall wird das Formular i.d.R. vorausgefüllt. Diese "
-"Form der Identifizierung hat Vorrang vor remote_contact_id ."
+"Sie können einen Einladungstoken übermitteln um den Kontakt zu identifizieren. In diesem "
+"Fall wird das Formular i.d.R. vorausgefüllt. Diese Form der Identifizierung hat Vorrang "
+"vor remote_contact_id ."
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "Invalid context '%1'"
@@ -1428,8 +1376,7 @@ msgstr "Token bezieht sich auf ein anderes Event '%1'"
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "RemoteEvent [%1] does not exist, or not eligible for registration."
-msgstr ""
-"RemoteEvent [%1] nicht verfügbar bzw. nicht für Anmeldung konfiguriert."
+msgstr "RemoteEvent [%1] nicht verfügbar bzw. nicht für Anmeldung konfiguriert."
 
 #: api/v3/RemoteParticipant/GetForm.php
 msgid "RemoteEvent [%1] is ambiguous."
@@ -1468,8 +1415,7 @@ msgid "CiviRemote Event: List public events"
 msgstr "CiviRemote Event: Öffentliche Events anzeigen"
 
 #: remoteevent.php
-msgid ""
-"Allows listing remote events marked as public via the CiviRemote Event API."
+msgid "Allows listing remote events marked as public via the CiviRemote Event API."
 msgstr ""
 
 #: remoteevent.php
@@ -1485,9 +1431,7 @@ msgid "CiviRemote Event: Spawn (create) events"
 msgstr "CiviRemote Event: Neue Events erzeugen"
 
 #: remoteevent.php
-msgid ""
-"Allows creating remote events via the CiviRemote Event API for further "
-"editing."
+msgid "Allows creating remote events via the CiviRemote Event API for further editing."
 msgstr ""
 
 #: remoteevent.php
@@ -1503,8 +1447,7 @@ msgid "CiviRemote Event: Edit registration"
 msgstr "CiviRemote Event: Registrierung bearbeiten"
 
 #: remoteevent.php
-msgid ""
-"Allows updating registrations for remote events via the CiviRemote Event API."
+msgid "Allows updating registrations for remote events via the CiviRemote Event API."
 msgstr ""
 
 #: remoteevent.php
@@ -1512,9 +1455,7 @@ msgid "CiviRemote Event: Cancel registration"
 msgstr "CiviRemote Event: Registrierung zurückziehen"
 
 #: remoteevent.php
-msgid ""
-"Allows cancelling registrations for remote events via the CiviRemote Event "
-"API."
+msgid "Allows cancelling registrations for remote events via the CiviRemote Event API."
 msgstr ""
 
 #: remoteevent.php
@@ -1557,29 +1498,26 @@ msgstr "[%1 Uhr - %2 Uhr]"
 
 #: templates/CRM/Remoteevent/Form/EventLocation.hlp
 msgid ""
-"This element defined may be displayed by your remote system during "
-"registration process. It may also be used in confirmation mails. How it is "
-"used may differ on your implementation."
+"This element defined may be displayed by your remote system during registration process. "
+"It may also be used in confirmation mails. How it is used may differ on your "
+"implementation."
 msgstr ""
 "Dieser Hinweis kann vom System das Ihr Anmeldeformular bereitstellt sowie in "
 "Bestätigungs-E-Mails genutzt werden. Wie die verschiedenen Elemente genau im "
-"Anmeldeprozess genutzt und dargestellt werden hängt von der konkreten "
-"Implementierung ab."
+"Anmeldeprozess genutzt und dargestellt werden hängt von der konkreten Implementierung ab."
 
 #: templates/CRM/Remoteevent/Form/EventLocation.tpl
 msgid ""
-"CiviCRM contacts of the type event location may be selected here. Your "
-"remote system may display their information (Display Name, Address, Geodata) "
-"as well as the Additional Information for this Event during registration "
-"process. The information may also be used in confirmation mails. How it "
-"isused may differ on your implementation."
+"CiviCRM contacts of the type event location may be selected here. Your remote system may "
+"display their information (Display Name, Address, Geodata) as well as the Additional "
+"Information for this Event during registration process. The information may also be used "
+"in confirmation mails. How it isused may differ on your implementation."
 msgstr ""
-"Bereits in CiviCRM als Kontakte angelegte Veranstaltungsorte können hier "
-"ausgewählt werden. Das System das Ihr Anmeldeformular bereitstellt kann "
-"diverse Informationen diese Kontakts (bspw. Name, Adresse, Geodaten) sowie "
-"den speziellen Hinweis unten anzeigen. Wie die verschiedenen Elemente genau "
-"im Anmeldeprozess genutzt und dargestellt werden hängt von der konkreten "
-"Implementierung ab."
+"Bereits in CiviCRM als Kontakte angelegte Veranstaltungsorte können hier ausgewählt "
+"werden. Das System das Ihr Anmeldeformular bereitstellt kann diverse Informationen diese "
+"Kontakts (bspw. Name, Adresse, Geodaten) sowie den speziellen Hinweis unten anzeigen. "
+"Wie die verschiedenen Elemente genau im Anmeldeprozess genutzt und dargestellt werden "
+"hängt von der konkreten Implementierung ab."
 
 #: templates/CRM/Remoteevent/Form/EventSessions.tpl
 msgid "Download as CSV"
@@ -1596,21 +1534,20 @@ msgstr "Aktionen"
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.hlp
 #: templates/CRM/Remoteevent/Form/Task/ParticipantSession.hlp
 msgid ""
-"Unless you check this option, every session registration change will be "
-"checked, e.g. whether the sessions are overlapping, of whether the session "
-"is full."
+"Unless you check this option, every session registration change will be checked, e.g. "
+"whether the sessions are overlapping, of whether the session is full."
 msgstr ""
-"Solange diese Option nicht aktiviert ist, werden alle Workshop-Teilnahmen "
-"geprüft - beispielsweise darauf, ob noch ein freier Platz im Workshop "
-"vorhanden ist, oder ob sich die angefragten Workshops überschneiden."
+"Solange diese Option nicht aktiviert ist, werden alle Workshop-Teilnahmen geprüft - "
+"beispielsweise darauf, ob noch ein freier Platz im Workshop vorhanden ist, oder ob sich "
+"die angefragten Workshops überschneiden."
 
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.hlp
 msgid ""
-"If you <i>do</i> check this option, the requested changes will be applied "
-"regardless of any restrictions."
+"If you <i>do</i> check this option, the requested changes will be applied regardless of "
+"any restrictions."
 msgstr ""
-"Falls diese Option aktiviert ist, werden die angefragten Workshop-Teilnahmen "
-"ungeprüft übernommen."
+"Falls diese Option aktiviert ist, werden die angefragten Workshop-Teilnahmen ungeprüft "
+"übernommen."
 
 #: templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Registered?"
@@ -1618,30 +1555,28 @@ msgstr "Teilnahme?"
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"If you tick this box, participants may cancel or change their own "
-"registration. Links for changing or canceling a registration may be included "
-"in your event confirmation mail."
+"If you tick this box, participants may cancel or change their own registration. Links "
+"for changing or canceling a registration may be included in your event confirmation mail."
 msgstr ""
-"Falls aktiviert können Teilnehmer*innen ihre eigene Anmeldung stornieren "
-"oder ändern. Änderungs- oder Stornolinks sollten in diesem Fall den "
-"Bestätigungs-E-Mails hinzugefügt werden."
+"Falls aktiviert können Teilnehmer*innen ihre eigene Anmeldung stornieren oder ändern. "
+"Änderungs- oder Stornolinks sollten in diesem Fall den Bestätigungs-E-Mails hinzugefügt "
+"werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Number of hours before the start of the event that a participant can edit or "
-"cancel it's registration."
+"Number of hours before the start of the event that a participant can edit or cancel it's "
+"registration."
 msgstr ""
-"Zeitraum in Stunden vor Beginn des Events in dem eine Teilnehmer*in ihre/"
-"seine Anmeldung bearbeiten oder stornieren kann."
+"Zeitraum in Stunden vor Beginn des Events in dem eine Teilnehmer*in ihre/seine Anmeldung "
+"bearbeiten oder stornieren kann."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Whether participants can register with themselves up to 9 other participants "
-"using the profile to be selected below."
+"Whether participants can register with themselves up to 9 other participants using the "
+"profile to be selected below."
 msgstr ""
-"Bestimmt, ob Veranstaltungsteilnehmer mit ihrer Anmeldung bis zu 9 weitere "
-"Teilnehmer anmelden können, unter Verwendung des unterhalb ausgewählten "
-"Profils."
+"Bestimmt, ob Veranstaltungsteilnehmer mit ihrer Anmeldung bis zu 9 weitere Teilnehmer "
+"anmelden können, unter Verwendung des unterhalb ausgewählten Profils."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "The registration profile to use for additional participants."
@@ -1649,76 +1584,72 @@ msgstr "Zur Anmeldung zusätzlicher Teilnehmer verwendetes Anmeldeprofil."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Limit the number of additional participants that can be registered in a "
-"single booking."
+"Limit the number of additional participants that can be registered in a single booking."
 msgstr ""
-"Beschränkung der Anzahl zusätzlicher Teilnehmer, die in einer "
-"Einzelanmeldung mit angemeldet werden können."
+"Beschränkung der Anzahl zusätzlicher Teilnehmer, die in einer Einzelanmeldung mit "
+"angemeldet werden können."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Eg: if you choose '2' then the lead booker can bring 2 guests; there would "
-"be a limit of 3 participants in total per booking."
+"Eg: if you choose '2' then the lead booker can bring 2 guests; there would be a limit of "
+"3 participants in total per booking."
 msgstr ""
-"Wenn Sie z. B. \"2\" auswählen, kann der Teilnehmer bis zu 2 Gäste "
-"mitbringen; Es gäbe eine Beschränkung von insgesamt 3 Teilnehmern pro "
-"Buchung."
+"Wenn Sie z. B. \"2\" auswählen, kann der Teilnehmer bis zu 2 Gäste mitbringen; Es gäbe "
+"eine Beschränkung von insgesamt 3 Teilnehmern pro Buchung."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Whether to allow additional participants be added to a waiting list (if "
-"active) in case there are not enough vacancies for the total number of "
-"participants requested to be registered."
+"Whether to allow additional participants be added to a waiting list (if active) in case "
+"there are not enough vacancies for the total number of participants requested to be "
+"registered."
 msgstr ""
-"Bestimmt, ob zusätzliche Teilnehmer zu einer ggf. aktiven Warteliste "
-"hinzugefügt werden sollen, falls nicht genügend freie Plätze für die Anzahl "
-"zusätzlich anzumeldender Teilnehmer vorhanden sind."
+"Bestimmt, ob zusätzliche Teilnehmer zu einer ggf. aktiven Warteliste hinzugefügt werden "
+"sollen, falls nicht genügend freie Plätze für die Anzahl zusätzlich anzumeldender "
+"Teilnehmer vorhanden sind."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"When this is active, some additional participants might be added to the "
-"waiting list instead of being registered."
+"When this is active, some additional participants might be added to the waiting list "
+"instead of being registered."
 msgstr ""
-"Wenn aktiviert, könnten einige zusätzliche Teilnehmer zur Warteliste "
-"hinzugefügt werden, statt direkt angemeldet zu werden."
+"Wenn aktiviert, könnten einige zusätzliche Teilnehmer zur Warteliste hinzugefügt werden, "
+"statt direkt angemeldet zu werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"When this is not active, the registration will be rejected for all "
-"participants if any of them can not be registered."
+"When this is not active, the registration will be rejected for all participants if any "
+"of them can not be registered."
 msgstr ""
-"Wenn nicht aktiviert, werden Anmeldungen für alle Teilnehmer abgelehnt, wenn "
-"mindestens einer von ihnen nicht mit angemeldet werden kann."
+"Wenn nicht aktiviert, werden Anmeldungen für alle Teilnehmer abgelehnt, wenn mindestens "
+"einer von ihnen nicht mit angemeldet werden kann."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"The XCM tool will be used to identify and update an existing contact with "
-"the submitted data, or to create a new one."
+"The XCM tool will be used to identify and update an existing contact with the submitted "
+"data, or to create a new one."
 msgstr ""
-"Das XCM-Werkzeug wird verwendet, um bestehende Kontakte zu identifizieren "
-"und mit übermittelten Daten zu aktualisieren, oder um einen neuen Kontakt "
-"anzulegen."
+"Das XCM-Werkzeug wird verwendet, um bestehende Kontakte zu identifizieren und mit "
+"übermittelten Daten zu aktualisieren, oder um einen neuen Kontakt anzulegen."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"If you can't find a profile that meets your requirements, feel free to add "
-"another profile there."
+"If you can't find a profile that meets your requirements, feel free to add another "
+"profile there."
 msgstr ""
-"Wenn Sie kein Profil entdecken, dass Ihren Anforderungen genügt, können Sie "
-"dort ein weiteres hinzufügen."
+"Wenn Sie kein Profil entdecken, dass Ihren Anforderungen genügt, können Sie dort ein "
+"weiteres hinzufügen."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"If you tick this box, registrations will be assigned the \"Awaiting "
-"approval\" status and you will need to manually review and approve each "
-"registration. Depending on your remote system's settings and/or your "
-"confirmation mail settings, registrants may be informed about the pending "
-"approval as well."
+"If you tick this box, registrations will be assigned the \"Awaiting approval\" status "
+"and you will need to manually review and approve each registration. Depending on your "
+"remote system's settings and/or your confirmation mail settings, registrants may be "
+"informed about the pending approval as well."
 msgstr ""
-"Falls aktiviert erhalten Anmeldungen den Status „Bestätigung ausstehend“ und "
-"müssen manuell freigegeben werden. Je nach Einstellung des Systems das Ihr "
-"Anmeldeformular generiert und Ihrer Bestätigungs-E-Mails, können "
-"Teilnehmende über die ausstehende Bestätigung auch informiert werden."
+"Falls aktiviert erhalten Anmeldungen den Status „Bestätigung ausstehend“ und müssen "
+"manuell freigegeben werden. Je nach Einstellung des Systems das Ihr Anmeldeformular "
+"generiert und Ihrer Bestätigungs-E-Mails, können Teilnehmende über die ausstehende "
+"Bestätigung auch informiert werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "This registration profile will be shown by default."
@@ -1726,63 +1657,58 @@ msgstr "Dieses Anmeldeformular wird standardmäßig angezeigt."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Additional registration profiles that may be used to register for this "
-"event. You will need to enable at least your default profile. You will have "
-"to enable the One-Click-Profile in order ro allow contacts to respond to an "
-"event invitation (feature provided by separate Event Invitations Extension)."
+"Additional registration profiles that may be used to register for this event. You will "
+"need to enable at least your default profile. You will have to enable the One-Click-"
+"Profile in order ro allow contacts to respond to an event invitation (feature provided "
+"by separate Event Invitations Extension)."
 msgstr ""
-"Weiter zulässige Anmeldeprofile für diese Veranstaltung. Es muss zumindest "
-"das Standardprofil ausgewählt werden. Sie müssen das „Ein-Klick-Profil“ "
-"aktivieren, wenn es Kontakten möglich sein soll eine Einladung anzunehmen "
-"oder abzulehnen (von separater Erweiterung „Event Invitations Extension“ "
-"bereitgestellte Funktion)"
+"Weiter zulässige Anmeldeprofile für diese Veranstaltung. Es muss zumindest das "
+"Standardprofil ausgewählt werden. Sie müssen das „Ein-Klick-Profil“ aktivieren, wenn es "
+"Kontakten möglich sein soll eine Einladung anzunehmen oder abzulehnen (von separater "
+"Erweiterung „Event Invitations Extension“ bereitgestellte Funktion)"
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "This profile will be used for updates/changes to an existing registration"
+msgstr ""
+"Dieses Profil wird standardmäßig verwendet um Änderungen an einer bereits bestehenden "
+"Anmeldung zu verarbeiten."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"This profile will be used for updates/changes to an existing registration"
+"Additional profiles that may be defined here for updating/changing an existing "
+"registration"
 msgstr ""
-"Dieses Profil wird standardmäßig verwendet um Änderungen an einer bereits "
-"bestehenden Anmeldung zu verarbeiten."
+"Liste der Profile die für die Verarbeitung von Änderungen an einer bereits bestehenden "
+"Anmeldung verwendet werden dürfen."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Additional profiles that may be defined here for updating/changing an "
-"existing registration"
+"If checked an alternative approach to handle event locations will be used and CiviCRM's "
+"default tab will be replaced with a custom one. Please refer to documentation for more "
+"information."
 msgstr ""
-"Liste der Profile die für die Verarbeitung von Änderungen an einer bereits "
-"bestehenden Anmeldung verwendet werden dürfen."
+"Falls aktiviert wird eine alternative Funktion für die Nutzung des Veranstaltungsortes "
+"aktiviert und der reguläre CiviCRM Reiter mit einem benutzerdefinierten ersetzt. Weitere "
+"Informationen erhalten Sie in der Dokumentation der Erweiterung."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"If checked an alternative approach to handle event locations will be used "
-"and CiviCRM's default tab will be replaced with a custom one. Please refer "
-"to documentation for more information."
+"All text elements defined in this area may be displayed by your remote system during "
+"registration process. They may also be used in confirmation mails. How they are used may "
+"differ on your implementation."
 msgstr ""
-"Falls aktiviert wird eine alternative Funktion für die Nutzung des "
-"Veranstaltungsortes aktiviert und der reguläre CiviCRM Reiter mit einem "
-"benutzerdefinierten ersetzt. Weitere Informationen erhalten Sie in der "
-"Dokumentation der Erweiterung."
+"Alle in diesem Bereich vorgenommenen Texte und weitere Eingaben können vom System das "
+"Ihr Anmeldeformular bereitstellt genutzt werden. Sie können zudem in Bestätigungs-E-"
+"Mails genutzt werden. Wie die verschiedenen Elemente genau im Anmeldeprozess genutzt und "
+"dargestellt werden hängt von der konkreten Implementierung ab."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"All text elements defined in this area may be displayed by your remote "
-"system during registration process. They may also be used in confirmation "
-"mails. How they are used may differ on your implementation."
+"If you enter any information in this area, participants will be displayed and need to "
+"confirm these Generel Terms and Conditions when registering."
 msgstr ""
-"Alle in diesem Bereich vorgenommenen Texte und weitere Eingaben können vom "
-"System das Ihr Anmeldeformular bereitstellt genutzt werden. Sie können zudem "
-"in Bestätigungs-E-Mails genutzt werden. Wie die verschiedenen Elemente genau "
-"im Anmeldeprozess genutzt und dargestellt werden hängt von der konkreten "
-"Implementierung ab."
-
-#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
-msgid ""
-"If you enter any information in this area, participants will be displayed "
-"and need to confirm these Generel Terms and Conditions when registering."
-msgstr ""
-"Wenn Sie in diese Feld etwas eintragen wird dies als allgemeine "
-"Anmeldebedingungen im Anmeldeformular angezeigt und muss von den "
-"Teilnehmenden bestätigt werden."
+"Wenn Sie in diese Feld etwas eintragen wird dies als allgemeine Anmeldebedingungen im "
+"Anmeldeformular angezeigt und muss von den Teilnehmenden bestätigt werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "Can be displayed as an introduction of your registration form."
@@ -1790,29 +1716,23 @@ msgstr "Kann als Einleitung in Ihrem Anmeldeformular angezeigt."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Can be displayed at the bottom of your registration form close to the submit "
-"bottom."
+"Can be displayed at the bottom of your registration form close to the submit bottom."
 msgstr ""
-"Kann im Fußbereich des Eingabeformulars nahe des „Abschicken-Buttons“ "
-"angezeigt werden."
+"Kann im Fußbereich des Eingabeformulars nahe des „Abschicken-Buttons“ angezeigt werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "Can be displayed as the title of your confirmation page."
 msgstr "Kann als Überschrift Ihrer Bestätigungsseite verwendet werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
-msgid ""
-"Element / message that can be displayed on top of your confirmation page."
-msgstr ""
-"Hinweistext der oben auf Ihrer Bestätigungsseite angezeigt werden kann."
+msgid "Element / message that can be displayed on top of your confirmation page."
+msgstr "Hinweistext der oben auf Ihrer Bestätigungsseite angezeigt werden kann."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"Can be displayed at the bottom of your confirmation page close to the submit "
-"bottom."
+"Can be displayed at the bottom of your confirmation page close to the submit bottom."
 msgstr ""
-"Kann im Fußbereich der Bestätigungsseite nahe des „Abschicken-Buttons“ "
-"angezeigt werden."
+"Kann im Fußbereich der Bestätigungsseite nahe des „Abschicken-Buttons“ angezeigt werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "Element / message that can be displayed on top of your thank you page."
@@ -1824,42 +1744,39 @@ msgstr "Kann im Fußbereich des Dankeschönbereichs angezeigt werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"You can set an external identifier to identify this this event from an "
-"external system, e.g. a registration platform. This identifier has to be "
-"unique."
+"You can set an external identifier to identify this this event from an external system, "
+"e.g. a registration platform. This identifier has to be unique."
 msgstr ""
-"Sie können einen externen Bezeichner festlegen, um diese Veranstaltungen aus "
-"einem externen Systemen zu identifizieren, z.B. einer "
-"Registrierungsplattform. Dieser Bezeichner muss eindeutig sein."
+"Sie können einen externen Bezeichner festlegen, um diese Veranstaltungen aus einem "
+"externen Systemen zu identifizieren, z.B. einer Registrierungsplattform. Dieser "
+"Bezeichner muss eindeutig sein."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"If you wish to change an existing external identifier, first make sure no "
-"external system still refers to the previous value."
+"If you wish to change an existing external identifier, first make sure no external "
+"system still refers to the previous value."
 msgstr ""
-"Wenn Sie einen existierenden externen Bezeichner ändern wollen, stellen Sie "
-"zunächst sicher, dass kein externes System weiterhin den vorherigen Wert "
-"verwendet."
+"Wenn Sie einen existierenden externen Bezeichner ändern wollen, stellen Sie zunächst "
+"sicher, dass kein externes System weiterhin den vorherigen Wert verwendet."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid ""
-"With this flag you can suspend / disable the remote online registration for "
-"this event, regardless of the other restrictions."
+"With this flag you can suspend / disable the remote online registration for this event, "
+"regardless of the other restrictions."
 msgstr ""
-"Mit dieser Einstellung können sie die Registrierung über die RemoteEvent "
-"Schnittstelle aussetzen, unabhängig von den anderen Einstellungen"
+"Mit dieser Einstellung können sie die Registrierung über die RemoteEvent Schnittstelle "
+"aussetzen, unabhängig von den anderen Einstellungen"
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "If enabled, registration is only possible for logged in users."
 msgstr ""
-"Wenn aktiviert, ist eine Veranstaltungsanmeldung nur für eingeloggte "
-"Benutzer möglich."
+"Wenn aktiviert, ist eine Veranstaltungsanmeldung nur für eingeloggte Benutzer möglich."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "The XCM tool can be used to update and process the registered contact."
 msgstr ""
-"Das XCM-Werkzeug kann zur Aktualisierung und Verarbeitung des angemeldeten "
-"Kontakts verwendet werden."
+"Das XCM-Werkzeug kann zur Aktualisierung und Verarbeitung des angemeldeten Kontakts "
+"verwendet werden."
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "CiviRemote Event settings"
@@ -1880,115 +1797,108 @@ msgstr "Öffentliche Textelemente"
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid "List of statuses the will prevent a contact from registering again."
 msgstr ""
-"Alle Teilnehmer mit einer Anmeldung in einem dieser Status sind von der "
-"erneuten Anmeldung ausgeschlossen."
+"Alle Teilnehmer mit einer Anmeldung in einem dieser Status sind von der erneuten "
+"Anmeldung ausgeschlossen."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"Any roles you select here will cause all participants with this role to be "
-"publicly listed as speakers at the event."
+"Any roles you select here will cause all participants with this role to be publicly "
+"listed as speakers at the event."
 msgstr ""
-"Alle Teilnehmer mit den hier ausgewählten Rollen werden bei den "
-"Eventinformationen als Vortragende gelistet."
+"Alle Teilnehmer mit den hier ausgewählten Rollen werden bei den Eventinformationen als "
+"Vortragende gelistet."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"If this is active, the session data will be delivered with the general event "
-"data (<code>RemoteEvent.get</code>). Turn this off if you don't need it, as "
-"it can be increase the volume of submitted data substantially."
+"If this is active, the session data will be delivered with the general event data "
+"(<code>RemoteEvent.get</code>). Turn this off if you don't need it, as it can be "
+"increase the volume of submitted data substantially."
 msgstr ""
-"Wenn aktiv, werden die Workshop-Daten mit den allgemeinen "
-"Veranstaltungsdaten übermittelt (<code>RemoteEvent.get</code>). Schalten Sie "
-"diese Option aus, wenn Sie sie nicht benötigen, da sie die Menge der "
-"übertragenen Daten deutlisch steigern kann."
+"Wenn aktiv, werden die Workshop-Daten mit den allgemeinen Veranstaltungsdaten "
+"übermittelt (<code>RemoteEvent.get</code>). Schalten Sie diese Option aus, wenn Sie sie "
+"nicht benötigen, da sie die Menge der übertragenen Daten deutlisch steigern kann."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"You may pick a XCM profile to <i>update</i> contacts that have already been "
-"identified, for example by token or remote user connection."
+"You may pick a XCM profile to <i>update</i> contacts that have already been identified, "
+"for example by token or remote user connection."
 msgstr ""
-"Hier können Sie ein XCM Profil einstellen, um Kontakte zu <i>aktualisieren</"
-"i>, falls diese bereits durch ein Token oder eine RemoteContact ID "
-"identifiziert wurden."
+"Hier können Sie ein XCM Profil einstellen, um Kontakte zu <i>aktualisieren</i>, falls "
+"diese bereits durch ein Token oder eine RemoteContact ID identifiziert wurden."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"It is strongly recommended, that the chosen profile has the \"Match contacts "
-"by contact ID\" option enabled. This way you can avoid creating duplicates."
+"It is strongly recommended, that the chosen profile has the \"Match contacts by contact "
+"ID\" option enabled. This way you can avoid creating duplicates."
 msgstr ""
-"Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact "
-"ID\" zu aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
+"Ist sehr ratsam, in diesem Profil die Option \"Match contacts by contact ID\" zu "
+"aktivieren, da sonst gegebenenfalls Duplikate erzeugt werden."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"You can select a custom activity type here to enable the recording of "
-"changes and updates of participant data."
+"You can select a custom activity type here to enable the recording of changes and "
+"updates of participant data."
 msgstr ""
-"Falls sie Änderungen der Teilnehmerdaten aufzeichnen möchten, können Sie "
-"hier einen Aktivitätstyp eintragen. Bei Änderungen wird dann jeweils eine "
-"entsprechende Aktivität angelegt."
+"Falls sie Änderungen der Teilnehmerdaten aufzeichnen möchten, können Sie hier einen "
+"Aktivitätstyp eintragen. Bei Änderungen wird dann jeweils eine entsprechende Aktivität "
+"angelegt."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid "If you don't select anything here, nothing will be recorded."
-msgstr ""
-"Wenn Sie die Auswahl leer lassen, so werden die Änderungen nicht "
-"aufgezeichnet."
+msgstr "Wenn Sie die Auswahl leer lassen, so werden die Änderungen nicht aufgezeichnet."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"If you have a lot of events in your system, the response time to the "
-"registration system(s) via <code>RemoteEvent.get</code> can become quite "
-"slow."
+"If you have a lot of events in your system, the response time to the registration "
+"system(s) via <code>RemoteEvent.get</code> can become quite slow."
 msgstr ""
-"Wenn Sie viele Veranstaltungen in Ihrem System haben, kann die Antwortzeit "
-"zu dem/den Registrierungssystem/en via <code>RemoteEvent.get</code> ziemlich "
-"langsam werden."
+"Wenn Sie viele Veranstaltungen in Ihrem System haben, kann die Antwortzeit zu dem/den "
+"Registrierungssystem/en via <code>RemoteEvent.get</code> ziemlich langsam werden."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"You can enable this option to boost its performance, but it if you have "
-"customisations that manipulate flags like <code>can_register</code> or "
-"<code>is_registered</code>, the results might be inaccurate."
+"You can enable this option to boost its performance, but it if you have customisations "
+"that manipulate flags like <code>can_register</code> or <code>is_registered</code>, the "
+"results might be inaccurate."
 msgstr ""
-"Sie können diese Option aktivieren, um die Performance zu verbessern. "
-"Sollten Sie jedoch Anpassungen haben, die Markierungen wie "
-"<code>can_register</code> oder <code>is_registered</code> beeinflussen, "
-"können die Ergebnisse fehlerhaft sein."
+"Sie können diese Option aktivieren, um die Performance zu verbessern. Sollten Sie jedoch "
+"Anpassungen haben, die Markierungen wie <code>can_register</code> oder "
+"<code>is_registered</code> beeinflussen, können die Ergebnisse fehlerhaft sein."
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid ""
-"The reason for this lies in RemoteEvent's architecture, where Sympfony "
-"events can manipulate data <i>after</i> the main query was completed."
+"The reason for this lies in RemoteEvent's architecture, where Sympfony events can "
+"manipulate data <i>after</i> the main query was completed."
 msgstr ""
-"Der Grund hierfür liegt in der Architektur von RemoteEvents, welche es "
-"mittels Symfony Events ermöglicht, Daten zu manipulieren, <i>nachdem</i> die "
-"Hauptanfrage abgeschlossen ist."
+"Der Grund hierfür liegt in der Architektur von CiviRemote Event, welche es mittels "
+"Symfony Events ermöglicht, Daten zu manipulieren, <i>nachdem</i> die Hauptanfrage "
+"abgeschlossen ist."
 
 #: templates/CRM/Remoteevent/Form/Task/ParticipantSession.hlp
 msgid ""
-"You can use this search task to mass-register participants to the event's "
-"sessions, or unregister them."
+"You can use this search task to mass-register participants to the event's sessions, or "
+"unregister them."
 msgstr ""
-"Sie können diese Aktion verwenden, um gruppenweise Teilnehmer zu Workshops "
-"hinzuzufügen, oder zu entfernen."
+"Sie können diese Aktion verwenden, um gruppenweise Teilnehmer zu Workshops hinzuzufügen, "
+"oder zu entfernen."
 
 #: templates/CRM/Remoteevent/Form/Task/ParticipantSession.hlp
 msgid ""
-"Should they be already registered, they will not be registered again. "
-"Equally, if you would unregister a participant from a session they're not "
-"registered to, nothing will happen."
+"Should they be already registered, they will not be registered again. Equally, if you "
+"would unregister a participant from a session they're not registered to, nothing will "
+"happen."
 msgstr ""
-"Sollten ein Teilnehmer dabei bereits angemeldet sein, so wird dieser nicht "
-"erneut angemeldet. Genauso geschieht auch nichts, wenn man einen Teilnehmer "
-"von einem Workshop entfernt, zu dem er gar nicht angemeldet ist."
+"Sollten ein Teilnehmer dabei bereits angemeldet sein, so wird dieser nicht erneut "
+"angemeldet. Genauso geschieht auch nichts, wenn man einen Teilnehmer von einem Workshop "
+"entfernt, zu dem er gar nicht angemeldet ist."
 
 #: templates/CRM/Remoteevent/Form/Task/ParticipantSession.hlp
 msgid ""
-"If you <i>do</i> check this option, the requested registrations will be "
-"recorded regardless of any restrictions."
+"If you <i>do</i> check this option, the requested registrations will be recorded "
+"regardless of any restrictions."
 msgstr ""
-"Falls diese Option aktiviert ist, werden die angefragten Workshop-Teilnahmen "
-"ungeprüft vorgenommen."
+"Falls diese Option aktiviert ist, werden die angefragten Workshop-Teilnahmen ungeprüft "
+"vorgenommen."
 
 #: templates/CRM/Remoteevent/Page/SessionParticipantList.tpl
 msgid "Status"

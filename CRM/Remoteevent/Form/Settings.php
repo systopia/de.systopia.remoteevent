@@ -36,7 +36,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
 
     public function buildQuickForm()
     {
-        $this->setTitle(E::ts("Remote Events - General Configuration"));
+        $this->setTitle(E::ts("CiviRemote Event - General Configuration"));
 
         $this->add(
             'select',

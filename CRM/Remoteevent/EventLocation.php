@@ -91,7 +91,7 @@ class CRM_Remoteevent_EventLocation
                 $new_location = civicrm_api3('ContactType', 'create', [
                     'name' => 'Event_Location',
                     'label' => E::ts("Event Location"),
-                    'description' => E::ts("These contacts can be used as event locations by the RemoteEvents extension"),
+                    'description' => E::ts("These contacts can be used as event locations by the CiviRemote Event extension"),
                     'image_URL' => E::url('icons/event_location.png'),
                     'parent_id' => 3, // 'Organisation'
                 ]);
