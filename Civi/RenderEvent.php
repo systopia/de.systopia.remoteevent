@@ -32,6 +32,9 @@ class RenderEvent extends Event
     /** @var string the full path to the template */
     protected $current_template_file;
 
+    /** @var string the full path to the original template */
+    protected $original_template_file;
+
     /** @var array the list of smarty variables to be passed to the renderer */
     protected $smarty_variables;
 
@@ -161,15 +164,15 @@ class RenderEvent extends Event
      */
     public static function renderTemplate($template_path, $smarty_variables, $context, $trim_mode = 'none')
     {
-        // step 1: trigger the event
+        // Trigger the event.
         $render_event = new RenderEvent($template_path, $smarty_variables, $context, $trim_mode);
         \Civi::dispatcher()->dispatch(RenderEvent::NAME, $render_event);
 
-        // step 2: load the template
+        // Load the template.
         static $template_cache = [];
         $template_file = $render_event->getTemplateFile();
         if (empty($template_file)) {
-            // an empty template file cannot be rendered
+            // An empty template file cannot be rendered.
             return null;
         }
         if (!isset($template_cache[$template_file])) {
@@ -177,34 +180,10 @@ class RenderEvent extends Event
         }
         $template = $template_cache[$template_file];
 
-        // step 3: render the template
-        $smarty = \CRM_Core_Smarty::singleton();
-        $new_smarty_vars = $render_event->getVars();
-        $previous_smarty_vars = $smarty->get_template_vars();
-        $smarty_var_backup = [];
-        foreach ($new_smarty_vars as $key => $value) {
-            if (isset($previous_smarty_vars[$key])) {
-                $smarty_var_backup[$key] = $previous_smarty_vars[$key];
-            } else {
-                $smarty_var_backup[$key] = null;
-            }
-            $smarty->assign($key, $value);
-        }
-        $rendered_text = $smarty->fetch($template);
+        // Render the template.
+        $rendered_text = \CRM_Utils_String::parseOneOffStringThroughSmarty($template, $render_event->getVars());
 
-        // step 4: restore smarty state
-        foreach ($new_smarty_vars as $key => $value) {
-            $smarty->clear_assign($key);
-        }
-        foreach ($smarty_var_backup as $key => $value) {
-            if ($value === null) {
-                $smarty->clear_assign($key);
-            } else {
-                $smarty->assign($key, $value);
-            }
-        }
-
-        // step 5: clean the output
+        // Clean the output.
         $trim_mode = $render_event->getTrimMode();
         switch ($trim_mode) {
             case 'trim':
