@@ -17,5 +17,20 @@
         .toggle($(this).prop('checked'));
     });
     $('[name=is_multiple_registrations]').change();
+
+    $('input#remote_registration_is_mailing_list_double_optin').on('change', function() {
+      if (this.checked) {
+        $('#remote_registration_mailing_list_double_optin_subject_row').slideDown();
+        $('#remote_registration_mailing_list_double_optin_text_row').slideDown();
+      }
+      else {
+        $('#remote_registration_mailing_list_double_optin_subject_row').slideUp();
+        $('#remote_registration_mailing_list_double_optin_text_row').slideUp();
+      }
+    });
+    if (!$('input#remote_registration_is_mailing_list_double_optin').prop('checked')) {
+      $('#remote_registration_mailing_list_double_optin_subject_row').hide();
+      $('#remote_registration_mailing_list_double_optin_text_row').hide();
+    }
   });
 })(CRM.$ || cj);

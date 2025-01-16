@@ -167,6 +167,30 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
           ['class' => 'crm-select2', 'multiple' => 'multiple']
         );
 
+        $this->add(
+          'checkbox',
+          'remote_registration_is_mailing_list_double_optin',
+          E::ts('Double Opt-in for Mailing List Subscriptions?')
+        );
+
+        $this->add(
+          'text',
+          'remote_registration_mailing_list_double_optin_subject',
+          E::ts('Subject for Double Opt-in Email')
+        );
+
+        $this->add(
+          'wysiwyg',
+          'remote_registration_mailing_list_double_optin_text',
+          E::ts('Text for Double Opt-in Email')
+        );
+        $this->addRule(
+          'remote_registration_mailing_list_double_optin_text',
+          E::ts('The text must contain the placeholder <code>{subscribe.url}</code>.'),
+          'regex',
+          '/\{subscribe\.url\}/'
+        );
+
         $this->assign('profiles', $available_registration_profiles);
 
         // add GTAC field
@@ -220,6 +244,9 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.remote_registration_additional_participants_profile' => 'remote_registration_additional_participants_profile',
                 'event_remote_registration.remote_registration_additional_participants_xcm_profile' => 'remote_registration_additional_participants_xcm_profile',
                 'event_remote_registration.mailing_list_group_ids' => 'remote_registration_mailing_list_group_ids',
+                'event_remote_registration.is_mailing_list_double_optin' => 'remote_registration_is_mailing_list_double_optin',
+                'event_remote_registration.mailing_list_double_optin_subject' => 'remote_registration_mailing_list_double_optin_subject',
+                'event_remote_registration.mailing_list_double_optin_text' => 'remote_registration_mailing_list_double_optin_text',
                 'event_remote_registration.mailing_list_subscriptions_label' => 'remote_registration_mailing_list_subscriptions_label',
             ];
             CRM_Remoteevent_CustomData::resolveCustomFields($field_list);
@@ -296,7 +323,16 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
           }
         }
 
-        return (0 == count($this->_errors));
+        if ($this->getSubmitValue('remote_registration_is_mailing_list_double_optin')) {
+          if ($this->getSubmitValue('remote_registration_mailing_list_double_optin_subject') === '') {
+            $this->setElementError(
+              'remote_registration_mailing_list_double_optin_subject',
+              E::ts('This value is required.')
+            );
+          }
+        }
+
+        return (0 === count($this->_errors));
     }
 
     public function postProcess()
@@ -349,6 +385,9 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             'event_remote_registration.remote_registration_additional_participants_profile' => $values['remote_registration_additional_participants_profile'],
             'event_remote_registration.remote_registration_additional_participants_xcm_profile' => $values['remote_registration_additional_participants_xcm_profile'],
             'event_remote_registration.mailing_list_group_ids' => $values['remote_registration_mailing_list_group_ids'],
+            'event_remote_registration.is_mailing_list_double_optin' => $values['remote_registration_is_mailing_list_double_optin'] ?? FALSE,
+            'event_remote_registration.mailing_list_double_optin_subject' => $values['remote_registration_mailing_list_double_optin_subject'],
+            'event_remote_registration.mailing_list_double_optin_text' => $values['remote_registration_mailing_list_double_optin_text'],
             'event_remote_registration.mailing_list_subscriptions_label' => $values['remote_registration_mailing_list_subscriptions_label'],
         ];
 

@@ -44,4 +44,9 @@
   <p>{ts}You can enable this option to boost its performance, but it if you have customisations that manipulate flags like <code>can_register</code> or <code>is_registered</code>, the results might be inaccurate.{/ts}</p>
   <p>{ts}The reason for this lies in RemoteEvent's architecture, where Sympfony events can manipulate data <i>after</i> the main query was completed.{/ts}</p>
 {/htxt}
+
+{htxt id='remote_event_mailing_list_subscription_confirm_link'}
+{ts}The URL used to confirm mailing list subscriptions if double opt-in is enabled. The placeholder for the confirmation token is <code>{literal}{token}{/literal}</code>.{/ts}
+{/htxt}
+
 {/crmScope}

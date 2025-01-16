@@ -1237,7 +1237,7 @@ msgstr ""
 
 #: Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
 msgid "I want to subscribe to the following newsletters"
-msgstr "I möchte mich zu folgenden Newslettern anmelden"
+msgstr "Ich möchte mich zu folgenden Newslettern anmelden"
 
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
 msgid "Template ID"

@@ -41,6 +41,7 @@ require_once __DIR__ . '/../../remoteevent.civix.php';
 // Add test classes to class loader.
 addExtensionDirToClassLoader(__DIR__);
 addExtensionToClassLoader('de.systopia.remoteevent');
+addExtensionToClassLoader('de.systopia.remotetools');
 
 if (!function_exists('ts')) {
   // Ensure function ts() is available - it's declared in the same file as CRM_Core_I18n in CiviCRM < 5.74.

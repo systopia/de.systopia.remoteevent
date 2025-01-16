@@ -33,6 +33,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         'remote_participant_change_activity_type_id',
         'remote_event_get_performance_enhancement',
         'remote_event_get_session_data',
+        'remote_event_mailing_list_subscription_confirm_link',
     ];
 
     public function buildQuickForm()
@@ -151,6 +152,20 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
             '/\{token\}/'
         );
 
+      $this->add(
+        'text',
+        'remote_event_mailing_list_subscription_confirm_link',
+        E::ts('Mailing List Subscription Confirm Link'),
+        ['class' => 'huge']
+      );
+      $this->addRule('remote_event_mailing_list_subscription_confirm_link', E::ts('Please enter a valid URL'), 'url');
+      $this->addRule(
+        'remote_event_mailing_list_subscription_confirm_link',
+        E::ts('The link must include the placeholder <code>{token}</code>.'),
+        'regex',
+        '/\{token\}/'
+      );
+
         $this->addButtons(
             [
                 [
@@ -174,7 +189,7 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
         $values = $this->exportValues();
 
         foreach (self::SETTINGS as $setting_key) {
-            Civi::settings()->set($setting_key, CRM_Utils_Array::value($setting_key, $values));
+            Civi::settings()->set($setting_key, $values[$setting_key] ?? NULL);
         }
         CRM_Core_Session::setStatus(E::ts("Configuration Updated"));
         parent::postProcess();

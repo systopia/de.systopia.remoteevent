@@ -85,6 +85,12 @@
     <div class="clear"></div>
   </div>
 
+  <div class="crm-section">
+    <div class="label">{$form.remote_event_mailing_list_subscription_confirm_link.label}&nbsp;{help id="remote_event_mailing_list_subscription_confirm_link" title=$form.remote_event_mailing_list_subscription_confirm_link.label}</div>
+    <div class="content">{$form.remote_event_mailing_list_subscription_confirm_link.html}</div>
+    <div class="clear"></div>
+  </div>
+
   <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>

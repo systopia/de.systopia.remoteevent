@@ -56,6 +56,11 @@ abstract class RemoteEvent extends RemoteToolsRequest
     protected $info_list = [];
 
 
+    public function __construct(array $original_request = [], ?array $event = null) {
+      parent::__construct($original_request);
+      $this->event = $event;
+    }
+
     /**
      * Get the parameters of the original query
      *
@@ -212,7 +217,7 @@ abstract class RemoteEvent extends RemoteToolsRequest
      */
     public function getEvent()
     {
-        if (null === $this->event_id) {
+        if (null === $this->event) {
           $event_id = $this->getEventID();
           if ($event_id) {
             $this->event = \CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
