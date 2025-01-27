@@ -120,6 +120,11 @@ final class RegistrationEventFactory
             $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
             $additionalParticipantsData[$participantNo]['role_id'] ??= $this->getDefaultRoleId($event);
             $additionalParticipantsData[$participantNo]['event_id'] = $submissionData['event_id'];
+
+            // Check if registration requires approval.
+            if (!empty($event['requires_approval'])) {
+                $additionalParticipantsData[$participantNo]['status_id.name'] = 'Awaiting approval';
+            }
         }
 
         $registrationEvent->setAdditionalContactsData($additionalContactsData);
