@@ -792,7 +792,7 @@ class CRM_Remoteevent_Registration
         // Create additional participants.
         foreach ($additionalParticipantsData as &$participantData) {
             $participantData['registered_by_id'] = $registration->getParticipantID();
-            $participantData['register_date'] = $registration->getParticipantData()['participant_register_date'];
+            $participantData['register_date'] = date('Y-m-d H:i');
             $participantRegistered = Participant::create(false)
                 ->setValues($participantData)
                 ->execute()
