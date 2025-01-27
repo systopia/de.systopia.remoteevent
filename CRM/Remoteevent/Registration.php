@@ -668,14 +668,6 @@ class CRM_Remoteevent_Registration
         $participant_data = &$registration->getParticipantData();
         $event_data = $registration->getEvent();
 
-        // check if it registration requires approval
-        if (empty($participant_data['participant_status_id'])) {
-            if (!empty($event_data['requires_approval'])) {
-                // there is an active waiting list, see if need to get on it
-                $participant_data['participant_status_id'] = 'Awaiting approval';
-            }
-        }
-
         // check if this has a waiting list
         if (empty($participant_data['participant_status_id'])) {
             if (CRM_Remoteevent_RemoteEvent::hasActiveWaitingList($event_data['id'], $event_data)) {
@@ -686,6 +678,14 @@ class CRM_Remoteevent_Registration
                 } else {
                     $registration->addStatus(E::ts("You have been added to the waitlist."));
                 }
+            }
+        }
+
+        // check if it registration requires approval
+        if (empty($participant_data['participant_status_id'])) {
+            if (!empty($event_data['requires_approval'])) {
+                // there is an active waiting list, see if need to get on it
+                $participant_data['participant_status_id'] = 'Awaiting approval';
             }
         }
 
