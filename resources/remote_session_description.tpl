@@ -25,7 +25,7 @@
   {if $session.presenter_id}
   <tr class="civiremote-event-session-info-row civiremote-event-session-info-row-presenter {$style_odd}">
     <th>{if $session.presenter_title}{$session.presenter_title}{else}{ts}Presenter{/ts}{/if}</th>
-    <td>{crmAPI var='presenter' entity='Contact' action='getvalue' sequential=0 return="display_name" id=$session.presenter_id}{$presenter}</td>
+    <td>{$session.presenter_display_name}</td>
     {* swap following styles *}{assign var=style_odd value="even"}{assign var=style_even value="odd"}
   </tr>
   {/if}
