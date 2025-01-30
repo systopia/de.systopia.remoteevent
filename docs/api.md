@@ -1,6 +1,6 @@
-## Remote Event API
+## CiviRemote Event API
 
-The extension exposes a new API to remote event listings or registration 
+The extension exposes a new API to remote event listings or registration
 systems:
 
 + ``RemoteEvent.get`` allows querying for remotely available events in the same

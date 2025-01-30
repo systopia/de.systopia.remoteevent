@@ -1,4 +1,4 @@
-# SYSTOPIAs Remote-Event-Erweiterung
+# CiviRemote Event
 
 ## Ziele und Funktionsumfang
 
@@ -29,6 +29,11 @@ enthält (https://github.com/systopia/civiremote).
 Beachten Sie, dass diese Erweiterung neben den regulären CiviCRM-Anmeldeseiten
 verwendet werden kann - Sie können für jedes Event wählen, ob Sie die
 Remote-Funktionen verwenden möchten oder nicht.
+
+Diese Erweiterung ist Teil des *CiviRemote*-Frameworks, das den Zugriff auf und
+die Interaktion mit CiviCRM-Entitäten über die REST-API für häufige
+Anwendungsfälle ermöglicht, indem Konfigurationsmöglichkeiten für die einfache
+Integration von entfernten Systemen bietet.
 
 ### Warum diese Erweiterung?
 
