@@ -13,10 +13,11 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi;
 
-use \Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Class RenderEvent
@@ -25,207 +26,192 @@ use \Symfony\Contracts\EventDispatcher\Event;
  *
  * Render smarty snippets
  */
-class RenderEvent extends Event
-{
-    public const NAME = 'civi.remoteevent.render';
+class RenderEvent extends Event {
 
-    /** @var string the full path to the template */
-    protected $current_template_file;
+  public const NAME = 'civi.remoteevent.render';
 
-    /** @var array the list of smarty variables to be passed to the renderer */
-    protected $smarty_variables;
+  /**
+   * The full path to the template.
+   */
+  protected ?string $current_template_file;
 
-    /** @var string the render context */
-    protected $context;
+  /**
+   * The full path to the original template.
+   */
+  protected ?string $original_template_file;
 
-    /** @var string the trim mode, see below */
-    protected $trim_mode;
+  /**
+   * @phpstan-var array<mixed>
+   * The list of smarty variables to be passed to the renderer.
+   */
+  protected array $smarty_variables;
 
+  /**
+   * The render context.
+   */
+  protected string $context;
 
-    protected function __construct($template_path, $smarty_variables, $context, $trim_mode)
-    {
-        $this->current_template_file = $template_path;
-        $this->original_template_file = $template_path;
-        $this->smarty_variables = $smarty_variables;
-        $this->context = $context;
-        $this->trim_mode = $trim_mode;
+  /**
+   * The trim mode, see below.
+   */
+  protected string $trim_mode;
+
+  /**
+   * @param ?string $template_path
+   * @param array<mixed> $smarty_variables
+   * @param string $context
+   * @param string $trim_mode
+   */
+  protected function __construct(?string $template_path, array $smarty_variables, string $context, string $trim_mode) {
+    $this->current_template_file = $template_path;
+    $this->original_template_file = $template_path;
+    $this->smarty_variables = $smarty_variables;
+    $this->context = $context;
+    $this->trim_mode = $trim_mode;
+  }
+
+  /**
+   * Utility function: render the given template
+   *
+   * @param string|null $template_path
+   *   full file path to the (intended) template snippet
+   *
+   * @param array<mixed> $smarty_variables
+   *   the variables passed to smarty
+   *
+   * @param string $context
+   *    a string identifying the context of the renderer
+   *
+   * @param string $trim_mode
+   *    should the string be trimmed? See options above
+   *
+   * @return string|null
+   *   rendered
+   */
+  public static function renderTemplate($template_path, $smarty_variables, $context, $trim_mode = 'none') {
+    // Trigger the event.
+    $render_event = new RenderEvent($template_path, $smarty_variables, $context, $trim_mode);
+    \Civi::dispatcher()->dispatch(RenderEvent::NAME, $render_event);
+
+    // Load the template.
+    static $template_cache = [];
+    $template_file = $render_event->getTemplateFile();
+    if (NULL === $template_file) {
+      // An empty template file cannot be rendered.
+      return NULL;
+    }
+    if (!isset($template_cache[$template_file])) {
+      $template_cache[$template_file] = 'string:' . file_get_contents($template_file);
+    }
+    $template = $template_cache[$template_file];
+
+    // Render the template.
+    $rendered_text = \CRM_Utils_String::parseOneOffStringThroughSmarty($template, $render_event->getVars());
+
+    // Clean the output.
+    $trim_mode = $render_event->getTrimMode();
+    switch ($trim_mode) {
+      case 'trim':
+        $rendered_text = trim($rendered_text);
+        break;
+
+      case 'meta-trim':
+        // trim, and strip literal '\r' and '\n' strings from the start and end
+        $rendered_text = preg_replace('/^( |\\r|\\n|\t|\n|\r)*/', '', $rendered_text);
+        $rendered_text = preg_replace('/( |\\r|\\n|\t|\n|\r)*$/', '', $rendered_text);
+        break;
+
+      case 'none':
+        // do nothing
+        break;
+
+      default:
+        \Civi::log()->debug("RenderEvent: Unknown trim mode '{$trim_mode}' for context '{$context}'. Ignored.");
+        break;
     }
 
-    /**
-     * Get the template file to be rendered
-     *
-     * @return string
-     */
-    public function getTemplateFile()
-    {
-        return $this->current_template_file;
-    }
+    return $rendered_text;
+  }
 
-    /**
-     * Set the template file to be rendered
-     *
-     * @return string
-     *   the new (full) file path to the template
-     */
-    public function setTemplateFile($file_path)
-    {
-        return $this->current_template_file = $file_path;
-    }
+  /**
+   * Get the template file to be rendered
+   *
+   * @return ?string
+   */
+  public function getTemplateFile() {
+    return $this->current_template_file;
+  }
 
-    /**
-     * Get the template file to be rendered
-     *
-     * @return string
-     */
-    public function getOriginalTemplateFile()
-    {
-        return $this->original_template_file;
-    }
+  /**
+   * Get the smarty variables,
+   *  can be edited in place
+   *
+   * @return array<mixed>
+   */
+  public function &getVars() {
+    return $this->smarty_variables;
+  }
 
-    /**
-     * Get the smarty variables,
-     *  can be edited in place
-     *
-     * @return array
-     */
-    public function &getVars()
-    {
-        return $this->smarty_variables;
-    }
+  /**
+   * Get trim mode
+   *
+   * @return string
+   */
+  public function getTrimMode() {
+    return $this->trim_mode;
+  }
 
-    /**
-     * Set/override a smarty variable
-     *
-     * @param string $key
-     *   the variable key/name
-     *
-     * @param mixed $value
-     *   the value
-     */
-    public function setVar($key, $value)
-    {
-        $this->smarty_variables[$key] = $value;
-    }
+  /**
+   * Set trim mode
+   *
+   * @param string $trim_mode
+   *    should the string be trimmed? Options are:
+   *       none: no trimming
+   *       trim: standard trim() function
+   */
+  public function setTrimMode($trim_mode): void {
+    $this->trim_mode = $trim_mode;
+  }
 
-    /**
-     * Get render context
-     *
-     * @return string
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
+  /**
+   * Set the template file to be rendered
+   *
+   * @return string
+   *   the new (full) file path to the template
+   */
+  public function setTemplateFile(string $file_path) {
+    return $this->current_template_file = $file_path;
+  }
 
-    /**
-     * Get trim mode
-     *
-     * @return string
-     */
-    public function getTrimMode()
-    {
-        return $this->trim_mode;
-    }
+  /**
+   * Get the template file to be rendered
+   *
+   * @return string
+   */
+  public function getOriginalTemplateFile() {
+    return $this->original_template_file;
+  }
 
-    /**
-     * Set trim mode
-     *
-     * @param string $trim_mode
-     *    should the string be trimmed? Options are:
-     *       none: no trimming
-     *       trim: standard trim() function
-     */
-    public function setTrimMode($trim_mode)
-    {
-        $this->trim_mode = $trim_mode;
-    }
+  /**
+   * Set/override a smarty variable
+   *
+   * @param string $key
+   *   the variable key/name
+   *
+   * @param mixed $value
+   *   the value
+   */
+  public function setVar($key, $value): void {
+    $this->smarty_variables[$key] = $value;
+  }
 
+  /**
+   * Get render context
+   *
+   * @return string
+   */
+  public function getContext() {
+    return $this->context;
+  }
 
-    /**
-     * Utility function: render the given template
-     *
-     * @param string|null $template_path
-     *   full file path to the (intended) template snippet
-     *
-     * @param array $smarty_variables
-     *   the variables passed to smarty
-     *
-     * @param string $context
-     *    a string identifying the context of the renderer
-     *
-     * @param string $trim_mode
-     *    should the string be trimmed? See options above
-     *
-     * @return string
-     *   rendered
-     */
-    public static function renderTemplate($template_path, $smarty_variables, $context, $trim_mode = 'none')
-    {
-        // step 1: trigger the event
-        $render_event = new RenderEvent($template_path, $smarty_variables, $context, $trim_mode);
-        \Civi::dispatcher()->dispatch(RenderEvent::NAME, $render_event);
-
-        // step 2: load the template
-        static $template_cache = [];
-        $template_file = $render_event->getTemplateFile();
-        if (empty($template_file)) {
-            // an empty template file cannot be rendered
-            return null;
-        }
-        if (!isset($template_cache[$template_file])) {
-            $template_cache[$template_file] = 'string:' . file_get_contents($template_file);
-        }
-        $template = $template_cache[$template_file];
-
-        // step 3: render the template
-        $smarty = \CRM_Core_Smarty::singleton();
-        $new_smarty_vars = $render_event->getVars();
-        $previous_smarty_vars = $smarty->get_template_vars();
-        $smarty_var_backup = [];
-        foreach ($new_smarty_vars as $key => $value) {
-            if (isset($previous_smarty_vars[$key])) {
-                $smarty_var_backup[$key] = $previous_smarty_vars[$key];
-            } else {
-                $smarty_var_backup[$key] = null;
-            }
-            $smarty->assign($key, $value);
-        }
-        $rendered_text = $smarty->fetch($template);
-
-        // step 4: restore smarty state
-        foreach ($new_smarty_vars as $key => $value) {
-            $smarty->clear_assign($key);
-        }
-        foreach ($smarty_var_backup as $key => $value) {
-            if ($value === null) {
-                $smarty->clear_assign($key);
-            } else {
-                $smarty->assign($key, $value);
-            }
-        }
-
-        // step 5: clean the output
-        $trim_mode = $render_event->getTrimMode();
-        switch ($trim_mode) {
-            case 'trim':
-                $rendered_text = trim($rendered_text);
-                break;
-
-            case 'meta-trim':
-                // trim, and strip literal '\r' and '\n' strings from the start and end
-                $rendered_text = preg_replace('/^( |\\r|\\n|\t|\n|\r)*/', '', $rendered_text);
-                $rendered_text = preg_replace('/( |\\r|\\n|\t|\n|\r)*$/', '', $rendered_text);
-                break;
-
-            case 'none':
-                // do nothing
-                break;
-
-            default:
-                \Civi::log()->debug("RenderEvent: Unknown trim mode '{$trim_mode}' for context '{$context}'. Ignored.");
-                break;
-        }
-
-        return $rendered_text;
-    }
 }
