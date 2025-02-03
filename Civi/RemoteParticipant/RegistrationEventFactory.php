@@ -114,15 +114,31 @@ final class RegistrationEventFactory
         $additionalParticipantsProfile = \CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
           $event['event_remote_registration.remote_registration_additional_participants_profile']
         );
+        $additionalParticipantCount = 0;
         foreach ($additionalContactsData as $participantNo => &$contactData) {
+            $additionalParticipantCount++;
             $additionalParticipantsProfile->modifyContactData($contactData);
             $contactData['contact_type'] ??= 'Individual';
             $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
             $additionalParticipantsData[$participantNo]['role_id'] ??= $this->getDefaultRoleId($event);
             $additionalParticipantsData[$participantNo]['event_id'] = $submissionData['event_id'];
 
+            // Check for waitlist.
+            // TODO: merge with code in \CRM_Remoteevent_RegistrationProfile::validateSubmission().
+            if (
+                !empty($event['max_participants'])
+                && !empty($event['has_waitlist'])
+                && !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
+                && \CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
+                // Primary participant has not yet been created or its status is not counted, thus add 1.
+                + 1
+                + $additionalParticipantCount
+                - $event['max_participants'] > 0
+            ) {
+                $additionalParticipantsData[$participantNo]['status_id.name'] = 'On waitlist';
+            }
             // Check if registration requires approval.
-            if (!empty($event['requires_approval'])) {
+            elseif (!empty($event['requires_approval'])) {
                 $additionalParticipantsData[$participantNo]['status_id.name'] = 'Awaiting approval';
             }
         }
