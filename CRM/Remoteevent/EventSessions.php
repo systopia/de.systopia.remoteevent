@@ -745,7 +745,7 @@ class CRM_Remoteevent_EventSessions
     {
         return \Civi\RenderEvent::renderTemplate(
             E::path('resources/remote_session_short_description.tpl'),
-            ['session' => $session],
+            ['eventSession' => $session],
             'remoteevent.session.description.short',
             'trim'
         );
@@ -772,7 +772,7 @@ class CRM_Remoteevent_EventSessions
         }
         return \Civi\RenderEvent::renderTemplate(
             E::path('resources/remote_session_description.tpl'),
-            ['session' => $session],
+            ['eventSession' => $session],
             'remoteevent.session.description.long',
             'trim'
         );
