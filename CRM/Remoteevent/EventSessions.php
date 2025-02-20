@@ -745,7 +745,7 @@ class CRM_Remoteevent_EventSessions
     {
         return \Civi\RenderEvent::renderTemplate(
             E::path('resources/remote_session_short_description.tpl'),
-            ['session' => $session],
+            ['eventSession' => $session],
             'remoteevent.session.description.short',
             'trim'
         );
@@ -763,9 +763,16 @@ class CRM_Remoteevent_EventSessions
      */
     protected static function renderSessionDescriptionLong($session)
     {
+        if (is_numeric($session['presenter_id'])) {
+            $session['presenter_display_name'] = \Civi\Api4\Contact::get(FALSE)
+                ->addSelect('display_name')
+                ->addWhere('id', '=', $session['presenter_id'])
+                ->execute()
+                ->single()['display_name'];
+        }
         return \Civi\RenderEvent::renderTemplate(
             E::path('resources/remote_session_description.tpl'),
-            ['session' => $session],
+            ['eventSession' => $session],
             'remoteevent.session.description.long',
             'trim'
         );
