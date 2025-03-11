@@ -15,24 +15,26 @@
 
 require_once 'remoteevent.civix.php';
 
+use Civi\RemoteEvent\Event\GetFieldsEvent;
+use Civi\RemoteEvent\Event\GetParamsEvent;
+use Civi\RemoteEvent\Event\GetResultEvent;
+use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
+use Civi\RemoteParticipant\Event\CancelEvent;
+use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\RegistrationEvent;
+use Civi\RemoteParticipant\Event\UpdateEvent;
+use Civi\RemoteParticipant\Event\ValidateEvent;
 use Civi\RemoteParticipant\EventSubscriber\MailingListSubscriptionSubscriber;
+use Civi\RemoteParticipant\MailingList\DoubleOptInEmailSender;
+use Civi\RemoteParticipant\MailingList\MailingListSubscriptionManager;
+use Civi\RemoteParticipant\MailingList\DoubleOptInTokenGenerator;
 use Civi\RemoteParticipant\RegistrationEventFactory;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
 use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\RemoteEvent\Event\GetParamsEvent;
-use Civi\RemoteEvent\Event\GetFieldsEvent;
-use Civi\RemoteEvent\Event\GetResultEvent;
-use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
-use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
-use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent;
-use Civi\RemoteParticipant\Event\ValidateEvent;
-use Civi\RemoteParticipant\Event\RegistrationEvent;
-use Civi\RemoteParticipant\Event\UpdateEvent;
-use Civi\RemoteParticipant\Event\CancelEvent;
-use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-
 
 /**
  * Implements hook_civicrm_config().
@@ -243,8 +245,12 @@ function remoteevent_civicrm_container(ContainerBuilder $container) {
 
     $container->autowire(MailingListSubscriptionSubscriber::class)
       ->addTag('kernel.event_subscriber');
+    $container->autowire(MailingListSubscriptionManager::class)
+      // Used in ConfirmSubscriptionAction
+      ->setPublic(TRUE);
+    $container->autowire(DoubleOptInTokenGenerator::class);
+    $container->autowire(DoubleOptInEmailSender::class);
 }
-
 
 /**
  * Implements hook_civicrm_install().

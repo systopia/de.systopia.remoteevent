@@ -161,9 +161,24 @@
     <fieldset id="mailing-list-subscriptions" class="crm-collapsible">
       <legend class="collapsible-title">{ts}Mailing List Subscriptions{/ts}</legend>
       <div>
-        <div class="crm-section crm-event-manage-registration-form-block-remote_registration_mailing_list_group_ids">
+        <div class="crm-section">
           <div class="label">{$form.remote_registration_mailing_list_group_ids.label}&nbsp;{help id="id-remote_registration_mailing_list_group_ids" title=$form.remote_registration_mailing_list_group_ids.label}</div>
           <div class="content">{$form.remote_registration_mailing_list_group_ids.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section">
+          <div class="label">{$form.remote_registration_is_mailing_list_double_optin.label}&nbsp;{help id="remote_registration_is_mailing_list_double_optin" title=$form.remote_registration_is_mailing_list_double_optin.label}</div>
+          <div class="content">{$form.remote_registration_is_mailing_list_double_optin.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div id="remote_registration_mailing_list_double_optin_subject_row" class="crm-section">
+          <div class="label">{$form.remote_registration_mailing_list_double_optin_subject.label}&nbsp;<span class="crm-marker">*</span>&nbsp;{help id="remote_registration_mailing_list_double_optin_subject" title=$form.remote_registration_mailing_list_double_optin_subject.label}</div>
+          <div class="content">{$form.remote_registration_mailing_list_double_optin_subject.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div id="remote_registration_mailing_list_double_optin_text_row" class="crm-section">
+          <div class="label">{$form.remote_registration_mailing_list_double_optin_text.label}&nbsp;<span class="crm-marker">*</span>&nbsp;{help id="remote_registration_mailing_list_double_optin_text" title=$form.remote_registration_mailing_list_double_optin_text.label}</div>
+          <div class="content">{$form.remote_registration_mailing_list_double_optin_text.html}</div>
           <div class="clear"></div>
         </div>
       </div>

@@ -20,7 +20,6 @@ declare(strict_types = 1);
 namespace Civi\RemoteParticipant\EventSubscriber;
 
 use Civi\Api4\Group;
-use Civi\Api4\GroupContact;
 use Civi\RemoteParticipant\Event\ChangingEvent;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase;
@@ -28,12 +27,15 @@ use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
+use Civi\RemoteParticipant\MailingList\MailingListSubscriptionManager;
 use Civi\RemoteTools\Api4\Api4Interface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class MailingListSubscriptionSubscriber implements EventSubscriberInterface {
 
   private Api4Interface $api4;
+
+  private MailingListSubscriptionManager $subscriptionManager;
 
   /**
    * @inheritDoc
@@ -48,8 +50,9 @@ final class MailingListSubscriptionSubscriber implements EventSubscriberInterfac
     ];
   }
 
-  public function __construct(Api4Interface $api4) {
+  public function __construct(Api4Interface $api4, MailingListSubscriptionManager $subscriptionManager) {
     $this->api4 = $api4;
+    $this->subscriptionManager = $subscriptionManager;
   }
 
   /**
@@ -72,7 +75,9 @@ final class MailingListSubscriptionSubscriber implements EventSubscriberInterfac
      *   Mapping of group ID as integer to group ID as string.
      */
     $groupIds = $event->getSubmission()['mailing_list_group_ids'] ?? [];
-    if ([] !== array_diff($groupIds, $event->getEvent()['event_remote_registration.mailing_list_group_ids'] ?? [])) {
+    /** @phpstan-var list<int> $allowedGroupIds */
+    $allowedGroupIds = $event->getEvent()['event_remote_registration.mailing_list_group_ids'] ?? [];
+    if ([] !== array_diff($groupIds, $allowedGroupIds)) {
       $l10n = $event->getLocalisation();
       $event->addValidationError('mailing_list_group_ids', $l10n->ts('Invalid value'));
     }
@@ -101,7 +106,7 @@ final class MailingListSubscriptionSubscriber implements EventSubscriberInterfac
       return;
     }
 
-    $groups = $this->api4->execute(Group::getEntityName(), 'get', [
+    $groups = $this->api4->execute('Group', 'get', [
       'select' => ['id', 'title'],
       'where' => [
         ['id', 'IN', $groupIds],
@@ -116,7 +121,7 @@ final class MailingListSubscriptionSubscriber implements EventSubscriberInterfac
 
     $label = $event->getEvent()['event_remote_registration.mailing_list_subscriptions_label'] ?? '';
     if ('' === $label) {
-      $label = $event->getLocalisation()->ts('I want to subscribe to the following newsletters');
+      $label = $event->getLocalisation()->ts('I want to subscribe to the following mailing lists.');
     }
 
     $maxWeight = 0;
@@ -151,22 +156,25 @@ final class MailingListSubscriptionSubscriber implements EventSubscriberInterfac
       return;
     }
 
-    $records = [];
-    foreach ($groupIds as $groupId) {
-       $records[] = [
-        'contact_id' => $contactId,
-        'group_id' => $groupId,
-        'status' => 'Added',
-      ];
+    /** @var bool $doubleOptIn */
+    $doubleOptIn = $event->getEvent()['event_remote_registration.is_mailing_list_double_optin'] ?? FALSE;
+    if ($doubleOptIn) {
+      /** @var string $subject */
+      // @phpstan-ignore offsetAccess.notFound
+      $subject = $event->getEvent()['event_remote_registration.mailing_list_double_optin_subject'];
+      /** @var string $text */
+      // @phpstan-ignore offsetAccess.notFound
+      $text = $event->getEvent()['event_remote_registration.mailing_list_double_optin_text'];
     }
 
-    $this->api4->execute(GroupContact::getEntityName(), 'save', [
-      'records' => $records,
-      'match' => [
-        'contact_id',
-        'group_id',
-      ],
-    ]);
+    foreach ($groupIds as $groupId) {
+      if ($doubleOptIn) {
+        $this->subscriptionManager->subscribeWithDoubleOptIn($contactId, (int) $groupId, $subject, $text);
+      }
+      else {
+        $this->subscriptionManager->subscribe($contactId, (int) $groupId);
+      }
+    }
   }
 
 }

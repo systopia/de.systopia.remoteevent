@@ -21,12 +21,12 @@ namespace Civi\RemoteParticipant\EventSubscriber;
 
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Group;
-use Civi\Api4\GroupContact;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
+use Civi\RemoteParticipant\MailingList\MailingListSubscriptionManager;
 use Civi\RemoteTools\Api4\Api4Interface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -41,12 +41,21 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
      */
     private MockObject $api4Mock;
 
-    private MailingListSubscriptionSubscriber $subscriber;
+  /**
+   * @var \Civi\RemoteParticipant\MailingList\MailingListSubscriptionManager&\PHPUnit\Framework\MockObject\MockObject
+   */
+  private MockObject $subscriptionManagerMock;
+
+  private MailingListSubscriptionSubscriber $subscriber;
 
     protected function setUp(): void {
     parent::setUp();
     $this->api4Mock = $this->createMock(Api4Interface::class);
-    $this->subscriber = new MailingListSubscriptionSubscriber($this->api4Mock);
+    $this->subscriptionManagerMock = $this->createMock(MailingListSubscriptionManager::class);
+    $this->subscriber = new MailingListSubscriptionSubscriber(
+      $this->api4Mock,
+      $this->subscriptionManagerMock
+    );
   }
 
   public function testGetSubscribedEvents(): void {
@@ -79,7 +88,7 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
       $event->addFields($initialFields);
 
       $this->api4Mock->method('execute')
-        ->with(Group::getEntityName(), 'get', [
+        ->with('Group', 'get', [
           'select' => ['id', 'title'],
           'where' => [
             ['id', 'IN', [2, 3]],
@@ -116,7 +125,7 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
     $event->addFields($initialFields);
 
     $this->api4Mock->method('execute')
-      ->with(Group::getEntityName(), 'get', [
+      ->with('Group', 'get', [
         'select' => ['id', 'title'],
         'where' => [
           ['id', 'IN', [2, 3]],
@@ -175,56 +184,69 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
     ];
   }
 
-  public function testOnRegistrationEvent(): void {
-    $event = new RegistrationEvent(['mailing_list_group_ids' => [2 => '2', 3 => '3']]);
+  public function testOnRegistrationEventWithoutDoubleOptIn(): void {
+    $event = new RegistrationEvent(
+      ['mailing_list_group_ids' => [2 => '2']],
+      [
+        'event_remote_registration.is_mailing_list_double_optin' => FALSE,
+      ]
+    );
     $event->setContactID(23);
 
-    $this->api4Mock->expects(static::once())->method('execute')
-      ->with(GroupContact::getEntityName(), 'save', [
-        'records' => [
-          [
-            'contact_id' => 23,
-            'group_id' => '2',
-            'status' => 'Added',
-          ],
-          [
-            'contact_id' => 23,
-            'group_id' => '3',
-            'status' => 'Added',
-          ],
-        ],
-        'match' => [
-          'contact_id',
-          'group_id',
-        ],
-      ]);
+    $this->subscriptionManagerMock->expects(static::once())->method('subscribe')
+      ->with(23, 2);
 
     $this->subscriber->onRegistrationEvent($event);
   }
 
-  public function testOnUpdateEvent(): void {
-    $event = new UpdateEvent(['mailing_list_group_ids' => [2 => '2', 3 => '3']]);
+  public function testOnRegistrationEventWithDoubleOptIn(): void {
+    $event = new RegistrationEvent(
+      ['mailing_list_group_ids' => [2 => '2']],
+      [
+        'event_remote_registration.is_mailing_list_double_optin' => TRUE,
+        'event_remote_registration.mailing_list_double_optin_subject' => 'Test Subject',
+        'event_remote_registration.mailing_list_double_optin_text' => 'Test Text',
+      ]
+    );
     $event->setContactID(23);
 
-    $this->api4Mock->expects(static::once())->method('execute')
-      ->with(GroupContact::getEntityName(), 'save', [
-        'records' => [
-          [
-            'contact_id' => 23,
-            'group_id' => '2',
-            'status' => 'Added',
-          ],
-          [
-            'contact_id' => 23,
-            'group_id' => '3',
-            'status' => 'Added',
-          ],
-        ],
-        'match' => [
-          'contact_id',
-          'group_id',
-        ],
-      ]);
+    $this->subscriptionManagerMock->expects(static::once())->method('subscribeWithDoubleOptIn')
+      ->with(23, 2, 'Test Subject', 'Test Text');
+
+
+    $this->subscriber->onRegistrationEvent($event);
+  }
+
+  public function testOnUpdateEventWithoutDoubleOptIn(): void {
+    $event = new UpdateEvent(
+      ['mailing_list_group_ids' => [2 => '2']],
+      [
+        'event_remote_registration.is_mailing_list_double_optin' => FALSE,
+      ]
+    );
+    $event->setContactID(23);
+
+    $this->subscriptionManagerMock->expects(static::once())->method('subscribe')
+      ->with(23, 2);
+
+
+    $this->subscriber->onUpdateEvent($event);
+  }
+
+  public function testOnUpdateEventWithDoubleOptIn(): void {
+    $event = new UpdateEvent(
+      ['mailing_list_group_ids' => [2 => '2']],
+      [
+        'event_remote_registration.is_mailing_list_double_optin' => TRUE,
+        'event_remote_registration.mailing_list_double_optin_subject' => 'Test Subject',
+        'event_remote_registration.mailing_list_double_optin_text' => 'Test Text',
+      ]
+    );
+    $event->setContactID(23);
+
+    $this->subscriptionManagerMock->expects(static::once())->method('subscribeWithDoubleOptIn')
+      ->with(23, 2, 'Test Subject', 'Test Text');
+
 
     $this->subscriber->onUpdateEvent($event);
   }
