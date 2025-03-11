@@ -246,7 +246,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
       $this->ctx->log->info('Updating RegistrationProfile data structures');
       $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
       $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-    
+
       return true;
   }
 
@@ -266,6 +266,20 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
 
         return true;
     }
+
+  /**
+   * Synchronizes custom groups to add new fields.
+   *
+   * @throws \Exception
+   */
+  public function upgrade_0021(): bool
+  {
+    $this->ctx->log->info('Updating data structures');
+    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+
+    return true;
+  }
 
     /****************************************************************
      **                       HELPER FUNCTIONS                     **

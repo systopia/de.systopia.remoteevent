@@ -27,9 +27,18 @@ use Civi\RemoteEvent;
  */
 abstract class ChangingEvent extends RemoteEvent
 {
+    /** @var array holds the original RemoteParticipant.submit data */
+    protected array $submission;
+
     protected $contact_was_updated = false;
     protected $participant_was_updated = false;
     protected $xcm_profile = null;
+
+    public function __construct(array $submission_data, ?array $event = null)
+    {
+      parent::__construct($submission_data, $event);
+      $this->submission = $submission_data;
+    }
 
     /**
      * Get the currently available contact_data
@@ -64,6 +73,23 @@ abstract class ChangingEvent extends RemoteEvent
      *    participant data
      */
     public abstract function &getParticipantData();
+
+    /**
+     * @throws \Exception
+     *    if another contact ID has already been set
+     */
+    public function setContactID($contact_id): void
+    {
+        $contact_id = (int) $contact_id;
+        if (0 !== $contact_id) {
+            if ($this->getContactID() && $this->getContactID() !== $contact_id) {
+                throw new \Exception(
+                  'Conflicting contact IDs, there is a programming error'
+                );
+            }
+            $this->contact_id = $contact_id;
+        }
+    }
 
     /**
      * Get the name of the XCM profile to be used
@@ -221,5 +247,12 @@ abstract class ChangingEvent extends RemoteEvent
     public function getSubmission()
     {
         return $this->getQueryParameters();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getQueryParameters() {
+      return $this->submission;
     }
 }

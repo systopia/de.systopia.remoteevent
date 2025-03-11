@@ -67,6 +67,31 @@
   <p>{ts}Additional profiles that may be defined here for updating/changing an existing registration{/ts}</p>
 {/htxt}
 
+{htxt id='id-remote_registration_mailing_list_group_ids'}
+  <p>{ts}The selected mailing lists will be available for subscription in the registration and update forms.{/ts}</p>
+  <p>{ts}It's not possible to unsubscribe or to see the current subscriptions.{/ts}</p>
+{/htxt}
+
+{htxt id='id-remote_registration_mailing_list_subscriptions_label'}
+  <p>{ts}The label shown before the checkboxes for the selection of the mailing lists to subscribe.{/ts}</p>
+{/htxt}
+
+{htxt id='remote_registration_is_mailing_list_double_optin'}
+  <p>{ts}If enabled, an email will be sent with a link to confirm the subscription.{/ts}</p>
+  <p>{ts}The necessary URL has to be configured in the global Remote Event configuration.{/ts}</p>
+{/htxt}
+
+{htxt id='remote_registration_mailing_list_double_optin_subject'}
+  <p>{ts}The subject for the double opt-in email.{/ts}</p>
+  <p>{ts}It may contain placeholders for the contact and the mailing list group: <code>{literal}{contact.&lt;field name&gt;}{/literal}</code> (e.g. <code>{literal}{contact.first_name}{/literal}</code>) and <code>{literal}{group.&lt;field name&gt;}{/literal}</code> (e.g. <code>{literal}{group.title}{/literal}</code>).{/ts}</p>
+{/htxt}
+
+{htxt id='remote_registration_mailing_list_double_optin_text'}
+  <p>{ts}The text for the double opt-in email.{/ts}</p>
+  <p>{ts}It must contain the placeholder for the subscription URL: <code>{literal}{subscribe.url}{/literal}</code>.{/ts}</p>
+  <p>{ts}It may contain placeholders for the contact and the mailing list group: <code>{literal}{contact.&lt;field name&gt;}{/literal}</code> (e.g. <code>{literal}{contact.first_name}{/literal}</code>) and <code>{literal}{group.&lt;field name&gt;}{/literal}</code> (e.g. <code>{literal}{group.title}{/literal}</code>).{/ts}</p>
+{/htxt}
+
 {htxt id='id-use-custom-event-location'}
   <p>{ts}If checked an alternative approach to handle event locations will be used and CiviCRM's default tab will be replaced with a custom one. Please refer to documentation for more information.{/ts}</p>
 {/htxt}
@@ -135,6 +160,5 @@
   <p>{ts}A whole host of additional options like tagging the contacts, or recording/flagging differences are also available in the <a href="{crmURL p='civicrm/admin/setting/xcm'}">XCM configuration</a>.{/ts}</p>
   <p>{ts}If you can't find a profile that meets your requirements, feel free to add another profile there.{/ts}</p>
 {/htxt}
-
 
 {/crmScope}

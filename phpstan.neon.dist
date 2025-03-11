@@ -13,6 +13,8 @@ parameters:
 		- remoteevent.civix.php
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/src/Framework/TestCase.php
 	scanDirectories:
+		- ../de.systopia.remotetools/Civi
+		- ../de.systopia.remotetools/CRM
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/src/Framework
 	bootstrapFiles:
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/vendor/autoload.php

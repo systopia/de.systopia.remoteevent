@@ -511,7 +511,31 @@ msgid "Registration Suspended?"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Mailing Lists Available for Subscription"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Double Opt-in for Mailing List Subscriptions?"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Subject for Double Opt-in Email"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Text for Double Opt-in Email"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "The text must contain the placeholder <code>{subscribe.url}</code>."
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Terms and Conditions"
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "Label for Mailing List Subscriptions"
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
@@ -607,6 +631,10 @@ msgid "You must select an XCM matching profile for registering additional partic
 msgstr ""
 
 #: CRM/Remoteevent/Form/RegistrationConfig.php
+msgid "This value is required."
+msgstr ""
+
+#: CRM/Remoteevent/Form/RegistrationConfig.php
 msgid "Default (global CiviRemote Event settings)"
 msgstr ""
 
@@ -695,6 +723,18 @@ msgid "Statuses blocking (re)registration"
 msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
+msgid "Default value for confirmation of invitations"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
+msgid "Decline Invitation"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
+msgid "Accept Invitation"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
 msgid "Submit Session Data"
 msgstr ""
 
@@ -740,6 +780,10 @@ msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
 msgid "Registration Cancellation Link"
+msgstr ""
+
+#: CRM/Remoteevent/Form/Settings.php
+msgid "Mailing List Subscription Confirm Link"
 msgstr ""
 
 #: CRM/Remoteevent/Form/Settings.php
@@ -982,7 +1026,7 @@ msgstr ""
 msgid "Required"
 msgstr ""
 
-#: CRM/Remoteevent/RegistrationProfile.php
+#: CRM/Remoteevent/RegistrationProfile.php Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
 msgid "Invalid value"
 msgstr ""
 
@@ -1094,16 +1138,16 @@ msgstr ""
 msgid "Could not update or create an event."
 msgstr ""
 
+#: Civi/RemoteEvent/Api4/Action/RemoteEventMailingList/ConfirmSubscriptionAction.php
+msgid "Subscription succeeded."
+msgstr ""
+
+#: Civi/RemoteEvent/Api4/Action/RemoteEventMailingList/ConfirmSubscriptionAction.php
+msgid "Subscription token is not valid anymore."
+msgstr ""
+
 #: Civi/RemoteEvent/CompilerPass.php
 msgid "RemoteEvent spawn"
-msgstr ""
-
-#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
-msgid "Accept Invitation"
-msgstr ""
-
-#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
-msgid "Decline Invitation"
 msgstr ""
 
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
@@ -1124,6 +1168,10 @@ msgstr ""
 
 #: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
 msgid "Welcome %1. You are about to cancel your registration for the event '%2'"
+msgstr ""
+
+#: Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
+msgid "I want to subscribe to the following mailing lists."
 msgstr ""
 
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
@@ -1218,7 +1266,7 @@ msgstr ""
 msgid "Which context/action is the form for (create/cancel/update)"
 msgstr ""
 
-#: api/v3/RemoteParticipant/GetForm.php
+#: api/v3/RemoteParticipant/GetForm.php managed/CustomGroup_remote_event_mailing_list.mgd.php
 msgid "Token"
 msgstr ""
 
@@ -1276,6 +1324,14 @@ msgstr ""
 
 #: js/event_sessions.js
 msgid "Do you really want to delete session [%1]?"
+msgstr ""
+
+#: managed/CustomGroup_remote_event_mailing_list.mgd.php
+msgid "Group Contact"
+msgstr ""
+
+#: managed/CustomGroup_remote_event_mailing_list.mgd.php
+msgid "Remote Event Mailing List"
 msgstr ""
 
 #: remoteevent.php
@@ -1459,6 +1515,34 @@ msgid "Additional profiles that may be defined here for updating/changing an exi
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "The selected mailing lists will be available for subscription in the registration and update forms."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "It's not possible to unsubscribe or to see the current subscriptions."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "The label shown before the checkboxes for the selection of the mailing lists to subscribe."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "If enabled, an email will be sent with a link to confirm the subscription."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "The necessary URL has to be configured in the global Remote Event configuration."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "The subject for the double opt-in email."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
+msgid "The text for the double opt-in email."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.hlp
 msgid "If checked an alternative approach to handle event locations will be used and CiviCRM's default tab will be replaced with a custom one. Please refer to documentation for more information."
 msgstr ""
 
@@ -1531,11 +1615,19 @@ msgid "Registration Updates"
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
+msgid "Mailing List Subscriptions"
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Public Event Text Blocks"
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp
 msgid "List of statuses the will prevent a contact from registering again."
+msgstr ""
+
+#: templates/CRM/Remoteevent/Form/Settings.hlp
+msgid "Event registration forms for invited participants show a field for accepting/declining the invitation. Select which option should be pre-selected."
 msgstr ""
 
 #: templates/CRM/Remoteevent/Form/Settings.hlp

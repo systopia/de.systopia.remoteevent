@@ -30,9 +30,6 @@ class UpdateEvent extends ChangingEvent
 {
     public const NAME = 'civi.remoteevent.registration.update';
 
-    /** @var array holds the original RemoteParticipant.submit data */
-    protected $submission;
-
     /** @var array holds the current participant data  */
     protected $participant = null;
 
@@ -45,9 +42,9 @@ class UpdateEvent extends ChangingEvent
     /** @var array the contact update  */
     protected $contact_update = [];
 
-    public function __construct($submission_data)
+    public function __construct(array $submission_data, ?array $event = null)
     {
-        $this->submission = $submission_data;
+        parent::__construct($submission_data, $event);
         $this->token_usages = ['update', 'invite'];
     }
 
@@ -179,17 +176,6 @@ class UpdateEvent extends ChangingEvent
     public function addParticipantUpdate($field_name, $value)
     {
         $this->participant_update[$field_name] = $value;
-    }
-
-    /**
-     * Get a copy of the submitted parameters
-     *
-     * @return array
-     *   the submitted parameters
-     */
-    public function getQueryParameters()
-    {
-        return $this->submission;
     }
 
     /**

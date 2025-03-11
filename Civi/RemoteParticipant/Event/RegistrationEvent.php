@@ -29,9 +29,6 @@ class RegistrationEvent extends ChangingEvent
 {
     public const NAME = 'civi.remoteevent.registration.submit';
 
-    /** @var array holds the original RemoteParticipant.submit data */
-    protected $submission;
-
     /** @var array holds the participant data  */
     protected $contact_data = [];
 
@@ -53,11 +50,6 @@ class RegistrationEvent extends ChangingEvent
      * @see $additional_contacts_data
      */
     protected array $additional_participants_data = [];
-
-    public function __construct(array $submission_data)
-    {
-        $this->submission = $submission_data;
-    }
 
     /**
      * Check if the submission has errors
@@ -194,26 +186,6 @@ class RegistrationEvent extends ChangingEvent
     }
 
     /**
-     * Set the contact ID
-     *
-     * @return integer
-     *    contact ID
-     *
-     * @throws \Exception
-     *    if another contact ID has already been set
-     */
-    public function setContactID($contact_id)
-    {
-        $contact_id = (int) $contact_id;
-        if ($contact_id) {
-            if ($this->getContactID() && $this->getContactID() != $contact_id) {
-                throw new \Exception("Conflicting contact IDs, there is a programming error");
-            }
-            $this->contact_id = $contact_id;
-        }
-    }
-
-    /**
      * Get a submitted parameter
      *
      * @param string $value_name
@@ -223,28 +195,7 @@ class RegistrationEvent extends ChangingEvent
      */
     public function getSubmittedValue($value_name)
     {
-        return \CRM_Utils_Array::value($value_name, $this->submission);
+        return $this->submission[$value_name] ?? NULL;
     }
 
-    /**
-     * Get the event data
-     *
-     * @return array
-     *    event data
-     */
-    public function getEvent()
-    {
-        return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
-    }
-
-    /**
-     * Get the parameters of the original query
-     *
-     * @return array
-     *   parameters of the query
-     */
-    public function getQueryParameters()
-    {
-        return $this->submission;
-    }
 }

@@ -29,9 +29,6 @@ class CancelEvent extends ChangingEvent
 {
     public const NAME = 'civi.remoteevent.registration.cancel';
 
-    /** @var array holds the original RemoteParticipant.submit data */
-    protected $submission;
-
     /** @var array holds the participants originally identified  */
     protected $participants_identified;
 
@@ -41,8 +38,9 @@ class CancelEvent extends ChangingEvent
     /** @var array holds a list of (minor) errors */
     protected $error_list;
 
-    public function __construct($submission_data, $participants)
+    public function __construct($submission_data, $participants, ?array $event = null)
     {
+        parent::__construct($submission_data, $event);
         $this->token_usages = ['cancel'];
         $this->submission  = $submission_data;
         $this->participants_identified = $participants;
@@ -146,17 +144,6 @@ class CancelEvent extends ChangingEvent
     public function getErrors()
     {
         return $this->error_list;
-    }
-
-    /**
-     * Get the parameters of the original query
-     *
-     * @return array
-     *   parameters of the query
-     */
-    public function getQueryParameters()
-    {
-        return $this->submission;
     }
 
     /**
