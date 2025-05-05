@@ -804,6 +804,29 @@ class CRM_Remoteevent_Registration
         $registration->setAdditionalParticipantsData($additionalParticipantsData);
     }
 
+    public static function createOrder(RegistrationEvent $registration): void {
+      $event = $registration->getEvent();
+      if (
+        (bool) $event['is_monetary']
+        && class_exists('\Civi\Api4\Order')
+      ) {
+        $order = \Civi\Api4\Order::create(FALSE)
+          ->setContributionValues([
+            'contact_id' => $registration->getContactID(),
+            'financial_type_id' => $event['financial_type_id'],
+          ]);
+        foreach ($registration->getPriceFieldValues() as $value) {
+          $order->addLineItem([
+            'entity_table' => 'civicrm_participant',
+            'entity_id' => $value['participant_id'],
+            'price_field_value_id' => $value['price_field_value_id'],
+            'qty' => $value['qty']
+          ]);
+        }
+        $order->execute();
+      }
+    }
+
     /**
      * Get a (cached version) of ParticipantStatusType.get
      */
