@@ -819,8 +819,9 @@ class CRM_Remoteevent_Registration
           $order->addLineItem([
             'entity_table' => 'civicrm_participant',
             'entity_id' => $value['participant_id'],
+            'price_field_id' => $value['price_field_id'],
             'price_field_value_id' => $value['price_field_value_id'],
-            'qty' => $value['qty']
+            'qty' => $value['qty'],
           ]);
         }
         $order->execute();

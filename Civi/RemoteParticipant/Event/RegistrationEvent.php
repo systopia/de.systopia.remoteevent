@@ -234,12 +234,18 @@ class RegistrationEvent extends ChangingEvent
       }
 
       foreach (\CRM_Remoteevent_RegistrationProfile::getPriceFields($event) as $priceField) {
+        // The submitted value is either the selected price option (price field value ID) or the quantity of a specific
+        // price field value.
         $value = $this->submission['price_' . $priceField['price_field.name']] ?? NULL;
         if (is_numeric($value)) {
           $values[] = [
             'participant_id' => $this->getParticipantID(),
+            'price_field_id' => $priceField['price_field.id'],
             'price_field_name' => $priceField['price_field.name'],
-            'price_field_value_id' => !(bool) $priceField['price_field.is_enter_qty'] ? $value : NULL,
+            // If the price field has a single price field value, its ID is part of the price field metadata.
+            'price_field_value_id' => (bool) $priceField['price_field.is_enter_qty']
+              ? $priceField['price_field_value.id']
+              : $value,
             'qty' => (bool) $priceField['price_field.is_enter_qty'] ? $value : 1,
           ];
         }
@@ -253,7 +259,7 @@ class RegistrationEvent extends ChangingEvent
             $values[] = [
               'participant_id' => $additionalParticipant['id'],
               'price_field_name' => $priceField['price_field.name'],
-              'price_field_value_id' => !(bool) $priceField['price_field.is_enter_qty'] ? $value : NULL,
+              'price_field_value_id' => (bool) $priceField['price_field.is_enter_qty'] ? $priceField['price_field_value.id'] : $value,
               'qty' => (bool) $priceField['price_field.is_enter_qty'] ? $value : 1,
             ];
           }

@@ -104,7 +104,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
     public static function getPriceFields(array $event): array {
       return \Civi\Api4\Event::get(FALSE)
-        ->addSelect('price_field.*')
+        ->addSelect('price_field.*', 'price_field_value.id')
         ->addJoin(
           'PriceSetEntity AS price_set_entity',
           'INNER',
@@ -121,6 +121,13 @@ abstract class CRM_Remoteevent_RegistrationProfile
           'PriceField AS price_field',
           'LEFT',
           ['price_field.price_set_id', '=', 'price_set.id']
+        )
+        // For price fields with a selectable quantity, there is one single price field value; include its ID.
+        ->addJoin(
+          'PriceFieldValue AS price_field_value',
+          'LEFT',
+          ['price_field_value.price_field_id', '=', 'price_field.id'],
+          ['price_field.is_enter_qty', '=', TRUE]
         )
         ->addWhere('id', '=', $event['id'])
         ->execute()
