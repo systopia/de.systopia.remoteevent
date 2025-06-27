@@ -16,7 +16,7 @@
   </php>
 
   <testsuites>
-    <testsuite name="Remote Event Test Suite">
+    <testsuite name="de.systopia.remoteevent Test Suite">
       <directory>./tests/phpunit</directory>
     </testsuite>
   </testsuites>
