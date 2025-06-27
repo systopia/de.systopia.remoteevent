@@ -29,6 +29,11 @@ use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
  */
 abstract class CRM_Remoteevent_RegistrationProfile
 {
+  /**
+   * @phpstan-var array<int, array<string, mixed>>
+   */
+  public static array $priceFieldValues = [];
+
     /**
      * Get the internal name of the profile represented.
      *
@@ -102,37 +107,61 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     abstract public function getFields($locale = null);
 
-    public static function getPriceFields(array $event): array {
-      return \Civi\Api4\Event::get(FALSE)
-        ->addSelect('price_field.*', 'price_field_value.id')
-        ->addJoin(
-          'PriceSetEntity AS price_set_entity',
-          'INNER',
-          ['price_set_entity.entity_table', '=', '"civicrm_event"'],
-          ['price_set_entity.entity_id', '=', 'id']
-        )
-        ->addJoin(
-          'PriceSet AS price_set',
-          'INNER',
-          ['price_set.id', '=', 'price_set_entity.price_set_id'],
-          ['price_set.is_active', '=', 1]
-        )
-        ->addJoin(
-          'PriceField AS price_field',
-          'LEFT',
-          ['price_field.price_set_id', '=', 'price_set.id']
-        )
-        // For price fields with a selectable quantity, there is one single price field value; include its ID.
-        ->addJoin(
-          'PriceFieldValue AS price_field_value',
-          'LEFT',
-          ['price_field_value.price_field_id', '=', 'price_field.id'],
-          ['price_field.is_enter_qty', '=', TRUE]
-        )
-        ->addWhere('id', '=', $event['id'])
+  /**
+   * @phpstan-param array<string, mixed> $event
+   *
+   * @phpstan-return array<int, array<string, mixed>>
+   */
+  public static function getPriceFields(array $event): array {
+    return \Civi\Api4\Event::get(FALSE)
+      ->addSelect(
+        'price_field.*',
+        'price_field_value.id',
+        'price_field_value.max_value',
+      )
+      ->addJoin(
+        'PriceSetEntity AS price_set_entity',
+        'INNER',
+        ['price_set_entity.entity_table', '=', '"civicrm_event"'],
+        ['price_set_entity.entity_id', '=', 'id']
+      )
+      ->addJoin(
+        'PriceSet AS price_set',
+        'INNER',
+        ['price_set.id', '=', 'price_set_entity.price_set_id'],
+        ['price_set.is_active', '=', 1]
+      )
+      ->addJoin(
+        'PriceField AS price_field',
+        'LEFT',
+        ['price_field.price_set_id', '=', 'price_set.id']
+      )
+      // For price fields with a selectable quantity, there is one single price field value; include its ID.
+      ->addJoin(
+        'PriceFieldValue AS price_field_value',
+        'LEFT',
+        ['price_field_value.price_field_id', '=', 'price_field.id'],
+        ['price_field.is_enter_qty', '=', TRUE]
+      )
+      ->addWhere('id', '=', $event['id'])
+      ->execute()
+      ->indexBy('price_field.id')
+      ->getArrayCopy();
+  }
+
+  /**
+   * @phpstan-return array<int, array<string, mixed>>
+   */
+  public static function getPriceFieldValues(int $priceFieldId): array {
+    if (!isset(static::$priceFieldValues[$priceFieldId])) {
+      static::$priceFieldValues[$priceFieldId] = \Civi\Api4\PriceFieldValue::get(FALSE)
+        ->addWhere('price_field_id', '=', $priceFieldId)
         ->execute()
+        ->indexBy('id')
         ->getArrayCopy();
     }
+    return static::$priceFieldValues[$priceFieldId];
+  }
 
     /**
      * @phpstan-param array<string, mixed> $event
@@ -360,11 +389,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
           + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
         foreach ($fields as $field_name => $field_spec) {
             $value = $data[$field_name] ?? NULL;
-            if (!empty($field_spec['required']) && ($value === null || $value === '') &&
+            if (
+              !empty($field_spec['required']) && ($value === null || $value === '')
               // Files are always optional on update.
-              ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')) {
+              && ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')
+            ) {
                 $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
-            } else if ($field_spec['type'] === 'File') {
+            }
+            elseif ($field_spec['type'] === 'File') {
                 if ($value === NULL) {
                   continue;
                 }
@@ -384,7 +416,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
                         $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
                     }
                 }
-            } else {
+            }
+            else {
                 if (!$this->validateFieldValue($field_spec, $value)) {
                     $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
                 }
@@ -396,7 +429,12 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         // Validate price fields.
         if ((bool) $event['is_monetary']) {
-            foreach ($this->validatePriceFields($event, $data, $l10n) as $field_name => $error) {
+            foreach ($this->validatePriceFields(
+                $event,
+                $data,
+                $additionalParticipantsCount,
+                $l10n
+            ) as $field_name => $error) {
                 $validationEvent->addValidationError($field_name, $error);
             }
         }
@@ -411,28 +449,68 @@ abstract class CRM_Remoteevent_RegistrationProfile
    *   messages as values.
    * @throws \CRM_Core_Exception
    */
-  protected function validatePriceFields(array $event, array $submission, CRM_Remoteevent_Localisation $l10n): array {
+  protected function validatePriceFields(
+    array $event,
+    array $submission,
+    int $additionalParticipantsCount,
+    CRM_Remoteevent_Localisation $l10n
+  ): array {
     $errors = [];
-    foreach ($this->getProfilePriceFields($event) as $fieldName => $priceField) {
-      // Validate price field values inside the "price" fieldset.
-      if ('price' === $priceField['parent']) {
-        // Validate price field value is a valid options.
-        if (
-          isset($priceField['options'])
-          && !array_key_exists($submission[$fieldName], $priceField['options'])
-        ) {
-          $errors[$fieldName] = $l10n->ts('Invalid value');
-        }
+    $priceFields = static::getPriceFields($event);
+    /** @var array<string, int> $priceFieldsToValidate Mapping of submission field name => price field ID. */
+    $priceFieldsToValidate = static::getPriceFieldsToValidate($priceFields, $additionalParticipantsCount);
+    foreach ($priceFieldsToValidate as $fieldName => $priceFieldId) {
+      $priceField = $priceFields[$priceFieldId];
+      $priceFieldValues = static::getPriceFieldValues($priceField['price_field.id']);
+      $priceFieldValueId = $priceField['price_field.is_enter_qty']
+        ? array_key_first($priceFieldValues)
+        : (int) $submission[$fieldName];
 
-        // Validate quantity being numeric.
-        elseif (!is_numeric($submission[$fieldName])) {
-          $errors[$fieldName] = $l10n->ts('Quantity must be numeric');
-        }
+      // Validate quantity being numeric.
+      if ($priceField['price_field.is_enter_qty'] && !is_numeric($submission[$fieldName])) {
+        $errors[$fieldName] = $l10n->ts('Quantity must be numeric');
+      }
 
-        // TODO: Validate availability of price options.
+      // Validate price field value being a valid options.
+      if (
+        !$priceField['price_field.is_enter_qty']
+        && (
+          !is_numeric($submission[$fieldName])
+          || !array_key_exists((int) $submission[$fieldName], $priceFieldValues)
+        )
+      ) {
+        $errors[$fieldName] = $l10n->ts('Invalid value');
+      }
+
+      // Validate availability of price options.
+      if (isset($priceFieldValues[$priceFieldValueId]['max_value'])) {
+        $requestedCount[$priceFieldValueId] ??= 0;
+        $requestedCount[$priceFieldValueId] += $priceField['price_field.is_enter_qty']
+          ? (int) $submission[$fieldName]
+          : 1;
+        $currentCount = \CRM_Event_BAO_Participant::priceSetOptionsCount($event['id'])[$priceFieldValueId] ?? 0;
+        if ($currentCount + $requestedCount[$priceFieldValueId] > $priceFieldValues[$priceFieldValueId]['max_value']) {
+          $errors[$fieldName] = $l10n->ts('Maximum number of price option exceeded');
+        }
       }
     }
+
     return $errors;
+  }
+
+  public static function getPriceFieldsToValidate(array $priceFields, int $additionalParticipantsCount): array {
+    $priceFieldsToValidate = [];
+    foreach ($priceFields as $priceField) {
+      $priceFieldsToValidate['price_' . $priceField['price_field.name']] = $priceField['price_field.id'];
+    }
+    // Add all price fields for additional participants.
+    for ($i = 1; $i <= $additionalParticipantsCount; $i++) {
+      $priceFieldsToValidate += array_combine(
+        array_map(fn($fieldName) => 'additional_' . $i . '_' . $fieldName, array_keys($priceFieldsToValidate)),
+        $priceFieldsToValidate
+      );
+    }
+    return $priceFieldsToValidate;
   }
 
     /**

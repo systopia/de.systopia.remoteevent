@@ -469,6 +469,8 @@ class CRM_Remoteevent_Registration
             $AND_IS_COUNTED_CONDITION = '';
         }
 
+        // TODO: Include price options with participant count > 1.
+
         $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
         $query = "
             SELECT COUNT(participant.id)
