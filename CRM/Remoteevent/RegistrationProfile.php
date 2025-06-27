@@ -135,10 +135,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
     /**
-     * @param array $event
-     * @param string|null $locale
+     * @phpstan-param array<string, mixed> $event
      *
-     * @return array<string,array<string,mixed>>
+     * @phpstan-return array<string, array<string, mixed>>
      * @throws \CRM_Core_Exception
      */
     public function getProfilePriceFields(array $event, ?string $locale = NULL): array
@@ -404,23 +403,37 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
 
   /**
-   * @param array $event
-   * @param array $submission
-   * @param \CRM_Remoteevent_Localisation $l10n
+   * @phpstan-param array<string, mixed> $event
+   * @phpstan-param array<string, mixed> $submission
    *
-   * @return array<string, string>
+   * @phpstan-return array<string, string>
    *   An array with field names as keys and corresponding localised error
    *   messages as values.
    * @throws \CRM_Core_Exception
    */
-    protected function validatePriceFields(array $event, array $submission, CRM_Remoteevent_Localisation $l10n): array
-    {
-        $errors = [];
-        foreach ($this->getProfilePriceFields($event) as $priceField) {
-            // TODO: Validate price field values.
+  protected function validatePriceFields(array $event, array $submission, CRM_Remoteevent_Localisation $l10n): array {
+    $errors = [];
+    foreach ($this->getProfilePriceFields($event) as $fieldName => $priceField) {
+      // Validate price field values inside the "price" fieldset.
+      if ('price' === $priceField['parent']) {
+        // Validate price field value is a valid options.
+        if (
+          isset($priceField['options'])
+          && !array_key_exists($submission[$fieldName], $priceField['options'])
+        ) {
+          $errors[$fieldName] = $l10n->ts('Invalid value');
         }
-        return $errors;
+
+        // Validate quantity being numeric.
+        elseif (!is_numeric($submission[$fieldName])) {
+          $errors[$fieldName] = $l10n->ts('Quantity must be numeric');
+        }
+
+        // TODO: Validate availability of price options.
+      }
     }
+    return $errors;
+  }
 
     /**
      * This function will tell you which entity/entities the given field
