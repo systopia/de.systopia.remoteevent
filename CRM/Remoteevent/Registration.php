@@ -837,10 +837,7 @@ class CRM_Remoteevent_Registration
 
     public static function createOrder(RegistrationEvent $registration): void {
       $event = $registration->getEvent();
-      if (
-        (bool) $event['is_monetary']
-        && class_exists('\Civi\Api4\Order')
-      ) {
+      if ((bool) $event['is_monetary']) {
         $order = \Civi\Api4\Order::create(FALSE)
           ->setContributionValues([
             'contact_id' => $registration->getContactID(),
