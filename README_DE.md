@@ -69,7 +69,7 @@ TODO: Vollständige Merkmalliste
 ## Anforderungen
 
 * PHP ab Version 7.0
-* CiviCRM 5.0
+* CiviCRM 5.76
 * Abhängigkeit zur CiviCRM-Erweiterung "Remote Tools" (de.systopia.remotetools)
 * Abhängigkeit zur CiviCRM-Erweiterung "Extended Contact Matcher" (
   de.systopia.xcm)
