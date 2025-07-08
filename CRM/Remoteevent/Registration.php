@@ -412,89 +412,118 @@ class CRM_Remoteevent_Registration
         return !empty($event_data['event_remote_registration.remote_registration_suspended']);
     }
 
-    /**
-     * Get the count of current registrations for the given event
-     *
-     * @param integer $event_id
-     *    event ID
-     *
-     * @param integer $contact_id
-     *    restrict to this contact
-     *
-     * @param array $class_list
-     *    list of participant status classes to be included - default is ony positive statuses
-     *
-     * @param array $status_id_list
-     *    list of participant status ids to be included - default is <all>
-     *
-     * @param boolean $only_counted
-     *    only count registration where the status_type has is_counted = 1
-     *
-     * @return int
-     *    number of registrations (participant objects)
-     */
-    public static function getRegistrationCount(
-        $event_id,
-        $contact_id = null,
-        array $class_list = [],
-        array $status_id_list = [],
-        bool $only_counted = true
-    ): int {
-        $event_id = (int) $event_id;
-        $contact_id = (int) $contact_id;
+  /**
+   * Retrieves the count of current registrations for the given event.
+   *
+   * @param int $event_id
+   *   event ID
+   *
+   * @param int $contact_id
+   *   restrict to this contact
+   *
+   * @param array $class_list
+   *   list of participant status classes to be included - default is ony positive statuses
+   *
+   * @param array $status_id_list
+   *   list of participant status ids to be included - default is <all>
+   *
+   * @param bool $only_counted
+   *   only count registration where the status_type has is_counted = 1
+   *
+   * @return int
+   *   number of registrations (participant objects)
+   */
+  public static function getRegistrationCount(
+    $event_id,
+    $contact_id = NULL,
+    array $class_list = [],
+    array $status_id_list = [],
+    bool $only_counted = TRUE
+  ): int {
+    $event_id = (int) $event_id;
+    $contact_id = (int) $contact_id;
 
-        // compile query
-        $class_list = array_intersect(['Positive', 'Pending', 'Negative', 'Waiting'], $class_list);
-        if (empty($class_list)) {
-            $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative', 'Waiting')";
-        } else {
-            $REGISTRATION_CLASSES = "('" . implode("','", $class_list) . "')";
-        }
-        if (empty($status_id_list)) {
-            $AND_STATUS_ID_IN_LIST = "";
-        } else {
-            $status_id_list = array_map('intval', $status_id_list);
-            $status_id_list = implode(',', $status_id_list);
-            $AND_STATUS_ID_IN_LIST = "AND participant.status_id IN ({$status_id_list})";
-        }
-        if ($contact_id) {
-            $AND_CONTACT_RESTRICTION = "AND participant.contact_id = {$contact_id}";
-        } else {
-            $AND_CONTACT_RESTRICTION = "";
-        }
-        if ($only_counted) {
-            $AND_IS_COUNTED_CONDITION =
-                'AND status_type.is_counted = 1 AND option_value_participant_role.filter = 1';
-        } else {
-            $AND_IS_COUNTED_CONDITION = '';
-        }
-
-        // TODO: Include price options with participant count > 1.
-
-        $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
-        $query = "
-            SELECT COUNT(participant.id)
-            FROM civicrm_participant participant
-            LEFT JOIN civicrm_event  event
-                   ON event.id = participant.event_id
-            LEFT JOIN civicrm_participant_status_type status_type
-                   ON status_type.id = participant.status_id
-            INNER JOIN civicrm_option_value option_value_participant_role
-                    ON
-                        participant.role_id = option_value_participant_role.value
-                        OR participant.role_id LIKE CONCAT('%', option_value_participant_role.value, '{$value_separator}%')
-                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '%')
-                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '{$value_separator}%')
-            INNER JOIN civicrm_option_group option_group_participant_role
-                    ON option_group_participant_role.id = option_value_participant_role.option_group_id
-                    AND option_group_participant_role.name = 'participant_role'
-            WHERE status_type.class IN {$REGISTRATION_CLASSES}
-                  {$AND_IS_COUNTED_CONDITION}
-                  AND participant.event_id = {$event_id}
-                  {$AND_STATUS_ID_IN_LIST}
-                  {$AND_CONTACT_RESTRICTION}";
-        return (int) CRM_Core_DAO::singleValueQuery($query);
+    // compile query
+    $class_list = array_intersect(['Positive', 'Pending', 'Negative', 'Waiting'], $class_list);
+    if ([] === $class_list) {
+      $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative', 'Waiting')";
     }
+    else {
+      $REGISTRATION_CLASSES = "('" . implode("','", $class_list) . "')";
+    }
+    if ([] === $status_id_list) {
+      $AND_STATUS_ID_IN_LIST = '';
+    }
+    else {
+      $status_id_list = array_map('intval', $status_id_list);
+      $status_id_list = implode(',', $status_id_list);
+      $AND_STATUS_ID_IN_LIST = "AND participant.status_id IN ({$status_id_list})";
+    }
+    if ($contact_id) {
+      $AND_CONTACT_RESTRICTION = "AND participant.contact_id = {$contact_id}";
+    }
+    else {
+      $AND_CONTACT_RESTRICTION = '';
+    }
+    if ($only_counted) {
+      $AND_IS_COUNTED_CONDITION =
+        'AND status_type.is_counted = 1 AND option_value_participant_role.filter = 1';
+    }
+    else {
+      $AND_IS_COUNTED_CONDITION = '';
+    }
+
+    // TODO: Include price options with participant count > 1.
+
+    $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
+    // phpcs:disable Generic.Files.LineLength.TooLong
+    $query = <<<SQL
+      SELECT
+        IF(
+          -- If the line item count * the line item quantity is not 0
+          SUM(price_field_value.`count` * lineItem.qty),
+
+          -- then use the count * the quantity, ensuring each
+          -- actual participant record gets a result
+          SUM(price_field_value.`count` * lineItem.qty)
+            + COUNT(DISTINCT participant.id )
+            - COUNT(DISTINCT IF (price_field_value.`count`, participant.id, NULL)),
+
+          -- if the line item count is NULL or 0 then count the participants
+          COUNT(DISTINCT participant.id)
+        )
+      FROM civicrm_participant participant
+      LEFT JOIN civicrm_event event
+        ON event.id = participant.event_id
+      LEFT JOIN civicrm_participant_status_type status_type
+        ON status_type.id = participant.status_id
+      LEFT JOIN civicrm_line_item lineItem
+        ON
+          lineItem.entity_id = participant.id
+          AND  lineItem.entity_table = 'civicrm_participant'
+      LEFT JOIN civicrm_price_field_value price_field_value
+        ON
+          price_field_value.id = lineItem.price_field_value_id
+          AND price_field_value.`count`
+      INNER JOIN civicrm_option_value option_value_participant_role
+        ON
+          participant.role_id = option_value_participant_role.value
+          OR participant.role_id LIKE CONCAT('%', option_value_participant_role.value, '{$value_separator}%')
+          OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '%')
+          OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '{$value_separator}%')
+      INNER JOIN civicrm_option_group option_group_participant_role
+        ON
+          option_group_participant_role.id = option_value_participant_role.option_group_id
+          AND option_group_participant_role.name = 'participant_role'
+      WHERE status_type.class IN {$REGISTRATION_CLASSES}
+        {$AND_IS_COUNTED_CONDITION}
+        AND participant.event_id = {$event_id}
+        {$AND_STATUS_ID_IN_LIST}
+        {$AND_CONTACT_RESTRICTION}
+      SQL;
+    // phpcs:enable
+    return (int) CRM_Core_DAO::singleValueQuery($query);
+  }
 
     /**
      * Create or identify the contact based on the collected data
@@ -911,4 +940,5 @@ class CRM_Remoteevent_Registration
             ]);
         }
     }
+
 }

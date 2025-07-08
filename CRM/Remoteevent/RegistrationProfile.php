@@ -363,7 +363,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
             !empty($event['max_participants'])
             && ($excessParticipants =
               CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
-              + 1 + $additionalParticipantsCount - $event['max_participants'])
+              + static::getRequestedParticipantCount($event, $data, $additionalParticipantsCount)
+              - $event['max_participants'])
             > 0
         ) {
             if (
@@ -457,9 +458,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
   ): array {
     $errors = [];
     $priceFields = static::getPriceFields($event);
-    /** @var array<string, int> $priceFieldsToValidate Mapping of submission field name => price field ID. */
-    $priceFieldsToValidate = static::getPriceFieldsToValidate($priceFields, $additionalParticipantsCount);
-    foreach ($priceFieldsToValidate as $fieldName => $priceFieldId) {
+    foreach (static::getPriceFieldsToValidate(
+      $priceFields,
+      $additionalParticipantsCount
+    ) as $fieldName => $priceFieldId) {
       $priceField = $priceFields[$priceFieldId];
       $priceFieldValues = static::getPriceFieldValues($priceField['price_field.id']);
       $priceFieldValueId = $priceField['price_field.is_enter_qty']
@@ -498,6 +500,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
     return $errors;
   }
 
+  /**
+   * @phpstan-return array<string, int>
+   *   Mapping of submission field name => price field ID
+   */
   public static function getPriceFieldsToValidate(array $priceFields, int $additionalParticipantsCount): array {
     $priceFieldsToValidate = [];
     foreach ($priceFields as $priceField) {
@@ -511,6 +517,45 @@ abstract class CRM_Remoteevent_RegistrationProfile
       );
     }
     return $priceFieldsToValidate;
+  }
+
+  public static function getRequestedParticipantCount(
+    array $event,
+    array $submission,
+    int $additionalParticipantsCount
+  ): int {
+    $priceFields = static::getPriceFields($event);
+    $maxRequestedParticipantCounts = [];
+    foreach (static::getPriceFieldsToValidate(
+      $priceFields,
+      $additionalParticipantsCount
+    ) as $fieldName => $priceFieldId) {
+      /** @var $participantNo 0 for the initial participant, 1-N for additional participants */
+      $participantNo = self::getAdditionalParticipantNo($fieldName) ?? 0;
+      $priceField = $priceFields[$priceFieldId];
+      $priceFieldValues = static::getPriceFieldValues($priceField['price_field.id']);
+      $priceFieldValueId = $priceField['price_field.is_enter_qty']
+        ? array_key_first($priceFieldValues)
+        : (int) $submission[$fieldName];
+
+      // For each participant (initial and additional), use the maximum count of participants in price fields to be used
+      // for this registration.
+      $maxRequestedParticipantCounts[$participantNo] = max(
+        $priceFieldValues[$priceFieldValueId]['count'] ?? 1,
+        $maxRequestedParticipantCounts[$participantNo]
+      );
+    }
+
+    return array_sum($maxRequestedParticipantCounts);
+  }
+
+  public static function getAdditionalParticipantNo(string $fieldKey): ?int {
+    $matches = [];
+    if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
+      return (int) $matches[1];
+    }
+
+    return NULL;
   }
 
     /**
@@ -537,7 +582,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
-    /**
+  /**
      * Give the profile a chance to manipulate the contact data before it's being sent off to
      *   the contact creation/update
      *

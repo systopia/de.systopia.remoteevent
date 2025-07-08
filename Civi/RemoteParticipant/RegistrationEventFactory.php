@@ -21,6 +21,7 @@ namespace Civi\RemoteParticipant;
 
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
+use CRM_Remoteevent_RegistrationProfile;
 
 final class RegistrationEventFactory
 {
@@ -32,7 +33,7 @@ final class RegistrationEventFactory
 
     public function createRegistrationEvent(array $submissionData): RegistrationEvent {
         $registrationEvent = new RegistrationEvent($submissionData);
-        $profile = \CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
+        $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
         $event = $registrationEvent->getEvent();
 
         $contactData = [];
@@ -78,7 +79,7 @@ final class RegistrationEventFactory
      * Handles additional participants' data in the submission data and sets the
      * resulting data in the event.
      */
-    private function handleAdditionalParticipants(RegistrationEvent $registrationEvent, \CRM_Remoteevent_RegistrationProfile $profile): void {
+    private function handleAdditionalParticipants(RegistrationEvent $registrationEvent, CRM_Remoteevent_RegistrationProfile $profile): void {
         $event = $registrationEvent->getEvent();
 
         $additionalContactsData = [];
@@ -86,7 +87,7 @@ final class RegistrationEventFactory
 
         $submissionData = $registrationEvent->getSubmission();
         foreach ($profile->getAdditionalParticipantsFields($event) as $fieldKey => $fieldSpec) {
-            $participantNo = $this->getAdditionalParticipantNo($fieldKey);
+            $participantNo = CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantNo($fieldKey);
             if (null !== $participantNo && array_key_exists($fieldKey, $submissionData)) {
                 $entityNames = (array)($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
                 $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
@@ -111,7 +112,7 @@ final class RegistrationEventFactory
             return;
         }
 
-        $additionalParticipantsProfile = \CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
+        $additionalParticipantsProfile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
           $event['event_remote_registration.remote_registration_additional_participants_profile']
         );
         $additionalParticipantCount = 0;
@@ -147,16 +148,7 @@ final class RegistrationEventFactory
         $registrationEvent->setAdditionalParticipantsData($additionalParticipantsData);
     }
 
-    private function getAdditionalParticipantNo(string $fieldKey): ?int {
-        $matches = [];
-        if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
-            return (int) $matches[1];
-        }
-
-        return null;
-    }
-
-    /**
+  /**
      * @param array<string, mixed> $event
      */
     private function getDefaultRoleId(array $event): int {
