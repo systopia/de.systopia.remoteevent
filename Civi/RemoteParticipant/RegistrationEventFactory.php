@@ -21,6 +21,7 @@ namespace Civi\RemoteParticipant;
 
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
+use CRM_Remoteevent_RegistrationProfile;
 
 final class RegistrationEventFactory {
 
@@ -60,11 +61,10 @@ final class RegistrationEventFactory {
       }
     }
 
-    // Assign default role for new participants only.
-    if (NULL === $registrationEvent->getParticipantID()) {
-      $participantData['role_id'] ??= $this->getDefaultRoleId($event);
-    }
-    $participantData['event_id'] = $submissionData['event_id'];
+    public function createRegistrationEvent(array $submissionData): RegistrationEvent {
+        $registrationEvent = new RegistrationEvent($submissionData);
+        $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
+        $event = $registrationEvent->getEvent();
 
     $profile->modifyContactData($contactData);
 
@@ -121,52 +121,84 @@ final class RegistrationEventFactory {
       }
     }
 
-    if ([] === $additionalParticipantsData && [] === $additionalContactsData) {
-      return;
+    /**
+     * Handles additional participants' data in the submission data and sets the
+     * resulting data in the event.
+     */
+    private function handleAdditionalParticipants(RegistrationEvent $registrationEvent, CRM_Remoteevent_RegistrationProfile $profile): void {
+        $event = $registrationEvent->getEvent();
+
+        $additionalContactsData = [];
+        $additionalParticipantsData = [];
+
+        $submissionData = $registrationEvent->getSubmission();
+        foreach ($profile->getAdditionalParticipantsFields($event) as $fieldKey => $fieldSpec) {
+            $participantNo = CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantNo($fieldKey);
+            if (null !== $participantNo && array_key_exists($fieldKey, $submissionData)) {
+                $entityNames = (array)($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
+                $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
+                $value = isset($fieldSpec['value_callback'])
+                  ? $fieldSpec['value_callback']($submissionData[$fieldKey], $submissionData)
+                  : $submissionData[$fieldKey];
+
+                if ('File' === $fieldSpec['type'] && NULL !== $value) {
+                    $value = $this->filePersister->persistFileFromForm($value, NULL, $registrationEvent->getContactId());
+                }
+
+                if (in_array('Contact', $entityNames, true)) {
+                    $additionalContactsData[$participantNo][$entityFieldName] = $value;
+                }
+                if (in_array('Participant', $entityNames, true)) {
+                    $additionalParticipantsData[$participantNo][$entityFieldName] = $value;
+                }
+            }
+        }
+
+        if ([] === $additionalParticipantsData && [] === $additionalContactsData) {
+            return;
+        }
+
+        $additionalParticipantsProfile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
+          $event['event_remote_registration.remote_registration_additional_participants_profile']
+        );
+        $additionalParticipantCount = 0;
+        foreach ($additionalContactsData as $participantNo => &$contactData) {
+            $additionalParticipantCount++;
+            $additionalParticipantsProfile->modifyContactData($contactData);
+            $contactData['contact_type'] ??= 'Individual';
+            $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
+            $additionalParticipantsData[$participantNo]['role_id'] ??= $this->getDefaultRoleId($event);
+            $additionalParticipantsData[$participantNo]['event_id'] = $submissionData['event_id'];
+
+            // Check for waitlist.
+            // TODO: merge with code in \CRM_Remoteevent_RegistrationProfile::validateSubmission().
+            if (
+                !empty($event['max_participants'])
+                && !empty($event['has_waitlist'])
+                && !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
+                && \CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
+                // Primary participant has not yet been created or its status is not counted, thus add 1.
+                + 1
+                + $additionalParticipantCount
+                - $event['max_participants'] > 0
+            ) {
+                $additionalParticipantsData[$participantNo]['status_id.name'] = 'On waitlist';
+            }
+            // Check if registration requires approval.
+            elseif (!empty($event['requires_approval'])) {
+                $additionalParticipantsData[$participantNo]['status_id.name'] = 'Awaiting approval';
+            }
+        }
+
+        $registrationEvent->setAdditionalContactsData($additionalContactsData);
+        $registrationEvent->setAdditionalParticipantsData($additionalParticipantsData);
     }
 
-    $additionalParticipantsProfile = \CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
-      $event['event_remote_registration.remote_registration_additional_participants_profile']
-    );
-    $additionalParticipantCount = 0;
-    foreach ($additionalContactsData as $participantNo => &$contactData) {
-      $additionalParticipantCount++;
-      $additionalParticipantsProfile->modifyContactData($contactData);
-      $contactData['contact_type'] ??= 'Individual';
-      // phpcs:ignore Generic.Files.LineLength.TooLong
-      $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
-      $additionalParticipantsData[$participantNo]['role_id'] ??= $this->getDefaultRoleId($event);
-      $additionalParticipantsData[$participantNo]['event_id'] = $submissionData['event_id'];
-
-      // Check for waitlist.
-      // TODO: merge with code in \CRM_Remoteevent_RegistrationProfile::validateSubmission().
-      if (
-        !empty($event['max_participants'])
-        && !empty($event['has_waitlist'])
-        && !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
-        && \CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
-        // Primary participant has not yet been created or its status is not counted, thus add 1.
-        // phpcs:ignore Drupal.Formatting.SpaceUnaryOperator.PlusMinus
-        + 1
-        + $additionalParticipantCount
-        - $event['max_participants'] > 0
-      ) {
-        $additionalParticipantsData[$participantNo]['status_id.name'] = 'On waitlist';
-      }
-      // Check if registration requires approval.
-      elseif (!empty($event['requires_approval'])) {
-        $additionalParticipantsData[$participantNo]['status_id.name'] = 'Awaiting approval';
-      }
-    }
-
-    $registrationEvent->setAdditionalContactsData($additionalContactsData);
-    $registrationEvent->setAdditionalParticipantsData($additionalParticipantsData);
-  }
-
-  private function getAdditionalParticipantNo(string $fieldKey): ?int {
-    $matches = [];
-    if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
-      return (int) $matches[1];
+  /**
+     * @param array<string, mixed> $event
+     */
+    private function getDefaultRoleId(array $event): int {
+        return (int) ($event['default_role_id'] ?: 1); // 1 = Attendee
     }
 
     return NULL;

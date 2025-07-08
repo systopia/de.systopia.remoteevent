@@ -432,8 +432,58 @@ abstract class CRM_Remoteevent_RegistrationProfile
       }
     }
 
-    // Validate field values.
-    $fields = $this->getFields()
+    /**
+     * Validate the profile fields individually.
+     * This only validates the mere data types,
+     *   more complex validation (e.g. over multiple fields)
+     *   have to be performed by the profile implementations
+     *
+     * @param ValidateEvent $validationEvent
+     *      event triggered by the RemoteParticipant.validate or submit API call
+     */
+    public function validateSubmission($validationEvent)
+    {
+        $data = $validationEvent->getSubmission();
+        $event = $validationEvent->getEvent();
+        $additionalParticipantsCount = array_reduce(
+          preg_grep('#^additional_([0-9]+)(_|$)#', array_keys($data)),
+          function(int $carry, string $item) {
+            $currentCount = (int) preg_filter('#^additional_([0-9]+)(.*?)$#', '$1', $item);
+            return max($carry, $currentCount);
+          },
+          0
+        );
+        $l10n = $validationEvent->getLocalisation();
+
+        // Validate number of participants.
+        if (
+            !empty($event['max_participants'])
+            && ($excessParticipants =
+              CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
+              + static::getRequestedParticipantCount($event, $data, $additionalParticipantsCount)
+              - $event['max_participants'])
+            > 0
+        ) {
+            if (
+                !empty($event['has_waitlist'])
+                    && (
+                        $additionalParticipantsCount === 0
+                        || !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
+                    )
+            ) {
+                $validationEvent->addWarning(
+                    $l10n->ts('Not enough vacancies for the number of requested participants.')
+                    . ' '
+                    . $l10n->ts('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
+                );
+            }
+            else {
+                $validationEvent->addValidationError('', $l10n->ts('Not enough vacancies for the number of requested participants.'));
+            }
+        }
+
+        // Validate field values.
+        $fields = $this->getFields()
           + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
         foreach ($fields as $field_name => $field_spec) {
             $value = $data[$field_name] ?? NULL;
@@ -505,9 +555,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
   ): array {
     $errors = [];
     $priceFields = static::getPriceFields($event);
-    /** @var array<string, int> $priceFieldsToValidate Mapping of submission field name => price field ID. */
-    $priceFieldsToValidate = static::getPriceFieldsToValidate($priceFields, $additionalParticipantsCount);
-    foreach ($priceFieldsToValidate as $fieldName => $priceFieldId) {
+    foreach (static::getPriceFieldsToValidate(
+      $priceFields,
+      $additionalParticipantsCount
+    ) as $fieldName => $priceFieldId) {
       $priceField = $priceFields[$priceFieldId];
       $priceFieldValues = static::getPriceFieldValues($priceField['price_field.id']);
       $priceFieldValueId = $priceField['price_field.is_enter_qty']
@@ -546,6 +597,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
     return $errors;
   }
 
+  /**
+   * @phpstan-return array<string, int>
+   *   Mapping of submission field name => price field ID
+   */
   public static function getPriceFieldsToValidate(array $priceFields, int $additionalParticipantsCount): array {
     $priceFieldsToValidate = [];
     foreach ($priceFields as $priceField) {
@@ -559,6 +614,45 @@ abstract class CRM_Remoteevent_RegistrationProfile
       );
     }
     return $priceFieldsToValidate;
+  }
+
+  public static function getRequestedParticipantCount(
+    array $event,
+    array $submission,
+    int $additionalParticipantsCount
+  ): int {
+    $priceFields = static::getPriceFields($event);
+    $maxRequestedParticipantCounts = [];
+    foreach (static::getPriceFieldsToValidate(
+      $priceFields,
+      $additionalParticipantsCount
+    ) as $fieldName => $priceFieldId) {
+      /** @var $participantNo 0 for the initial participant, 1-N for additional participants */
+      $participantNo = self::getAdditionalParticipantNo($fieldName) ?? 0;
+      $priceField = $priceFields[$priceFieldId];
+      $priceFieldValues = static::getPriceFieldValues($priceField['price_field.id']);
+      $priceFieldValueId = $priceField['price_field.is_enter_qty']
+        ? array_key_first($priceFieldValues)
+        : (int) $submission[$fieldName];
+
+      // For each participant (initial and additional), use the maximum count of participants in price fields to be used
+      // for this registration.
+      $maxRequestedParticipantCounts[$participantNo] = max(
+        $priceFieldValues[$priceFieldValueId]['count'] ?? 1,
+        $maxRequestedParticipantCounts[$participantNo]
+      );
+    }
+
+    return array_sum($maxRequestedParticipantCounts);
+  }
+
+  public static function getAdditionalParticipantNo(string $fieldKey): ?int {
+    $matches = [];
+    if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
+      return (int) $matches[1];
+    }
+
+    return NULL;
   }
 
     /**
@@ -585,7 +679,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
-    /**
+  /**
      * Give the profile a chance to manipulate the contact data before it's being sent off to
      *   the contact creation/update
      *
