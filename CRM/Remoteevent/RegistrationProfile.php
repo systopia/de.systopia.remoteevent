@@ -163,96 +163,98 @@ abstract class CRM_Remoteevent_RegistrationProfile
     return static::$priceFieldValues[$priceFieldId];
   }
 
-    /**
-     * @phpstan-param array<string, mixed> $event
-     *
-     * @phpstan-return array<string, array<string, mixed>>
-     * @throws \CRM_Core_Exception
-     */
-    public function getProfilePriceFields(array $event, ?string $locale = NULL): array
-    {
-        $fields = [];
+  /**
+   * @phpstan-param array<string, mixed> $event
+   *
+   * @phpstan-return array<string, array<string, mixed>>
+   * @throws \CRM_Core_Exception
+   */
+  public function getProfilePriceFields(array $event, ?string $locale = NULL): array {
+    $fields = [];
 
-        if (!(bool) $event['is_monetary']) {
-            return $fields;
-        }
-
-        $priceFields = self::getPriceFields($event);
-        if (count($priceFields) === 0) {
-           return $fields;
-        }
-
-        $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
-        $fields['price'] = [
-            'type' => 'fieldset',
-            'name' => 'price',
-            // TODO: Is the label correctly localised with the requested $locale?
-            'label' => $event['fee_label'],
-        ];
-        foreach ($priceFields as $priceField) {
-            $priceFieldValues = \Civi\Api4\PriceFieldValue::get(FALSE)
-                ->addSelect('id', 'label', 'amount')
-                ->addWhere('price_field_id', '=', $priceField['price_field.id'])
-                ->execute()
-                ->indexBy('id');
-            $field = [
-                // TODO: Validate types.
-                'type' => $priceField['price_field.html_type'],
-                'name' => 'price_' . $priceField['price_field.name'],
-                // TODO: Localize label with given $locale.
-                'label' => $priceField['price_field.label'],
-                'weight' => $priceField['price_field.weight'],
-                'required' => (bool) $priceField['price_field.is_required'],
-                'parent' => 'price',
-            ];
-            if ($priceField['price_field.is_enter_qty']) {
-                // Append price per unit.
-                $field['label'] .= sprintf(
-                  ' (%s)',
-                  CRM_Utils_Money::format(
-                    $priceFieldValues->first()['amount'],
-                    $event['currency']
-                  )
-                );
-            }
-            else {
-                $field['options'] = $priceFieldValues->column('label');
-            }
-
-            // Append price field value amounts in option labels.
-            if (isset($field['options']) && $priceField['price_field.is_display_amounts']) {
-                array_walk($field['options'], function(&$label, $id, $context) {
-                    $label .= sprintf(
-                        ' (%s)',
-                        CRM_Utils_Money::format(
-                          $context['priceFieldValues'][$id]['amount'],
-                          $context['event']['currency']
-                        )
-                    );
-                }, ['priceFieldValues' => $priceFieldValues, 'event' => $event]);
-            }
-
-            // Add prefixed help text.
-            if (isset($priceField['price_field.help_pre'])) {
-                // TODO: Localize with given $locale.
-                $field['prefix'] = $priceField['price_field.help_pre'];
-                $field['prefix_display'] = 'inline';
-            }
-
-            // Add suffixed help text.
-            if (isset($priceField['price_field.help_post'])) {
-                // TODO: Localize with given $locale.
-                $field['suffix'] = $priceField['price_field.help_post'];
-                $field['suffix_display'] = 'inline';
-            }
-
-            // TODO: Is the price field name unique across all price fields for
-            //       this event?
-            $fields['price_' . $priceField['price_field.name']] = $field;
-        }
-
-        return $fields;
+    if (!(bool) $event['is_monetary']) {
+      return $fields;
     }
+
+    $priceFields = self::getPriceFields($event);
+    if (count($priceFields) === 0) {
+      return $fields;
+    }
+
+    $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+    $fields['price'] = [
+      'type' => 'fieldset',
+      'name' => 'price',
+      // TODO: Is the label correctly localised with the requested $locale?
+      'label' => $event['fee_label'],
+    ];
+    foreach ($priceFields as $priceField) {
+      $priceFieldValues = \Civi\Api4\PriceFieldValue::get(FALSE)
+        ->addSelect('id', 'label', 'amount')
+        ->addWhere('price_field_id', '=', $priceField['price_field.id'])
+        ->execute()
+        ->indexBy('id');
+      $field = [
+        // TODO: Validate types.
+        'type' => $priceField['price_field.html_type'],
+        'name' => 'price_' . $priceField['price_field.name'],
+        // TODO: Localize label with given $locale.
+        'label' => $priceField['price_field.label'],
+        'weight' => $priceField['price_field.weight'],
+        'required' => (bool) $priceField['price_field.is_required'],
+        'parent' => 'price',
+      ];
+      if ($priceField['price_field.is_enter_qty']) {
+        // Append price per unit.
+        $field['label'] .= sprintf(
+          ' (%s)',
+          CRM_Utils_Money::format(
+            $priceFieldValues->first()['amount'],
+            $event['currency']
+          )
+        );
+      }
+      else {
+        $field['options'] = $priceFieldValues->column('label');
+      }
+
+      // Append price field value amounts in option labels.
+      if (isset($field['options']) && $priceField['price_field.is_display_amounts']) {
+        array_walk(
+          $field['options'],
+          function(&$label, $id, $context) {
+            $label .= sprintf(
+              ' (%s)',
+              CRM_Utils_Money::format(
+                $context['priceFieldValues'][$id]['amount'],
+                $context['event']['currency']
+              )
+            );
+          },
+          ['priceFieldValues' => $priceFieldValues, 'event' => $event]
+        );
+      }
+
+      // Add prefixed help text.
+      if (isset($priceField['price_field.help_pre'])) {
+        // TODO: Localize with given $locale.
+        $field['prefix'] = $priceField['price_field.help_pre'];
+        $field['prefix_display'] = 'inline';
+      }
+
+      // Add suffixed help text.
+      if (isset($priceField['price_field.help_post'])) {
+        // TODO: Localize with given $locale.
+        $field['suffix'] = $priceField['price_field.help_post'];
+        $field['suffix_display'] = 'inline';
+      }
+
+      // TODO: Is the price field name unique across all price fields for this event?
+      $fields['price_' . $priceField['price_field.name']] = $field;
+    }
+
+    return $fields;
+  }
 
     public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
     {
@@ -473,7 +475,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $errors[$fieldName] = $l10n->ts('Quantity must be numeric');
       }
 
-      // Validate price field value being a valid options.
+      // Validate price field value being a valid option.
       if (
         !$priceField['price_field.is_enter_qty']
         && (

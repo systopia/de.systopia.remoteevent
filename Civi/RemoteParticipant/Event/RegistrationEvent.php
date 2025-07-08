@@ -198,48 +198,61 @@ class RegistrationEvent extends ChangingEvent
         return $this->submission[$value_name] ?? NULL;
     }
 
-    /**
-     * Get the event data
-     *
-     * @return array
-     *    event data
-     */
-    public function getEvent()
-    {
-        return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
-    }
-
-    /**
-     * Get the parameters of the original query
-     *
-     * @return array
-     *   parameters of the query
-     */
-    public function getQueryParameters()
-    {
-        return $this->submission;
-    }
+  /**
+   * Get the event data
+   *
+   * @return array
+   *    event data
+   */
+  public function getEvent() {
+    return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
+  }
 
   /**
-   * @return array<string, mixed>
+   * Get the parameters of the original query
+   *
+   * @return array
+   *   parameters of the query
+   */
+  public function getQueryParameters() {
+    return $this->submission;
+  }
+
+  /**
+   * @phpstan-return array<string, mixed>
    * @throws \CRM_Core_Exception
    */
-    public function getPriceFieldValues(): array
-    {
-      $values = [];
+  public function getPriceFieldValues(): array {
+    $values = [];
 
-      $event = $this->getEvent();
-      if (!(bool) $event['is_monetary']) {
-        return $values;
-      }
+    $event = $this->getEvent();
+    if (!(bool) $event['is_monetary']) {
+      return $values;
+    }
 
-      foreach (\CRM_Remoteevent_RegistrationProfile::getPriceFields($event) as $priceField) {
+    $priceFields = \CRM_Remoteevent_RegistrationProfile::getPriceFields($event);
+
+    /**
+     * @var $participants
+     *   An array of participants to be registered, indexed by number of additional participant;
+     *   0 for the initial participant.
+     */
+    $participants = [
+      0 => ['id' => $this->getParticipantID()],
+    ] + $this->getAdditionalParticipantsData();
+
+    foreach ($participants as $participantNo => $participant) {
+      foreach ($priceFields as $priceField) {
+        $fieldName = ($participantNo > 0 ? "additional_{$participantNo}_" : '')
+          . "price_{$priceField['price_field.name']}";
+        $participantId = $participant['id'];
         // The submitted value is either the selected price option (price field value ID) or the quantity of a specific
         // price field value.
-        $value = $this->submission['price_' . $priceField['price_field.name']] ?? NULL;
+        $value = $this->submission[$fieldName] ?? NULL;
         if (is_numeric($value)) {
+          // phpcs:disable Drupal.Arrays.Array.ArrayIndentation
           $values[] = [
-            'participant_id' => $this->getParticipantID(),
+            'participant_id' => $participantId,
             'price_field_id' => $priceField['price_field.id'],
             'price_field_name' => $priceField['price_field.name'],
             // If the price field has a single price field value, its ID is part of the price field metadata.
@@ -248,24 +261,12 @@ class RegistrationEvent extends ChangingEvent
               : $value,
             'qty' => (bool) $priceField['price_field.is_enter_qty'] ? $value : 1,
           ];
+          // phpcs:enable
         }
       }
-
-      $additionalParticipantsPriceFields = \CRM_Remoteevent_RegistrationProfile::getPriceFields($event);
-      foreach ($this->getAdditionalParticipantsData() as $additionalParticipantNo => $additionalParticipant) {
-        foreach ($additionalParticipantsPriceFields as $priceField) {
-          $value = $this->submission['additional_' . $additionalParticipantNo . '_price_' . $priceField['price_field.name']] ?? NULL;
-          if (is_numeric($value)) {
-            $values[] = [
-              'participant_id' => $additionalParticipant['id'],
-              'price_field_name' => $priceField['price_field.name'],
-              'price_field_value_id' => (bool) $priceField['price_field.is_enter_qty'] ? $priceField['price_field_value.id'] : $value,
-              'qty' => (bool) $priceField['price_field.is_enter_qty'] ? $value : 1,
-            ];
-          }
-        }
-      }
-
-      return $values;
     }
+
+    return $values;
+  }
+
 }
