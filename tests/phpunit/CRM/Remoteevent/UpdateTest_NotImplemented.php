@@ -57,7 +57,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase
         } catch (CiviCRM_API3_Exception $ex) {
             // todo: check error message?
             // $error_message = $ex->getMessage();
-            // $this->assertRegExp('/invalid/', $error_message, "This seems to be the wrong kind of exception");
+            // $this->assertMatchesRegularExpression('/invalid/', $error_message, "This seems to be the wrong kind of exception");
         }
     }
 
