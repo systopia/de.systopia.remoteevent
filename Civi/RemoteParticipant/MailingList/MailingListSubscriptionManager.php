@@ -30,7 +30,7 @@ use Civi\RemoteTools\Api4\Query\Comparison;
  *   contact_id: int,
  *   group_id: int,
  *   status: string,
- *   'remote_event_mailing_list.token'?: string|null,
+ *   "remote_event_mailing_list.token"?: string|null,
  * }
  */
 class MailingListSubscriptionManager {
