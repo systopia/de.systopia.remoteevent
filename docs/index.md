@@ -62,7 +62,7 @@ built-in forms, such as:
 ## Requirements
 
 + PHP v7.0+
-+ CiviCRM 5.61
++ CiviCRM 5.76
 + Dependency on the CiviCRM Extension CiviRemote Tools
 + Dependency on the CiviCRM Extension Extended Contact Matcher
 + A system to serve as your public interface, such as an external website
