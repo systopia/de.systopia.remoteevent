@@ -408,49 +408,46 @@ class CRM_Remoteevent_Registration {
       $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($event_id);
     }
 
-    return !empty($event_data['event_remote_registration.remote_registration_suspended']);
-  }
-
   /**
-   * Get the count of current registrations for the given event
+   * Retrieves the count of current registrations for the given event.
    *
-   * @param integer $event_id
-   *    event ID
+   * @param int $event_id
+   *   event ID
    *
-   * @param integer $contact_id
-   *    restrict to this contact
+   * @param int $contact_id
+   *   restrict to this contact
    *
    * @param array $class_list
-   *    list of participant status classes to be included - default is ony positive statuses
+   *   list of participant status classes to be included - default is ony positive statuses
    *
    * @param array $status_id_list
-   *    list of participant status ids to be included - default is <all>
+   *   list of participant status ids to be included - default is <all>
    *
-   * @param boolean $only_counted
-   *    only count registration where the status_type has is_counted = 1
+   * @param bool $only_counted
+   *   only count registration where the status_type has is_counted = 1
    *
    * @return int
    *   number of registrations (participant objects)
    */
   public static function getRegistrationCount(
-        $event_id,
-        $contact_id = NULL,
-        array $class_list = [],
-        array $status_id_list = [],
-        bool $only_counted = TRUE
-    ): int {
+    $event_id,
+    $contact_id = NULL,
+    array $class_list = [],
+    array $status_id_list = [],
+    bool $only_counted = TRUE
+  ): int {
     $event_id = (int) $event_id;
     $contact_id = (int) $contact_id;
 
     // compile query
     $class_list = array_intersect(['Positive', 'Pending', 'Negative', 'Waiting'], $class_list);
-    if (empty($class_list)) {
+    if ([] === $class_list) {
       $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative', 'Waiting')";
     }
     else {
       $REGISTRATION_CLASSES = "('" . implode("','", $class_list) . "')";
     }
-    if (empty($status_id_list)) {
+    if ([] === $status_id_list) {
       $AND_STATUS_ID_IN_LIST = '';
     }
     else {
@@ -466,54 +463,63 @@ class CRM_Remoteevent_Registration {
     }
     if ($only_counted) {
       $AND_IS_COUNTED_CONDITION =
-                'AND status_type.is_counted = 1 AND option_value_participant_role.filter = 1';
+        'AND status_type.is_counted = 1 AND option_value_participant_role.filter = 1';
     }
     else {
       $AND_IS_COUNTED_CONDITION = '';
     }
 
-        // TODO: Include price options with participant count > 1.
+    // TODO: Include price options with participant count > 1.
 
-        $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
-        $query = "
-            SELECT COUNT(participant.id)
-            FROM civicrm_participant participant
-            LEFT JOIN civicrm_event  event
-                   ON event.id = participant.event_id
-            LEFT JOIN civicrm_participant_status_type status_type
-                   ON status_type.id = participant.status_id
-            INNER JOIN civicrm_option_value option_value_participant_role
-                    ON
-                        participant.role_id = option_value_participant_role.value
-                        OR participant.role_id LIKE CONCAT('%', option_value_participant_role.value, '{$value_separator}%')
-                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '%')
-                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '{$value_separator}%')
-            INNER JOIN civicrm_option_group option_group_participant_role
-                    ON option_group_participant_role.id = option_value_participant_role.option_group_id
-                    AND option_group_participant_role.name = 'participant_role'
-            WHERE status_type.class IN {$REGISTRATION_CLASSES}
-                  {$AND_IS_COUNTED_CONDITION}
-                  AND participant.event_id = {$event_id}
-                  {$AND_STATUS_ID_IN_LIST}
-                  {$AND_CONTACT_RESTRICTION}";
+    $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
+    // phpcs:disable Generic.Files.LineLength.TooLong
+    $query = <<<SQL
+      SELECT
+        IF(
+          -- If the line item count * the line item quantity is not 0
+          SUM(price_field_value.`count` * lineItem.qty),
+
+          -- then use the count * the quantity, ensuring each
+          -- actual participant record gets a result
+          SUM(price_field_value.`count` * lineItem.qty)
+            + COUNT(DISTINCT participant.id )
+            - COUNT(DISTINCT IF (price_field_value.`count`, participant.id, NULL)),
+
+          -- if the line item count is NULL or 0 then count the participants
+          COUNT(DISTINCT participant.id)
+        )
+      FROM civicrm_participant participant
+      LEFT JOIN civicrm_event event
+        ON event.id = participant.event_id
+      LEFT JOIN civicrm_participant_status_type status_type
+        ON status_type.id = participant.status_id
+      LEFT JOIN civicrm_line_item lineItem
+        ON
+          lineItem.entity_id = participant.id
+          AND  lineItem.entity_table = 'civicrm_participant'
+      LEFT JOIN civicrm_price_field_value price_field_value
+        ON
+          price_field_value.id = lineItem.price_field_value_id
+          AND price_field_value.`count`
+      INNER JOIN civicrm_option_value option_value_participant_role
+        ON
+          participant.role_id = option_value_participant_role.value
+          OR participant.role_id LIKE CONCAT('%', option_value_participant_role.value, '{$value_separator}%')
+          OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '%')
+          OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '{$value_separator}%')
+      INNER JOIN civicrm_option_group option_group_participant_role
+        ON
+          option_group_participant_role.id = option_value_participant_role.option_group_id
+          AND option_group_participant_role.name = 'participant_role'
+      WHERE status_type.class IN {$REGISTRATION_CLASSES}
+        {$AND_IS_COUNTED_CONDITION}
+        AND participant.event_id = {$event_id}
+        {$AND_STATUS_ID_IN_LIST}
+        {$AND_CONTACT_RESTRICTION}
+      SQL;
     // phpcs:enable
     return (int) CRM_Core_DAO::singleValueQuery($query);
   }
-
-  /**
-   * Create or identify the contact based on the collected data
-   *
-   * @param \Civi\RemoteParticipant\Event\RegistrationEvent $registration
-   *      event triggered by the RemoteParticipant.submit
-   */
-  public static function createContactXCM($registration) {
-    // get collected contact data
-    $contact_identification = $registration->getContactData();
-
-    // add contact type if it's missing
-    if (empty($contact_identification['contact_type'])) {
-      $contact_identification['contact_type'] = 'Individual';
-    }
 
     if (!$registration->isContactUpdated()) {
       if ($registration->getContactID()) {
@@ -659,242 +665,5 @@ class CRM_Remoteevent_Registration {
         }
       }
     }
-  }
-
-  /**
-   * Will calculate the participant status
-   *
-   * @param \Civi\RemoteParticipant\Event\RegistrationEvent $registration
-   *   registration event
-   */
-  public static function determineParticipantStatus($registration) {
-    // of there is already an issue, don't waste any more time on this
-    if ($registration->hasErrors()) {
-      return;
-    }
-
-    if ($registration->getParticipantID()) {
-      // there is already a registration identified
-      return;
-    }
-
-    // default status calculation
-    $participant_data = &$registration->getParticipantData();
-    $event_data = $registration->getEvent();
-
-    // check if this has a waiting list
-    if (empty($participant_data['participant_status_id'])) {
-      if (CRM_Remoteevent_RemoteEvent::hasActiveWaitingList($event_data['id'], $event_data)) {
-        $participant_data['participant_status_id'] = 'On waitlist';
-
-        if (!empty($event_data['waitlist_text'])) {
-          $registration->addStatus($event_data['waitlist_text']);
-        }
-        else {
-          $registration->addStatus(E::ts('You have been added to the waitlist.'));
-        }
-      }
-    }
-
-    // check if it registration requires approval
-    if (empty($participant_data['participant_status_id'])) {
-      if (!empty($event_data['requires_approval'])) {
-        // there is an active waiting list, see if need to get on it
-        $participant_data['participant_status_id'] = 'Awaiting approval';
-      }
-    }
-
-    // finally: the default status is Registered
-    if (empty($participant_data['participant_status_id'])) {
-      $participant_data['participant_status_id'] = 'Registered';
-    }
-  }
-
-  /**
-   * Will create a simple participant object
-   *
-   * @param \Civi\RemoteParticipant\Event\RegistrationEvent $registration
-   *   registration event
-   */
-  public static function createParticipant($registration) {
-    // of there is already an issue, don't waste any more time on this
-    if ($registration->hasErrors()) {
-      return;
-    }
-
-    // let's look into this
-    $participant_data = &$registration->getParticipantData();
-
-    if ($registration->getParticipantID()) {
-      // this is updating an existing participant
-      $participant_data['id'] = $registration->getParticipantID();
-      if (!$registration->isParticipantUpdated()) {
-        $participant_data['force_trigger_eventmessage'] = 1;
-      }
-
-    }
-    else {
-      // we're creating an all new participant
-      if (!isset($participant_data['contact_id'])) {
-        $participant_data['contact_id'] = $registration->getContactID();
-      }
-    }
-
-    // Modify Participant Data Event here. This can be used to maybe manually update/set participant data
-    $update_participant_event = new UpdateParticipantEvent($participant_data);
-    // dispatch Registration Profile Event and try to instantiate a profile class from $profile_name
-    Civi::dispatcher()->dispatch(UpdateParticipantEvent::NAME, $update_participant_event);
-    $participant_data = $update_participant_event->get_participant_data();
-
-    // run create/update
-    CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
-    $creation = civicrm_api3('Participant', 'create', $participant_data);
-    $registration->setParticipantUpdated();
-    $participant = civicrm_api3('Participant', 'getsingle', ['id' => $creation['id']]);
-    CRM_Remoteevent_CustomData::labelCustomFields($participant);
-    $registration->setParticipant($participant);
-
-    // invalidate caches
-    self::invalidateRegistrationCache($participant_data['contact_id'], $participant_data['event_id']);
-    CRM_Remoteevent_RemoteEvent::invalidateRemoteEvent($registration->getEventID());
-  }
-
-  public static function registerAdditionalParticipants(RegistrationEvent $registration): void {
-    if ($registration->hasErrors() || [] === $registration->getAdditionalParticipantsData()) {
-      return;
-    }
-
-    $additionalContactsData = $registration->getAdditionalContactsData();
-    $additionalParticipantsData = $registration->getAdditionalParticipantsData();
-
-    foreach ($additionalContactsData as $participantNo => $contactData) {
-      CRM_Remoteevent_CustomData::resolveCustomFields($contactData);
-      $match = civicrm_api3('Contact', 'getorcreate', $contactData);
-      if (!isset($match['id'])) {
-        throw new \RuntimeException('Contact for additional participant could not be identified or created.');
-      }
-
-      $additionalParticipantsData[$participantNo]['contact_id']
-        = $additionalContactsData[$participantNo]['id'] = $contactData['id'] = $match['id'];
-
-      // Check for existing participants for the identified contact.
-      $cannotRegisterReason = CRM_Remoteevent_Registration::cannotRegister(
-        $registration->getEventID(),
-        $contactData['id'],
-        $registration->getEvent()
-      );
-      if ($cannotRegisterReason) {
-        $registration->addError(
-        E::ts('Additional participant %1: %2', [
-          1 => $participantNo,
-          2 => $cannotRegisterReason,
-        ])
-        );
-      }
-      // Do not register participants yet, as there might be reasons for not
-      // registering, and we want to collect all of them first.
-    }
-
-    $registration->setAdditionalContactsData($additionalContactsData);
-
-    // Abort if any additional participant can't be registered.
-    if ($registration->hasErrors()) {
-      return;
-    }
-
-    // Create additional participants.
-    foreach ($additionalParticipantsData as &$participantData) {
-      $participantData['registered_by_id'] = $registration->getParticipantID();
-      $participantData['register_date'] = date('Y-m-d H:i');
-      $participantRegistered = Participant::create(FALSE)
-        ->setValues($participantData)
-        ->execute()
-        ->single();
-
-      $participantData += $participantRegistered;
-    }
-
-    $registration->setAdditionalParticipantsData($additionalParticipantsData);
-  }
-
-  /**
-   * Get a (cached version) of ParticipantStatusType.get
-   */
-  public static function getParticipantStatusList() {
-    static $status_list = NULL;
-    if ($status_list === NULL) {
-      $status_list = [];
-      $query = civicrm_api3('ParticipantStatusType', 'get', ['option.limit' => 0]);
-      foreach ($query['values'] as $status) {
-        $status_list[$status['id']] = $status;
-      }
-    }
-    return $status_list;
-  }
-
-  /**
-   * Get a the class of the given status ID
-   *
-   * @param integer $participant_status_id
-   *   the status id
-   *
-   * @return string
-   *   class name: 'Positive', 'Negative', 'Pending'...
-   */
-  public static function getParticipantStatusClass($participant_status_id) {
-    $status_list = self::getParticipantStatusList();
-    $status = $status_list[$participant_status_id];
-    return $status['class'];
-  }
-
-  /**
-   * Get a the name of the given status ID
-   *
-   * @param integer $participant_status_id
-   *   the status id
-   *
-   * @return string
-   *   status (internal) name: 'Registered', 'Attended', ...
-   */
-  public static function getParticipantStatusName($participant_status_id) {
-    $status_list = self::getParticipantStatusList();
-    $status = $status_list[$participant_status_id];
-    return $status['name'];
-  }
-
-  /**
-   * Add the GTAC data to the get_form results
-   *
-   * @param \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent $get_form_results
-   *      event triggered by the RemoteParticipant.get_form API call
-   */
-  public static function addGtacField($get_form_results) {
-    $event = $get_form_results->getEvent();
-    if (!empty($event['event_remote_registration.remote_registration_gtac'])) {
-      $l10n = $get_form_results->getLocalisation();
-      $get_form_results->addFields([
-        'gtacs' => [
-          'type'        => 'fieldset',
-          'name'        => 'gtacs',
-          'label'       => $l10n->ts('General Terms and Conditions'),
-      // this should be at the end
-          'weight'      => 500,
-        ],
-        'gtac' => [
-          'name' => 'gtac',
-          'type' => 'Checkbox',
-          'validation' => '',
-          'weight' => 100,
-          'required' => 1,
-          'label' => $l10n->ts('I accept the following terms and conditions'),
-          'description' => '',
-          'parent' => 'gtacs',
-          'suffix' => $event['event_remote_registration.remote_registration_gtac'],
-          'suffix_display' => 'inline',
-          'suffix_dialog_label' => $l10n->ts('Details'),
-        ],
-      ]);
-    }
-  }
 
 }
