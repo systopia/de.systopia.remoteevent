@@ -19,6 +19,7 @@ use Civi\RemoteParticipant\Event\Util\ParticipantFormEventUtil;
 use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
+use Civi\RemoteParticipant\Event\ValidateEvent;
 
 /**
  * Abstract base to all registration profile implementations
@@ -275,111 +276,98 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
-    /**
-     * Validate the profile fields individually.
-     * This only validates the mere data types,
-     *   more complex validation (e.g. over multiple fields)
-     *   have to be performed by the profile implementations
-     *
-     * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
-     *      event triggered by the RemoteParticipant.validate or submit API call
-     */
-    public function validateSubmission($validationEvent)
-    {
-        $data = $validationEvent->getSubmission();
-        $event = $validationEvent->getEvent();
-        $additionalParticipantsCount = array_reduce(
-          preg_grep('#^additional_([0-9]+)(_|$)#', array_keys($data)),
-          function(int $carry, string $item) {
-            $currentCount = (int) preg_filter('#^additional_([0-9]+)(.*?)$#', '$1', $item);
-            return max($carry, $currentCount);
-          },
-          0
+  /**
+   * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
+   *   Event triggered by the RemoteParticipant.validate or submit API call.
+   */
+  public function validateSubmission(ValidateEvent $validationEvent) {
+    $this->validateNumberOfParticipants($validationEvent);
+    $this->validateFieldValues($validationEvent);
+    $this->validatePriceFields($validationEvent);
+  }
+
+  protected function validateNumberOfParticipants(ValidateEvent $validationEvent): void {
+    $event = $validationEvent->getEvent();
+    $l10n = $validationEvent->getLocalisation();
+    $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
+
+    if (
+      !empty($event['max_participants'])
+      && ($excessParticipants =
+        CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
+        + $validationEvent->getRequestedParticipantCount($additionalParticipantsCount)
+        - $event['max_participants'])
+      > 0
+    ) {
+      if (
+        !empty($event['has_waitlist'])
+        && (
+          $additionalParticipantsCount === 0
+          || !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
+        )
+      ) {
+        $validationEvent->addWarning(
+          $l10n->ts('Not enough vacancies for the number of requested participants.')
+          . ' '
+          . $l10n->ts('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
         );
-        $l10n = $validationEvent->getLocalisation();
-
-        // Validate number of participants.
-        if (
-            !empty($event['max_participants'])
-            && ($excessParticipants =
-              CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
-              + $validationEvent->getRequestedParticipantCount($additionalParticipantsCount)
-              - $event['max_participants'])
-            > 0
-        ) {
-            if (
-                !empty($event['has_waitlist'])
-                    && (
-                        $additionalParticipantsCount === 0
-                        || !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
-                    )
-            ) {
-                $validationEvent->addWarning(
-                    $l10n->ts('Not enough vacancies for the number of requested participants.')
-                    . ' '
-                    . $l10n->ts('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
-                );
-            }
-            else {
-                $validationEvent->addValidationError('', $l10n->ts('Not enough vacancies for the number of requested participants.'));
-            }
-        }
-
-        // Validate field values.
-        $fields = $this->getFields()
-          + CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantsFields($event, $additionalParticipantsCount);
-        foreach ($fields as $field_name => $field_spec) {
-            $value = $data[$field_name] ?? NULL;
-            if (
-              !empty($field_spec['required']) && ($value === null || $value === '')
-              // Files are always optional on update.
-              && ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')
-            ) {
-                $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
-            }
-            elseif ($field_spec['type'] === 'File') {
-                if ($value === NULL) {
-                  continue;
-                }
-
-                if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
-                  // File systems usually allow up to 255 characters.
-                  || strlen($value['filename']) > 255 || !is_string($value['content'] ?? NULL)
-                ) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
-                    continue;
-                }
-
-                $maxFilesize = (int) ($field_spec['max_filesize'] ?? 0);
-                if ($maxFilesize > 0) {
-                    // The file might need up to 38 % more space through Base64 encoding.
-                    if (strlen($value['content']) > ceil($maxFilesize * 1.38)) {
-                        $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
-                    }
-                }
-            }
-            else {
-                if (!$this->validateFieldValue($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
-                }
-                if (!$this->validateFieldLength($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts('Value too long'));
-                }
-            }
-        }
-
-        // Validate price fields.
-        if ((bool) $event['is_monetary']) {
-            foreach (self::validatePriceFields(
-              $event,
-              $data,
-              $additionalParticipantsCount,
-              $l10n
-            ) as $field_name => $error) {
-                $validationEvent->addValidationError($field_name, $error);
-            }
-        }
+      }
+      else {
+        $validationEvent->addValidationError(
+          '',
+          $l10n->ts('Not enough vacancies for the number of requested participants.')
+        );
+      }
     }
+  }
+
+  protected function validateFieldValues(ValidateEvent $validationEvent): void {
+    $data = $validationEvent->getSubmission();
+    $event = $validationEvent->getEvent();
+    $l10n = $validationEvent->getLocalisation();
+    $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
+    $fields = $this->getFields() + self::getAdditionalParticipantsFields($event, $additionalParticipantsCount);
+
+    foreach ($fields as $field_name => $field_spec) {
+      $value = $data[$field_name] ?? NULL;
+      if (
+        !empty($field_spec['required']) && ($value === NULL || $value === '')
+        // Files are always optional on update.
+        && ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')
+      ) {
+        $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
+      }
+      elseif ($field_spec['type'] === 'File') {
+        if ($value === NULL) {
+          continue;
+        }
+
+        if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
+          // File systems usually allow up to 255 characters.
+          || strlen($value['filename']) > 255 || !is_string($value['content'] ?? NULL)
+        ) {
+          $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+          continue;
+        }
+
+        $maxFilesize = (int) ($field_spec['max_filesize'] ?? 0);
+        if ($maxFilesize > 0) {
+          // The file might need up to 38 % more space through Base64 encoding.
+          if (strlen($value['content']) > ceil($maxFilesize * 1.38)) {
+            $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
+          }
+        }
+      }
+      else {
+        if (!$this->validateFieldValue($field_spec, $value)) {
+          $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+        }
+        if (!$this->validateFieldLength($field_spec, $value)) {
+          $validationEvent->addValidationError($field_name, $l10n->ts('Value too long'));
+        }
+      }
+    }
+  }
 
   /**
    * @phpstan-param array<string, mixed> $event
@@ -390,13 +378,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
    *   messages as values.
    * @throws \CRM_Core_Exception
    */
-  public static function validatePriceFields(
-    array $event,
-    array $submission,
-    int $additionalParticipantsCount,
-    CRM_Remoteevent_Localisation $l10n
-  ): array {
-    $errors = [];
+  protected function validatePriceFields(ValidateEvent $validationEvent): void {
+    $event = $validationEvent->getEvent();
+    if (!(bool) $event['is_monetary']) {
+      return;
+    }
+    $submission = $validationEvent->getSubmission();
+    $l10n = $validationEvent->getLocalisation();
+    $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
     $priceFields = PriceFieldUtil::getPriceFields($event);
     foreach (self::getPriceFieldsToValidate(
       $priceFields,
@@ -410,7 +399,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
       // Validate quantity being numeric.
       if ($priceField['price_field.is_enter_qty'] && !is_numeric($submission[$fieldName])) {
-        $errors[$fieldName] = $l10n->ts('Quantity must be numeric');
+        $validationEvent->addValidationError($fieldName, $l10n->ts('Quantity must be numeric'));
       }
 
       // Validate price field value being a valid option.
@@ -421,7 +410,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
           || !array_key_exists((int) $submission[$fieldName], $priceFieldValues)
         )
       ) {
-        $errors[$fieldName] = $l10n->ts('Invalid value');
+        $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
       }
 
       // Validate availability of price options.
@@ -432,12 +421,10 @@ abstract class CRM_Remoteevent_RegistrationProfile
           : 1;
         $currentCount = \CRM_Event_BAO_Participant::priceSetOptionsCount($event['id'])[$priceFieldValueId] ?? 0;
         if ($currentCount + $requestedCount[$priceFieldValueId] > $priceFieldValues[$priceFieldValueId]['max_value']) {
-          $errors[$fieldName] = $l10n->ts('Maximum number of price option exceeded');
+          $validationEvent->addValidationError($fieldName, $l10n->ts('Maximum number of price option exceeded'));
         }
       }
     }
-
-    return $errors;
   }
 
   /**
