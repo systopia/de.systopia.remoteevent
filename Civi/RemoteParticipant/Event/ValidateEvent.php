@@ -70,6 +70,17 @@ class ValidateEvent extends RemoteEvent {
     return $this->error_list;
   }
 
+  public function getAdditionalParticipantsCount(): int {
+    return array_reduce(
+      preg_grep('#^additional_([0-9]+)(_|$)#', array_keys($this->getSubmission())),
+      function(int $carry, string $item) {
+        $currentCount = (int) preg_filter('#^additional_([0-9]+)(.*?)$#', '$1', $item);
+        return max($carry, $currentCount);
+      },
+      0
+    );
+  }
+
   public function getRequestedParticipantCount(int $additionalParticipantsCount): int {
     $event = $this->getEvent();
     $submission = $this->getSubmission();
