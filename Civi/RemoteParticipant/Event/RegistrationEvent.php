@@ -200,26 +200,6 @@ class RegistrationEvent extends ChangingEvent
     }
 
   /**
-   * Get the event data
-   *
-   * @return array
-   *    event data
-   */
-  public function getEvent() {
-    return \CRM_Remoteevent_RemoteEvent::getRemoteEvent($this->getEventID());
-  }
-
-  /**
-   * Get the parameters of the original query
-   *
-   * @return array
-   *   parameters of the query
-   */
-  public function getQueryParameters() {
-    return $this->submission;
-  }
-
-  /**
    * @phpstan-return array<string, mixed>
    * @throws \CRM_Core_Exception
    */

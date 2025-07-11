@@ -213,7 +213,6 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
     $this->subscriptionManagerMock->expects(static::once())->method('subscribeWithDoubleOptIn')
       ->with(23, 2, 'Test Subject', 'Test Text');
 
-
     $this->subscriber->onRegistrationEvent($event);
   }
 
