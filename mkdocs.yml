@@ -2,6 +2,7 @@ site_name: CiviRemote Event
 site_description: 'This extension provides a lot of additional features to CiviCRMs events.'
 site_author: SYSTOPIA
 site_url: https://github.com/systopia/de.systopia.remoteevent
+repo_url: https://github.com/systopia/de.systopia.remoteevent
 
 theme:
   name: material
