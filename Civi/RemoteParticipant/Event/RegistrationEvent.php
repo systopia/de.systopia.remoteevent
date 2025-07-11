@@ -15,7 +15,8 @@
 
 
 namespace Civi\RemoteParticipant\Event;
-use Civi\RemoteEvent;
+
+use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
 
 /**
  * Class ValidateEvent
@@ -230,7 +231,7 @@ class RegistrationEvent extends ChangingEvent
       return $values;
     }
 
-    $priceFields = \CRM_Remoteevent_RegistrationProfile::getPriceFields($event);
+    $priceFields = PriceFieldUtil::getPriceFields($event);
 
     /**
      * @var $participants

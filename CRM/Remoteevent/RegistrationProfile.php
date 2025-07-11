@@ -13,28 +13,20 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\Api4\Participant;
 use Civi\RemoteParticipant\Event\Util\ParticipantFormEventUtil;
-use CRM_Remoteevent_ExtensionUtil as E;
-
-use Civi\RemoteEvent as RemoteEvent;
+use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
-use Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
-use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
-
 
 /**
  * Abstract base to all registration profile implementations
  */
 abstract class CRM_Remoteevent_RegistrationProfile
 {
-  /**
-   * @phpstan-var array<int, array<string, mixed>>
-   */
-  public static array $priceFieldValues = [];
 
-    /**
+  /**
      * Get the internal name of the profile represented.
      *
      * This name has to be identical to the corresponding OptionGroupValue
@@ -110,73 +102,19 @@ abstract class CRM_Remoteevent_RegistrationProfile
   /**
    * @phpstan-param array<string, mixed> $event
    *
-   * @phpstan-return array<int, array<string, mixed>>
-   */
-  public static function getPriceFields(array $event): array {
-    return \Civi\Api4\Event::get(FALSE)
-      ->addSelect(
-        'price_field.*',
-        'price_field_value.id',
-        'price_field_value.max_value',
-      )
-      ->addJoin(
-        'PriceSetEntity AS price_set_entity',
-        'INNER',
-        ['price_set_entity.entity_table', '=', '"civicrm_event"'],
-        ['price_set_entity.entity_id', '=', 'id']
-      )
-      ->addJoin(
-        'PriceSet AS price_set',
-        'INNER',
-        ['price_set.id', '=', 'price_set_entity.price_set_id'],
-        ['price_set.is_active', '=', 1]
-      )
-      ->addJoin(
-        'PriceField AS price_field',
-        'LEFT',
-        ['price_field.price_set_id', '=', 'price_set.id']
-      )
-      // For price fields with a selectable quantity, there is one single price field value; include its ID.
-      ->addJoin(
-        'PriceFieldValue AS price_field_value',
-        'LEFT',
-        ['price_field_value.price_field_id', '=', 'price_field.id'],
-        ['price_field.is_enter_qty', '=', TRUE]
-      )
-      ->addWhere('id', '=', $event['id'])
-      ->execute()
-      ->indexBy('price_field.id')
-      ->getArrayCopy();
-  }
-
-  /**
-   * @phpstan-return array<int, array<string, mixed>>
-   */
-  public static function getPriceFieldValues(int $priceFieldId): array {
-    if (!isset(static::$priceFieldValues[$priceFieldId])) {
-      static::$priceFieldValues[$priceFieldId] = \Civi\Api4\PriceFieldValue::get(FALSE)
-        ->addWhere('price_field_id', '=', $priceFieldId)
-        ->execute()
-        ->indexBy('id')
-        ->getArrayCopy();
-    }
-    return static::$priceFieldValues[$priceFieldId];
-  }
-
-  /**
-   * @phpstan-param array<string, mixed> $event
+   * @param string|null $locale
    *
-   * @phpstan-return array<string, array<string, mixed>>
+   * @return array
    * @throws \CRM_Core_Exception
    */
-  public function getProfilePriceFields(array $event, ?string $locale = NULL): array {
+  public static function getProfilePriceFields(array $event, ?string $locale = NULL): array {
     $fields = [];
 
     if (!(bool) $event['is_monetary']) {
       return $fields;
     }
 
-    $priceFields = self::getPriceFields($event);
+    $priceFields = PriceFieldUtil::getPriceFields($event);
     if (count($priceFields) === 0) {
       return $fields;
     }
@@ -256,7 +194,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     return $fields;
   }
 
-    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
+    public static function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
     {
         $fields = [];
         if (!empty($event['is_multiple_registrations'])) {
@@ -268,7 +206,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 $event['event_remote_registration.remote_registration_additional_participants_profile']
             );
             $additional_fields = $additional_participants_profile->getFields($locale);
-            $additional_fields += $additional_participants_profile->getProfilePriceFields($event, $locale);
+            $additional_fields += CRM_Remoteevent_RegistrationProfile::getProfilePriceFields($event, $locale);
             $fields['additional_participants'] = [
                 'type' => 'fieldset',
                 'name' => 'additional_participants',
@@ -343,7 +281,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
      *   more complex validation (e.g. over multiple fields)
      *   have to be performed by the profile implementations
      *
-     * @param ValidateEvent $validationEvent
+     * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
      *      event triggered by the RemoteParticipant.validate or submit API call
      */
     public function validateSubmission($validationEvent)
@@ -365,7 +303,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
             !empty($event['max_participants'])
             && ($excessParticipants =
               CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
-              + static::getRequestedParticipantCount($event, $data, $additionalParticipantsCount)
+              + $validationEvent->getRequestedParticipantCount($additionalParticipantsCount)
               - $event['max_participants'])
             > 0
         ) {
@@ -389,7 +327,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         // Validate field values.
         $fields = $this->getFields()
-          + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
+          + CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantsFields($event, $additionalParticipantsCount);
         foreach ($fields as $field_name => $field_spec) {
             $value = $data[$field_name] ?? NULL;
             if (
@@ -432,11 +370,11 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         // Validate price fields.
         if ((bool) $event['is_monetary']) {
-            foreach ($this->validatePriceFields(
-                $event,
-                $data,
-                $additionalParticipantsCount,
-                $l10n
+            foreach (self::validatePriceFields(
+              $event,
+              $data,
+              $additionalParticipantsCount,
+              $l10n
             ) as $field_name => $error) {
                 $validationEvent->addValidationError($field_name, $error);
             }
@@ -452,20 +390,20 @@ abstract class CRM_Remoteevent_RegistrationProfile
    *   messages as values.
    * @throws \CRM_Core_Exception
    */
-  protected function validatePriceFields(
+  public static function validatePriceFields(
     array $event,
     array $submission,
     int $additionalParticipantsCount,
     CRM_Remoteevent_Localisation $l10n
   ): array {
     $errors = [];
-    $priceFields = static::getPriceFields($event);
-    foreach (static::getPriceFieldsToValidate(
+    $priceFields = PriceFieldUtil::getPriceFields($event);
+    foreach (self::getPriceFieldsToValidate(
       $priceFields,
       $additionalParticipantsCount
     ) as $fieldName => $priceFieldId) {
       $priceField = $priceFields[$priceFieldId];
-      $priceFieldValues = static::getPriceFieldValues($priceField['price_field.id']);
+      $priceFieldValues = PriceFieldUtil::getPriceFieldValues($priceField['price_field.id']);
       $priceFieldValueId = $priceField['price_field.is_enter_qty']
         ? array_key_first($priceFieldValues)
         : (int) $submission[$fieldName];
@@ -521,46 +459,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     return $priceFieldsToValidate;
   }
 
-  public static function getRequestedParticipantCount(
-    array $event,
-    array $submission,
-    int $additionalParticipantsCount
-  ): int {
-    $priceFields = static::getPriceFields($event);
-    $maxRequestedParticipantCounts = [];
-    foreach (static::getPriceFieldsToValidate(
-      $priceFields,
-      $additionalParticipantsCount
-    ) as $fieldName => $priceFieldId) {
-      /** @var $participantNo 0 for the initial participant, 1-N for additional participants */
-      $participantNo = self::getAdditionalParticipantNo($fieldName) ?? 0;
-      $priceField = $priceFields[$priceFieldId];
-      $priceFieldValues = static::getPriceFieldValues($priceField['price_field.id']);
-      $priceFieldValueId = $priceField['price_field.is_enter_qty']
-        ? array_key_first($priceFieldValues)
-        : (int) $submission[$fieldName];
-
-      // For each participant (initial and additional), use the maximum count of participants in price fields to be used
-      // for this registration.
-      $maxRequestedParticipantCounts[$participantNo] = max(
-        $priceFieldValues[$priceFieldValueId]['count'] ?? 1,
-        $maxRequestedParticipantCounts[$participantNo]
-      );
-    }
-
-    return array_sum($maxRequestedParticipantCounts);
-  }
-
-  public static function getAdditionalParticipantNo(string $fieldKey): ?int {
-    $matches = [];
-    if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
-      return (int) $matches[1];
-    }
-
-    return NULL;
-  }
-
-    /**
+  /**
      * This function will tell you which entity/entities the given field
      *   will relate to. It would mostly be Contact or Participant (or both)
      *
@@ -620,7 +519,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Add the profile data to the get_form results
      *
-     * @param RemoteEvent $remote_event
+     * @param \Civi\RemoteEvent $remote_event
      *      event triggered by the RemoteParticipant.get_form API call
      *
      * @return \CRM_Remoteevent_RegistrationProfile
@@ -685,8 +584,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
         if ('create' === $get_form_results->getContext()) {
-          $fields += $profile->getProfilePriceFields($event, $locale);
-          $fields += $profile->getAdditionalParticipantsFields($event, NULL, $locale);
+          $fields += CRM_Remoteevent_RegistrationProfile::getProfilePriceFields($event, $locale);
+          $fields += CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantsFields($event, NULL, $locale);
         }
         $get_form_results->addFields($fields);
 
@@ -707,7 +606,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Validate the profile fields
      *
-     * @param ValidateEvent $validationEvent
+     * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
      *      event triggered by the RemoteParticipant.validate or submit API call
      */
     public static function validateProfileData($validationEvent)
