@@ -27,7 +27,7 @@ use Civi\RemoteParticipant\Event\ValidateEvent;
 abstract class CRM_Remoteevent_RegistrationProfile
 {
 
-  /**
+    /**
      * Get the internal name of the profile represented.
      *
      * This name has to be identical to the corresponding OptionGroupValue
@@ -124,7 +124,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     $fields['price'] = [
       'type' => 'fieldset',
       'name' => 'price',
-      // TODO: Is the label correctly localised with the requested $locale?
+      // TODO: Is this configurable option localizable?
       'label' => $event['fee_label'],
     ];
     foreach ($priceFields as $priceField) {
@@ -137,7 +137,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         // TODO: Validate types.
         'type' => $priceField['price_field.html_type'],
         'name' => 'price_' . $priceField['price_field.name'],
-        // TODO: Localize label with given $locale.
+        // TODO: Make configurable price field labels localizable.
         'label' => $priceField['price_field.label'],
         'weight' => $priceField['price_field.weight'],
         'required' => (bool) $priceField['price_field.is_required'],
@@ -176,14 +176,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
       // Add prefixed help text.
       if (isset($priceField['price_field.help_pre'])) {
-        // TODO: Localize with given $locale.
+        // TODO: Make configurable price field labels localizable.
         $field['prefix'] = $priceField['price_field.help_pre'];
         $field['prefix_display'] = 'inline';
       }
 
       // Add suffixed help text.
       if (isset($priceField['price_field.help_post'])) {
-        // TODO: Localize with given $locale.
+        // TODO: Make configurable price field labels localizable.
         $field['suffix'] = $priceField['price_field.help_post'];
         $field['suffix_display'] = 'inline';
       }
@@ -207,7 +207,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 $event['event_remote_registration.remote_registration_additional_participants_profile']
             );
             $additional_fields = $additional_participants_profile->getFields($locale);
-            $additional_fields += CRM_Remoteevent_RegistrationProfile::getProfilePriceFields($event, $locale);
+            $additional_fields += static::getProfilePriceFields($event, $locale);
             $fields['additional_participants'] = [
                 'type' => 'fieldset',
                 'name' => 'additional_participants',
@@ -326,7 +326,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     $event = $validationEvent->getEvent();
     $l10n = $validationEvent->getLocalisation();
     $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
-    $fields = $this->getFields() + self::getAdditionalParticipantsFields($event, $additionalParticipantsCount);
+    $fields = $this->getFields() + static::getAdditionalParticipantsFields($event, $additionalParticipantsCount);
 
     foreach ($fields as $field_name => $field_spec) {
       $value = $data[$field_name] ?? NULL;
@@ -446,7 +446,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     return $priceFieldsToValidate;
   }
 
-  /**
+    /**
      * This function will tell you which entity/entities the given field
      *   will relate to. It would mostly be Contact or Participant (or both)
      *
@@ -470,7 +470,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
-  /**
+    /**
      * Give the profile a chance to manipulate the contact data before it's being sent off to
      *   the contact creation/update
      *
@@ -571,8 +571,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
         if ('create' === $get_form_results->getContext()) {
-          $fields += CRM_Remoteevent_RegistrationProfile::getProfilePriceFields($event, $locale);
-          $fields += CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantsFields($event, NULL, $locale);
+          $fields += static::getProfilePriceFields($event, $locale);
+          $fields += static::getAdditionalParticipantsFields($event, NULL, $locale);
         }
         $get_form_results->addFields($fields);
 

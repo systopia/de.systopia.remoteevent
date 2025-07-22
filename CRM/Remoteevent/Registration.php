@@ -486,7 +486,7 @@ class CRM_Remoteevent_Registration
           -- then use the count * the quantity, ensuring each
           -- actual participant record gets a result
           SUM(price_field_value.`count` * lineItem.qty)
-            + COUNT(DISTINCT participant.id )
+            + COUNT(DISTINCT participant.id)
             - COUNT(DISTINCT IF (price_field_value.`count`, participant.id, NULL)),
 
           -- if the line item count is NULL or 0 then count the participants

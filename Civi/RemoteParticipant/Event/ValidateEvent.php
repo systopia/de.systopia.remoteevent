@@ -37,19 +37,19 @@ class ValidateEvent extends RemoteEvent {
   /**
    * @phpstan-return array<string, mixed>
    */
-  protected $submission;
+  protected array $submission;
+
+  public function __construct($submission_data, $error_list = []) {
+    $this->submission = $submission_data;
+    $this->error_list = $error_list;
+    $this->token_usages = ['invite', 'update'];
+  }
 
   /**
    * {@inheritDoc}
    */
   public function getQueryParameters(): array {
     return $this->submission;
-  }
-
-  public function __construct($submission_data, $error_list = []) {
-    $this->submission = $submission_data;
-    $this->error_list = $error_list;
-    $this->token_usages = ['invite', 'update'];
   }
 
   /**
