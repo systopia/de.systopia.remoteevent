@@ -516,12 +516,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
             unset($event['event_remote_registration.remote_registration_default_profile']);
         }
 
-        // set enabled profiles
-        $enabled_profiles      = $event['event_remote_registration.remote_registration_profiles'];
-        $enabled_profile_names = [];
-        if (is_array($enabled_profiles)) {
-            $enabled_profile_names = array_intersect($enabled_profiles, array_keys($profiles));
-        }
+      // set enabled profiles
+      $enabled_profiles = $event['event_remote_registration.remote_registration_profiles'] ?? [];
+      $enabled_profile_names = array_intersect($enabled_profiles, array_keys($profiles));
         $event['enabled_profiles'] = implode(',', $enabled_profile_names);
         unset($event['event_remote_registration.remote_registration_profiles']);
 
@@ -538,11 +535,8 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         // set enabled UPDATE profiles
         if (isset($event['event_remote_registration.remote_registration_update_profiles'])) {
-            $enabled_profiles      = $event['event_remote_registration.remote_registration_update_profiles'];
-            $enabled_profile_names = [];
-            if (is_array($enabled_profiles)) {
-                $enabled_profile_names = array_intersect($enabled_profiles, array_keys($profiles));
-            }
+            $enabled_profiles = $event['event_remote_registration.remote_registration_update_profiles'] ?? [];
+            $enabled_profile_names = array_intersect($enabled_profiles, array_keys($profiles));
             $event['enabled_update_profiles'] = implode(',', $enabled_profile_names);
             unset($event['event_remote_registration.remote_registration_update_profiles']);
         } else {

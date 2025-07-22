@@ -57,7 +57,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
         } catch (CiviCRM_API3_Exception $ex) {
             // todo: check error message?
              $error_message = $ex->getMessage();
-             $this->assertRegExp('/no participants found/i', $error_message, "This seems to be the wrong kind of exception");
+             $this->assertMatchesRegularExpression('/no participants found/i', $error_message, "This seems to be the wrong kind of exception");
         }
     }
 

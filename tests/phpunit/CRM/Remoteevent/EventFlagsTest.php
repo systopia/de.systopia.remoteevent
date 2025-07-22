@@ -307,6 +307,6 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase
     protected function checkFlagFormat($flag_name, $pattern, $data)
     {
         $this->assertArrayHasKey($flag_name, $data, "The flag {$flag_name} should always be there.");
-        $this->assertRegExp($pattern, $data[$flag_name], "The flag {$flag_name} has in invalid value: '{$data[$flag_name]}'");
+        $this->assertMatchesRegularExpression($pattern, $data[$flag_name], "The flag {$flag_name} has in invalid value: '{$data[$flag_name]}'");
     }
 }
