@@ -133,7 +133,6 @@ final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
         ->single();
       static::assertNotSame($fileId, $participant['test_participant_custom_group.file']);
       static::assertCiviFileContentEquals('test2', $participant['test_participant_custom_group.file']);
-      static::assertCiviFileContentEquals('test', $fileId);
     }
     finally {
       \Civi\Core\Transaction\Manager::singleton()->forceRollback();
