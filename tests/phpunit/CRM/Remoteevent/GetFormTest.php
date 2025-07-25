@@ -105,4 +105,16 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
 
     }
 
+    public function testWithPriceFields(): void {
+      // TODO: Test for price fields for additional participants.
+      $event = $this->createRemoteEvent([]);
+      $priceFields = $this->addPriceFields((int) $event['id']);
+
+      $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+        'event_id' => $event['id'],
+      ])['values'];
+
+      $this->assertGetFormPriceFields($fields, $priceFields);
+    }
+
 }

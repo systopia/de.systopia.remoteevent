@@ -839,7 +839,7 @@ class CRM_Remoteevent_Registration
         $order = \Civi\Api4\Order::create(FALSE)
           ->setContributionValues([
             'contact_id' => $registration->getContactID(),
-            'financial_type_id' => $event['financial_type_id'],
+            'financial_type_id' => (int) $event['financial_type_id'],
           ]);
         foreach ($registration->getPriceFieldValues() as $value) {
           $order->addLineItem([

@@ -143,4 +143,76 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         ], "Value too long");
     }
 
+    public function testRegistrationWithPriceFields(): void {
+      $event = $this->createRemoteEvent();
+      $priceFields = $this->addPriceFields((int) $event['id']);
+
+      $contact = $this->createContact();
+      $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+        'event_id' => $event['id'],
+      ])['values'];
+      $priceFieldOneValue = isset($fields['price_' . $priceFields[0]['name']]['options'])
+        // First option
+        ? key($fields['price_' . $priceFields[0]['name']]['options'])
+        // Quantity of 2
+        : 2;
+      $priceFieldTwoValue = isset($fields['price_' . $priceFields[1]['name']]['options'])
+        // First option
+        ? key($fields['price_' . $priceFields[1]['name']]['options'])
+        // Quantity of 2
+        : 2;
+
+      $registration = $this->registerRemote($event['id'], [
+        'first_name' => $contact['first_name'],
+        'last_name'  => $contact['last_name'],
+        'email' => $contact['email'],
+        'price_' . $priceFields[0]['name'] => $priceFieldOneValue,
+        'price_' . $priceFields[1]['name'] => $priceFieldTwoValue,
+      ]);
+
+      $this->assertAPISuccess($registration, 'Registration with price fields failed');
+
+      $lineItems = \Civi\Api4\LineItem::get(TRUE)
+        ->addSelect('participant.contact_id', 'price_field_id', 'price_field_value_id', 'qty')
+        ->addJoin('Participant AS participant', 'INNER', ['participant.id', '=', 'entity_id'])
+        ->addWhere('entity_table', '=', 'civicrm_participant')
+        ->addWhere('price_field_id', 'IN', array_column($priceFields, 'id'))
+        ->addWhere('participant.id', '=', $registration['participant_id'])
+        ->execute()
+        ->getArrayCopy();
+
+      // Assert number of line items.
+      $this->assertCount(2, $lineItems, sprintf("Expected 2 line items but found %d", count($lineItems)));
+
+      // Assert line item for the option price field.
+      $this->assertArraySubset(
+        [
+          'price_field_id' => $priceFields[0]['id'],
+          'price_field_value_id' => $priceFieldOneValue,
+        ],
+        $lineItems[0],
+        FALSE,
+        sprintf(
+          "Expected line item with price field value ID %d for price field ID %d",
+          $priceFields[0]['id'],
+          $priceFieldOneValue
+        )
+      );
+
+      // Assert line item for the amount price field.
+      $this->assertArraySubset(
+        [
+          'price_field_id' => $priceFields[1]['id'],
+          'qty' => $priceFieldTwoValue,
+        ],
+        $lineItems[1],
+        FALSE,
+        sprintf(
+          "Expected line item with price field value ID %d for price field ID %d",
+          $priceFields[1]['id'],
+          $priceFieldTwoValue
+        )
+      );
+    }
+
 }
