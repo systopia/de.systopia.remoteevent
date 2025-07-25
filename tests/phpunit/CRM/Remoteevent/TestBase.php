@@ -434,9 +434,110 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
       $count = mt_rand(1, count($array) - 1);
     }
 
-    $random_keys = array_rand($array, $count);
-    if (!is_array($random_keys)) {
-      $random_keys = [$random_keys];
+  /**
+   * @phpstan-return list<array<string, mixed>>
+   *   A list of price fields added to the event.
+   */
+    public function addPriceFields(int $eventId): array {
+      $priceFields = [];
+
+      $priceSet = \Civi\Api4\PriceSet::create(TRUE)
+        ->addValue('title', 'Test Price Set')
+        ->addValue('extends:name', ['CiviEvent'])
+        ->addValue('name', 'test_price_set')
+        ->execute()
+        ->single();
+
+      $optionsPriceField = \Civi\Api4\PriceField::create(TRUE)
+        ->addValue('price_set_id', $priceSet['id'])
+        ->addValue('name', 'test_price_options_field')
+        ->addValue('label', 'Test Price Options Field')
+        ->addValue('html_type', 'Select')
+        ->execute()
+        ->single();
+      $priceFields[] = $optionsPriceField;
+      $priceFieldValueRegular = \Civi\Api4\PriceFieldValue::create(TRUE)
+        ->addValue('label', 'Regular Fee')
+        ->addValue('amount', 20)
+        // price_field_id.name does not seem to be accepted, so use the actual ID.
+        ->addValue('price_field_id', $optionsPriceField['id'])
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->execute();
+      $priceFieldValueDiscount = \Civi\Api4\PriceFieldValue::create(TRUE)
+        ->addValue('label', 'Discount Fee')
+        ->addValue('amount', 10)
+        ->addValue('price_field_id', $optionsPriceField['id'])
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->execute();
+
+      $amountPriceField = \Civi\Api4\PriceField::create(TRUE)
+        ->addValue('price_set_id', $priceSet['id'])
+        ->addValue('name', 'test_price_amount_field')
+        ->addValue('label', 'Test Price Amount Field')
+        ->addValue('html_type', 'Text')
+        ->addValue('is_enter_qty', TRUE)
+        ->execute()
+        ->single();
+      $priceFieldValueAmount = \Civi\Api4\PriceFieldValue::create(TRUE)
+        ->addValue('label', 'Amount of Stuff')
+        ->addValue('amount', 25)
+        ->addValue('price_field_id', $amountPriceField['id'])
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->execute();
+      $priceFields[] = $amountPriceField;
+
+      // Make the event monetary and assign a financial type.
+      \Civi\Api4\Event::update(TRUE)
+        ->addValue('is_monetary', TRUE)
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->addValue('fee_label', 'Test Fee Label')
+        ->addValue('currency', 'EUR')
+        ->addWhere('id', '=', $eventId)
+        ->execute();
+
+      // Assign the price set to the event.
+      \Civi\Api4\PriceSetEntity::create(TRUE)
+        ->addValue('entity_table', 'civicrm_event')
+        ->addValue('entity_id', $eventId)
+        ->addValue('price_set_id', $priceSet['id'])
+        ->execute();
+
+      return $priceFields;
+    }
+
+    /**
+     * Create a new session
+     *
+     * @params
+     * @param array $session_details
+     *   overrides the default values
+     *
+     * @return array
+     *  contact data
+     */
+    public function createEventSession($event_id, $session_details = [])
+    {
+        // prepare event
+        $session_data = [
+            'event_id'         => $event_id,
+            'title'            => $this->randomString(50),
+            'is_active'        => 1,
+            'start_date'       => $this->getUniqueDateTime(),
+            'end_date'         => $this->getUniqueDateTime(),
+            //'slot_id'        => '',
+            'category_id'      => 1,
+            'type_id'          => 1,
+            'description'      => $this->randomString(50),
+            'max_participants' => null,
+        ];
+        foreach ($session_details as $key => $value) {
+            $session_data[$key] = $value;
+        }
+
+        // create contact
+        $result = $this->traitCallAPISuccess('Session', 'create', $session_data);
+        $session = $this->traitCallAPISuccess('Session', 'getsingle', ['id' => $result['id']]);
+        return $session;
     }
 
     // create result array
@@ -701,4 +802,134 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     parent::tearDown();
   }
 
+        $this->assertArrayHasKey($status_name, $participant_statuses, "Participant status '{$status_name} doesn't exist.");
+        return $participant_statuses[$status_name];
+    }
+
+    /**
+     * Verify that the participant object has the right status
+     *
+     * @param integer $participant_id
+     *   the participant ID
+     * @param integer|string $participant_status
+     *   the expected participant status
+     * @param string $failure_msg
+     *   message to log in case of failure
+     */
+    public function assertParticipantStatus($participant_id, $participant_status, $failure_msg)
+    {
+        $participant = $this->traitCallAPISuccess('Participant', 'get', ['id' => $participant_id]);
+        $this->assertGreaterThan(0, $participant['count'], $failure_msg . " (doesn't exist)");
+        $this->assertLessThan(2, $participant['count'], $failure_msg . " (ambiguous)");
+        $participant = reset($participant['values']);
+
+        $this->assertEquals($this->getParticipantStatusId($participant_status, true), $participant['participant_status_id'], $failure_msg);
+    }
+
+    /**
+     * Verify that the RemoteContact.get_form standard 'fields' are there
+     *
+     * @param array $fields
+     *   the fields reported by the get_form
+     * @param boolean $strip_fields
+     *   if true, the standard fields are removed from the $fields array
+     */
+    public function assertGetFormStandardFields(&$fields, $strip_fields = false)
+    {
+        // todo: check more?
+        $this->assertArrayHasKey('event_id', $fields, "RemoteContact.get_form should contain 'event_id' field");
+        $field_spec = $fields['event_id'];
+        $this->assertArrayHasKey('profile', $fields, "RemoteContact.get_form should contain 'profile' field");
+        $field_spec = $fields['profile'];
+        $this->assertArrayHasKey('remote_contact_id', $fields, "RemoteContact.get_form should contain 'remote_contact_id' field");
+        $field_spec = $fields['remote_contact_id'];
+
+        if ($strip_fields) {
+            unset($fields['event_id']);
+            unset($fields['profile']);
+            unset($fields['remote_contact_id']);
+        }
+    }
+
+    public function assertGetFormPriceFields(&$fields, $priceFields): void {
+      foreach ($priceFields as $priceField) {
+        $formFieldName = 'price_' . $priceField['name'];
+        $this->assertArrayHasKey(
+          $formFieldName,
+          $fields,
+          sprintf("RemoteContact.get_form should contain '%s' field", $formFieldName)
+        );
+      }
+    }
+
+    /**
+     * Create a new, unique campaign
+     */
+    public function getCampaign() {
+        $campaign_name = $this->randomString();
+        $campaign = $this->traitCallAPISuccess('Campaign', 'create', [
+            'name' => $campaign_name,
+            'title' => $campaign_name,
+            'campaign_type_id' => 1,
+            'status_id' => 1,
+        ]);
+        return $this->traitCallAPISuccess('Campaign', 'getsingle', ['id' => $campaign['id']]);
+    }
+
+    /**
+     * Get a (within this test) unique
+     *  timestamp. It starts with now+1h and
+     *  increments in 5 minute interval
+     *
+     * @return string timestamp
+     */
+    public function getUniqueDateTime()
+    {
+        static $last_timestamp = null;
+        if ($last_timestamp === null) {
+            $last_timestamp = strtotime('now + 1 hour');
+        } else {
+            $last_timestamp = strtotime('+5 minutes', $last_timestamp);
+        }
+        return date('YmdHis', $last_timestamp);
+    }
+
+
+    /**
+     * Create an associative array from a list of fields specs in the form of
+     * [
+     *   [
+     *      'name'        => 'some field name',
+     *      'type'        => CRM_Utils_Type::T_STRING,
+     *      'value'       => 'some value',
+     *      'title'       => 'some title',
+     *      'localizable' => 0,
+     *   ],
+     *    ...
+     * ]
+     *
+     * @param array $field_array
+     *    the outer array
+     * @param string $key_field
+     *    the inner field to be used as key
+     * @param string $value_field
+     *    the inner field to be used as value
+     *
+     * @return array
+     *    the extracted associative array
+     */
+    public function mapFieldArray($field_array, $key_field = 'name', $value_field = 'value')
+    {
+        $result = [];
+        foreach ($field_array as $field_spec) {
+            if (!isset($field_spec[$key_field])) {
+                $this->fail("Field array doesn't have key field '{$key_field}'");
+            }
+            if (!isset($field_spec[$value_field])) {
+                $this->fail("Field array doesn't have value field '{$value_field}'");
+            }
+            $result[$field_spec[$key_field]] = $field_spec[$value_field];
+        }
+        return $result;
+    }
 }
