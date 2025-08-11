@@ -228,20 +228,20 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         // load and set defaults
         if ($this->_id) {
             $field_list = [
-                'event_remote_registration.remote_registration_enabled'                => 'remote_registration_enabled',
-                'event_remote_registration.remote_registration_default_profile'        => 'remote_registration_default_profile',
-                'event_remote_registration.remote_registration_profiles'               => 'remote_registration_profiles',
+                'event_remote_registration.remote_registration_enabled' => 'remote_registration_enabled',
+                'event_remote_registration.remote_registration_default_profile' => 'remote_registration_default_profile',
+                'event_remote_registration.remote_registration_profiles' => 'remote_registration_profiles',
                 'event_remote_registration.remote_registration_default_update_profile' => 'remote_registration_default_update_profile',
-                'event_remote_registration.remote_registration_update_profiles'        => 'remote_registration_update_profiles',
-                'event_remote_registration.remote_use_custom_event_location'           => 'remote_use_custom_event_location',
-                'event_remote_registration.remote_registration_gtac'                   => 'remote_registration_gtac',
-                'event_remote_registration.remote_registration_external_identifier'    => 'remote_registration_external_identifier',
-                'event_remote_registration.remote_disable_civicrm_registration'        => 'remote_disable_civicrm_registration',
-                'event_remote_registration.remote_registration_suspended'              => 'remote_registration_suspended',
+                'event_remote_registration.remote_registration_update_profiles' => 'remote_registration_update_profiles',
+                'event_remote_registration.remote_use_custom_event_location' => 'remote_use_custom_event_location',
+                'event_remote_registration.remote_registration_gtac' => 'remote_registration_gtac',
+                'event_remote_registration.remote_registration_external_identifier' => 'remote_registration_external_identifier',
+                'event_remote_registration.remote_disable_civicrm_registration' => 'remote_disable_civicrm_registration',
+                'event_remote_registration.remote_registration_suspended' => 'remote_registration_suspended',
                 'event_remote_registration.require_user_account' => 'require_user_account',
-                'event_remote_registration.remote_registration_xcm_profile'            => 'remote_registration_xcm_profile',
+                'event_remote_registration.remote_registration_xcm_profile' => 'remote_registration_xcm_profile',
                 'event_remote_registration.remote_registration_additional_participants_waitlist' => 'remote_registration_additional_participants_waitlist',
-                'event_remote_registration.remote_registration_update_xcm_profile'     => 'remote_registration_update_xcm_profile',
+                'event_remote_registration.remote_registration_update_xcm_profile' => 'remote_registration_update_xcm_profile',
                 'event_remote_registration.remote_registration_additional_participants_profile' => 'remote_registration_additional_participants_profile',
                 'event_remote_registration.remote_registration_additional_participants_xcm_profile' => 'remote_registration_additional_participants_xcm_profile',
                 'event_remote_registration.mailing_list_group_ids' => 'remote_registration_mailing_list_group_ids',
@@ -251,7 +251,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
                 'event_remote_registration.mailing_list_subscriptions_label' => 'remote_registration_mailing_list_subscriptions_label',
             ];
             $values = Event::get(FALSE)
-              ->setSelect(array_merge(array_keys($field_list), self::NATIVE_ATTRIBUTES_USED))
+              ->addSelect(...array_keys($field_list))
+              ->addSelect(...self::NATIVE_ATTRIBUTES_USED)
               ->addWhere('id', '=', $this->_id)
               ->execute()
               ->single();
@@ -264,8 +265,8 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         $this->addButtons(
             [
                 [
-                    'type'      => 'submit',
-                    'name'      => E::ts('Save'),
+                    'type' => 'submit',
+                    'name' => E::ts('Save'),
                     'isDefault' => true,
                 ],
             ]
@@ -295,7 +296,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
             else {
                 // check if it already exists (with another event)
                 $existsCheckResult = Event::get(FALSE)
-                  ->setSelect(['id'])
+                  ->addSelect('id')
                   ->addWhere('event_remote_registration.remote_registration_external_identifier', '=', $this->_submitValues['remote_registration_external_identifier'])
                   ->execute();
                 if ($existsCheckResult->count() !== 0 && $existsCheckResult->single()['id'] !== $this->_id) {
@@ -337,20 +338,20 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
 
         // store data
         $event_update = [
-            'id'                                                            => $this->_id,
-            'is_template'                                                   => CRM_Remoteevent_RemoteEvent::isTemplate($this->_id),
-            'event_remote_registration.remote_registration_enabled'         => $values['remote_registration_enabled'] ?? 0,
-            'event_remote_registration.remote_invitation_enabled'           => $values['remote_invitation_enabled'] ?? 0,
-            'event_remote_registration.remote_use_custom_event_location'    => $values['remote_use_custom_event_location'] ?? 0,
-            'event_remote_registration.remote_disable_civicrm_registration'    => $values['remote_disable_civicrm_registration'] ?? 0,
-            'event_remote_registration.remote_registration_suspended'    => $values['remote_registration_suspended'] ?? 0,
+            'id' => $this->_id,
+            'is_template' => CRM_Remoteevent_RemoteEvent::isTemplate($this->_id),
+            'event_remote_registration.remote_registration_enabled' => $values['remote_registration_enabled'] ?? 0,
+            'event_remote_registration.remote_invitation_enabled' => $values['remote_invitation_enabled'] ?? 0,
+            'event_remote_registration.remote_use_custom_event_location' => $values['remote_use_custom_event_location'] ?? 0,
+            'event_remote_registration.remote_disable_civicrm_registration' => $values['remote_disable_civicrm_registration'] ?? 0,
+            'event_remote_registration.remote_registration_suspended' => $values['remote_registration_suspended'] ?? 0,
             'event_remote_registration.require_user_account' => $values['require_user_account'] ?? 0,
-            'event_remote_registration.remote_registration_default_profile'        => $values['remote_registration_default_profile'],
+            'event_remote_registration.remote_registration_default_profile' => $values['remote_registration_default_profile'],
             'event_remote_registration.remote_registration_default_update_profile' => $values['remote_registration_default_update_profile'],
-            'event_remote_registration.remote_registration_external_identifier'    => $values['remote_registration_external_identifier'],
-            'event_remote_registration.remote_registration_gtac'                   => $values['remote_registration_gtac'],
-            'event_remote_registration.remote_registration_xcm_profile'            => $values['remote_registration_xcm_profile'],
-            'event_remote_registration.remote_registration_update_xcm_profile'     => $values['remote_registration_update_xcm_profile'],
+            'event_remote_registration.remote_registration_external_identifier' => $values['remote_registration_external_identifier'],
+            'event_remote_registration.remote_registration_gtac' => $values['remote_registration_gtac'],
+            'event_remote_registration.remote_registration_xcm_profile' => $values['remote_registration_xcm_profile'],
+            'event_remote_registration.remote_registration_update_xcm_profile' => $values['remote_registration_update_xcm_profile'],
             'event_remote_registration.remote_registration_additional_participants_waitlist' => $values['remote_registration_additional_participants_waitlist'] ?? 0,
             'event_remote_registration.remote_registration_additional_participants_profile' => $values['remote_registration_additional_participants_profile'],
             'event_remote_registration.remote_registration_additional_participants_xcm_profile' => $values['remote_registration_additional_participants_xcm_profile'],
@@ -413,17 +414,17 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     /**
      * Get a list of the available XCM profiles plus the default option
      *
-     * @param bool $can_be_off
+     * @param bool $canBeOff
      *   if this is true, an 'off' option will be added to prevent XCM to run
      *
-     * @return array
+     * @phpstan-return array<string, string>
      *   list of string(key) => string(label)
      */
-    protected function getAvailableXcmProfiles(bool $can_be_off = false): array
+    protected function getAvailableXcmProfiles(bool $canBeOff = false): array
     {
         $profiles = CRM_Xcm_Configuration::getProfileList();
         $profiles[''] = E::ts("Default (global CiviRemote Event settings)");
-        if ($can_be_off) {
+        if ($canBeOff) {
             $profiles['off'] = E::ts("No Contact Updates");
         }
         return $profiles;
