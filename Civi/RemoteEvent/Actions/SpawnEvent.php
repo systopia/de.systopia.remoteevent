@@ -3,7 +3,6 @@
 namespace Civi\RemoteEvent\Actions;
 
 use Civi\ActionProvider\Action\AbstractAction;
-use Civi\ActionProvider\Action\Contact\ContactActionUtils;
 use Civi\ActionProvider\ConfigContainer;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\SpecificationBag;
@@ -81,9 +80,9 @@ class SpawnEvent extends AbstractAction {
   /**
    * Run the action
    *
-   * @param ParameterInterface $parameters
+   * @param $parameters
    *   The parameters to this action.
-   * @param ParameterBagInterface $output
+   * @param $output
    *   The parameters this action can send back
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output): void {
@@ -133,8 +132,9 @@ class SpawnEvent extends AbstractAction {
     try {
       $result = civicrm_api3('RemoteEvent', 'spawn', $apiParams);
       $output->setParameter('id', $result['id']);
-    } catch (Exception $e) {
-      throw new ExecutionException(E::ts('Could not update or create an event.'), $e->getCode(), $e);
+    }
+    catch (\CRM_Core_Exception $e) {
+      throw new \RuntimeException(E::ts('Could not update or create an event.'), $e->getCode(), $e);
     }
   }
 

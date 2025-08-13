@@ -32,7 +32,7 @@ class PriceFieldUtil {
   /**
    * @phpstan-param array{id: int} $event
    *
-   * @phpstan-return array<int, array<string, mixed>>
+   * @phpstan-return array<int, array<string, string|int>>
    */
   public static function getPriceFields(array $event): array {
     return \Civi\Api4\Event::get(FALSE)

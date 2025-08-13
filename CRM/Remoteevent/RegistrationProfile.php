@@ -101,11 +101,16 @@ abstract class CRM_Remoteevent_RegistrationProfile
     abstract public function getFields($locale = null);
 
   /**
-   * @phpstan-param array<string, mixed> $event
+   * @phpstan-param array{
+   *   id: int,
+   *   currency: string,
+   *   fee_label: string,
+   *   is_monetary: int
+   * } $event
    *
    * @param string|null $locale
    *
-   * @return array
+   * @phpstan-return array<string, array<string, mixed>>
    * @throws \CRM_Core_Exception
    */
   public static function getProfilePriceFields(array $event, ?string $locale = NULL): array {
@@ -143,7 +148,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
         'required' => (bool) $priceField['price_field.is_required'],
         'parent' => 'price',
       ];
-      if ($priceField['price_field.is_enter_qty']) {
+      if ((bool) $priceField['price_field.is_enter_qty']) {
         // Append price per unit.
         $field['label'] .= sprintf(
           ' (%s)',
@@ -155,23 +160,23 @@ abstract class CRM_Remoteevent_RegistrationProfile
       }
       else {
         $field['options'] = $priceFieldValues->column('label');
-      }
 
-      // Append price field value amounts in option labels.
-      if (isset($field['options']) && $priceField['price_field.is_display_amounts']) {
-        array_walk(
-          $field['options'],
-          function(&$label, $id, $context) {
-            $label .= sprintf(
-              ' (%s)',
-              CRM_Utils_Money::format(
-                $context['priceFieldValues'][$id]['amount'],
-                $context['event']['currency']
-              )
-            );
-          },
-          ['priceFieldValues' => $priceFieldValues, 'event' => $event]
-        );
+        // Append price field value amounts in option labels.
+        if ((bool) $priceField['price_field.is_display_amounts']) {
+          array_walk(
+            $field['options'],
+            function(&$label, $id, $context) {
+              $label .= sprintf(
+                ' (%s)',
+                CRM_Utils_Money::format(
+                  $context['priceFieldValues'][$id]['amount'],
+                  $context['event']['currency']
+                )
+              );
+            },
+            ['priceFieldValues' => $priceFieldValues, 'event' => $event]
+          );
+        }
       }
 
       // Add prefixed help text.

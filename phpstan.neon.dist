@@ -15,6 +15,9 @@ parameters:
 	scanDirectories:
 		- ../de.systopia.remotetools/Civi
 		- ../de.systopia.remotetools/CRM
+		- ../de.systopia.eventmessages/Civi/EventMessages
+		- ../de.systopia.xcm/CRM
+		- ../action-provider/Civi
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/src/Framework
 	bootstrapFiles:
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/vendor/autoload.php
@@ -41,4 +44,5 @@ parameters:
 	ignoreErrors:
 		# Note paths are prefixed with "*/" to work with inspections in PHPStorm because of:
 		# https://youtrack.jetbrains.com/issue/WI-63891/PHPStan-ignoreErrors-configuration-isnt-working-with-inspections
+		- '#^Parameter \#3 \$bridge of method Civi\\Api4\\Generic\\DAOGetAction::addJoin\(\) expects string\|null, array<int, string> given.$#'
 	tmpDir: .phpstan
