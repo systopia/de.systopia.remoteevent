@@ -8,3 +8,4 @@ includes:
 parameters:
 	bootstrapFiles:
 		- {VENDOR_DIR}/autoload.php
+		- {VENDOR_DIR}/civicrm/civicrm-core/api/Exception.php

@@ -3,8 +3,9 @@ includes:
 
 parameters:
 	bootstrapFiles:
-		- vendor/autoload.php
-	# Because we test with different versions in CI we may have unmatched errors.
+		- ci/vendor/autoload.php
+		- ci/vendor/civicrm/civicrm-core/api/Exception.php
+	# Because we test with different versions in CI we have unmatched errors
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		# Errors we get when using "prefer-lowest"
