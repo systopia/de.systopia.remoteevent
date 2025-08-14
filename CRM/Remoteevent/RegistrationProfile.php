@@ -132,7 +132,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
       // TODO: Is this configurable option localizable?
       'label' => $event['fee_label'],
     ];
+
+    $maxWeight = 0;
+    $hasRequiredPriceFields = FALSE;
+
     foreach ($priceFields as $priceField) {
+      $maxWeight = max($maxWeight, $priceField['price_field.weight']);
+      $hasRequiredPriceFields = $hasRequiredPriceFields || (bool) $priceField['price_field.is_required'];
+
       $priceFieldValues = \Civi\Api4\PriceFieldValue::get(FALSE)
         ->addSelect('id', 'label', 'amount')
         ->addWhere('price_field_id', '=', $priceField['price_field.id'])
@@ -197,7 +204,92 @@ abstract class CRM_Remoteevent_RegistrationProfile
       $fields['price_' . $priceField['price_field.name']] = $field;
     }
 
+    $fields += static::getPaymentProcessorFields($event, $locale, $maxWeight, $hasRequiredPriceFields);
+
     return $fields;
+  }
+
+  public static function getPaymentProcessorFields(
+    array $event,
+    ?string $locale = NULL,
+    int $maxWeight = 0,
+    bool $paymentRequired = FALSE
+  ): array {
+    $fields = [];
+    $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+
+    if (is_numeric($event['payment_processor']) || is_array($event['payment_processor'])) {
+      $fields['payment'] = [
+        'type' => 'fieldset',
+        'name' => 'payment',
+        'label' => $l10n->ts('Payment'),
+        'parent' => 'price',
+        'weight' => $maxWeight++,
+      ];
+      $fields['payment_processor'] = [
+        'type' => 'Select',
+        'name' => 'payment_processor',
+        'label' => $l10n->ts('Payment Method'),
+        'options' => [],
+        'required' => $paymentRequired,
+        'parent' => 'payment',
+        'weight' => 0,
+      ];
+
+      if ((bool) $event['is_pay_later']) {
+        $fields['payment_processor']['options'][0] = $event['pay_later_text'];
+        // TODO: Add notes from $event['pay_later_receipt'].
+      }
+
+      foreach ((array) $event['payment_processor'] as $paymentProcessorId) {
+        $paymentProcessor = \Civi\Api4\PaymentProcessor::get(FALSE)
+          ->addWhere('id', '=', $paymentProcessorId)
+          ->execute()
+          ->single();
+        $paymentProcessorObject = \Civi\Payment\System::singleton()->getByProcessor($paymentProcessor);
+
+        $fields['payment_processor']['options'][$paymentProcessorId] = $l10n->ts(
+          $paymentProcessorObject->getPaymentProcessor()['frontend_title']
+        );
+
+        $paymentProcessorFormFields = array_intersect_key(
+          $paymentProcessorObject->getPaymentFormFieldsMetadata(),
+          array_flip($paymentProcessorObject->getPaymentFormFields())
+        );
+        foreach ($paymentProcessorFormFields as $paymentProcessorField) {
+          $fieldName = 'payment_processor_' . $paymentProcessorId . '_' . $paymentProcessorField['name'];
+          $fields[$fieldName] = [
+            'type' => self::getQuickFormType($paymentProcessorField['htmlType']),
+            'name' => $fieldName,
+            'label' => $paymentProcessorField['title'],
+            'required' => (bool) $paymentProcessorField['is_required'],
+            'maxlength' => $paymentProcessorField['attributes']['maxlength'] ?? NULL,
+            'parent' => 'payment_processor',
+            'weight' => 1,
+            'dependencies' => [
+              [
+                'command' => 'hide',
+                'dependee_field' => 'payment_processor',
+                'dependee_value' => $paymentProcessorId,
+              ],
+            ],
+          ];
+        }
+      }
+    }
+
+    return $fields;
+  }
+
+  public static function getQuickFormType(string $htmlType): string {
+    $mapping = [
+      'checkbox' => 'Checkbox',
+      'radio' => 'Radio',
+      'select' => 'Select',
+      'textarea' => 'Textarea',
+      'text' => 'Text',
+    ];
+    return $mapping[$htmlType] ?? '';
   }
 
     public static function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
