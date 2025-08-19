@@ -161,6 +161,9 @@ function remoteevent_civicrm_config(&$config)
     $dispatcher->addUniqueListener(
         RegistrationEvent::NAME,
         ['CRM_Remoteevent_Registration', 'createOrder'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
+    $dispatcher->addUniqueListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_Registration', 'createPayment'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
 
     $dispatcher->addUniqueListener(
         RegistrationEvent::NAME,

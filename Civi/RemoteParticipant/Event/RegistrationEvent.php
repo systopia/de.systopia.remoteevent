@@ -52,6 +52,11 @@ class RegistrationEvent extends ChangingEvent
      */
     protected array $additional_participants_data = [];
 
+  /**
+   * @phpstan-var array<string, mixed>
+   */
+    protected array $order_data = [];
+
     /**
      * Check if the submission has errors
      * @return bool
@@ -143,12 +148,26 @@ class RegistrationEvent extends ChangingEvent
         return $this->additional_participants_data;
     }
 
+  /**
+   * @phpstan-return array<string, mixed>
+   */
+    public function getOrderData(): array {
+      return $this->order_data;
+    }
+
     /**
      * @phpstan-param array<array<string, mixed>> $additional_participants_data
      */
     public function setAdditionalParticipantsData(array $additional_participants_data): void
     {
         $this->additional_participants_data = $additional_participants_data;
+    }
+
+  /**
+   * @phpstan-param array<string, mixed> $order_data
+   */
+    public function setOrderData(array $order_data): void {
+      $this->order_data = $order_data;
     }
 
     /**

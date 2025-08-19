@@ -105,7 +105,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
    *   id: int,
    *   currency: string,
    *   fee_label: string,
-   *   is_monetary: int
+   *   is_monetary: int,
    * } $event
    *
    * @param string|null $locale
@@ -134,11 +134,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
     ];
 
     $maxWeight = 0;
-    $hasRequiredPriceFields = FALSE;
 
     foreach ($priceFields as $priceField) {
       $maxWeight = max($maxWeight, $priceField['price_field.weight']);
-      $hasRequiredPriceFields = $hasRequiredPriceFields || (bool) $priceField['price_field.is_required'];
 
       $priceFieldValues = \Civi\Api4\PriceFieldValue::get(FALSE)
         ->addSelect('id', 'label', 'amount')
@@ -204,79 +202,145 @@ abstract class CRM_Remoteevent_RegistrationProfile
       $fields['price_' . $priceField['price_field.name']] = $field;
     }
 
-    $fields += static::getPaymentProcessorFields($event, $locale, $maxWeight, $hasRequiredPriceFields);
-
     return $fields;
   }
 
-  public static function getPaymentProcessorFields(
+  /**
+   * @phpstan-param array{
+   *   id: int,
+   *   currency: string,
+   *   fee_label: string,
+   *   is_monetary: int,
+   * } $event
+   */
+  public static function hasRequiredPriceFields(array $event): bool {
+    return in_array(
+      TRUE,
+      array_column(PriceFieldUtil::getPriceFields($event), 'price_field.is_required'),
+      FALSE
+    );
+  }
+
+  /**
+   * @phpstan-param array{
+   *    id: int,
+   *    currency: string,
+   *    fee_label: string,
+   *    is_monetary: int,
+   *    payment_processor?: int|string|array,
+   *    is_pay_later: bool|int,
+   *    pay_later_text?: string,
+   *  } $event
+   *
+   * @param int $maxWeight
+   *   The maximum weight of price fields, so that the payment fieldset can be positioned as the last element.
+   *
+   * @phpstan-return array<string, array<string, mixed>>
+   */
+  public static function getPaymentMethodsFields(
     array $event,
     ?string $locale = NULL,
     int $maxWeight = 0,
     bool $paymentRequired = FALSE
   ): array {
     $fields = [];
+
+    if (!(bool) $event['is_monetary']) {
+      return $fields;
+    }
+
     $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
 
-    if (is_numeric($event['payment_processor']) || is_array($event['payment_processor'])) {
-      $fields['payment'] = [
-        'type' => 'fieldset',
-        'name' => 'payment',
-        'label' => $l10n->ts('Payment'),
-        'parent' => 'price',
-        'weight' => $maxWeight++,
-      ];
-      $fields['payment_processor'] = [
-        'type' => 'Select',
-        'name' => 'payment_processor',
-        'label' => $l10n->ts('Payment Method'),
-        'options' => [],
-        'required' => $paymentRequired,
-        'parent' => 'payment',
-        'weight' => 0,
-      ];
+    // TODO: Get supported payment methods from remote event configuration.
+    $fields['payment'] = [
+      'type' => 'fieldset',
+      'name' => 'payment',
+      'label' => $l10n->ts('Payment'),
+      'parent' => 'price',
+      'weight' => $maxWeight++,
+    ];
+    $fields['payment_method'] = [
+      'type' => 'Select',
+      'name' => 'payment_method',
+      'label' => $l10n->ts('Payment Method'),
+      'options' => [],
+      'required' => $paymentRequired,
+      'parent' => 'payment',
+      'weight' => 0,
+    ];
 
-      if ((bool) $event['is_pay_later']) {
-        $fields['payment_processor']['options'][0] = $event['pay_later_text'];
-        // TODO: Add notes from $event['pay_later_receipt'].
-      }
-
-      foreach ((array) $event['payment_processor'] as $paymentProcessorId) {
-        $paymentProcessor = \Civi\Api4\PaymentProcessor::get(FALSE)
-          ->addWhere('id', '=', $paymentProcessorId)
-          ->execute()
-          ->single();
-        $paymentProcessorObject = \Civi\Payment\System::singleton()->getByProcessor($paymentProcessor);
-
-        $fields['payment_processor']['options'][$paymentProcessorId] = $l10n->ts(
-          $paymentProcessorObject->getPaymentProcessor()['frontend_title']
-        );
-
-        $paymentProcessorFormFields = array_intersect_key(
-          $paymentProcessorObject->getPaymentFormFieldsMetadata(),
-          array_flip($paymentProcessorObject->getPaymentFormFields())
-        );
-        foreach ($paymentProcessorFormFields as $paymentProcessorField) {
-          $fieldName = 'payment_processor_' . $paymentProcessorId . '_' . $paymentProcessorField['name'];
-          $fields[$fieldName] = [
-            'type' => self::getQuickFormType($paymentProcessorField['htmlType']),
-            'name' => $fieldName,
-            'label' => $paymentProcessorField['title'],
-            'required' => (bool) $paymentProcessorField['is_required'],
-            'maxlength' => $paymentProcessorField['attributes']['maxlength'] ?? NULL,
-            'parent' => 'payment_processor',
-            'weight' => 1,
-            'dependencies' => [
-              [
-                'command' => 'hide',
-                'dependee_field' => 'payment_processor',
-                'dependee_value' => $paymentProcessorId,
-              ],
-            ],
-          ];
-        }
-      }
+    if ((bool) $event['is_pay_later']) {
+      $fields['payment_method']['options']['pay_later'] = $event['pay_later_text'] ?? $l10n->ts('Pay Later');
+      // TODO: Add notes from $event['pay_later_receipt'].
     }
+
+    // TODO: Allow more custom payment methods that require sending back data
+    //       (instead of processing the payment on the remote environment).
+    $fields['payment_method']['options']['sepa'] = $l10n->ts('SEPA Direct Debit');
+    $fields['payment_method_sepa_account_holder'] = [
+      'type' => 'Text',
+      'name' => 'payment_method_sepa_account_holder',
+      'label' => $l10n->ts('Account Holder'),
+      'required' => FALSE,
+      'maxlength' => 34,
+      'parent' => 'payment_method',
+      'weight' => 1,
+      'dependencies' => [
+        [
+          'command' => 'hide',
+          'dependee_field' => 'payment_method',
+          'dependee_value' => 'sepa',
+        ],
+      ],
+    ];
+    $fields['payment_method_sepa_iban'] = [
+      'type' => 'Text',
+      'name' => 'payment_method_sepa_iban',
+      'label' => $l10n->ts('IBAN'),
+      'required' => TRUE,
+      'maxlength' => 34,
+      'parent' => 'payment_method',
+      'weight' => 1,
+      'dependencies' => [
+        [
+          'command' => 'hide',
+          'dependee_field' => 'payment_method',
+          'dependee_value' => 'sepa',
+        ],
+      ],
+    ];
+    $fields['payment_method_sepa_bic'] = [
+      'type' => 'Text',
+      'name' => 'payment_method_sepa_bic',
+      'label' => $l10n->ts('BIC'),
+      'required' => TRUE,
+      'maxlength' => 11,
+      'parent' => 'payment_method',
+      'weight' => 1,
+      'dependencies' => [
+        [
+          'command' => 'hide',
+          'dependee_field' => 'payment_method',
+          'dependee_value' => 'sepa',
+        ],
+      ],
+    ];
+    $fields['payment_method_sepa_bank_name'] = [
+      'type' => 'Text',
+      'name' => 'payment_method_sepa_bank_name',
+      'label' => $l10n->ts('Bank Name'),
+      'required' => FALSE,
+      'maxlength' => 64,
+      'parent' => 'payment_method',
+      'weight' => 1,
+      'dependencies' => [
+        [
+          'command' => 'hide',
+          'dependee_field' => 'payment_method',
+          'dependee_value' => 'sepa',
+        ],
+      ],
+    ];
 
     return $fields;
   }
@@ -381,6 +445,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     $this->validateNumberOfParticipants($validationEvent);
     $this->validateFieldValues($validationEvent);
     $this->validatePriceFields($validationEvent);
+    $this->validatePaymentFields($validationEvent);
   }
 
   protected function validateNumberOfParticipants(ValidateEvent $validationEvent): void {
@@ -524,6 +589,31 @@ abstract class CRM_Remoteevent_RegistrationProfile
     }
   }
 
+  protected function validatePaymentFields(ValidateEvent $validationEvent): void {
+    $event = $validationEvent->getEvent();
+    if (!(bool) $event['is_monetary']) {
+      return;
+    }
+    $submission = $validationEvent->getSubmission();
+    $l10n = $validationEvent->getLocalisation();
+
+    switch ($submission['payment_method']) {
+      case 'pay_later':
+        break;
+
+      case 'sepa':
+        $error = CRM_Sepa_Logic_Verification::verifyIBAN($submission['payment_method_sepa_iban']);
+        if (NULL !== $error) {
+          $validationEvent->addValidationError('payment_method_sepa_iban', $l10n->ts('Invalid IBAN'));
+        }
+        $error = CRM_Sepa_Logic_Verification::verifyBIC($submission['payment_method_sepa_bic']);
+        if (NULL !== $error) {
+          $validationEvent->addValidationError('payment_method_sepa_bic', $l10n->ts('Invalid BIC'));
+        }
+        break;
+    }
+  }
+
   /**
    * @phpstan-return array<string, int>
    *   Mapping of submission field name => price field ID
@@ -662,13 +752,28 @@ abstract class CRM_Remoteevent_RegistrationProfile
     {
         // simply add the fields from the profile
         $profile = self::getProfile($get_form_results);
+      /**
+       * @phpstan-var array{
+       *   id: int,
+       *   currency: string,
+       *   fee_label: string,
+       *   is_monetary: int,
+       * } $event
+       */
         $event = $get_form_results->getEvent();
 
         // add the fields
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
         if ('create' === $get_form_results->getContext()) {
-          $fields += static::getProfilePriceFields($event, $locale);
+          $profilePriceFields = static::getProfilePriceFields($event, $locale);
+          $fields += $profilePriceFields;
+          $fields += static::getPaymentMethodsFields(
+            $event,
+            $locale,
+            max(array_column($profilePriceFields, 'weight') + [0]),
+            static::hasRequiredPriceFields($event)
+          );
           $fields += static::getAdditionalParticipantsFields($event, NULL, $locale);
         }
         $get_form_results->addFields($fields);

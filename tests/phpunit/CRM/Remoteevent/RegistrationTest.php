@@ -168,6 +168,7 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase
         'email' => $contact['email'],
         'price_' . $priceFields[0]['name'] => $priceFieldOneValue,
         'price_' . $priceFields[1]['name'] => $priceFieldTwoValue,
+        'payment_method' => 'pay_later',
       ]);
 
       $this->assertAPISuccess($registration, 'Registration with price fields failed');

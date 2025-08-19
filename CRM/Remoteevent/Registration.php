@@ -840,6 +840,10 @@ class CRM_Remoteevent_Registration
           ->setContributionValues([
             'contact_id' => $registration->getContactID(),
             'financial_type_id' => (int) $event['financial_type_id'],
+            'payment_instrument_id' => static::getPaymentInstrumentForPaymentMethod(
+              $registration->getSubmittedValue('payment_method'),
+              $event
+            )
           ]);
         foreach ($registration->getPriceFieldValues() as $value) {
           $order->addLineItem([
@@ -850,7 +854,79 @@ class CRM_Remoteevent_Registration
             'qty' => $value['qty'],
           ]);
         }
-        $order->execute();
+        try {
+          $orderResult = $order
+            ->execute()
+            ->single();
+          $registration->setOrderData($orderResult);
+        }
+        catch (CRM_Core_Exception $exception) {
+          $registration->addError(E::ts('Could not register order.'));
+        }
+      }
+    }
+
+  /**
+   * @phpstan-param array{
+   *   id: int,
+   *   currency: string,
+   *   fee_label: string,
+   *   is_monetary: int,
+   * } $event
+   */
+    public static function getPaymentInstrumentForPaymentMethod(string $paymentMethod, array $event): int {
+      switch ($paymentMethod) {
+        case 'pay_later':
+          // TODO: Make payment method for "Pay later" configurable per event.
+          return (int) \Civi\Api4\OptionValue::get(FALSE)
+            ->addSelect('value')
+            ->addWhere('option_group_id.name', '=', 'payment_instrument')
+            ->addWhere('name', '=', 'EFT')
+            ->execute()['value'];
+
+        case 'sepa':
+          // Use OOFF payment instrument from creditor.
+          // TODO: Make creditor configurable per event.
+          return (int) \CRM_Sepa_Logic_Settings::defaultCreditor()->pi_ooff;
+      }
+    }
+
+    public static function createPayment(RegistrationEvent $registration): void {
+      $event = $registration->getEvent();
+      if ((bool) $event['is_monetary']) {
+        $order = $registration->getOrderData();
+
+        switch ($registration->getSubmittedValue('payment_method')) {
+          case 'pay_later':
+            // Nothing to do here, there is already a pending contribution.
+            break;
+
+          case 'sepa':
+            $mandate = \Civi\Api4\SepaMandate::create(FALSE)
+              ->addValue('creditor_id', NULL)
+              ->addValue('type', 'OOFF')
+              ->addValue('iban', $registration->getSubmittedValue('payment_method_sepa_iban'))
+              ->addValue('bic', $registration->getSubmittedValue('payment_method_sepa_bic'))
+              ->addValue('status', 'OOFF')
+              // Reference is given a default when empty(), but is a required field, thus passing 0.
+              // TODO: Adjust CiviSEPA to not make the API parameter required if there is a default, and do not pass a
+              //       a value once that's done.
+              ->addValue('reference', 0)
+              ->addValue('entity_table', 'civicrm_contribution')
+              ->addValue('entity_id', $order['id'])
+              ->addValue('contact_id', $registration->getContactID())
+              ->addValue('currency', $event['currency'])
+              ->addValue('date', $order['receive_date'])
+              ->addValue('creation_date', $order['receive_date'])
+              ->addValue('validation_date', $order['receive_date'])
+              ->execute();
+            break;
+
+          default:
+            // TODO: Register submitted payment (API to be defined; must include the amount and the date, possibly a
+            //       transaction ID, etc.) using \Civi\Api4\Payment::create().
+            break;
+        }
       }
     }
 
