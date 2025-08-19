@@ -55,24 +55,18 @@ class RegistrationEvent extends ChangingEvent {
   protected array $additional_participants_data = [];
 
   /**
-   * Check if the submission has errors
-   * @return bool
-   *   true if there is errors
+   * @phpstan-var array<string, mixed>
    */
-  public function hasErrors() {
-    return !empty($this->error_list);
-  }
+    protected array $order_data = [];
 
-  /**
-   * {@inheritDoc}
-   */
-  public function getParticipantID(): ?int {
-    if (empty($this->participant['id'])) {
-      $participant_id = parent::getParticipantID();
-      if ($participant_id) {
-        $this->participant['id'] = $participant_id;
-      }
-      return $participant_id;
+    /**
+     * Check if the submission has errors
+     * @return bool
+     *   true if there is errors
+     */
+    public function hasErrors()
+    {
+        return !empty($this->error_list);
     }
     else {
       return (int) $this->participant['id'];
@@ -139,22 +133,38 @@ class RegistrationEvent extends ChangingEvent {
   }
 
   /**
-   * @phpstan-param array<array<string, mixed>> $additional_participants_data
+   * @phpstan-return array<string, mixed>
    */
-  public function setAdditionalParticipantsData(array $additional_participants_data): void {
-    $this->additional_participants_data = $additional_participants_data;
-  }
+    public function getOrderData(): array {
+      return $this->order_data;
+    }
+
+    /**
+     * @phpstan-param array<array<string, mixed>> $additional_participants_data
+     */
+    public function setAdditionalParticipantsData(array $additional_participants_data): void
+    {
+        $this->additional_participants_data = $additional_participants_data;
+    }
 
   /**
-   * Set the contact_data object, which is used for
-   *   contact identification / creation
-   *
-   * @param array $contact_data
-   *    contact_data data
+   * @phpstan-param array<string, mixed> $order_data
    */
-  public function setContactData($contact_data) {
-    $this->contact_data = $contact_data;
-  }
+    public function setOrderData(array $order_data): void {
+      $this->order_data = $order_data;
+    }
+
+    /**
+     * Set the contact_data object, which is used for
+     *   contact identification / creation
+     *
+     * @param array $contact_data
+     *    contact_data data
+     */
+    public function setContactData($contact_data)
+    {
+        $this->contact_data = $contact_data;
+    }
 
   /**
    * Get the contact_data object, which is used for
