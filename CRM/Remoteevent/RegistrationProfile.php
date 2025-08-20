@@ -560,13 +560,18 @@ abstract class CRM_Remoteevent_RegistrationProfile
         : (int) $submission[$fieldName];
 
       // Validate quantity being numeric.
-      if ($priceField['price_field.is_enter_qty'] && !is_numeric($submission[$fieldName])) {
+      if (
+        $priceField['price_field.is_enter_qty']
+        && !empty($submission[$fieldName])
+        && !is_numeric($submission[$fieldName])
+      ) {
         $validationEvent->addValidationError($fieldName, $l10n->ts('Quantity must be numeric'));
       }
 
       // Validate price field value being a valid option.
       if (
         !$priceField['price_field.is_enter_qty']
+        && !empty($submission[$fieldName])
         && (
           !is_numeric($submission[$fieldName])
           || !array_key_exists((int) $submission[$fieldName], $priceFieldValues)
