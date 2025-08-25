@@ -82,4 +82,20 @@ class PriceFieldUtil {
       ->getArrayCopy();
   }
 
+  /**
+   * @phpstan-param array{
+   *   id: int,
+   *   currency: string,
+   *   fee_label: string,
+   *   is_monetary: int,
+   * } $event
+   */
+  public static function hasRequiredPriceFields(array $event): bool {
+    return in_array(
+      TRUE,
+      array_column(PriceFieldUtil::getPriceFields($event), 'price_field.is_required'),
+      FALSE
+    );
+  }
+
 }

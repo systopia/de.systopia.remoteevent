@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\RemoteParticipant\Event\Util\PaymentMethodUtil;
 use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\Api4\Participant;
 use Civi\RemoteParticipant\Event\Util\ParticipantFormEventUtil;
@@ -207,22 +208,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
   /**
    * @phpstan-param array{
-   *   id: int,
-   *   currency: string,
-   *   fee_label: string,
-   *   is_monetary: int,
-   * } $event
-   */
-  public static function hasRequiredPriceFields(array $event): bool {
-    return in_array(
-      TRUE,
-      array_column(PriceFieldUtil::getPriceFields($event), 'price_field.is_required'),
-      FALSE
-    );
-  }
-
-  /**
-   * @phpstan-param array{
    *    id: int,
    *    currency: string,
    *    fee_label: string,
@@ -251,7 +236,6 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
     $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
 
-    // TODO: Get supported payment methods from remote event configuration.
     $fields['payment'] = [
       'type' => 'fieldset',
       'name' => 'payment',
@@ -263,85 +247,14 @@ abstract class CRM_Remoteevent_RegistrationProfile
       'type' => 'Select',
       'name' => 'payment_method',
       'label' => $l10n->ts('Payment Method'),
-      'options' => [],
+      'options' => PaymentMethodUtil::getPaymentMethodOptions($event, $locale),
       'required' => $paymentRequired,
       'parent' => 'payment',
       'weight' => 0,
     ];
-
-    if ((bool) $event['is_pay_later']) {
-      $fields['payment_method']['options']['pay_later'] = $event['pay_later_text'] ?? $l10n->ts('Pay Later');
-      // TODO: Add notes from $event['pay_later_receipt'].
+    foreach (array_keys($fields['payment_method']['options']) as $paymentMethod) {
+      $fields += PaymentMethodUtil::getPaymentMethodFields($event, $paymentMethod, $locale);
     }
-
-    // TODO: Allow more custom payment methods that require sending back data
-    //       (instead of processing the payment on the remote environment).
-    $fields['payment_method']['options']['sepa'] = $l10n->ts('SEPA Direct Debit');
-    $fields['payment_method_sepa_account_holder'] = [
-      'type' => 'Text',
-      'name' => 'payment_method_sepa_account_holder',
-      'label' => $l10n->ts('Account Holder'),
-      'required' => FALSE,
-      'maxlength' => 34,
-      'parent' => 'payment_method',
-      'weight' => 1,
-      'dependencies' => [
-        [
-          'command' => 'hide',
-          'dependee_field' => 'payment_method',
-          'dependee_value' => 'sepa',
-        ],
-      ],
-    ];
-    $fields['payment_method_sepa_iban'] = [
-      'type' => 'Text',
-      'name' => 'payment_method_sepa_iban',
-      'label' => $l10n->ts('IBAN'),
-      'required' => TRUE,
-      'maxlength' => 34,
-      'parent' => 'payment_method',
-      'weight' => 1,
-      'dependencies' => [
-        [
-          'command' => 'hide',
-          'dependee_field' => 'payment_method',
-          'dependee_value' => 'sepa',
-        ],
-      ],
-    ];
-    $fields['payment_method_sepa_bic'] = [
-      'type' => 'Text',
-      'name' => 'payment_method_sepa_bic',
-      'label' => $l10n->ts('BIC'),
-      'required' => TRUE,
-      'maxlength' => 11,
-      'parent' => 'payment_method',
-      'weight' => 1,
-      'dependencies' => [
-        [
-          'command' => 'hide',
-          'dependee_field' => 'payment_method',
-          'dependee_value' => 'sepa',
-        ],
-      ],
-    ];
-    $fields['payment_method_sepa_bank_name'] = [
-      'type' => 'Text',
-      'name' => 'payment_method_sepa_bank_name',
-      'label' => $l10n->ts('Bank Name'),
-      'required' => FALSE,
-      'maxlength' => 64,
-      'parent' => 'payment_method',
-      'weight' => 1,
-      'dependencies' => [
-        [
-          'command' => 'hide',
-          'dependee_field' => 'payment_method',
-          'dependee_value' => 'sepa',
-        ],
-      ],
-    ];
-
     return $fields;
   }
 
@@ -777,7 +690,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
             $event,
             $locale,
             max(array_column($profilePriceFields, 'weight') + [0]),
-            static::hasRequiredPriceFields($event)
+            PriceFieldUtil::hasRequiredPriceFields($event)
           );
           $fields += static::getAdditionalParticipantsFields($event, NULL, $locale);
         }
