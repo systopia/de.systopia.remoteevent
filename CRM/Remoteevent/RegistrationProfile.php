@@ -626,7 +626,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
         $validation = $field_spec['validation'] ?? '';
         switch ($validation) {
             case 'Email':
-                return preg_match('#^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$#', $value) > 0;
+                // Since CiviCRM Core uses \CRM_Utils_Rule::email() for validating e-mail addresses, we rely on it here.
+                // \CRM_Utils_Rule::email() returns TRUE for unset or empty values, therefore require a value here.
+                return '' !== $value && NULL !== $value && \CRM_Utils_Rule::email($value);
 
             case 'Integer':
             case 'Int':
