@@ -34,11 +34,14 @@ final class RemoteEventMailingList extends AbstractEntity {
     return new BasicGetFieldsAction(self::getEntityName(), __FUNCTION__, fn () => []);
   }
 
+  /**
+   * @return array<string, array<string|array<string>>>
+   */
   public static function permissions(): array {
-      return [
-        'meta' => ['register to Remote Events'],
-        'default' => ['register to Remote Events'],
-      ];
-    }
+    return [
+      'meta' => ['access CiviCRM'],
+      'default' => ['register to Remote Events'],
+    ];
+  }
 
 }
