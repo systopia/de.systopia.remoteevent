@@ -248,7 +248,7 @@ class CRM_Remoteevent_RemoteEvent
             $registered_count = CRM_Remoteevent_Registration::getRegistrationCount(
                 $event_id,
                 NULL,
-                ['Positive', 'Pending']
+                ['Positive', 'Pending', 'Waiting']
             );
             return ($registered_count >= $event_data['max_participants']);
         } else {
