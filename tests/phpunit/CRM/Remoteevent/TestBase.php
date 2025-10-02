@@ -152,6 +152,77 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         return $event_template;
     }
 
+  /**
+   * @phpstan-return list<array<string, mixed>>
+   *   A list of price fields added to the event.
+   */
+    public function addPriceFields(int $eventId): array {
+      $priceFields = [];
+
+      $priceSet = \Civi\Api4\PriceSet::create(TRUE)
+        ->addValue('title', 'Test Price Set')
+        ->addValue('extends:name', ['CiviEvent'])
+        ->addValue('name', 'test_price_set')
+        ->execute()
+        ->single();
+
+      $optionsPriceField = \Civi\Api4\PriceField::create(TRUE)
+        ->addValue('price_set_id', $priceSet['id'])
+        ->addValue('name', 'test_price_options_field')
+        ->addValue('label', 'Test Price Options Field')
+        ->addValue('html_type', 'Select')
+        ->execute()
+        ->single();
+      $priceFields[] = $optionsPriceField;
+      $priceFieldValueRegular = \Civi\Api4\PriceFieldValue::create(TRUE)
+        ->addValue('label', 'Regular Fee')
+        ->addValue('amount', 20)
+        // price_field_id.name does not seem to be accepted, so use the actual ID.
+        ->addValue('price_field_id', $optionsPriceField['id'])
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->execute();
+      $priceFieldValueDiscount = \Civi\Api4\PriceFieldValue::create(TRUE)
+        ->addValue('label', 'Discount Fee')
+        ->addValue('amount', 10)
+        ->addValue('price_field_id', $optionsPriceField['id'])
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->execute();
+
+      $amountPriceField = \Civi\Api4\PriceField::create(TRUE)
+        ->addValue('price_set_id', $priceSet['id'])
+        ->addValue('name', 'test_price_amount_field')
+        ->addValue('label', 'Test Price Amount Field')
+        ->addValue('html_type', 'Text')
+        ->addValue('is_enter_qty', TRUE)
+        ->execute()
+        ->single();
+      $priceFieldValueAmount = \Civi\Api4\PriceFieldValue::create(TRUE)
+        ->addValue('label', 'Amount of Stuff')
+        ->addValue('amount', 25)
+        ->addValue('price_field_id', $amountPriceField['id'])
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->execute();
+      $priceFields[] = $amountPriceField;
+
+      // Make the event monetary and assign a financial type.
+      \Civi\Api4\Event::update(TRUE)
+        ->addValue('is_monetary', TRUE)
+        ->addValue('financial_type_id:name', 'Event Fee')
+        ->addValue('fee_label', 'Test Fee Label')
+        ->addValue('currency', 'EUR')
+        ->addWhere('id', '=', $eventId)
+        ->execute();
+
+      // Assign the price set to the event.
+      \Civi\Api4\PriceSetEntity::create(TRUE)
+        ->addValue('entity_table', 'civicrm_event')
+        ->addValue('entity_id', $eventId)
+        ->addValue('price_set_id', $priceSet['id'])
+        ->execute();
+
+      return $priceFields;
+    }
+
     /**
      * Create a new session
      *
@@ -609,6 +680,17 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             unset($fields['profile']);
             unset($fields['remote_contact_id']);
         }
+    }
+
+    public function assertGetFormPriceFields(&$fields, $priceFields): void {
+      foreach ($priceFields as $priceField) {
+        $formFieldName = 'price_' . $priceField['name'];
+        $this->assertArrayHasKey(
+          $formFieldName,
+          $fields,
+          sprintf("RemoteContact.get_form should contain '%s' field", $formFieldName)
+        );
+      }
     }
 
     /**

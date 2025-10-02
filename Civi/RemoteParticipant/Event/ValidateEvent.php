@@ -13,9 +13,14 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\RemoteParticipant\Event;
+
 use Civi\RemoteEvent;
+use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
+use Civi\RemoteParticipant\RegistrationEventFactory;
+use CRM_Remoteevent_RegistrationProfile;
 
 /**
  * Class ValidateEvent
@@ -25,67 +30,83 @@ use Civi\RemoteEvent;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.validate API call, so the search parameters can be manipulated
  */
-class ValidateEvent extends RemoteEvent
-{
+class ValidateEvent extends RemoteEvent {
 
-    public const NAME = 'civi.remoteevent.registration.validate';
+  public const NAME = 'civi.remoteevent.registration.validate';
 
-    /** @var array holds the original RemoteParticipant.validate submission */
-    protected $submission;
+  /**
+   * @phpstan-return array<string, mixed>
+   */
+  protected array $submission;
 
-    public function __construct($submission_data, $error_list = [])
-    {
-        $this->submission  = $submission_data;
-        $this->error_list = $error_list;
-        $this->token_usages = ['invite', 'update'];
+  public function __construct($submission_data, $error_list = []) {
+    $this->submission = $submission_data;
+    $this->error_list = $error_list;
+    $this->token_usages = ['invite', 'update'];
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getQueryParameters(): array {
+    return $this->submission;
+  }
+
+  /**
+   * @phpstan-return array<string, mixed>
+   */
+  public function getSubmission(): array {
+    return $this->submission;
+  }
+
+  public function addValidationError(string $fieldName, string $errorMessage): void {
+    $this->addError($errorMessage, $fieldName);
+  }
+
+  /**
+   * @phpstan-return list<string>
+   */
+  public function &modifyValidationErrors(): array {
+    return $this->error_list;
+  }
+
+  public function getAdditionalParticipantsCount(): int {
+    return array_reduce(
+      preg_grep('#^additional_([0-9]+)(_|$)#', array_keys($this->getSubmission())),
+      function(int $carry, string $item) {
+        $currentCount = (int) preg_filter('#^additional_([0-9]+)(.*?)$#', '$1', $item);
+        return max($carry, $currentCount);
+      },
+      0
+    );
+  }
+
+  public function getRequestedParticipantCount(int $additionalParticipantsCount): int {
+    $event = $this->getEvent();
+    $submission = $this->getSubmission();
+    $priceFields = PriceFieldUtil::getPriceFields($event);
+    $maxRequestedParticipantCounts = [];
+    foreach (CRM_Remoteevent_RegistrationProfile::getPriceFieldsToValidate(
+      $priceFields,
+      $additionalParticipantsCount
+    ) as $fieldName => $priceFieldId) {
+      /** @var $participantNo 0 for the initial participant, 1-N for additional participants */
+      $participantNo = RegistrationEventFactory::getAdditionalParticipantNo($fieldName) ?? 0;
+      $priceField = $priceFields[$priceFieldId];
+      $priceFieldValues = PriceFieldUtil::getPriceFieldValues($priceField['price_field.id']);
+      $priceFieldValueId = $priceField['price_field.is_enter_qty']
+        ? array_key_first($priceFieldValues)
+        : (int) $submission[$fieldName];
+
+      // For each participant (initial and additional), use the maximum count of participants in price fields to be used
+      // for this registration.
+      $maxRequestedParticipantCounts[$participantNo] = max(
+        $priceFieldValues[$priceFieldValueId]['count'] ?? 1,
+        $maxRequestedParticipantCounts[$participantNo]
+      );
     }
 
-    /**
-     * Add an error to the given field
-     *
-     * @param string $field_name
-     *   field name
-     *
-     * @param string $error
-     *   error message to be displayed to the user
-     */
-    public function addValidationError($field_name, $error)
-    {
-        // just pass to the underlying error system
-        $this->addError($error, $field_name);
-    }
+    return array_sum($maxRequestedParticipantCounts);
+  }
 
-    /**
-     * Modify Validation Errors
-     *
-     * @return array
-     *  $validation error list (reference!)
-     */
-    public function &modifyValidationErrors()
-    {
-        // just pass to the underlying error system
-        return $this->error_list;
-    }
-
-    /**
-     * Get the complete submission
-     *
-     * @return array
-     *   submission data
-     */
-    public function getSubmission()
-    {
-        return $this->submission;
-    }
-
-    /**
-     * Get the parameters of the original query
-     *
-     * @return array
-     *   parameters of the query
-     */
-    public function getQueryParameters()
-    {
-        return $this->submission;
-    }
 }
