@@ -149,7 +149,7 @@ class CRM_Remoteevent_RemoteEvent
     {
         // check if status is not (already) negative
         $all_statuses = CRM_Remoteevent_Registration::getParticipantStatusList();
-        $participant_status = \CRM_Utils_Array::value($participant['participant_status_id'], $all_statuses);
+        $participant_status = $all_statuses[$participant['participant_status_id']] ?? NULL;
         if (empty($participant_status)) {
             return false;
         } else {
@@ -184,7 +184,7 @@ class CRM_Remoteevent_RemoteEvent
     {
         // check if status is not (already) negative
         $all_statuses = CRM_Remoteevent_Registration::getParticipantStatusList();
-        $participant_status = \CRM_Utils_Array::value($participant['participant_status_id'], $all_statuses);
+        $participant_status = $all_statuses[$participant['participant_status_id']] ?? NULL;
         if (empty($participant_status)) {
             return false;
         } else {

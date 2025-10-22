@@ -159,9 +159,7 @@ class CancelEvent extends ChangingEvent
         // check if status is not (already) negative
         $all_statuses = \CRM_Remoteevent_Registration::getParticipantStatusList();
         // APIv3 and v4 have different field names for the status ID.
-        $participant_status =
-            \CRM_Utils_Array::value($participant['participant_status_id'], $all_statuses)
-                ?: \CRM_Utils_Array::value($participant['status_id'], $all_statuses);
+        $participant_status = $all_statuses[$participant['participant_status_id']] ?? $all_statuses[$participant['status_id']];
         if (empty($participant_status)) {
             $this->addError("Participant [{$participant['id']}] has no valid status");
             return false;
