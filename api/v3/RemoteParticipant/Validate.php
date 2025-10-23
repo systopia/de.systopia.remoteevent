@@ -73,7 +73,7 @@ function _civicrm_api3_remote_participant_validate_spec(&$spec)
  * @return array
  *   API3 response
  *
- * @throws CiviCRM_API3_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_remote_participant_validate($params)
 {

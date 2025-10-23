@@ -319,7 +319,7 @@ class CRM_Remoteevent_RemoteEvent
         $event_id = (int) $event_id;
         try {
             return (int) civicrm_api3('Event', 'getvalue', ['return' => 'is_template', 'id' => $event_id]);
-        } catch (CiviCRM_API3_Exception $ex) {
+        } catch (CRM_Core_Exception $ex) {
             // event probably doesn't exist
             return 0;
         }

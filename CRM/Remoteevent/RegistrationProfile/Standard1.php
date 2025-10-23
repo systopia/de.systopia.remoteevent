@@ -82,7 +82,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
                     'is_primary' => 1
                 ]);
                 $resultsEvent->setPrefillValue('email', $primary_email['email']);
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 // there is no (unique) primary email
             }
         }

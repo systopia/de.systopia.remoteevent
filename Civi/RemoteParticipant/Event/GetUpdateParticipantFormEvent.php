@@ -70,7 +70,7 @@ class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase
                     // todo: there IS a participant, and it's NOT an invite. anything to do here?
 
                 }
-            } catch (\CiviCRM_API3_Exception $ex) {
+            } catch (\CRM_Core_Exception $ex) {
                 // the participant probably doesn't exist:
                 $this->addWarning(E::ts("The link or reference you're using is no longer valid."));
             }

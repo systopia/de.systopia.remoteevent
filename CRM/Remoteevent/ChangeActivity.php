@@ -243,7 +243,7 @@ class CRM_Remoteevent_ChangeActivity
                                     'value'           => $field_data[$attribute][$value_key],
                                     'return'          => 'label'
                                 ]);
-                            } catch (CiviCRM_API3_Exception $ex) {
+                            } catch (CRM_Core_Exception $ex) {
                                 $field_data[$attribute][$value_key] = E::ts("%1 (invalid)", [1 => $field_data[$attribute][$value_key]]);
                             }
                         }
@@ -281,7 +281,7 @@ class CRM_Remoteevent_ChangeActivity
                     'details'           => $details,
                 ];
                 civicrm_api3('Activity', 'create', $activity_data);
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 Civi::log()->debug("Couldn't create activity: " . json_encode($activity_data) . ' - error was: ' . $ex->getMessage());
             }
         }

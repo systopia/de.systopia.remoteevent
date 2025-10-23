@@ -120,7 +120,7 @@ function civicrm_api3_remote_participant_get_form($params)
             // token checks out, get the event_id
             try {
                 $participant = civicrm_api3('Participant', 'getsingle', ['id' => $participant_id, 'return' => 'event_id']);
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 // token is valid, but the participant doesn't exist (any more)
                 return RemoteEvent::createStaticAPI3Error(E::ts("Broken token '%1'", [1 => $params['token']]));
             }
