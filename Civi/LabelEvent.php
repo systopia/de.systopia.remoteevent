@@ -87,7 +87,7 @@ class LabelEvent extends Event
     public function isBackend()
     {
         if (isset($this->context_data['is_backend'])) {
-            return (boolean) $this->context_data['is_backend'];
+            return (bool) $this->context_data['is_backend'];
         } else {
             return false;
         }
