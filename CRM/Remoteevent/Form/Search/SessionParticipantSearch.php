@@ -230,7 +230,7 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch
         if (!empty($this->_formValues['session_ids'])) {
             $session_ids = $this->_formValues['session_ids'];
         } else {
-            $session_ids = CRM_Utils_Array::value('session_ids', $_REQUEST, null);
+            $session_ids = $_REQUEST['session_ids'] ?? NULL;
         }
         if (empty($session_ids)) {
             $session_ids = [];

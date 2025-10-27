@@ -34,7 +34,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
         $entityName = 'Session';
         $hook = empty($params['id']) ? 'create' : 'edit';
 
-        CRM_Utils_Hook::pre($hook, $entityName, CRM_Utils_Array::value('id', $params), $params);
+        CRM_Utils_Hook::pre($hook, $entityName, $params['id'] ?? NULL, $params);
         $instance = new $className();
         $instance->copyValues($params);
         $instance->save();

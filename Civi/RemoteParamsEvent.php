@@ -88,7 +88,7 @@ abstract class RemoteParamsEvent extends RemoteEvent
      */
     public function getParameter($key)
     {
-        return \CRM_Utils_Array::value($key, $this->request, null);
+        return $this->request[$key] ?? NULL;
     }
 
     /**

@@ -168,8 +168,8 @@ class CRM_Remoteevent_ChangeActivity
         $all_attributes = array_keys($previous_values) + array_keys($previous_values);
         foreach ($all_attributes as $attribute) {
             // extract values
-            $previous_value = CRM_Utils_Array::value($attribute, $previous_values);
-            $current_value  = CRM_Utils_Array::value($attribute, $current_values);
+            $previous_value = $previous_values[$attribute] ?? NULL;
+            $current_value  = $current_values[$attribute] ?? NULL;
 
             // format arrays
             if (is_array($previous_value)) {
@@ -207,8 +207,8 @@ class CRM_Remoteevent_ChangeActivity
             foreach ($differing_attributes as $attribute) {
                 // first: create record
                 $field_data[$attribute] = [
-                    'old_value' => CRM_Utils_Array::value($attribute, $previous_values),
-                    'new_value' => CRM_Utils_Array::value($attribute, $current_values),
+                    'old_value' => $previous_values[$attribute] ?? NULL,
+                    'new_value' => $current_values[$attribute] ?? NULL,
                 ];
 
                 // look for labels

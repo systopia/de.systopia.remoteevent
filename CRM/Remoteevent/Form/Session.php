@@ -185,7 +185,7 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
                 $defaults = [];
                 $current_values = civicrm_api3('Session', 'getsingle', ['id' => $session_id]);
                 foreach (self::SESSION_PROPERTIES as $property) {
-                    $defaults[$property] = CRM_Utils_Array::value($property, $current_values);
+                    $defaults[$property] = $current_values[$property] ?? NULL;
                 }
                 $this->setDefaults($defaults);
             } catch (CRM_Core_Exception $ex) {
@@ -242,7 +242,7 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
         $values = $this->exportValues();
         $update = [];
         foreach (self::SESSION_PROPERTIES as $property) {
-            $update[$property] = CRM_Utils_Array::value($property, $values);
+            $update[$property] = $values[$property] ?? NULL;
         }
 
         $session_id = $this->getSessionID();

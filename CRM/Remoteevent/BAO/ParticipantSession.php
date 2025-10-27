@@ -30,7 +30,7 @@ class CRM_Remoteevent_BAO_ParticipantSession extends CRM_Remoteevent_DAO_Partici
         $entityName = 'ParticipantSession';
         $hook = empty($params['id']) ? 'create' : 'edit';
 
-        CRM_Utils_Hook::pre($hook, $entityName, CRM_Utils_Array::value('id', $params), $params);
+        CRM_Utils_Hook::pre($hook, $entityName, $params['id'] ?? NULL, $params);
         $instance = new $className();
         $instance->copyValues($params);
         $instance->save();
