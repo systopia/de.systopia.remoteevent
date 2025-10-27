@@ -366,7 +366,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
 
         // check if valid
         if (!in_array($params['profile'], $allowed_profiles)) {
-            throw new CiviCRM_API3_Exception(
+            throw new CRM_Core_Exception(
                 E::ts("Profile [%2] cannot be used with RemoteEvent [%1].", [
                     1 => $event['id'],
                     2 => $params['profile']])
@@ -799,9 +799,9 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 ]);
                 $contact_data += $legacy_contact_data;
                 ParticipantFormEventUtil::mapToPrefill($contact_data, $attribute_mapping, $resultsEvent, $value_callbacks);
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 // there is no (unique) primary email
-                // @todo CiviCRM_API3_Exception is an alias of CRM_Core_Exception so this catch is too broad.
+                // @todo CRM_Core_Exception is an alias of CRM_Core_Exception so this catch is too broad.
             }
         }
     }

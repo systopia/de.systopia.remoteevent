@@ -72,7 +72,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
                 'profile'  => 'Standard3'
             ]);
             $this->fail("RemoteParticipant.get_form with an illegal profile should cause an exception");
-        } catch (CiviCRM_API3_Exception $ex) {
+        } catch (CRM_Core_Exception $ex) {
             $error_message = $ex->getMessage();
             $this->assertMatchesRegularExpression('/cannot be used/', $error_message, "This seems to be the wrong kind of exception");
         }

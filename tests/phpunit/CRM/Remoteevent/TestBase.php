@@ -270,7 +270,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             $result['is_error'] = 0;
             $this->assertArrayHasKey('status_messages', $result, "API Call {$entity}.{$action} doesn't return 'status_messages'");
             $status_messages = $result['status_messages'];
-        } catch (CiviCRM_API3_Exception $ex) {
+        } catch (CRM_Core_Exception $ex) {
             $result = [
                 'is_error'      => 1,
                 'error_message' => $ex->getMessage()

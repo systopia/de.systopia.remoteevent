@@ -169,7 +169,7 @@ class CRM_Remoteevent_RegistrationUpdate
                     $registration_update->setContactUpdated();
 
                 }
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 $l10n = $registration_update->getLocalisation();
                 $registration_update->addError($l10n->ts("Couldn't update contact: %1", [1 => $l10n->ts($ex->getMessage())]));
             }
@@ -198,7 +198,7 @@ class CRM_Remoteevent_RegistrationUpdate
             try {
                 civicrm_api3('Participant', 'create', $participant_updates);
                 $registration_update->setParticipantUpdated();
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 $l10n = $registration_update->getLocalisation();
                 $registration_update->addError($l10n->ts("Couldn't update participant: %1", [1 => $l10n->ts($ex->getMessage())]));
             }

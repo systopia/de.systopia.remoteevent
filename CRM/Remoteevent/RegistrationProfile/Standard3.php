@@ -206,7 +206,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
                 foreach ($address_fields as $address_field) {
                     $resultsEvent->setPrefillValue($address_field, $address[$address_field]);
                 }
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 // probably no primary address set
             }
         }

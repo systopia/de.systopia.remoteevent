@@ -54,7 +54,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase
                 ]
             );
             $this->fail("RemoteParticipant.cancel without identification should fail");
-        } catch (CiviCRM_API3_Exception $ex) {
+        } catch (CRM_Core_Exception $ex) {
             // todo: check error message?
             // $error_message = $ex->getMessage();
             // $this->assertMatchesRegularExpression('/invalid/', $error_message, "This seems to be the wrong kind of exception");

@@ -68,7 +68,7 @@ function _civicrm_api3_remote_participant_update_spec(&$spec)
  * @return array
  *   API3 response
  *
- * @throws CiviCRM_API3_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_remote_participant_update($params)
 {
@@ -82,7 +82,7 @@ function civicrm_api3_remote_participant_update($params)
             $errors = $validation_result['values'];
             return RemoteEvent::createStaticAPI3Error(reset($errors), ['errors' => $errors]);
         }
-    } catch (CiviCRM_API3_Exception $ex) {
+    } catch (CRM_Core_Exception $ex) {
         if (isset($ex->getExtraParams()['values'])) {
             $errors = $ex->getExtraParams()['values'];
         } else {

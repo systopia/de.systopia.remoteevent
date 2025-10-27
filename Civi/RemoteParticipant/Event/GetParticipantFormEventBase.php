@@ -297,7 +297,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent
 
             // ...and else...other greetings to be set?
 
-        } catch (\CiviCRM_API3_Exception $exception) {
+        } catch (\CRM_Core_Exception $exception) {
             \Civi::log()->debug("Error while rendering standard greeting: " . $exception->getMessage());
         }
     }

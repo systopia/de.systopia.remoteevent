@@ -167,7 +167,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session
                 $start_date = civicrm_api3('Event', 'getvalue', [
                     'id'     => $event_id,
                     'return' => 'start_date']);
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 // something's wrong
                 return [];
             }

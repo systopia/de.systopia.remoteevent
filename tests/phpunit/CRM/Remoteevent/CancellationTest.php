@@ -54,7 +54,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
                 ]
             );
             $this->fail("RemoteParticipant.cancel without identification should fail");
-        } catch (CiviCRM_API3_Exception $ex) {
+        } catch (CRM_Core_Exception $ex) {
             // todo: check error message?
              $error_message = $ex->getMessage();
              $this->assertMatchesRegularExpression('/no participants found/i', $error_message, "This seems to be the wrong kind of exception");
@@ -208,7 +208,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase
                 'remote_contact_id' => $this->getRemoteContactKey($contact['id'])
             ]);
             $this->fail("Cancelling a participant after the selfcancelxfer_time limit should not succeed.");
-        } catch (CiviCRM_API3_Exception $ex) {
+        } catch (CRM_Core_Exception $ex) {
             // didn't work: verify it's for the right reason
             $this->assertNotEmpty(strstr($ex->getMessage(), 'does not allow cancellation less than'), "There should be an error message regarding the cancellation time restrictions");
         }

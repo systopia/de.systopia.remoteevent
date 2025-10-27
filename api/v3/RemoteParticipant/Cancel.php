@@ -93,7 +93,7 @@ function civicrm_api3_remote_participant_cancel($params)
                     'id'     => $participant_id,
                     'return' => 'event_id,contact_id']);
                 $participants = CRM_Remoteevent_Registration::getRegistrations($participant['event_id'], $participant['contact_id']);
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 return RemoteEvent::createStaticAPI3Error('Outdated Token!');
             }
         }

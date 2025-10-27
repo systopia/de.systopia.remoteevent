@@ -188,7 +188,7 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form
                     $defaults[$property] = CRM_Utils_Array::value($property, $current_values);
                 }
                 $this->setDefaults($defaults);
-            } catch (CiviCRM_API3_Exception $ex) {
+            } catch (CRM_Core_Exception $ex) {
                 throw new CRM_Core_Exception("Session [{$session_id}] does not exist");
             }
         } else {

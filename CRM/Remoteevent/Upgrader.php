@@ -388,7 +388,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base
      * @param string $class
      *   status class
      *
-     * @throws \CiviCRM_API3_Exception
+     * @throws \CRM_Core_Exception
      */
     protected function addParticipantStatus($name, $label, $class)
     {
