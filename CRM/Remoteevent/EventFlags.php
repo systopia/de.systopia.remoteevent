@@ -143,7 +143,7 @@ class CRM_Remoteevent_EventFlags
             $get_parameters->setOffset(0);
 
             // check if we should apply performance enhancements
-            $performance_enhancement_enabled = (boolean) Civi::settings()->get('remote_event_get_performance_enhancement');
+            $performance_enhancement_enabled = (bool) Civi::settings()->get('remote_event_get_performance_enhancement');
             $requested_event_ids = $get_parameters->getRequestedEventIDs();
 
             // apply performance enhancements if there isn't already a restriction on event _IDs_ (<=25)
