@@ -77,7 +77,7 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
   /**
    * @phpstan-param array<string, array<string, mixed>> $initialFields
    *
-   * @dataProvider provideInitialFields()
+   * @dataProvider provideInitialFields
    */
   public function testOnGetCreateParticipantForm(array $initialFields, int $expectedWeight): void {
       $event = new GetCreateParticipantFormEvent([], [
@@ -114,7 +114,7 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
   /**
    * @phpstan-param array<string, array<string, mixed>> $initialFields
    *
-   * @dataProvider provideInitialFields()
+   * @dataProvider provideInitialFields
    */
   public function testOnGetUpdateParticipantForm(array $initialFields, int $expectedWeight): void {
     $event = new GetUpdateParticipantFormEvent([], [
@@ -212,7 +212,6 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
 
     $this->subscriptionManagerMock->expects(static::once())->method('subscribeWithDoubleOptIn')
       ->with(23, 2, 'Test Subject', 'Test Text');
-
 
     $this->subscriber->onRegistrationEvent($event);
   }
