@@ -47,7 +47,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
             ->apply();
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         CRM_Xcm_Configuration::flushProfileCache();
@@ -62,7 +62,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         //Civi::settings()->set('remote_event_get_performance_enhancement', true);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->transaction->rollback();
         $this->transaction = null;
