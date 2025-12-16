@@ -43,7 +43,7 @@ class CRM_Remoteevent_RegistrationUpdate
      * @return void
      */
     public static function addAdditionalParticipantInfo(GetUpdateParticipantFormEvent $event): void {
-        if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID(), $event))) {
+        if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID() ?? 0, $event))) {
             $event->addWarning($event->localise(
                 'You registered additional participants which can not be updated: %1',
                 [1 => '<ul><li>' . implode('</li><li>', array_column($additional_participants, 'message')) . '</li></ul>']

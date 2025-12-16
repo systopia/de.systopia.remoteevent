@@ -105,7 +105,6 @@ abstract class RemoteEvent extends RemoteToolsRequest
     public function getParticipantID(): ?int
     {
         if ($this->participant_id === null) {
-            $this->participant_id = 0; // don't look it up again
             $query = $this->getQueryParameters();
             if (!empty($query['token'])) {
                 // there is a token, see if it complies with the known formats
@@ -136,6 +135,9 @@ abstract class RemoteEvent extends RemoteToolsRequest
                     ]);
                     if (!empty($participant_query['id'])) {
                         $this->participant_id = (int) $participant_query['id'];
+                    }
+                    else {
+                      $this->participant_id = 0; // don't look it up again
                     }
                 }
             }
