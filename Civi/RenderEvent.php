@@ -101,7 +101,7 @@ class RenderEvent extends Event {
       return NULL;
     }
     if (!isset($template_cache[$template_file])) {
-      $template_cache[$template_file] = 'string:' . file_get_contents($template_file);
+      $template_cache[$template_file] = file_get_contents($template_file);
     }
     $template = $template_cache[$template_file];
 
