@@ -13,22 +13,21 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\RemoteParticipant\Event\Util\PaymentMethodUtil;
+use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\Api4\Participant;
 use Civi\RemoteParticipant\Event\Util\ParticipantFormEventUtil;
-use CRM_Remoteevent_ExtensionUtil as E;
-
-use Civi\RemoteEvent as RemoteEvent;
+use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
-use Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
-use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
-
+use Civi\RemoteParticipant\Event\ValidateEvent;
 
 /**
  * Abstract base to all registration profile implementations
  */
 abstract class CRM_Remoteevent_RegistrationProfile
 {
+
     /**
      * Get the internal name of the profile represented.
      *
@@ -102,7 +101,175 @@ abstract class CRM_Remoteevent_RegistrationProfile
      */
     abstract public function getFields($locale = null);
 
-    public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
+  /**
+   * @phpstan-param array{
+   *   id: int,
+   *   currency: string,
+   *   fee_label: string,
+   *   is_monetary: int,
+   * } $event
+   *
+   * @param string|null $locale
+   *
+   * @phpstan-return array<string, array<string, mixed>>
+   * @throws \CRM_Core_Exception
+   */
+  public static function getProfilePriceFields(array $event, ?string $locale = NULL): array {
+    $fields = [];
+
+    if (!(bool) $event['is_monetary']) {
+      return $fields;
+    }
+
+    $priceFields = PriceFieldUtil::getPriceFields($event);
+    if (count($priceFields) === 0) {
+      return $fields;
+    }
+
+    $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+    $fields['price'] = [
+      'type' => 'fieldset',
+      'name' => 'price',
+      // TODO: Is this configurable option localizable?
+      'label' => $event['fee_label'],
+    ];
+
+    $maxWeight = 0;
+
+    foreach ($priceFields as $priceField) {
+      $maxWeight = max($maxWeight, $priceField['price_field.weight']);
+
+      $priceFieldValues = \Civi\Api4\PriceFieldValue::get(FALSE)
+        ->addSelect('id', 'label', 'amount')
+        ->addWhere('price_field_id', '=', $priceField['price_field.id'])
+        ->execute()
+        ->indexBy('id');
+      $field = [
+        // TODO: Validate types.
+        'type' => $priceField['price_field.html_type'],
+        'name' => 'price_' . $priceField['price_field.name'],
+        // TODO: Make configurable price field labels localizable.
+        'label' => $priceField['price_field.label'],
+        'weight' => $priceField['price_field.weight'],
+        'required' => (bool) $priceField['price_field.is_required'],
+        'parent' => 'price',
+      ];
+      if ((bool) $priceField['price_field.is_enter_qty']) {
+        // Append price per unit.
+        $field['label'] .= sprintf(
+          ' (%s)',
+          CRM_Utils_Money::format(
+            $priceFieldValues->first()['amount'],
+            $event['currency']
+          )
+        );
+      }
+      else {
+        $field['options'] = $priceFieldValues->column('label');
+
+        // Append price field value amounts in option labels.
+        if ((bool) $priceField['price_field.is_display_amounts']) {
+          array_walk(
+            $field['options'],
+            function(&$label, $id, $context) {
+              $label .= sprintf(
+                ' (%s)',
+                CRM_Utils_Money::format(
+                  $context['priceFieldValues'][$id]['amount'],
+                  $context['event']['currency']
+                )
+              );
+            },
+            ['priceFieldValues' => $priceFieldValues, 'event' => $event]
+          );
+        }
+      }
+
+      // Add prefixed help text.
+      if (isset($priceField['price_field.help_pre'])) {
+        // TODO: Make configurable price field labels localizable.
+        $field['prefix'] = $priceField['price_field.help_pre'];
+        $field['prefix_display'] = 'inline';
+      }
+
+      // Add suffixed help text.
+      if (isset($priceField['price_field.help_post'])) {
+        // TODO: Make configurable price field labels localizable.
+        $field['suffix'] = $priceField['price_field.help_post'];
+        $field['suffix_display'] = 'inline';
+      }
+
+      // TODO: Is the price field name unique across all price fields for this event?
+      $fields['price_' . $priceField['price_field.name']] = $field;
+    }
+
+    return $fields;
+  }
+
+  /**
+   * @phpstan-param array{
+   *    id: int,
+   *    currency: string,
+   *    fee_label: string,
+   *    is_monetary: int,
+   *    payment_processor?: int|string|array,
+   *    is_pay_later: bool|int,
+   *    pay_later_text?: string,
+   *  } $event
+   *
+   * @param int $maxWeight
+   *   The maximum weight of price fields, so that the payment fieldset can be positioned as the last element.
+   *
+   * @phpstan-return array<string, array<string, mixed>>
+   */
+  public static function getPaymentMethodsFields(
+    array $event,
+    ?string $locale = NULL,
+    int $maxWeight = 0,
+    bool $paymentRequired = FALSE
+  ): array {
+    $fields = [];
+
+    if (!(bool) $event['is_monetary']) {
+      return $fields;
+    }
+
+    $l10n = CRM_Remoteevent_Localisation::getLocalisation($locale);
+
+    $fields['payment'] = [
+      'type' => 'fieldset',
+      'name' => 'payment',
+      'label' => $l10n->ts('Payment'),
+      'parent' => 'price',
+      'weight' => $maxWeight++,
+    ];
+    $fields['payment_method'] = [
+      'type' => 'Select',
+      'name' => 'payment_method',
+      'label' => $l10n->ts('Payment Method'),
+      'options' => PaymentMethodUtil::getPaymentMethodOptions($event, $locale),
+      'required' => $paymentRequired,
+      'parent' => 'payment',
+      'weight' => 0,
+    ];
+    foreach (array_keys($fields['payment_method']['options']) as $paymentMethod) {
+      $fields += PaymentMethodUtil::getPaymentMethodFields($event, $paymentMethod, $locale);
+    }
+    return $fields;
+  }
+
+  public static function getQuickFormType(string $htmlType): string {
+    $mapping = [
+      'checkbox' => 'Checkbox',
+      'radio' => 'Radio',
+      'select' => 'Select',
+      'textarea' => 'Textarea',
+      'text' => 'Text',
+    ];
+    return $mapping[$htmlType] ?? '';
+  }
+
+    public static function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array
     {
         $fields = [];
         if (!empty($event['is_multiple_registrations'])) {
@@ -114,6 +281,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
                 $event['event_remote_registration.remote_registration_additional_participants_profile']
             );
             $additional_fields = $additional_participants_profile->getFields($locale);
+            $additional_fields += static::getProfilePriceFields($event, $locale);
             $fields['additional_participants'] = [
                 'type' => 'fieldset',
                 'name' => 'additional_participants',
@@ -182,94 +350,206 @@ abstract class CRM_Remoteevent_RegistrationProfile
         }
     }
 
-    /**
-     * Validate the profile fields individually.
-     * This only validates the mere data types,
-     *   more complex validation (e.g. over multiple fields)
-     *   have to be performed by the profile implementations
-     *
-     * @param ValidateEvent $validationEvent
-     *      event triggered by the RemoteParticipant.validate or submit API call
-     */
-    public function validateSubmission($validationEvent)
-    {
-        $data = $validationEvent->getSubmission();
-        $event = $validationEvent->getEvent();
-        $additionalParticipantsCount = array_reduce(
-          preg_grep('#^additional_([0-9]+)(_|$)#', array_keys($data)),
-          function(int $carry, string $item) {
-            $currentCount = (int) preg_filter('#^additional_([0-9]+)(.*?)$#', '$1', $item);
-            return max($carry, $currentCount);
-          },
-          0
+  /**
+   * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
+   *   Event triggered by the RemoteParticipant.validate or submit API call.
+   */
+  public function validateSubmission(ValidateEvent $validationEvent) {
+    $this->validateNumberOfParticipants($validationEvent);
+    $this->validateFieldValues($validationEvent);
+    $this->validatePriceFields($validationEvent);
+    $this->validatePaymentFields($validationEvent);
+  }
+
+  protected function validateNumberOfParticipants(ValidateEvent $validationEvent): void {
+    $event = $validationEvent->getEvent();
+    $l10n = $validationEvent->getLocalisation();
+    $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
+
+    if (
+      !empty($event['max_participants'])
+      && ($excessParticipants =
+        CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
+        + $validationEvent->getRequestedParticipantCount($additionalParticipantsCount)
+        - $event['max_participants'])
+      > 0
+    ) {
+      if (
+        !empty($event['has_waitlist'])
+        && (
+          $additionalParticipantsCount === 0
+          || !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
+        )
+      ) {
+        $validationEvent->addWarning(
+          $l10n->ts('Not enough vacancies for the number of requested participants.')
+          . ' '
+          . $l10n->ts('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
         );
-        $l10n = $validationEvent->getLocalisation();
-
-        // Validate number of participants.
-        if (
-            !empty($event['max_participants'])
-            && ($excessParticipants =
-              CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
-              + 1 + $additionalParticipantsCount - $event['max_participants'])
-            > 0
-        ) {
-            if (
-                !empty($event['has_waitlist'])
-                    && (
-                        $additionalParticipantsCount === 0
-                        || !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
-                    )
-            ) {
-                $validationEvent->addWarning(
-                    $l10n->ts('Not enough vacancies for the number of requested participants.')
-                    . ' '
-                    . $l10n->ts('%1 participant(s) will be added to the waiting list.', [1 => $excessParticipants])
-                );
-            }
-            else {
-                $validationEvent->addValidationError('', $l10n->ts('Not enough vacancies for the number of requested participants.'));
-            }
-        }
-
-        // Validate field values.
-        $fields = $this->getFields()
-          + $this->getAdditionalParticipantsFields($event, $additionalParticipantsCount);
-        foreach ($fields as $field_name => $field_spec) {
-            $value = $data[$field_name] ?? NULL;
-            if (!empty($field_spec['required']) && ($value === null || $value === '') &&
-              // Files are always optional on update.
-              ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')) {
-                $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
-            } else if ($field_spec['type'] === 'File') {
-                if ($value === NULL) {
-                  continue;
-                }
-
-                if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
-                  // File systems usually allow up to 255 characters.
-                  || strlen($value['filename']) > 255 || !is_string($value['content'] ?? NULL)
-                ) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
-                    continue;
-                }
-
-                $maxFilesize = (int) ($field_spec['max_filesize'] ?? 0);
-                if ($maxFilesize > 0) {
-                    // The file might need up to 38 % more space through Base64 encoding.
-                    if (strlen($value['content']) > ceil($maxFilesize * 1.38)) {
-                        $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
-                    }
-                }
-            } else {
-                if (!$this->validateFieldValue($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
-                }
-                if (!$this->validateFieldLength($field_spec, $value)) {
-                    $validationEvent->addValidationError($field_name, $l10n->ts('Value too long'));
-                }
-            }
-        }
+      }
+      else {
+        $validationEvent->addValidationError(
+          '',
+          $l10n->ts('Not enough vacancies for the number of requested participants.')
+        );
+      }
     }
+  }
+
+  protected function validateFieldValues(ValidateEvent $validationEvent): void {
+    $data = $validationEvent->getSubmission();
+    $event = $validationEvent->getEvent();
+    $l10n = $validationEvent->getLocalisation();
+    $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
+    $fields = $this->getFields() + static::getAdditionalParticipantsFields($event, $additionalParticipantsCount);
+
+    foreach ($fields as $field_name => $field_spec) {
+      $value = $data[$field_name] ?? NULL;
+      if (
+        !empty($field_spec['required']) && ($value === NULL || $value === '')
+        // Files are always optional on update.
+        && ($field_spec['type'] !== 'File' || $validationEvent->getContext() !== 'update')
+      ) {
+        $validationEvent->addValidationError($field_name, $l10n->ts('Required'));
+      }
+      elseif ($field_spec['type'] === 'File') {
+        if ($value === NULL) {
+          continue;
+        }
+
+        if (!is_array($value) || !is_string($value['filename'] ?? NULL) || $value['filename'] === ''
+          // File systems usually allow up to 255 characters.
+          || strlen($value['filename']) > 255 || !is_string($value['content'] ?? NULL)
+        ) {
+          $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+          continue;
+        }
+
+        $maxFilesize = (int) ($field_spec['max_filesize'] ?? 0);
+        if ($maxFilesize > 0) {
+          // The file might need up to 38 % more space through Base64 encoding.
+          if (strlen($value['content']) > ceil($maxFilesize * 1.38)) {
+            $validationEvent->addValidationError($field_name, $l10n->ts('File too large'));
+          }
+        }
+      }
+      else {
+        if (!$this->validateFieldValue($field_spec, $value)) {
+          $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+        }
+        if (!$this->validateFieldLength($field_spec, $value)) {
+          $validationEvent->addValidationError($field_name, $l10n->ts('Value too long'));
+        }
+      }
+    }
+  }
+
+  /**
+   * @phpstan-param array<string, mixed> $event
+   * @phpstan-param array<string, mixed> $submission
+   *
+   * @phpstan-return array<string, string>
+   *   An array with field names as keys and corresponding localised error
+   *   messages as values.
+   * @throws \CRM_Core_Exception
+   */
+  protected function validatePriceFields(ValidateEvent $validationEvent): void {
+    $event = $validationEvent->getEvent();
+    if (!(bool) $event['is_monetary']) {
+      return;
+    }
+    $submission = $validationEvent->getSubmission();
+    $l10n = $validationEvent->getLocalisation();
+    $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
+    $priceFields = PriceFieldUtil::getPriceFields($event);
+    foreach (self::getPriceFieldsToValidate(
+      $priceFields,
+      $additionalParticipantsCount
+    ) as $fieldName => $priceFieldId) {
+      $priceField = $priceFields[$priceFieldId];
+      $priceFieldValues = PriceFieldUtil::getPriceFieldValues($priceField['price_field.id']);
+      $priceFieldValueId = $priceField['price_field.is_enter_qty']
+        ? array_key_first($priceFieldValues)
+        : (int) $submission[$fieldName];
+
+      // Validate quantity being numeric.
+      if (
+        $priceField['price_field.is_enter_qty']
+        && !empty($submission[$fieldName])
+        && !is_numeric($submission[$fieldName])
+      ) {
+        $validationEvent->addValidationError($fieldName, $l10n->ts('Quantity must be numeric'));
+      }
+
+      // Validate price field value being a valid option.
+      if (
+        !$priceField['price_field.is_enter_qty']
+        && !empty($submission[$fieldName])
+        && (
+          !is_numeric($submission[$fieldName])
+          || !array_key_exists((int) $submission[$fieldName], $priceFieldValues)
+        )
+      ) {
+        $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+      }
+
+      // Validate availability of price options.
+      if (isset($priceFieldValues[$priceFieldValueId]['max_value'])) {
+        $requestedCount[$priceFieldValueId] ??= 0;
+        $requestedCount[$priceFieldValueId] += $priceField['price_field.is_enter_qty']
+          ? (int) $submission[$fieldName]
+          : 1;
+        $currentCount = \CRM_Event_BAO_Participant::priceSetOptionsCount($event['id'])[$priceFieldValueId] ?? 0;
+        if ($currentCount + $requestedCount[$priceFieldValueId] > $priceFieldValues[$priceFieldValueId]['max_value']) {
+          $validationEvent->addValidationError($fieldName, $l10n->ts('Maximum number of price option exceeded'));
+        }
+      }
+    }
+  }
+
+  protected function validatePaymentFields(ValidateEvent $validationEvent): void {
+    $event = $validationEvent->getEvent();
+    if (!(bool) $event['is_monetary']) {
+      return;
+    }
+    $submission = $validationEvent->getSubmission();
+    $l10n = $validationEvent->getLocalisation();
+
+    switch ($submission['payment_method']) {
+      case 'pay_later':
+        break;
+
+      case 'sepa':
+        $error = CRM_Sepa_Logic_Verification::verifyIBAN($submission['payment_method_sepa_iban']);
+        if (NULL !== $error) {
+          $validationEvent->addValidationError('payment_method_sepa_iban', $l10n->ts('Invalid IBAN'));
+        }
+        $error = CRM_Sepa_Logic_Verification::verifyBIC($submission['payment_method_sepa_bic']);
+        if (NULL !== $error) {
+          $validationEvent->addValidationError('payment_method_sepa_bic', $l10n->ts('Invalid BIC'));
+        }
+        break;
+    }
+  }
+
+  /**
+   * @phpstan-return array<string, int>
+   *   Mapping of submission field name => price field ID
+   */
+  public static function getPriceFieldsToValidate(array $priceFields, int $additionalParticipantsCount): array {
+    $priceFieldsToValidate = [];
+    foreach ($priceFields as $priceField) {
+      $priceFieldsToValidate['price_' . $priceField['price_field.name']] = $priceField['price_field.id'];
+    }
+    // Add all price fields for additional participants.
+    for ($i = 1; $i <= $additionalParticipantsCount; $i++) {
+      $priceFieldsToValidate += array_combine(
+        array_map(fn($fieldName) => 'additional_' . $i . '_' . $fieldName, array_keys($priceFieldsToValidate)),
+        $priceFieldsToValidate
+      );
+    }
+    return $priceFieldsToValidate;
+  }
 
     /**
      * This function will tell you which entity/entities the given field
@@ -331,7 +611,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Add the profile data to the get_form results
      *
-     * @param RemoteEvent $remote_event
+     * @param \Civi\RemoteEvent $remote_event
      *      event triggered by the RemoteParticipant.get_form API call
      *
      * @return \CRM_Remoteevent_RegistrationProfile
@@ -390,13 +670,29 @@ abstract class CRM_Remoteevent_RegistrationProfile
     {
         // simply add the fields from the profile
         $profile = self::getProfile($get_form_results);
+      /**
+       * @phpstan-var array{
+       *   id: int,
+       *   currency: string,
+       *   fee_label: string,
+       *   is_monetary: int,
+       * } $event
+       */
         $event = $get_form_results->getEvent();
 
         // add the fields
         $locale = $get_form_results->getLocale();
         $fields = $profile->getFields($locale);
         if ('create' === $get_form_results->getContext()) {
-          $fields += $profile->getAdditionalParticipantsFields($event, NULL, $locale);
+          $profilePriceFields = static::getProfilePriceFields($event, $locale);
+          $fields += $profilePriceFields;
+          $fields += static::getPaymentMethodsFields(
+            $event,
+            $locale,
+            max(array_column($profilePriceFields, 'weight') + [0]),
+            PriceFieldUtil::hasRequiredPriceFields($event)
+          );
+          $fields += static::getAdditionalParticipantsFields($event, NULL, $locale);
         }
         $get_form_results->addFields($fields);
 
@@ -417,7 +713,7 @@ abstract class CRM_Remoteevent_RegistrationProfile
     /**
      * Validate the profile fields
      *
-     * @param ValidateEvent $validationEvent
+     * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
      *      event triggered by the RemoteParticipant.validate or submit API call
      */
     public static function validateProfileData($validationEvent)
