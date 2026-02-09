@@ -92,43 +92,43 @@ class SpawnEvent extends AbstractAction {
     // Get the contact and the event.
     $apiParams = CustomField::getCustomFieldsApiParameter($parameters, $this->getParameterSpecification());
 
-    if ($this->configuration->doesParameterExists('template_id')) {
+    if ($this->configuration->parameterExists('template_id')) {
       $apiParams['template_id'] = $this->configuration->getParameter('template_id');
     }
-    elseif ($parameters->doesParameterExists('template_id')) {
+    elseif ($parameters->parameterExists('template_id')) {
       $apiParams['template_id'] = $parameters->getParameter('template_id');
     }
-    if ($parameters->doesParameterExists('event_id')) {
+    if ($parameters->parameterExists('event_id')) {
       $apiParams['id'] = $parameters->getParameter('event_id');
     }
     $apiParams['title'] = $parameters->getParameter('title');
-    if ($parameters->doesParameterExists('description')) {
+    if ($parameters->parameterExists('description')) {
       $apiParams['description'] = $parameters->getParameter('description');
     }
-    if ($parameters->doesParameterExists('summary')) {
+    if ($parameters->parameterExists('summary')) {
       $apiParams['summary'] = $parameters->getParameter('summary');
     }
     $apiParams['start_date'] = $parameters->getParameter('start_date');
-    if ($parameters->doesParameterExists('end_date')) {
+    if ($parameters->parameterExists('end_date')) {
       $apiParams['end_date'] = $parameters->getParameter('end_date');
     }
 
-    if ($parameters->doesParameterExists('event_type')) {
+    if ($parameters->parameterExists('event_type')) {
       $apiParams['event_type_id'] = $parameters->getParameter('event_type');
     }
-    if ($parameters->doesParameterExists('is_active')) {
+    if ($parameters->parameterExists('is_active')) {
       $apiParams['is_active'] = $parameters->getParameter('is_active');
     }
-    if ($parameters->doesParameterExists('is_public')) {
+    if ($parameters->parameterExists('is_public')) {
       $apiParams['is_public'] = $parameters->getParameter('is_public');
     }
-    if ($parameters->doesParameterExists('max_participants')) {
+    if ($parameters->parameterExists('max_participants')) {
       $apiParams['max_participants'] = $parameters->getParameter('max_participants');
     }
-    if ($parameters->doesParameterExists('event_full_text')) {
+    if ($parameters->parameterExists('event_full_text')) {
       $apiParams['event_full_text'] = $parameters->getParameter('event_full_text');
     }
-    if ($parameters->doesParameterExists('waitlist_text')) {
+    if ($parameters->parameterExists('waitlist_text')) {
       $apiParams['waitlist_text'] = $parameters->getParameter('waitlist_text');
     }
 
