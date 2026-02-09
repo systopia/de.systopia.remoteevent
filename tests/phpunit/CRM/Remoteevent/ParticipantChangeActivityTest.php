@@ -24,6 +24,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests for the recording of change activities
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_TestBase
 {

@@ -24,6 +24,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests regarding the RemoteParticipant.get_form API
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
 {

@@ -24,6 +24,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Some very basic tests around CiviRemote Event
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_Remoteevent_CreateEventTest extends CRM_Remoteevent_TestBase
 {

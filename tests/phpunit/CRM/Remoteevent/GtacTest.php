@@ -24,6 +24,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests the "general terms and conditions" field
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_Remoteevent_GtacTest extends CRM_Remoteevent_TestBase
 {

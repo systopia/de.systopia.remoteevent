@@ -24,6 +24,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests regarding registration flags
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase
 {

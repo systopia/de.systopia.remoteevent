@@ -24,6 +24,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests around event templating and instances
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase
 {

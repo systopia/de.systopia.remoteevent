@@ -25,6 +25,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests regarding the creation / update of participants
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase
 {

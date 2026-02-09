@@ -25,6 +25,8 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Test event functions with an anonymous contact
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase
 {

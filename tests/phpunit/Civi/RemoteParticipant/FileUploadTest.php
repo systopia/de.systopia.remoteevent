@@ -29,6 +29,8 @@ use Civi\RemoteEvent\Fixtures\RemoteEventFixture;
 
 /**
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
 
