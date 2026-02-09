@@ -149,7 +149,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
       }
     }
 
-    return $this->participant_id;
+    return (int) $this->participant_id;
   }
 
   public function getContactID() {
@@ -256,7 +256,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
         // do the lookup
         $remote_contact_lookup_cache[$remote_contact_key] = \CRM_Remotetools_Contact::getByKey($data['remote_contact_id']);
       }
-      return $remote_contact_lookup_cache[$remote_contact_key];
+      return (int) $remote_contact_lookup_cache[$remote_contact_key];
     }
   }
 

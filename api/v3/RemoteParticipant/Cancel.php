@@ -66,7 +66,7 @@ function civicrm_api3_remote_participant_cancel($params) {
   // there is two options here to identify the participant object
   // 1) event_id and remote_contact_id
   $participants = [];
-  $event_id = (int) $params['event_id'] ?? 0;
+  $event_id = (int) ($params['event_id'] ?? 0);
   $remote_contact_id = $params['remote_contact_id'] ?? NULL;
   if ($event_id && $remote_contact_id) {
     $contact_id = CRM_Remotetools_Contact::getByKey($remote_contact_id);

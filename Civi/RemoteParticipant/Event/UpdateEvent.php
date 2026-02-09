@@ -80,7 +80,7 @@ class UpdateEvent extends ChangingEvent {
       if ($this->contact_id && $this->contact_id != $contact_data['id']) {
         \Civi::log()->debug('UpdateEvent: Contact ID overruled');
       }
-      $this->contact_id = $contact_data['id'];
+      $this->contact_id = (int) $contact_data['id'];
     }
     else {
       $this->addError($this->localise('Contact already loaded.'));

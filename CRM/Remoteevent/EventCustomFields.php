@@ -78,7 +78,7 @@ class CRM_Remoteevent_EventCustomFields {
       $OR_AND_GROUPS = [];
       if (is_array($values)) {
         foreach ($values as $key => $value) {
-          if (strtolower($key) == 'in') {
+          if (strtolower((string) $key) == 'in') {
             if (!is_array($value)) {
               $value = explode(',', $value);
             }
