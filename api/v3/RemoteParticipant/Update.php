@@ -82,8 +82,8 @@ function civicrm_api3_remote_participant_update($params) {
     }
   }
   catch (CRM_Core_Exception $ex) {
-    if (isset($ex->getExtraParams()['values'])) {
-      $errors = $ex->getExtraParams()['values'];
+    if (isset($ex->getErrorData()['values'])) {
+      $errors = $ex->getErrorData()['values'];
     }
     else {
       $errors[] = $ex->getMessage();

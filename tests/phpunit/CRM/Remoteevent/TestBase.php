@@ -269,8 +269,8 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         'is_error'      => 1,
         'error_message' => $ex->getMessage(),
       ];
-      if (isset($ex->getExtraParams()['status_messages'])) {
-        $status_messages = $ex->getExtraParams()['status_messages'];
+      if (isset($ex->getErrorData()['status_messages'])) {
+        $status_messages = $ex->getErrorData()['status_messages'];
       }
       else {
         $status_messages = [];
