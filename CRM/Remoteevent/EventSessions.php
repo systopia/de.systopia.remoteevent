@@ -763,7 +763,7 @@ class CRM_Remoteevent_EventSessions
      */
     protected static function renderSessionDescriptionLong($session)
     {
-        if (is_numeric($session['presenter_id'])) {
+        if (is_numeric($session['presenter_id'] ?? NULL)) {
             $session['presenter_display_name'] = \Civi\Api4\Contact::get(FALSE)
                 ->addSelect('display_name')
                 ->addWhere('id', '=', $session['presenter_id'])
