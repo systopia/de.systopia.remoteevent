@@ -230,7 +230,7 @@ function remoteevent_civicrm_config(&$config) {
 }
 
 /**
- * Implements hook_civicrm_container
+ * Implements hook_civicrm_container().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
  *
@@ -320,7 +320,7 @@ function remoteevent_civicrm_permission(&$permissions) {
 }
 
 /**
- * Set permissions RemoteEvent API
+ * Implements hook_civicrm_alterAPIPermissions().
  */
 function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   // RemoteEvent entity
@@ -372,7 +372,7 @@ function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context) {
 }
 
 /**
- * Implementation of hook_civicrm_copy
+ * Implements hook_civicrm_copy().
  */
 function remoteevent_civicrm_copy($objectName, &$object) {
   if ($objectName == 'Event') {
@@ -410,6 +410,9 @@ function remoteevent_civicrm_pre($op, $objectName, $id, &$params) {
   }
 }
 
+/**
+ * Implements hook_civicrm_custom().
+ */
 function remoteevent_civicrm_custom($op, $groupID, $entityID, &$params): void {
   foreach ($params as $param) {
     if (($param['entity_table'] ?? NULL) === 'civicrm_participant') {
@@ -420,7 +423,7 @@ function remoteevent_civicrm_custom($op, $groupID, $entityID, &$params): void {
 }
 
 /**
- * Monitor Participant objects
+ * Implements hook_civicrm_post().
  */
 function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if (($op == 'edit' || $op == 'create') && $objectName == 'Participant') {
@@ -429,7 +432,7 @@ function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
 }
 
 /**
- * Inject session information
+ * Implements hook_civicrm_pageRun().
  */
 function remoteevent_civicrm_pageRun(&$page) {
   $pageName = $page->getVar('_name');
@@ -438,6 +441,9 @@ function remoteevent_civicrm_pageRun(&$page) {
   }
 }
 
+/**
+ * Implements hook_civicrm_links().
+ */
 function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
   if ($objectName == 'Participant' && $op == 'participant.selector.row') {
     $links[] = [
@@ -450,8 +456,7 @@ function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask,
 }
 
 /**
- * Implementation of hook_civicrm_searchTasks,
- *  to inject our 'Session Registration' task
+ * Implements hook_civicrm_searchTasks().
  */
 function remoteevent_civicrm_searchTasks($objectType, &$tasks) {
   // add "Session Registration" task to participant list
