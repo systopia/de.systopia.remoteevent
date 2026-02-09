@@ -114,6 +114,7 @@ jobs:
         sed -i "s#\"TEST_DB_DSN\": \".*\"#\"TEST_DB_DSN\": \"$DATABASE_URL\"#g" "$CV_CONFIG"
 
         cv ext:download "de.systopia.xcm@https://github.com/systopia/de.systopia.xcm/releases/download/1.14.1/de.systopia.xcm-1.14.1.zip"
+        cv ext:download "de.systopia.identitytracker@https://github.com/systopia/de.systopia.identitytracker/releases/download/1.4.0/de.systopia.identitytracker-1.4.0.zip"
         cv ext:download "de.systopia.remotetools@https://github.com/systopia/de.systopia.remotetools/releases/download/1.1.0/de.systopia.remotetools-1.1.0.zip"
 
     - name: Run PHPUnit
