@@ -146,7 +146,7 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
    *   session items by slot
    */
   protected function getSessionList($event_days) {
-    $event_days = self::getEventDays($event);
+    $event_days = \CRM_Remoteevent_Form_EventSessions::getEventDays($event);
     $sessions_by_day_and_slot = [];
     foreach ($event_days as $event_day) {
       $sessions_by_day_and_slot[$event_day] = [];
@@ -163,8 +163,8 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
     }
 
     // beautify / improve list
-    $categories = $this->getCategories();
-    $types = $this->getTypes();
+    $categories = \CRM_Remoteevent_Form_EventSessions::getCategories();
+    $types = \CRM_Remoteevent_Form_EventSessions::getTypes();
     // rename days
     foreach (array_keys($sessions_by_day_and_slot) as $day_index => $day) {
       $new_key = E::ts('Day %1 (%2)', [
@@ -225,7 +225,7 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
 
           // add presenter icon
           if (!empty($session['presenter_id'])) {
-            $presenter = $this->getPresenterString($session['presenter_id']);
+            $presenter = \CRM_Remoteevent_Form_EventSessions::getPresenterString($session);
             if (empty($session['presenter_title'])) {
               $message = E::ts('Given by %1', [1 => $presenter]);
             }
