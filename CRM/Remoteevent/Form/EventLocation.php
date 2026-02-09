@@ -72,7 +72,7 @@ class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent {
     $prefix = 'event_alternative_location.';
     $contact_field = CRM_Remoteevent_CustomData::getCustomFieldKey('event_alternative_location', 'event_alternativelocation_contact_id');
     $defaults = [
-      'event_alternativelocation_contact_id' => (int) CRM_Utils_Array::value("{$contact_field}_id", $current_values, NULL),
+      'event_alternativelocation_contact_id' => (int) $current_values["{$contact_field}_id"] ?? NULL,
       'event_alternativelocation_remark' =>
       $current_values["{$prefix}event_alternativelocation_remark"] ?? NULL,
     ];

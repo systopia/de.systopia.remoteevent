@@ -262,7 +262,7 @@ class CRM_Remoteevent_RemoteEvent {
    * @return string name of the event type
    */
   public static function getEventType($event, $locale = NULL) {
-    $event_type_id = CRM_Utils_Array::value('event_type_id', $event, '');
+    $event_type_id = $event['event_type_id'] ?? '';
 
     if ($event_type_id) {
       // load event types

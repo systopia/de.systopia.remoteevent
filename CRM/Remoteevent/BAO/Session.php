@@ -369,7 +369,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
     }
 
     // resolve
-    return CRM_Utils_Array::value($session_category_id, $categories, '');
+    return $categories[$session_category_id] ?? '';
   }
 
   /**
@@ -397,7 +397,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
     }
 
     // resolve
-    return CRM_Utils_Array::value($session_type_id, $types, '');
+    return $types[$session_type_id] ?? '';
   }
 
   /**
@@ -425,7 +425,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
     }
 
     // resolve
-    return CRM_Utils_Array::value($slot_id, $slots, '');
+    return $slots[$slot_id] ?? '';
   }
 
 }

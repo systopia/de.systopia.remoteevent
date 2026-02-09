@@ -74,7 +74,7 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task {
 
       // add participant counts if restricted
       if (!empty($session['max_participants'])) {
-        $session_participant_count = CRM_Utils_Array::value($session['id'], $participant_counts, 0);
+        $session_participant_count = $participant_counts[$session['id']] ?? 0;
         $free = $session['max_participants'] - $session_participant_count;
         if ($free > 0) {
           $session_title .= ' ' . E::ts('(%1 left)', [1 => $free]);

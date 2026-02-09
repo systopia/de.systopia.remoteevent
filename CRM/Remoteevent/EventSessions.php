@@ -116,14 +116,14 @@ class CRM_Remoteevent_EventSessions {
                         [
                           'name'        => 'location',
                           'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => CRM_Utils_Array::value('location', $session, ''),
+                          'value'       => $session['location'] ?? '',
                           'title'       => E::ts('Location'),
                           'localizable' => 1,
                         ],
                         [
                           'name'        => 'slot',
                           'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => CRM_Remoteevent_BAO_Session::getSlotLabel(CRM_Utils_Array::value('slot_id', $session, NULL)),
+                          'value'       => CRM_Remoteevent_BAO_Session::getSlotLabel($session['slot_id'] ?? NULL),
                           'title'       => E::ts('Slot'),
                           'localizable' => 1,
                         ],
@@ -190,7 +190,7 @@ class CRM_Remoteevent_EventSessions {
         unset($session_data[$session_key]);
       }
       else {
-        $_session['participant_count'] = CRM_Utils_Array::value($_session['id'], $participant_counts, 0);
+        $_session['participant_count'] = $participant_counts[$_session['id']] ?? 0;
         if (empty($_session['max_participants'])) {
           $_session['is_full'] = 0;
         }
@@ -408,7 +408,7 @@ class CRM_Remoteevent_EventSessions {
           $participant_counts = CRM_Remoteevent_BAO_Session::getParticipantCounts($event_id);
         }
 
-        $session_participant_count = CRM_Utils_Array::value($requested_session_id, $participant_counts, 0);
+        $session_participant_count = $participant_counts[$requested_session_id] ?? 0;
         if ($session_participant_count >= $session['max_participants']) {
           $validationEvent->addValidationError("session{$requested_session_id}", E::ts('Session is full'));
         }
@@ -675,7 +675,7 @@ class CRM_Remoteevent_EventSessions {
       return E::ts('no type');
     }
     else {
-      return CRM_Utils_Array::value($session_data['type_id'], $types, E::ts('unknown'));
+      return $types[$session_data['type_id']] ?? E::ts('unknown');
     }
   }
 
@@ -707,7 +707,7 @@ class CRM_Remoteevent_EventSessions {
       return E::ts('no category');
     }
     else {
-      return CRM_Utils_Array::value($session_data['category_id'], $categories, E::ts('unknown'));
+      return $categories[$session_data['category_id']] ?? E::ts('unknown');
     }
   }
 

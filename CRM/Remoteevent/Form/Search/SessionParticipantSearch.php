@@ -157,7 +157,7 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch extends CRM_Contact_F
     $wheres[] = '(contact_a.is_deleted IS NULL OR contact_a.is_deleted = 0)';
 
     // add event_id clause
-    $event_id = (int) CRM_Utils_Array::value('event_id', $this->_formValues, NULL);
+    $event_id = (int) $this->_formValues['event_id'] ?? NULL;
     if ($event_id) {
       $wheres[] = "event.id = {$event_id}";
     }

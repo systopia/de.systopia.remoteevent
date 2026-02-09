@@ -53,7 +53,7 @@ class CRM_Remoteevent_EventFlags {
    */
   public static function getEventFlags($event_id) {
     static $event_data = [];
-    if (CRM_Utils_Array::value('id', $event_data, NULL) != $event_id) {
+    if ($event_data['id'] ?? NULL != $event_id) {
       // todo: have a common pool for cached events?
       // load event data
       $flag_fields = self::EVENT_CONFIG_FLAGS;
@@ -84,7 +84,7 @@ class CRM_Remoteevent_EventFlags {
    */
   public static function isRemoteRegistrationEnabled($event_id) {
     $event_data = self::getEventFlags($event_id);
-    return CRM_Utils_Array::value('event_remote_registration.remote_registration_enabled', $event_data, FALSE);
+    return $event_data['event_remote_registration.remote_registration_enabled'] ?? FALSE;
   }
 
   /**
@@ -97,7 +97,7 @@ class CRM_Remoteevent_EventFlags {
    */
   public static function isAlternativeLocationEnabled($event_id) {
     $event_data = self::getEventFlags($event_id);
-    return CRM_Utils_Array::value('event_remote_registration.remote_use_custom_event_location', $event_data, FALSE);
+    return $event_data['event_remote_registration.remote_use_custom_event_location'] ?? FALSE;
   }
 
   /**
@@ -110,7 +110,7 @@ class CRM_Remoteevent_EventFlags {
    */
   public static function isNativeOnlineRegistrationDisabled($event_id) {
     $event_data = self::getEventFlags($event_id);
-    return CRM_Utils_Array::value('event_remote_registration.remote_disable_civicrm_registration', $event_data, FALSE);
+    return $event_data['event_remote_registration.remote_disable_civicrm_registration'] ?? FALSE;
   }
 
   /**
@@ -243,7 +243,7 @@ class CRM_Remoteevent_EventFlags {
         $queried_value = empty($query_values[$flag]) ? 0 : 1;
         foreach (array_keys($event_list) as $event_key) {
           $event = $event_list[$event_key];
-          $event_value = (int) CRM_Utils_Array::value($flag, $event, -1);
+          $event_value = (int) $event[$flag] ?? -1;
           if ($event_value != $queried_value) {
             // filter this event
             unset($event_list[$event_key]);

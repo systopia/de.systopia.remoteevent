@@ -29,7 +29,7 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
   /**
    * event hook for testAnonymousRegistration */
   public static function registrationSetParticipantCampaign(RegistrationEvent $registration) {
-    $campaign_id = CRM_Utils_Array::value('campaign_id', $registration->getSubmission(), NULL);
+    $campaign_id = $registration->getSubmission()['campaign_id'] ?? NULL;
     if ($campaign_id) {
       $participant = &$registration->getParticipantData();
       $participant['campaign_id'] = $campaign_id;

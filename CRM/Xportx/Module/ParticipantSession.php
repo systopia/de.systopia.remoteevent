@@ -53,7 +53,7 @@ class CRM_Xportx_Module_ParticipantSession extends CRM_Xportx_Module {
    * @return array
    */
   public function getSessionIndices() {
-    $count = CRM_Utils_Array::value('count', $this->config, 5);
+    $count = $this->config['count'] ?? 5;
     return range(1, $count);
   }
 

@@ -139,7 +139,7 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
       'option.limit'                  => 3,
       'event_test2.event_multi_test' => [2, 3, 4],
     ]);
-    $this->assertEmpty(CRM_Utils_Array::value('id', $search_result, NULL), 'The should could not be found by this multi custom field equals operation');
+    $this->assertEmpty($search_result['id'] ?? NULL, 'The should could not be found by this multi custom field equals operation');
   }
 
 }

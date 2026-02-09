@@ -82,7 +82,7 @@ class CRM_Remoteevent_Registration {
       foreach ($participant_query['values'] as $participant_found) {
         $participant_data = [];
         foreach (self::PARTICIPANT_FIELDS as $field_name) {
-          $participant_data[$field_name] = CRM_Utils_Array::value($field_name, $participant_found, '');
+          $participant_data[$field_name] = $participant_found[$field_name] ?? '';
           // shouldn't be needed
           //if (substr($field_name, 0, 12) == 'participant_') {
           //    $participant_data[substr($field_name, 12)] = $participant_data[$field_name];

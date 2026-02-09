@@ -190,17 +190,17 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
 
           // add description
           $session['description_text'] = CRM_Utils_String::htmlToText(
-          CRM_Utils_Array::value('description', $session, ''));
+          $session['description'] ?? '');
           if (empty($session['description_text'])) {
             $session['description_text'] = E::ts('No description');
           }
 
           // resolve type and category
-          $session['category'] = CRM_Utils_Array::value($session['category_id'], $categories, E::ts('None'));
-          $session['type'] = CRM_Utils_Array::value($session['type_id'], $types, E::ts('None'));
+          $session['category'] = $categories[$session['category_id']] ?? E::ts('None');
+          $session['type'] = $types[$session['type_id']] ?? E::ts('None');
 
           // participant count
-          $session['participant_count'] = CRM_Utils_Array::value($session['id'], $participant_counts, 0);
+          $session['participant_count'] = $participant_counts[$session['id']] ?? 0;
           if (!empty($session['max_participants'])) {
             $session['participants'] = E::ts('%1 / %2', [
               1 => $session['participant_count'],
@@ -390,9 +390,9 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
             $session['type'],
             $session['title'],
             $session['participant_count'],
-            CRM_Utils_Array::value('max_participants', $session, ''),
+            $session['max_participants'] ?? '',
             self::getPresenterString($session),
-            CRM_Utils_String::htmlToText(CRM_Utils_Array::value('location', $session, '')),
+            CRM_Utils_String::htmlToText($session['location'] ?? ''),
           ]
           );
         }

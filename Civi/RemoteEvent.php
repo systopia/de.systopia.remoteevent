@@ -80,7 +80,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * 'create', 'update', 'cancel'
    */
   public function getContext() {
-    return \CRM_Utils_Array::value('context', $this->getQueryParameters(), 'create');
+    return $this->getQueryParameters()['context'] ?? 'create';
   }
 
   /**
@@ -328,7 +328,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    *   the context data stored with the key, or the default
    */
   public function getContextData($key, $default = NULL) {
-    return \CRM_Utils_Array::value($key, $this->context_data, $default);
+    return $this->context_data[$key] ?? $default;
   }
 
   // ERROR/WARNING/STATUS MESSAGES
