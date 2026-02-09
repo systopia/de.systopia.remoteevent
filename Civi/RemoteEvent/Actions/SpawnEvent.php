@@ -6,6 +6,7 @@ namespace Civi\RemoteEvent\Actions;
 
 use Civi\ActionProvider\Action\AbstractAction;
 use Civi\ActionProvider\ConfigContainer;
+use Civi\ActionProvider\Exception\ExecutionException;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\SpecificationBag;
 use Civi\ActionProvider\Parameter\Specification;
@@ -136,7 +137,7 @@ class SpawnEvent extends AbstractAction {
       $result = civicrm_api3('RemoteEvent', 'spawn', $apiParams);
       $output->setParameter('id', $result['id']);
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       throw new ExecutionException(E::ts('Could not update or create an event.'), $e->getCode(), $e);
     }
   }
