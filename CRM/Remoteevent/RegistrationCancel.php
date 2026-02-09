@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\RemoteParticipant\Event\CancelEvent;
 use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent;

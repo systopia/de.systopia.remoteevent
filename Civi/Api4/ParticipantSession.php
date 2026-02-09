@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Api4;
 
 /**
@@ -21,11 +23,13 @@ namespace Civi\Api4;
  * @package Civi\Api4
  */
 class ParticipantSession extends Generic\DAOEntity {
-    public static function permissions() {
-        return [
-            'meta' => ['access CiviEvent'],
-            'default' => ['access CiviEvent'],
-            'create' => ['access CiviEvent', 'edit all events'],
-        ];
-    }
+
+  public static function permissions() {
+    return [
+      'meta' => ['access CiviEvent'],
+      'default' => ['access CiviEvent'],
+      'create' => ['access CiviEvent', 'edit all events'],
+    ];
+  }
+
 }

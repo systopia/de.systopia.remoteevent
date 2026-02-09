@@ -13,7 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-require_once 'remoteevent.civix.php';
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -22,34 +22,33 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * @param array $spec
  *   API specification blob
  */
-function _civicrm_api3_remote_participant_get_spec(&$spec)
-{
-    $spec['event_id']          = [
-        'name'         => 'event_id',
-        'api.required' => 1,
-        'title'        => E::ts('Event ID'),
-        'description'  => E::ts('Internal ID of the event the registration form is needed for'),
-    ];
-    $spec['remote_contact_id'] = [
-        'name'         => 'remote_contact_id',
-        'api.required' => 0,
-        'title'        => E::ts('Remote Contact ID'),
-        'description'  => E::ts(
+function _civicrm_api3_remote_participant_get_spec(&$spec) {
+  $spec['event_id']          = [
+    'name'         => 'event_id',
+    'api.required' => 1,
+    'title'        => E::ts('Event ID'),
+    'description'  => E::ts('Internal ID of the event the registration form is needed for'),
+  ];
+  $spec['remote_contact_id'] = [
+    'name'         => 'remote_contact_id',
+    'api.required' => 0,
+    'title'        => E::ts('Remote Contact ID'),
+    'description'  => E::ts(
             'You can submit a remote contact, in which case the fields should come with the default data'
-        ),
-    ];
-    $spec['token'] = [
-        'name'         => 'token',
-        'api.required' => 0,
-        'title'        => E::ts('Remote Registration Token'),
-        'description'  => E::ts('Token to view your registration'),
-    ];
-    $spec['locale']            = [
-        'name'         => 'locale',
-        'api.required' => 0,
-        'title'        => E::ts('Locale'),
-        'description'  => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
-    ];
+    ),
+  ];
+  $spec['token'] = [
+    'name'         => 'token',
+    'api.required' => 0,
+    'title'        => E::ts('Remote Registration Token'),
+    'description'  => E::ts('Token to view your registration'),
+  ];
+  $spec['locale']            = [
+    'name'         => 'locale',
+    'api.required' => 0,
+    'title'        => E::ts('Locale'),
+    'description'  => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
+  ];
 }
 
 /**
@@ -61,8 +60,7 @@ function _civicrm_api3_remote_participant_get_spec(&$spec)
  * @return array
  *   API3 response
  */
-function civicrm_api3_remote_participant_get($params)
-{
-    unset($params['check_permissions']);
-    // todo: implement?
+function civicrm_api3_remote_participant_get($params) {
+  unset($params['check_permissions']);
+  // todo: implement?
 }

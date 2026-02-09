@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\RemoteEvent;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -14,11 +16,12 @@ class CompilerPass implements CompilerPassInterface {
       $actionProviderDefinition = $container->getDefinition('action_provider');
       $actionProviderDefinition->addMethodCall('addAction',
         ['RemoteEventSpawnEvent',
-         'Civi\RemoteEvent\Actions\SpawnEvent',
-         E::ts('RemoteEvent spawn'),
-         []
+          'Civi\RemoteEvent\Actions\SpawnEvent',
+          E::ts('RemoteEvent spawn'),
+         [],
         ]
       );
     }
   }
+
 }

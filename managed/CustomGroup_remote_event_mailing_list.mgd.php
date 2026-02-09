@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
 return [

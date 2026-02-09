@@ -13,20 +13,17 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-require_once 'remoteevent.civix.php';
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
-use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
 
 /**
  * RemoteEvent.get specification
  * @param array $spec
  *   API specification blob
  */
-function _civicrm_api3_remote_event_getcount_spec(&$spec)
-{
-    // not in use, see civicrm_api3_remote_event_getfields_get
+function _civicrm_api3_remote_event_getcount_spec(&$spec) {
+  // not in use, see civicrm_api3_remote_event_getfields_get
 }
 
 /**
@@ -38,11 +35,10 @@ function _civicrm_api3_remote_event_getcount_spec(&$spec)
  * @return array
  *   API3 response
  */
-function civicrm_api3_remote_event_getcount($params)
-{
-    unset($params['check_permissions']);
+function civicrm_api3_remote_event_getcount($params) {
+  unset($params['check_permissions']);
 
-    // todo: improve performance? how can we be sure that the modules hooked in are considered?
-    $events = civicrm_api3('RemoteEvent', 'get', $params);
-    return $events['count'];
+  // todo: improve performance? how can we be sure that the modules hooked in are considered?
+  $events = civicrm_api3('RemoteEvent', 'get', $params);
+  return $events['count'];
 }

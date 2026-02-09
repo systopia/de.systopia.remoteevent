@@ -13,7 +13,10 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\RemoteEvent\Event;
+
 use Civi\RemoteParamsEvent;
 
 /**
@@ -24,7 +27,7 @@ use Civi\RemoteParamsEvent;
  * This event will be triggered at the beginning of the
  *  RemoteEvent.create API call, so the search parameters can be manipulated
  */
-class SpawnParamsEvent extends RemoteParamsEvent
-{
-    public const NAME = 'civi.remoteevent.spawn.params';
+class SpawnParamsEvent extends RemoteParamsEvent {
+  public const NAME = 'civi.remoteevent.spawn.params';
+
 }

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\RemoteParticipant\Event;
 
@@ -24,21 +25,21 @@ use Symfony\Contracts\EventDispatcher\Event;
  * get_participant_data returns current data, which can be overwritten with set_participan_data afterwards
  * After the event is run the (modified) participant data can be used
  */
-class UpdateParticipantEvent extends Event
-{
-    public const NAME = 'civi.remoteparticipant.update.participant';
+class UpdateParticipantEvent extends Event {
+  public const NAME = 'civi.remoteparticipant.update.participant';
 
-    private $participant_data;
+  private $participant_data;
 
-    public function __construct($participant_data) {
-        $this->participant_data = $participant_data;
-    }
+  public function __construct($participant_data) {
+    $this->participant_data = $participant_data;
+  }
 
-    public function get_participant_data() {
-        return $this->participant_data;
-    }
+  public function get_participant_data() {
+    return $this->participant_data;
+  }
 
-    public function set_participant_data($data) {
-        $this->participant_data = $data;
-    }
+  public function set_participant_data($data) {
+    $this->participant_data = $data;
+  }
+
 }

@@ -13,20 +13,19 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-require_once 'remoteevent.civix.php';
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use \Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
-use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
+use Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
+use Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
 
 /**
  * RemoteEvent.get specification
  * @param array $spec
  *   API specification blob
  */
-function _civicrm_api3_remote_event_get_spec(&$spec)
-{
-    // not in use, see civicrm_api3_remote_event_getfields_get
+function _civicrm_api3_remote_event_get_spec(&$spec) {
+  // not in use, see civicrm_api3_remote_event_getfields_get
 }
 
 /**
@@ -38,108 +37,109 @@ function _civicrm_api3_remote_event_get_spec(&$spec)
  * @return array
  *   API3 response
  */
-function civicrm_api3_remote_event_get($params)
-{
-    unset($params['check_permissions']);
+function civicrm_api3_remote_event_get($params) {
+  unset($params['check_permissions']);
 
-    // create an object for the parameters
-    $get_params = new GetParamsEvent($params);
+  // create an object for the parameters
+  $get_params = new GetParamsEvent($params);
 
-    // modify search terms based on user/permission/etc
-    $get_params->setParameter('is_template', 0);
-    $get_params->setParameter('check_permissions', false);
+  // modify search terms based on user/permission/etc
+  $get_params->setParameter('is_template', 0);
+  $get_params->setParameter('check_permissions', FALSE);
 
-    if (!CRM_Core_Permission::check('view all Remote Events')) {
-        // only basic view permissions -> only list public + active
-        $get_params->setParameter('is_public', 1);
-        $get_params->setParameter('is_active', 1);
+  if (!CRM_Core_Permission::check('view all Remote Events')) {
+    // only basic view permissions -> only list public + active
+    $get_params->setParameter('is_public', 1);
+    $get_params->setParameter('is_active', 1);
+  }
+
+  // todo: only view the ones that are open for registration?
+  $get_params->setParameter('event_remote_registration.remote_registration_enabled', 1);
+
+  // Translate event ID.
+  $original_params = $get_params->getOriginalParameters();
+  if (!empty($original_params['id'])) {
+    if (!is_numeric($original_params['id'])) {
+      throw new \InvalidArgumentException('Only a single ID is allowed');
     }
 
-    // todo: only view the ones that are open for registration?
-    $get_params->setParameter('event_remote_registration.remote_registration_enabled', 1);
+    $get_params->setParameter('event_id', (int) $original_params['id']);
+  }
 
-    // Translate event ID.
-    $original_params = $get_params->getOriginalParameters();
-    if (!empty($original_params['id'])) {
-      if (!is_numeric($original_params['id'])) {
-        throw new \InvalidArgumentException('Only a single ID is allowed');
-      }
+  // dispatch search parameters event
+  Civi::dispatcher()->dispatch(GetParamsEvent::NAME, $get_params);
 
-      $get_params->setParameter('event_id', (int) $original_params['id']);
+  // use the basic event API for queries
+  $event_get = $get_params->getParameters();
+  CRM_Remoteevent_CustomData::resolveCustomFields($event_get);
+  // we need the full event to cache
+  unset($event_get['return']);
+  Civi::log()->debug('RemoteEvent generated Event.get: ' . json_encode($event_get));
+  $result     = civicrm_api3('Event', 'get', $event_get);
+  $event_list = $result['values'];
+  $event_ids  = [];
+
+  // apply custom field labelling
+  foreach ($event_list as $key => &$event) {
+    CRM_Remoteevent_CustomData::labelCustomFields($event);
+    $event_ids[] = (int) $event['id'];
+    CRM_Remoteevent_EventCache::cacheEvent($event);
+  }
+
+  // strip some private/misleading event data
+  foreach ($event_list as $key => &$event) {
+    foreach (CRM_Remoteevent_RemoteEvent::STRIP_FIELDS as $field_name) {
+      unset($event[$field_name]);
     }
+  }
 
-    // dispatch search parameters event
-    Civi::dispatcher()->dispatch(GetParamsEvent::NAME, $get_params);
+  // add profile data
+  foreach ($event_list as $key => &$event) {
+    CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
+  }
 
-    // use the basic event API for queries
-    $event_get = $get_params->getParameters();
-    CRM_Remoteevent_CustomData::resolveCustomFields($event_get);
-    unset($event_get['return']); // we need the full event to cache
-    Civi::log()->debug("RemoteEvent generated Event.get: " . json_encode($event_get));
-    $result     = civicrm_api3('Event', 'get', $event_get);
-    $event_list = $result['values'];
-    $event_ids  = [];
+  // check if this is a personalised request
+  $contact_id = $get_params->getContactID();
+  if ($contact_id) {
+    CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
+  }
 
-    // apply custom field labelling
-    foreach ($event_list as $key => &$event) {
-        CRM_Remoteevent_CustomData::labelCustomFields($event);
-        $event_ids[] = (int) $event['id'];
-        CRM_Remoteevent_EventCache::cacheEvent($event);
-    }
+  //         NEXT STEP: CUSTOMISING
 
-    // strip some private/misleading event data
-    foreach ($event_list as $key => &$event) {
-        foreach (CRM_Remoteevent_RemoteEvent::STRIP_FIELDS as $field_name) {
-            unset($event[$field_name]);
-        }
-    }
+  // create a symfony event instance for further processing
+  $result = new GetResultEvent($event_get, $event_list, $get_params->getOriginalParameters());
 
-    // add profile data
-    foreach ($event_list as $key => &$event) {
-        CRM_Remoteevent_RegistrationProfile::setProfileDataInEventData($event);
-    }
-
-    // check if this is a personalised request
-    $contact_id = $get_params->getContactID();
-    if ($contact_id) {
-        CRM_Remoteevent_Registration::cacheRegistrationData($event_ids, $contact_id);
-    }
-
-    //         NEXT STEP: CUSTOMISING
-
-    // create a symfony event instance for further processing
-    $result = new GetResultEvent($event_get, $event_list, $get_params->getOriginalParameters());
-
-    // add some basic information
-    foreach ($result->getEventData() as &$event) { // todo: optimise queries (over all events)?
-        // add counts and other data
-        $event['event_type'] =
+  // add some basic information
+  // todo: optimise queries (over all events)?
+  foreach ($result->getEventData() as &$event) {
+    // add counts and other data
+    $event['event_type'] =
             CRM_Remoteevent_RemoteEvent::getEventType($event, $result->getLocalisation());
-        // Historically, "registration_count" only included registration with a
-        // "Positive" status, counting all participants that are "really"
-        // registered, which we want to keep that way.
-        $event['registration_count'] =
+    // Historically, "registration_count" only included registration with a
+    // "Positive" status, counting all participants that are "really"
+    // registered, which we want to keep that way.
+    $event['registration_count'] =
             CRM_Remoteevent_Registration::getRegistrationCount($event['id'], NULL, ['Positive']);
-        // "registration_count_all" denotes all registration with a status that
-        // has the "is_counted" flag, regardless of status classes, i.e.
-        // including waitlisted or pending registrations.
-        $event['registration_count_all'] =
+    // "registration_count_all" denotes all registration with a status that
+    // has the "is_counted" flag, regardless of status classes, i.e.
+    // including waitlisted or pending registrations.
+    $event['registration_count_all'] =
             CRM_Remoteevent_Registration::getRegistrationCount($event['id']);
-    }
+  }
 
+  // dispatch the event in case somebody else wants to add/remove something
+  Civi::dispatcher()->dispatch(GetResultEvent::NAME, $result);
 
-    // dispatch the event in case somebody else wants to add/remove something
-    Civi::dispatcher()->dispatch(GetResultEvent::NAME, $result);
+  // finally, apply the limit
+  if ($get_params->getLimit() != $get_params->getOriginalLimit()) {
+    $result->trimToLimit($get_params->getOriginalLimit(), $get_params->getOriginalOffset());
+  }
 
-    // finally, apply the limit
-    if ($get_params->getLimit() != $get_params->getOriginalLimit()) {
-        $result->trimToLimit($get_params->getOriginalLimit(), $get_params->getOriginalOffset());
-    }
-
-    // return the result
-    if ($result->hasErrors()) {
-        return $result->createAPI3Error();
-    } else {
-        return $result->createAPI3Success('RemoteEvent', 'get', $result->getFinalEventData());
-    }
+  // return the result
+  if ($result->hasErrors()) {
+    return $result->createAPI3Error();
+  }
+  else {
+    return $result->createAPI3Success('RemoteEvent', 'get', $result->getFinalEventData());
+  }
 }

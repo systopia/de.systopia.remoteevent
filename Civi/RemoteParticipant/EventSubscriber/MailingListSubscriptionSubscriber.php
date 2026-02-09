@@ -19,7 +19,6 @@ declare(strict_types = 1);
 
 namespace Civi\RemoteParticipant\EventSubscriber;
 
-use Civi\Api4\Group;
 use Civi\RemoteParticipant\Event\ChangingEvent;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase;

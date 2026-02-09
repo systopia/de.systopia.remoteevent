@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Civi\RemoteEvent\Actions;
 
 use Civi\ActionProvider\Action\AbstractAction;
-use Civi\ActionProvider\Action\Contact\ContactActionUtils;
 use Civi\ActionProvider\ConfigContainer;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\SpecificationBag;
@@ -21,15 +22,15 @@ class SpawnEvent extends AbstractAction {
   public function getConfigurationSpecification(): SpecificationBag {
 
     return new SpecificationBag([
-        new Specification('template_id', 'Integer', E::ts('Event Template ID'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('template_id', 'Integer', E::ts('Event Template ID'), FALSE, NULL, NULL, NULL, FALSE),
     ]);
   }
 
   /**
    * @inheritDoc
    */
-  public function getParameterSpecification(): SpecificationBag{
-    $specs = new SpecificationBag(array(
+  public function getParameterSpecification(): SpecificationBag {
+    $specs = new SpecificationBag([
       /**
        * The parameters given to the Specification object are:
        * @param string $name
@@ -54,7 +55,7 @@ class SpawnEvent extends AbstractAction {
       new Specification('max_participants', 'Integer', E::ts('Max. Participants'), FALSE, NULL),
       new Specification('event_full_text', 'String', E::ts('Text when event is full'), FALSE, NULL),
       new Specification('waitlist_text', 'String', E::ts('Waitlist Text'), FALSE, NULL),
-    ));
+    ]);
 
     $config = ConfigContainer::getInstance();
     $customGroups = $config->getCustomGroupsForEntity('Event');
@@ -83,7 +84,7 @@ class SpawnEvent extends AbstractAction {
    *
    * @param ParameterInterface $parameters
    *   The parameters to this action.
-   * @param ParameterBagInterface $output
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
    *   The parameters this action can send back
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output): void {
@@ -92,7 +93,8 @@ class SpawnEvent extends AbstractAction {
 
     if ($this->configuration->doesParameterExists('template_id')) {
       $apiParams['template_id'] = $this->configuration->getParameter('template_id');
-    } elseif ($parameters->doesParameterExists('template_id')) {
+    }
+    elseif ($parameters->doesParameterExists('template_id')) {
       $apiParams['template_id'] = $parameters->getParameter('template_id');
     }
     if ($parameters->doesParameterExists('event_id')) {
@@ -133,7 +135,8 @@ class SpawnEvent extends AbstractAction {
     try {
       $result = civicrm_api3('RemoteEvent', 'spawn', $apiParams);
       $output->setParameter('id', $result['id']);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       throw new ExecutionException(E::ts('Could not update or create an event.'), $e->getCode(), $e);
     }
   }

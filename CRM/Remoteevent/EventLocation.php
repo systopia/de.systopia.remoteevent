@@ -13,118 +13,120 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
-use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
-use \Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
-use \Civi\EventMessages\MessageTokens as MessageTokens;
-use \Civi\EventMessages\MessageTokenList as MessageTokenList;
+use Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
+use Civi\EventMessages\MessageTokens as MessageTokens;
 
 /**
  * Functionality around the EventLocation
  */
-class CRM_Remoteevent_EventLocation
-{
-    const FIELDS = [
-        'location_name',
-        'location_remark',
-        'location_street_address',
-        'location_postal_code',
-        'location_city',
-        'location_country_id',
-        'location_supplemental_address_1',
-        'location_supplemental_address_2',
-        'location_supplemental_address_3',
-        'location_geo_code_1',
-        'location_geo_code_2',
-    ];
+class CRM_Remoteevent_EventLocation {
+  const FIELDS = [
+    'location_name',
+    'location_remark',
+    'location_street_address',
+    'location_postal_code',
+    'location_city',
+    'location_country_id',
+    'location_supplemental_address_1',
+    'location_supplemental_address_2',
+    'location_supplemental_address_3',
+    'location_geo_code_1',
+    'location_geo_code_2',
+  ];
 
-    /** @var CRM_Remoteevent_EventLocation the single instance */
-    protected static $singleton = null;
+  /**
+   * @var CRM_Remoteevent_EventLocation the single instance */
+  protected static $singleton = NULL;
 
-    /** @var integer event ID, or 0 if w/o event */
-    protected $event_id;
+  /**
+   * @var integer event ID, or 0 if w/o event */
+  protected $event_id;
 
-    /** @var array event location contact type data */
-    protected $event_location;
+  /**
+   * @var array event location contact type data */
+  protected $event_location;
 
-    /**
-     * Get the event location logic for the given event ID
-     *
-     * @param integer $event_id
-     *   event ID or 0 if general
-     */
-    public static function singleton($event_id)
-    {
-        if (self::$singleton === null || self::$singleton->event_id != $event_id) {
-            self::$singleton = new CRM_Remoteevent_EventLocation($event_id);
-        }
-        return self::$singleton;
+  /**
+   * Get the event location logic for the given event ID
+   *
+   * @param integer $event_id
+   *   event ID or 0 if general
+   */
+  public static function singleton($event_id) {
+    if (self::$singleton === NULL || self::$singleton->event_id != $event_id) {
+      self::$singleton = new CRM_Remoteevent_EventLocation($event_id);
+    }
+    return self::$singleton;
+  }
+
+  protected function __construct($event_id) {
+    $this->event_id = $event_id;
+    $this->event_location = NULL;
+  }
+
+  /**
+   * Get the data of the event contact type,
+   *  and creates it if it doesn't exist yet
+   *
+   * @return array
+   *   contact type data
+   */
+  public function getEventContactType() {
+    if ($this->event_location === NULL) {
+      // first: we'll try to look it up
+      $locations = civicrm_api3('ContactType', 'get', [
+        'name' => 'Event_Location',
+      ]);
+      if ($locations['count'] > 1) {
+        Civi::log()->warning(E::ts('Multiple matching EventLocation contact types found!'));
+      }
+      if ($locations['count'] > 0) {
+        $this->event_location = reset($locations['values']);
+
+      }
+      else {
+        // create it
+        $new_location = civicrm_api3('ContactType', 'create', [
+          'name' => 'Event_Location',
+          'label' => E::ts('Event Location'),
+          'description' => E::ts('These contacts can be used as event locations by the CiviRemote Event extension'),
+          'image_URL' => E::url('icons/event_location.png'),
+        // 'Organisation'
+          'parent_id' => 3,
+        ]);
+        $this->event_location = civicrm_api3('ContactType', 'getsingle', [
+          'id' => $new_location['id'],
+        ]);
+      }
+    }
+    return $this->event_location;
+  }
+
+  /**
+   * Extend the data returned by RemoteEvent.get by the location data
+   *
+   * @param \Civi\RemoteEvent\Event\GetResultEvent $result
+   */
+  public static function addLocationData(GetResultEvent $result) {
+    // extract event_ids
+    $events = [];
+    foreach ($result->getEventData() as &$event) {
+      unset($event['event_alternative_location.event_alternativelocation_remark']);
+      unset($event['event_alternative_location.event_alternativelocation_contact_id']);
+      $events[$event['id']] = &$event;
+    }
+    if (empty($events)) {
+      // nothing to do
+      return;
     }
 
-    protected function __construct($event_id)
-    {
-        $this->event_id = $event_id;
-        $this->event_location = null;
-    }
-
-    /**
-     * Get the data of the event contact type,
-     *  and creates it if it doesn't exist yet
-     *
-     * @return array
-     *   contact type data
-     */
-    public function getEventContactType() {
-        if ($this->event_location === null) {
-            // first: we'll try to look it up
-            $locations = civicrm_api3('ContactType', 'get', [
-                'name' => 'Event_Location',
-            ]);
-            if ($locations['count'] > 1) {
-                Civi::log()->warning(E::ts("Multiple matching EventLocation contact types found!"));
-            }
-            if ($locations['count'] > 0) {
-                $this->event_location = reset($locations['values']);
-
-            } else {
-                // create it
-                $new_location = civicrm_api3('ContactType', 'create', [
-                    'name' => 'Event_Location',
-                    'label' => E::ts("Event Location"),
-                    'description' => E::ts("These contacts can be used as event locations by the CiviRemote Event extension"),
-                    'image_URL' => E::url('icons/event_location.png'),
-                    'parent_id' => 3, // 'Organisation'
-                ]);
-                $this->event_location = civicrm_api3('ContactType', 'getsingle', [
-                    'id' => $new_location['id']]);
-            }
-        }
-        return $this->event_location;
-    }
-
-    /**
-     * Extend the data returned by RemoteEvent.get by the location data
-     *
-     * @param GetResultEvent $result
-     */
-    public static function addLocationData(GetResultEvent $result)
-    {
-        // extract event_ids
-        $events = [];
-        foreach ($result->getEventData() as &$event) {
-            unset($event['event_alternative_location.event_alternativelocation_remark']);
-            unset($event['event_alternative_location.event_alternativelocation_contact_id']);
-            $events[$event['id']] = &$event;
-        }
-        if (empty($events)) {
-            // nothing to do
-            return;
-        }
-
-        // process all that have an alternative event location
-        $event_id_list = implode(',', array_keys($events));
-        CRM_Core_DAO::disableFullGroupByMode();
-        $alternative_location_query = "
+    // process all that have an alternative event location
+    $event_id_list = implode(',', array_keys($events));
+    CRM_Core_DAO::disableFullGroupByMode();
+    $alternative_location_query = "
             SELECT
               event.id                                AS event_id,
               location_contact.organization_name      AS location_name,
@@ -151,21 +153,21 @@ class CRM_Remoteevent_EventLocation
             WHERE event.id IN ({$event_id_list})
               AND settings.use_custom_event_location = 1
             GROUP BY event.id";
-        $query = CRM_Core_DAO::executeQuery($alternative_location_query);
-        CRM_Core_DAO::reenableFullGroupByMode();
-        while ($query->fetch()) {
-            $event = &$events[$query->event_id];
-            foreach (self::FIELDS as $field_name) {
-                $event[$field_name] = $query->$field_name;
-            }
-            unset($events[$query->event_id]);
-        }
+    $query = CRM_Core_DAO::executeQuery($alternative_location_query);
+    CRM_Core_DAO::reenableFullGroupByMode();
+    while ($query->fetch()) {
+      $event = &$events[$query->event_id];
+      foreach (self::FIELDS as $field_name) {
+        $event[$field_name] = $query->$field_name;
+      }
+      unset($events[$query->event_id]);
+    }
 
-        // for the remaining events, get the default event data
-        $remaining_event_list = implode(',', array_keys($events));
-        if (!empty($remaining_event_list)) {
-            CRM_Core_DAO::disableFullGroupByMode();
-            $native_location_query = "
+    // for the remaining events, get the default event data
+    $remaining_event_list = implode(',', array_keys($events));
+    if (!empty($remaining_event_list)) {
+      CRM_Core_DAO::disableFullGroupByMode();
+      $native_location_query = "
             SELECT
               event.id                                AS event_id,
               event.title                             AS location_name,
@@ -186,156 +188,154 @@ class CRM_Remoteevent_EventLocation
                    ON location_address.id = location_block.address_id
             WHERE event.id IN ({$remaining_event_list})
             GROUP BY event.id";
-            $query = CRM_Core_DAO::executeQuery($native_location_query);
-            CRM_Core_DAO::reenableFullGroupByMode();
-            while ($query->fetch()) {
-                $event = &$events[$query->event_id];
-                foreach (self::FIELDS as $field_name) {
-                    $event[$field_name] = $query->$field_name;
-                }
-            }
+      $query = CRM_Core_DAO::executeQuery($native_location_query);
+      CRM_Core_DAO::reenableFullGroupByMode();
+      while ($query->fetch()) {
+        $event = &$events[$query->event_id];
+        foreach (self::FIELDS as $field_name) {
+          $event[$field_name] = $query->$field_name;
         }
+      }
+    }
+  }
+
+  /**
+   * Add the fields to the RemoteEvent.get_fields list
+   *
+   * @param \Civi\RemoteEvent\Event\GetFieldsEvent $fields_collection
+   */
+  public static function addFieldSpecs($fields_collection) {
+    // remove the custom fields from the list, we're adding the unified fields below
+    $fields_collection->removeFieldSpec('event_alternative_location.event_alternativelocation_remark');
+    $fields_collection->removeFieldSpec('event_alternative_location.event_alternativelocation_contact_id');
+
+    // add unified location fields (used by native and alternative location)
+    $fields_collection->setFieldSpec('location_name', [
+      'name'          => 'location_name',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'title'         => 'Location Name',
+      'description'   => 'Name of the location',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+
+    ]);
+    $fields_collection->setFieldSpec('location_remark', [
+      'name'          => 'location_remark',
+      'type'          => CRM_Utils_Type::T_LONGTEXT,
+      'title'         => 'Location Remark',
+      'description'   => 'Additional information for this location, unique to the event',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_street_address', [
+      'name'          => 'location_street_address',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'title'         => 'Location Street Address',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_postal_code', [
+      'name'          => 'location_postal_code',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'title'         => 'Location Postal Code',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_city', [
+      'name'          => 'location_city',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'title'         => 'Location City',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_country_id', [
+      'name'          => 'location_country_id',
+      'type'          => CRM_Utils_Type::T_INT,
+      'title'         => 'Location Country ID',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+
+    ]);
+    $fields_collection->setFieldSpec('location_supplemental_address_1', [
+      'name'          => 'location_supplemental_address_1',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'title'         => 'Location Supplemental Address 1',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_supplemental_address_2', [
+      'name'          => 'location_supplemental_address_2',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'title'         => 'Location Supplemental Address 2',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_supplemental_address_3', [
+      'name'          => 'location_supplemental_address_3',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'title'         => 'Location Supplemental Address 3',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_geo_code_1', [
+      'name'          => 'location_geo_code_1',
+      'type'          => CRM_Utils_Type::T_FLOAT,
+      'title'         => 'Location Geo-Code longitude',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+    $fields_collection->setFieldSpec('location_geo_code_2', [
+      'name'          => 'location_geo_code_2',
+      'type'          => CRM_Utils_Type::T_FLOAT,
+      'title'         => 'Location Geo-Code latitude',
+      'localizable'   => 0,
+      'is_core_field' => FALSE,
+    ]);
+  }
+
+  /**
+   * @param \Civi\EventMessages\MessageTokenList $tokenList
+   *   token list event
+   */
+  public static function listTokens($tokenList) {
+    $tokenList->addToken('$location_name', E::ts('Event Location Name'));
+    $tokenList->addToken('$location_remark', E::ts('Event Location - Additional Note'));
+    $tokenList->addToken('$location_street_address', E::ts('Event Location - Address Line'));
+    $tokenList->addToken('$location_city', E::ts('Event Location - City'));
+    $tokenList->addToken('$location_supplemental_address_1', E::ts('Event Location - Supplemental Address 1'));
+    $tokenList->addToken('$location_supplemental_address_2', E::ts('Event Location - Supplemental Address 2'));
+    $tokenList->addToken('$location_supplemental_address_3', E::ts('Event Location - Supplemental Address 3'));
+    $tokenList->addToken('$location_geo_code_1', E::ts('Event Location - Latitude'));
+    $tokenList->addToken('$location_geo_code_2', E::ts('Event Location - Longitude'));
+  }
+
+  /**
+   * Add some tokens to an event message:
+   *  - cancellation token
+   *
+   * @param \Civi\EventMessages\MessageTokens $messageTokens
+   *   the token list
+   */
+  public static function addTokens(MessageTokens $messageTokens) {
+    // check if tokens are requested
+    $uses_location_tokens = FALSE;
+    foreach (self::FIELDS as $token_name) {
+      if ($messageTokens->requiresToken($token_name)) {
+        $uses_location_tokens = TRUE;
+        break;
+      }
     }
 
-    /**
-     * Add the fields to the RemoteEvent.get_fields list
-     *
-     * @param GetFieldsEvent $fields_collection
-     */
-    public static function addFieldSpecs($fields_collection)
-    {
-        // remove the custom fields from the list, we're adding the unified fields below
-        $fields_collection->removeFieldSpec('event_alternative_location.event_alternativelocation_remark');
-        $fields_collection->removeFieldSpec('event_alternative_location.event_alternativelocation_contact_id');
-
-        // add unified location fields (used by native and alternative location)
-        $fields_collection->setFieldSpec('location_name', [
-            'name'          => 'location_name',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Location Name",
-            'description'   => "Name of the location",
-            'localizable'   => 0,
-            'is_core_field' => false,
-
-        ]);
-        $fields_collection->setFieldSpec('location_remark', [
-            'name'          => 'location_remark',
-            'type'          => CRM_Utils_Type::T_LONGTEXT,
-            'title'         => "Location Remark",
-            'description'   => "Additional information for this location, unique to the event",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_street_address', [
-            'name'          => 'location_street_address',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Location Street Address",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_postal_code', [
-            'name'          => 'location_postal_code',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Location Postal Code",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_city', [
-            'name'          => 'location_city',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Location City",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_country_id', [
-            'name'          => 'location_country_id',
-            'type'          => CRM_Utils_Type::T_INT,
-            'title'         => "Location Country ID",
-            'localizable'   => 0,
-            'is_core_field' => false,
-
-        ]);
-        $fields_collection->setFieldSpec('location_supplemental_address_1', [
-            'name'          => 'location_supplemental_address_1',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Location Supplemental Address 1",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_supplemental_address_2', [
-            'name'          => 'location_supplemental_address_2',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Location Supplemental Address 2",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_supplemental_address_3', [
-            'name'          => 'location_supplemental_address_3',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'title'         => "Location Supplemental Address 3",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_geo_code_1', [
-            'name'          => 'location_geo_code_1',
-            'type'          => CRM_Utils_Type::T_FLOAT,
-            'title'         => "Location Geo-Code longitude",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-        $fields_collection->setFieldSpec('location_geo_code_2', [
-            'name'          => 'location_geo_code_2',
-            'type'          => CRM_Utils_Type::T_FLOAT,
-            'title'         => "Location Geo-Code latitude",
-            'localizable'   => 0,
-            'is_core_field' => false,
-        ]);
-    }
-
-    /**
-     * @param MessageTokenList $tokenList
-     *   token list event
-     */
-    public static function listTokens($tokenList)
-    {
-        $tokenList->addToken('$location_name', E::ts("Event Location Name"));
-        $tokenList->addToken('$location_remark', E::ts("Event Location - Additional Note"));
-        $tokenList->addToken('$location_street_address', E::ts("Event Location - Address Line"));
-        $tokenList->addToken('$location_city', E::ts("Event Location - City"));
-        $tokenList->addToken('$location_supplemental_address_1', E::ts("Event Location - Supplemental Address 1"));
-        $tokenList->addToken('$location_supplemental_address_2', E::ts("Event Location - Supplemental Address 2"));
-        $tokenList->addToken('$location_supplemental_address_3', E::ts("Event Location - Supplemental Address 3"));
-        $tokenList->addToken('$location_geo_code_1', E::ts("Event Location - Latitude"));
-        $tokenList->addToken('$location_geo_code_2', E::ts("Event Location - Longitude"));
-    }
-
-    /**
-     * Add some tokens to an event message:
-     *  - cancellation token
-     *
-     * @param MessageTokens $messageTokens
-     *   the token list
-     */
-    public static function addTokens(MessageTokens $messageTokens)
-    {
-        // check if tokens are requested
-        $uses_location_tokens = false;
+    // if so, add all tokens
+    if ($uses_location_tokens) {
+      $tokens = $messageTokens->getTokens();
+      if (!empty($tokens['participant']['event_id'])) {
+        $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($tokens['participant']['event_id']);
         foreach (self::FIELDS as $token_name) {
-            if ($messageTokens->requiresToken($token_name)) {
-                $uses_location_tokens = true;
-                break;
-            }
+          $messageTokens->setToken($token_name, $event_data[$token_name] ?? '');
         }
-
-        // if so, add all tokens
-        if ($uses_location_tokens) {
-            $tokens = $messageTokens->getTokens();
-            if (!empty($tokens['participant']['event_id'])) {
-                $event_data = CRM_Remoteevent_RemoteEvent::getRemoteEvent($tokens['participant']['event_id']);
-                foreach (self::FIELDS as $token_name) {
-                    $messageTokens->setToken($token_name, $event_data[$token_name] ?? '');
-                }
-            }
-        }
+      }
     }
+  }
+
 }

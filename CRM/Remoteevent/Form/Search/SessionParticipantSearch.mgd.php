@@ -13,19 +13,21 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
 return [
-    0 =>
+  0 =>
         [
-            'name' => 'CRM_Remoteevent_Form_Search_SessionParticipantSearch',
-            'entity' => 'CustomSearch',
-            'params' =>
+          'name' => 'CRM_Remoteevent_Form_Search_SessionParticipantSearch',
+          'entity' => 'CustomSearch',
+          'params' =>
                 [
-                    'version' => 3,
-                    'label'       => E::ts('Session Participants Search'),
-                    'description' => E::ts('Find contacts that registered for selected sessions'),
-                    'class_name' => 'CRM_Remoteevent_Form_Search_SessionParticipantSearch',
+                  'version' => 3,
+                  'label'       => E::ts('Session Participants Search'),
+                  'description' => E::ts('Find contacts that registered for selected sessions'),
+                  'class_name' => 'CRM_Remoteevent_Form_Search_SessionParticipantSearch',
                 ],
         ],
 ];

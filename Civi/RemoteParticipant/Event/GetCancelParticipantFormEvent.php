@@ -13,8 +13,10 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\RemoteParticipant\Event;
-use Civi\RemoteEvent;
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -25,17 +27,16 @@ use CRM_Remoteevent_ExtensionUtil as E;
  *
  * @todo: implement, this is just copied from GetCreateParticipantFormEvent
  */
-class GetCancelParticipantFormEvent extends GetParticipantFormEventBase
-{
-    public const NAME = 'civi.remoteevent.cancellation.getform';
+class GetCancelParticipantFormEvent extends GetParticipantFormEventBase {
+  public const NAME = 'civi.remoteevent.cancellation.getform';
 
-    /**
-     * Get the token usage key for this event type
-     *
-     * @return array
-     */
-    protected function getTokenUsages()
-    {
-        return ['cancel'];
-    }
+  /**
+   * Get the token usage key for this event type
+   *
+   * @return array
+   */
+  protected function getTokenUsages() {
+    return ['cancel'];
+  }
+
 }

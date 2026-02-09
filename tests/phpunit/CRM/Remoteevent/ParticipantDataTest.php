@@ -13,10 +13,6 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use Civi\Test\Api3TestTrait;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 
 use CRM_Remoteevent_ExtensionUtil as E;
@@ -28,91 +24,95 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * @coversNothing
  *   TODO: Document actual coverage.
  */
-class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase
-{
-    /** event hook for testAnonymousRegistration */
-    public static function registrationSetParticipantCampaign(RegistrationEvent $registration) {
-        $campaign_id = CRM_Utils_Array::value('campaign_id', $registration->getSubmission());
-        if ($campaign_id) {
-            $participant = &$registration->getParticipantData();
-            $participant['campaign_id'] = $campaign_id;
-        }
+class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
+
+  /**
+   * event hook for testAnonymousRegistration */
+  public static function registrationSetParticipantCampaign(RegistrationEvent $registration) {
+    $campaign_id = CRM_Utils_Array::value('campaign_id', $registration->getSubmission(), NULL);
+    if ($campaign_id) {
+      $participant = &$registration->getParticipantData();
+      $participant['campaign_id'] = $campaign_id;
     }
+  }
 
-    /**
-     * Test registration with a waiting list
-     */
-    public function testAnonymousRegistration()
-    {
-        // create an event
-        $event = $this->createRemoteEvent([
-            'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-        ]);
+  /**
+   * Test registration with a waiting list
+   */
+  public function testAnonymousRegistration() {
+    // create an event
+    $event = $this->createRemoteEvent([
+      'event_remote_registration.remote_registration_default_profile' => 'Standard1',
+    ]);
 
-        Civi::dispatcher()->addListener(
-            RegistrationEvent::NAME,
-            ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
+    Civi::dispatcher()->addListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
 
-        // register one contact
-        $contact = $this->createContact();
-        $campaign = $this->getCampaign();
-        $registration = $this->registerRemote($event['id'], [
-            'email' => $contact['email'],
-            'campaign_id' => $campaign['id']]);
-        $this->assertEmpty($registration['is_error'], "First Registration Failed");
+    // register one contact
+    $contact = $this->createContact();
+    $campaign = $this->getCampaign();
+    $registration = $this->registerRemote($event['id'], [
+      'email' => $contact['email'],
+      'campaign_id' => $campaign['id'],
+    ]);
+    $this->assertEmpty($registration['is_error'], 'First Registration Failed');
 
-        // load the participant
-        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
-            'contact_id' => $contact['id'],
-            'event_id'   => $event['id']]);
-        $this->assertEquals($campaign['id'], $participant['participant_campaign_id'], "The campaign was not propagated to the participant!");
-    }
+    // load the participant
+    $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
+      'contact_id' => $contact['id'],
+      'event_id'   => $event['id'],
+    ]);
+    $this->assertEquals($campaign['id'], $participant['participant_campaign_id'], 'The campaign was not propagated to the participant!');
+  }
 
-    /**
-     * Test registration with a waiting list
-     */
-    public function testInvitedRegistration()
-    {
-        // create an event
-        $event = $this->createRemoteEvent([
-              'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-          ]);
+  /**
+   * Test registration with a waiting list
+   */
+  public function testInvitedRegistration() {
+    // create an event
+    $event = $this->createRemoteEvent([
+      'event_remote_registration.remote_registration_default_profile' => 'Standard1',
+    ]);
 
-        Civi::dispatcher()->addListener(
-            RegistrationEvent::NAME,
-            ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
+    Civi::dispatcher()->addListener(
+        RegistrationEvent::NAME,
+        ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
 
-        // create invite participant
-        $contact = $this->createContact();
-        $result = $this->traitCallAPISuccess(
-            'Participant',
-            'create',
-            [
-                'event_id' => $event['id'],
-                'contact_id' => $contact['id'],
-                'status_id' => $this->getParticipantInvitedStatus(),
-                'role_id' => 'Attendee'
-            ]
-        );
-        $participant_id = $result['id'];
-        $this->assertParticipantStatus($participant_id, 'Invited', "Participant status should be 'Invited'");
+    // create invite participant
+    $contact = $this->createContact();
+    $result = $this->traitCallAPISuccess(
+        'Participant',
+        'create',
+        [
+          'event_id' => $event['id'],
+          'contact_id' => $contact['id'],
+          'status_id' => $this->getParticipantInvitedStatus(),
+          'role_id' => 'Attendee',
+        ]
+    );
+    $participant_id = $result['id'];
+    $this->assertParticipantStatus($participant_id, 'Invited', "Participant status should be 'Invited'");
 
-        // generate token
-        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, null, 'invite');
+    // generate token
+    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, NULL, 'invite');
 
-        // register one contact
-        $campaign = $this->getCampaign();
-        $registration = $this->registerRemote($event['id'], [
-            'token' => $token,
-            'confirm' => 1,
-            'email' => $contact['email'],
-            'campaign_id' => $campaign['id']]);
-        $this->assertEmpty($registration['is_error'], "First Registration Failed");
+    // register one contact
+    $campaign = $this->getCampaign();
+    $registration = $this->registerRemote($event['id'], [
+      'token' => $token,
+      'confirm' => 1,
+      'email' => $contact['email'],
+      'campaign_id' => $campaign['id'],
+    ]);
+    $this->assertEmpty($registration['is_error'], 'First Registration Failed');
 
-        // load the participant
-        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
-            'contact_id' => $contact['id'],
-            'event_id'   => $event['id']]);
-        $this->assertEquals($campaign['id'], $participant['participant_campaign_id'], "The campaign was not propagated to the participant!");
-    }
+    // load the participant
+    $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
+      'contact_id' => $contact['id'],
+      'event_id'   => $event['id'],
+    ]);
+    $this->assertEquals($campaign['id'], $participant['participant_campaign_id'], 'The campaign was not propagated to the participant!');
+  }
+
 }

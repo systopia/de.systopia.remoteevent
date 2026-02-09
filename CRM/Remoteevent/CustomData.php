@@ -1,19 +1,20 @@
 <?php
-/*-------------------------------------------------------+
-| SYSTOPIA CUSTOM DATA HELPER                            |
-| Copyright (C) 2018-2024 SYSTOPIA                       |
-| Author: B. Endres (endres@systopia.de)                 |
-| Source: https://github.com/systopia/Custom-Data-Helper |
-+--------------------------------------------------------+
-| This program is released as free software under the    |
-| Affero GPL license. You can redistribute it and/or     |
-| modify it under the terms of this license which you    |
-| can read by viewing the included agpl.txt or online    |
-| at www.gnu.org/licenses/agpl.html. Removal of this     |
-| copyright header is strictly prohibited without        |
-| written permission from the original author(s).        |
-+--------------------------------------------------------*/
-
+/**
+ * -------------------------------------------------------+
+ * | SYSTOPIA CUSTOM DATA HELPER                            |
+ * | Copyright (C) 2018-2024 SYSTOPIA                       |
+ * | Author: B. Endres (endres@systopia.de)                 |
+ * | Source: https://github.com/systopia/Custom-Data-Helper |
+ * +--------------------------------------------------------+
+ * | This program is released as free software under the    |
+ * | Affero GPL license. You can redistribute it and/or     |
+ * | modify it under the terms of this license which you    |
+ * | can read by viewing the included agpl.txt or online    |
+ * | at www.gnu.org/licenses/agpl.html. Removal of this     |
+ * | copyright header is strictly prohibited without        |
+ * | written permission from the original author(s).        |
+ * +--------------------------------------------------------
+ */
 class CRM_Remoteevent_CustomData {
 
   const CUSTOM_DATA_HELPER_VERSION = '0.12.0';
@@ -26,7 +27,8 @@ class CRM_Remoteevent_CustomData {
 
   const CUSTOM_DATA_HELPER_LOG_ERROR = 5;
 
-  /** caches custom field data, indexed by group name */
+  /**
+   * caches custom field data, indexed by group name */
   protected static $custom_group2name = NULL;
 
   protected static $custom_group2table_name = NULL;
@@ -154,7 +156,8 @@ class CRM_Remoteevent_CustomData {
 
     // if extends_entity_column_value, make sure it's sensible data
     if (isset($data['extends_entity_column_value'])) {
-      $force_update = TRUE; // this doesn't get returned by the API, so differences couldn't be detected
+      // this doesn't get returned by the API, so differences couldn't be detected
+      $force_update = TRUE;
       if ($data['extends'] == 'Activity') {
         $extends_list = [];
         foreach ($data['extends_entity_column_value'] as $activity_type) {
@@ -254,6 +257,7 @@ class CRM_Remoteevent_CustomData {
       case 1:
         // found
         return $lookup_result['values'][0];
+
       default:
         // more than one found
         $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Bad {$entity_type} lookup selector: " . json_encode($selector));
@@ -273,7 +277,7 @@ class CRM_Remoteevent_CustomData {
   protected function identifyEntity($entity_type, $data) {
     $lookup_query = [
       'sequential' => 1,
-      'options' => ['limit' => 2]
+      'options' => ['limit' => 2],
     ];
 
     foreach ($data['_lookup'] as $lookup_key) {
@@ -589,7 +593,7 @@ class CRM_Remoteevent_CustomData {
         self::$custom_group_cache[$custom_group_name] = [];
         $fields = civicrm_api3('CustomField', 'get', [
           'custom_group_id' => $custom_group_name,
-          'option.limit' => 0
+          'option.limit' => 0,
         ]);
         foreach ($fields['values'] as $field) {
           self::$custom_group_cache[$custom_group_name][$field['name']] = $field;
@@ -946,7 +950,7 @@ class CRM_Remoteevent_CustomData {
       $value = civicrm_api3('OptionValue', 'getvalue', [
         'option_group_id' => $group_name,
         $label_field => $label,
-        'return' => $value_field
+        'return' => $value_field,
       ]);
     }
     catch (CRM_Core_Exception $exception) {

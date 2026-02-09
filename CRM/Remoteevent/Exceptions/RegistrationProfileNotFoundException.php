@@ -13,10 +13,11 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Profile is not available
  *
  * Class CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
  */
-class CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException extends Exception
-{}
+class CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException extends Exception {}

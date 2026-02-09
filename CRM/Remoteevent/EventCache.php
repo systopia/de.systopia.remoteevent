@@ -13,88 +13,88 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use Civi\Api4\Event;
 use CRM_Remoteevent_ExtensionUtil as E;
-
 
 /**
  * Basic function regarding remote events
  */
-class CRM_Remoteevent_EventCache
-{
-    /** @var array cached events, indexed by event_id */
-    protected static $event_cache = [];
+class CRM_Remoteevent_EventCache {
+  /**
+   * @var array cached events, indexed by event_id */
+  protected static $event_cache = [];
 
-    /**
-     * Get the given event data.
-     *
-     *  Warning: uses RemoteEvent.get, don't cause recursions!
-     *
-     * @param integer $event_id
-     *   event ID
-     *
-     * @return array
-     *   event data
-     */
-    public static function getEvent($event_id)
-    {
-        $event_id = (int) $event_id;
-        if (!$event_id) {
-            return null;
-        }
-
-        if (!isset(self::$event_cache[$event_id])) {
-            self::$event_cache[$event_id] = Event::get(FALSE)
-              ->addSelect('*', 'custom.*')
-              ->addWhere('id', '=', $event_id)
-              ->execute()
-              ->single();
-        }
-        return self::$event_cache[$event_id];
+  /**
+   * Get the given event data.
+   *
+   *  Warning: uses RemoteEvent.get, don't cause recursions!
+   *
+   * @param integer $event_id
+   *   event ID
+   *
+   * @return array
+   *   event data
+   */
+  public static function getEvent($event_id) {
+    $event_id = (int) $event_id;
+    if (!$event_id) {
+      return NULL;
     }
 
-    /**
-     * Cache a given event (within the same request)
-     *
-     * @param array $event_data
-     *   event data. Must contain 'id'
-     */
-    public static function cacheEvent($event_data) {
-        if (!empty($event_data['id'])) {
-            self::$event_cache[$event_data['id']] = $event_data;
-        }
+    if (!isset(self::$event_cache[$event_id])) {
+      self::$event_cache[$event_id] = Event::get(FALSE)
+        ->addSelect('*', 'custom.*')
+        ->addWhere('id', '=', $event_id)
+        ->execute()
+        ->single();
     }
+    return self::$event_cache[$event_id];
+  }
 
-    /**
-     * Get a list of all participant roles
-     *
-     * @return array
-     *   role id => role label
-     */
-    public static function getRoles() {
-        static $list = null;
-        if ($list === null) {
-            $list = [];
-            $query = civicrm_api3('OptionValue', 'get', [
-                'option.limit'    => 0,
-                'option_group_id' => 'participant_role',
-                'return'          => 'value,label'
-            ]);
-            foreach ($query['values'] as $role) {
-                $list[$role['value']] = $role['label'];
-            }
-        }
-        return $list;
+  /**
+   * Cache a given event (within the same request)
+   *
+   * @param array $event_data
+   *   event data. Must contain 'id'
+   */
+  public static function cacheEvent($event_data) {
+    if (!empty($event_data['id'])) {
+      self::$event_cache[$event_data['id']] = $event_data;
     }
+  }
 
-    /**
-     * Invalidate some event, e.g. drop from the cache
-     *
-     * @param integer $event_id
-     *   event ID to drop
-     */
-    public static function invalidateEvent($event_id)
-    {
-        unset(self::$event_cache[$event_id]);
+  /**
+   * Get a list of all participant roles
+   *
+   * @return array
+   *   role id => role label
+   */
+  public static function getRoles() {
+    static $list = NULL;
+    if ($list === NULL) {
+      $list = [];
+      $query = civicrm_api3('OptionValue', 'get', [
+        'option.limit'    => 0,
+        'option_group_id' => 'participant_role',
+        'return'          => 'value,label',
+      ]);
+      foreach ($query['values'] as $role) {
+        $list[$role['value']] = $role['label'];
+      }
     }
+    return $list;
+  }
+
+  /**
+   * Invalidate some event, e.g. drop from the cache
+   *
+   * @param integer $event_id
+   *   event ID to drop
+   */
+  public static function invalidateEvent($event_id) {
+    unset(self::$event_cache[$event_id]);
+  }
+
 }

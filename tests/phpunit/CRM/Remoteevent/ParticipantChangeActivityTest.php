@@ -13,10 +13,6 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use Civi\Test\Api3TestTrait;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -27,166 +23,164 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * @coversNothing
  *   TODO: Document actual coverage.
  */
-class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_TestBase
-{
-    /**
-     * Test a simple participant update,
-     *  with update recording enabled
-     */
-    public function testSimpleUpdate()
-    {
-        // enable activity tracking (with activity_type_id 1)
-        Civi::settings()->set('remote_participant_change_activity_type_id', 1);
+class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_TestBase {
 
-        // create an event
-        $event = $this->createRemoteEvent([]);
-        // register one participant
-        $contact = $this->createContact();
-        $this->registerRemote($event['id'], ['email' => $contact['email']]);
-        $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
-            'contact_id' => $contact['id'],
-            'event_id'   => $event['id']
-        ]);
+  /**
+   * Test a simple participant update,
+   *  with update recording enabled
+   */
+  public function testSimpleUpdate() {
+    // enable activity tracking (with activity_type_id 1)
+    Civi::settings()->set('remote_participant_change_activity_type_id', 1);
 
-        // there should NOT be an activity with that contact, because it's a new one
-        $change_activities = civicrm_api3('Activity', 'get', [
-            'target_id'        => $contact['id'],
-            'activity_type_id' => 1,
-        ]);
-        $this->assertEmpty($change_activities['values'], "There should NOT be an activity with that contact, because it's a new one");
+    // create an event
+    $event = $this->createRemoteEvent([]);
+    // register one participant
+    $contact = $this->createContact();
+    $this->registerRemote($event['id'], ['email' => $contact['email']]);
+    $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
+      'contact_id' => $contact['id'],
+      'event_id'   => $event['id'],
+    ]);
 
-        // NOW update the participant
-        $participant = $this->traitCallAPISuccess('Participant', 'create', [
-            'id' => $participant['id'],
-            'status_id' => 'Cancelled',
-        ]);
+    // there should NOT be an activity with that contact, because it's a new one
+    $change_activities = civicrm_api3('Activity', 'get', [
+      'target_id'        => $contact['id'],
+      'activity_type_id' => 1,
+    ]);
+    $this->assertEmpty($change_activities['values'], "There should NOT be an activity with that contact, because it's a new one");
 
-        // THIS time there should be an activity with that contact, because it's a new one
-        $change_activities = civicrm_api3('Activity', 'get', [
-            'target_id'        => $contact['id'],
-            'activity_type_id' => 1,
-        ]);
-        $this->assertEquals(1, $change_activities['count'], "There should be a change activity with that contact");
-        $change_activity = reset($change_activities['values']);
-        // look for the jumbled (md5) names instead of the real ones
-        $this->assertNotEmpty(strstr($change_activity['details'], md5('Registered')), "The activity should mention the Registered->Cancelled change");
-        $this->assertNotEmpty(strstr($change_activity['details'], md5('Cancelled')), "The activity should mention the Registered->Cancelled change");
-    }
+    // NOW update the participant
+    $participant = $this->traitCallAPISuccess('Participant', 'create', [
+      'id' => $participant['id'],
+      'status_id' => 'Cancelled',
+    ]);
 
-    /**
-     * Test a simple participant update,
-     *  with update recording DISABLED
-     */
-    public function testSimpleUpdateDisabled()
-    {
-        // disable activity tracking (with activity_type_id 0)
-        Civi::settings()->set('remote_participant_change_activity_type_id', 0);
+    // THIS time there should be an activity with that contact, because it's a new one
+    $change_activities = civicrm_api3('Activity', 'get', [
+      'target_id'        => $contact['id'],
+      'activity_type_id' => 1,
+    ]);
+    $this->assertEquals(1, $change_activities['count'], 'There should be a change activity with that contact');
+    $change_activity = reset($change_activities['values']);
+    // look for the jumbled (md5) names instead of the real ones
+    $this->assertNotEmpty(strstr($change_activity['details'], md5('Registered')), 'The activity should mention the Registered->Cancelled change');
+    $this->assertNotEmpty(strstr($change_activity['details'], md5('Cancelled')), 'The activity should mention the Registered->Cancelled change');
+  }
 
-        // create an event
-        $event = $this->createRemoteEvent([]);
-        // register one participant
-        $contact = $this->createContact();
-        $this->registerRemote($event['id'], ['email' => $contact['email']]);
-        $participant = $this->traitCallAPISuccess(
-            'Participant',
-            'getsingle',
-            [
-                'contact_id' => $contact['id'],
-                'event_id' => $event['id']
-            ]
-        );
+  /**
+   * Test a simple participant update,
+   *  with update recording DISABLED
+   */
+  public function testSimpleUpdateDisabled() {
+    // disable activity tracking (with activity_type_id 0)
+    Civi::settings()->set('remote_participant_change_activity_type_id', 0);
 
-        // there should NOT be an activity with that contact, because it's a new one
-        $change_activities = civicrm_api3(
-            'Activity',
-            'get',
-            [
-                'target_id' => $contact['id'],
-                'activity_type_id' => 1,
-            ]
-        );
-        $this->assertEmpty(
-            $change_activities['values'],
-            "There should NOT be an activity with that contact, because it's a new one"
-        );
+    // create an event
+    $event = $this->createRemoteEvent([]);
+    // register one participant
+    $contact = $this->createContact();
+    $this->registerRemote($event['id'], ['email' => $contact['email']]);
+    $participant = $this->traitCallAPISuccess(
+        'Participant',
+        'getsingle',
+        [
+          'contact_id' => $contact['id'],
+          'event_id' => $event['id'],
+        ]
+    );
 
-        // NOW update the participant
-        $participant = $this->traitCallAPISuccess(
-            'Participant',
-            'create',
-            [
-                'id' => $participant['id'],
-                'status_id' => 'Cancelled',
-            ]
-        );
+    // there should NOT be an activity with that contact, because it's a new one
+    $change_activities = civicrm_api3(
+        'Activity',
+        'get',
+        [
+          'target_id' => $contact['id'],
+          'activity_type_id' => 1,
+        ]
+    );
+    $this->assertEmpty(
+        $change_activities['values'],
+        "There should NOT be an activity with that contact, because it's a new one"
+    );
 
-        // THIS time there should be an activity with that contact, because it's a new one
-        $change_activities = civicrm_api3(
-            'Activity',
-            'get',
-            [
-                'target_id' => $contact['id'],
-                'activity_type_id' => 1,
-            ]
-        );
-        $this->assertEmpty(
-            $change_activities['values'],
-            "There should NOT be an activity with that contact, the update tracking is disabled"
-        );
-    }
+    // NOW update the participant
+    $participant = $this->traitCallAPISuccess(
+        'Participant',
+        'create',
+        [
+          'id' => $participant['id'],
+          'status_id' => 'Cancelled',
+        ]
+    );
 
-    /**
-     * Test a simple participant update,
-     *  with custom fields
-     */
-    public function testCustomFieldUpdate()
-    {
-        // enable activity tracking (with activity_type_id 1)
-        Civi::settings()->set('remote_participant_change_activity_type_id', 1);
+    // THIS time there should be an activity with that contact, because it's a new one
+    $change_activities = civicrm_api3(
+        'Activity',
+        'get',
+        [
+          'target_id' => $contact['id'],
+          'activity_type_id' => 1,
+        ]
+    );
+    $this->assertEmpty(
+        $change_activities['values'],
+        'There should NOT be an activity with that contact, the update tracking is disabled'
+    );
+  }
 
-        // create custom fields
-        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-        $customData->syncOptionGroup(E::path('tests/resources/option_group_age_range.json'));
-        $customData->syncCustomGroup(E::path('tests/resources/custom_group_participant_test1.json'));
+  /**
+   * Test a simple participant update,
+   *  with custom fields
+   */
+  public function testCustomFieldUpdate() {
+    // enable activity tracking (with activity_type_id 1)
+    Civi::settings()->set('remote_participant_change_activity_type_id', 1);
 
-        // create an event
-        $event = $this->createRemoteEvent([]);
-        // register one participant
-        $contact = $this->createContact();
-        $participant_data = [
-            'contact_id'                           => $contact['id'],
-            'event_id'                             => $event['id'],
-            'participant_test1.event_age_range'    => 3,
-            'participant_test1.event_comm_twitter' => 'Twitter',
-        ];
-        CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
-        $participant = $this->traitCallAPISuccess('Participant', 'create', $participant_data);
+    // create custom fields
+    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+    $customData->syncOptionGroup(E::path('tests/resources/option_group_age_range.json'));
+    $customData->syncCustomGroup(E::path('tests/resources/custom_group_participant_test1.json'));
 
-        // there should NOT be an activity with that contact, because it's a new one
-        $change_activities = civicrm_api3('Activity', 'get', [
-            'target_id'        => $contact['id'],
-            'activity_type_id' => 1,
-        ]);
-        $this->assertEmpty($change_activities['values'], "There should NOT be an activity with that contact, because it's a new one");
+    // create an event
+    $event = $this->createRemoteEvent([]);
+    // register one participant
+    $contact = $this->createContact();
+    $participant_data = [
+      'contact_id'                           => $contact['id'],
+      'event_id'                             => $event['id'],
+      'participant_test1.event_age_range'    => 3,
+      'participant_test1.event_comm_twitter' => 'Twitter',
+    ];
+    CRM_Remoteevent_CustomData::resolveCustomFields($participant_data);
+    $participant = $this->traitCallAPISuccess('Participant', 'create', $participant_data);
 
-        // NOW update the participant
-        $participant_update = [
-            'id'                                   => $participant['id'],
-            'participant_test1.event_age_range'    => 4,
-            'participant_test1.event_comm_twitter' => 'Twatter',
-        ];
-        CRM_Remoteevent_CustomData::resolveCustomFields($participant_update);
-        $participant = $this->traitCallAPISuccess('Participant', 'create', $participant_update);
+    // there should NOT be an activity with that contact, because it's a new one
+    $change_activities = civicrm_api3('Activity', 'get', [
+      'target_id'        => $contact['id'],
+      'activity_type_id' => 1,
+    ]);
+    $this->assertEmpty($change_activities['values'], "There should NOT be an activity with that contact, because it's a new one");
 
-        // THIS time there should be an activity with that contact, because it's a new one
-        $change_activities = civicrm_api3('Activity', 'get', [
-            'target_id'        => $contact['id'],
-            'activity_type_id' => 1,
-        ]);
-        // todo: this needs a post hook
-        $this->assertEquals(1, $change_activities['count'], "There should be a change activity with that contact");
-        $change_activity = reset($change_activities['values']);
-        $this->assertNotEmpty(strstr($change_activity['details'], 'Twatter'), "The activity should mention the Twitter->Twatter change");
-        $this->assertNotEmpty(strstr($change_activity['details'], '40-49'), "The activity should mention the 30-39 to 40-49 change");
-    }
+    // NOW update the participant
+    $participant_update = [
+      'id'                                   => $participant['id'],
+      'participant_test1.event_age_range'    => 4,
+      'participant_test1.event_comm_twitter' => 'Twatter',
+    ];
+    CRM_Remoteevent_CustomData::resolveCustomFields($participant_update);
+    $participant = $this->traitCallAPISuccess('Participant', 'create', $participant_update);
+
+    // THIS time there should be an activity with that contact, because it's a new one
+    $change_activities = civicrm_api3('Activity', 'get', [
+      'target_id'        => $contact['id'],
+      'activity_type_id' => 1,
+    ]);
+    // todo: this needs a post hook
+    $this->assertEquals(1, $change_activities['count'], 'There should be a change activity with that contact');
+    $change_activity = reset($change_activities['values']);
+    $this->assertNotEmpty(strstr($change_activity['details'], 'Twatter'), 'The activity should mention the Twitter->Twatter change');
+    $this->assertNotEmpty(strstr($change_activity['details'], '40-49'), 'The activity should mention the 30-39 to 40-49 change');
+  }
+
 }

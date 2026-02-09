@@ -20,12 +20,9 @@ declare(strict_types = 1);
 namespace Civi\RemoteParticipant\MailingList;
 
 use Civi\Api4\Generic\Result;
-use Civi\Api4\GroupContact;
 use Civi\RemoteEvent\Exception\InvalidSubscriptionTokenException;
-use Civi\RemoteTools\Api4\Api4;
 use Civi\RemoteTools\Api4\Api4Interface;
 use Civi\RemoteTools\Api4\Query\Comparison;
-use Civi\RemoteTools\Api4\Query\CompositeCondition;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

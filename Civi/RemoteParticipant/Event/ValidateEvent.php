@@ -13,8 +13,10 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\RemoteParticipant\Event;
+
 use Civi\RemoteEvent;
 
 /**
@@ -25,67 +27,63 @@ use Civi\RemoteEvent;
  * This event will be triggered at the beginning of the
  *  RemoteParticipant.validate API call, so the search parameters can be manipulated
  */
-class ValidateEvent extends RemoteEvent
-{
+class ValidateEvent extends RemoteEvent {
 
-    public const NAME = 'civi.remoteevent.registration.validate';
+  public const NAME = 'civi.remoteevent.registration.validate';
 
-    /** @var array holds the original RemoteParticipant.validate submission */
-    protected $submission;
+  /**
+   * @var array holds the original RemoteParticipant.validate submission */
+  protected $submission;
 
-    public function __construct($submission_data, $error_list = [])
-    {
-        $this->submission  = $submission_data;
-        $this->error_list = $error_list;
-        $this->token_usages = ['invite', 'update'];
-    }
+  public function __construct($submission_data, $error_list = []) {
+    $this->submission  = $submission_data;
+    $this->error_list = $error_list;
+    $this->token_usages = ['invite', 'update'];
+  }
 
-    /**
-     * Add an error to the given field
-     *
-     * @param string $field_name
-     *   field name
-     *
-     * @param string $error
-     *   error message to be displayed to the user
-     */
-    public function addValidationError($field_name, $error)
-    {
-        // just pass to the underlying error system
-        $this->addError($error, $field_name);
-    }
+  /**
+   * Add an error to the given field
+   *
+   * @param string $field_name
+   *   field name
+   *
+   * @param string $error
+   *   error message to be displayed to the user
+   */
+  public function addValidationError($field_name, $error) {
+    // just pass to the underlying error system
+    $this->addError($error, $field_name);
+  }
 
-    /**
-     * Modify Validation Errors
-     *
-     * @return array
-     *  $validation error list (reference!)
-     */
-    public function &modifyValidationErrors()
-    {
-        // just pass to the underlying error system
-        return $this->error_list;
-    }
+  /**
+   * Modify Validation Errors
+   *
+   * @return array
+   *   $validation error list (reference!)
+   */
+  public function &modifyValidationErrors() {
+    // just pass to the underlying error system
+    return $this->error_list;
+  }
 
-    /**
-     * Get the complete submission
-     *
-     * @return array
-     *   submission data
-     */
-    public function getSubmission()
-    {
-        return $this->submission;
-    }
+  /**
+   * Get the complete submission
+   *
+   * @return array
+   *   submission data
+   */
+  public function getSubmission() {
+    return $this->submission;
+  }
 
-    /**
-     * Get the parameters of the original query
-     *
-     * @return array
-     *   parameters of the query
-     */
-    public function getQueryParameters()
-    {
-        return $this->submission;
-    }
+  /**
+   * Get the parameters of the original query
+   *
+   * @return array
+   *   parameters of the query
+   */
+  public function getQueryParameters() {
+    return $this->submission;
+  }
+
 }
