@@ -108,7 +108,7 @@ jobs:
       run: |
         cd ../civicrm-standalone
         export PATH="$(realpath vendor/bin):$PATH"
-        cv core:install --db="$DATABASE_URL" --comp="$CIVICRM_COMPONENTS"
+        cv core:install --db="$DATABASE_URL" --comp="$CIVICRM_COMPONENTS" --lang=de_DE
         export CV_CONFIG="$HOME/.cv.json"
         cv vars:fill --quiet
         sed -i "s#\"TEST_DB_DSN\": \".*\"#\"TEST_DB_DSN\": \"$DATABASE_URL\"#g" "$CV_CONFIG"
