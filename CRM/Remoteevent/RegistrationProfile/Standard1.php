@@ -57,7 +57,6 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
         'weight'      => 10,
         'required'    => 1,
         'label'       => $l10n->ts('Email'),
-            // $l10n->ts("Participant's email address"),
         'description' => '',
         'parent'      => 'contact_base',
       ],

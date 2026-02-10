@@ -26,6 +26,7 @@ use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\ClockMock;
 
+// phpcs:ignore Generic.Files.LineLength.TooLong
 abstract class AbstractRemoteEventHeadlessTestCase extends TestCase implements HeadlessInterface, TransactionalInterface {
 
   public static function tearDownAfterClass(): void {

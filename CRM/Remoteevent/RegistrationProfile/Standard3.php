@@ -184,12 +184,23 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
    */
   public function addDefaultValues(GetParticipantFormEventBase $resultsEvent) {
     // add contact data
-    $this->addDefaultContactValues($resultsEvent, ['prefix_id', 'email', 'formal_title', 'first_name', 'last_name', 'phone']);
+    $this->addDefaultContactValues(
+      $resultsEvent,
+      ['prefix_id', 'email', 'formal_title', 'first_name', 'last_name', 'phone']
+    );
 
     // add address data (primary?)
     $contact_id = $resultsEvent->getContactID();
     if ($contact_id) {
-      $address_fields = ['street_address', 'supplemental_address_1', 'supplemental_address_2', 'postal_code', 'city', 'country_id', 'state_province_id'];
+      $address_fields = [
+        'street_address',
+        'supplemental_address_1',
+        'supplemental_address_2',
+        'postal_code',
+        'city',
+        'country_id',
+        'state_province_id',
+      ];
       try {
         $address = civicrm_api3(
         'Address',

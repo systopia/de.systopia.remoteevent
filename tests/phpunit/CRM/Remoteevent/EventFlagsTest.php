@@ -13,8 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-
-use CRM_Remoteevent_ExtensionUtil as E;
+declare(strict_types = 1);
 
 /**
  * Tests regarding registration flags
@@ -30,16 +29,26 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
    */
   public function testFlagsAnonymous() {
     // create an event
-    $event = $this->createRemoteEvent([
-      'allow_selfcancelxfer' => 0,
-    ]);
+    $event = $this->createRemoteEvent(
+      [
+        'allow_selfcancelxfer' => 0,
+      ]
+    );
 
     // check the flags for a newly created event
     $this->checkFlagFormat('registration_count', '/^[0-9]+$/', $event);
-    $this->assertEquals('0', $event['registration_count'], 'The "flag" registration_count should be zero for a new event.');
+    $this->assertEquals(
+      '0',
+      $event['registration_count'],
+      'The "flag" registration_count should be zero for a new event.'
+    );
 
     $this->checkFlagFormat('participant_registration_count', '/^[0-9]+$/', $event);
-    $this->assertEquals('0', $event['participant_registration_count'], 'The "flag" participant_registration_count should always be zero for an anonymous query.');
+    $this->assertEquals(
+      '0',
+      $event['participant_registration_count'],
+      'The "flag" participant_registration_count should always be zero for an anonymous query.'
+    );
 
     $this->checkFlagFormat('is_registered', '/^(0|1)$/', $event);
     $this->assertEquals('0', $event['is_registered'], 'The flag can_register should always be 0');
@@ -48,13 +57,21 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
     $this->assertEquals('1', $event['can_register'], 'The flag can_register should be 1 for a new event.');
 
     $this->checkFlagFormat('can_instant_register', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_instant_register'], 'The flag can_instant_register should be 0 for an event without OneClick profile.');
+    $this->assertEquals(
+      '0',
+      $event['can_instant_register'],
+      'The flag can_instant_register should be 0 for an event without OneClick profile.'
+    );
 
     $this->checkFlagFormat('can_edit_registration', '/^(0|1)$/', $event);
     $this->assertEquals('0', $event['can_edit_registration'], 'The flag can_edit_registration should be 0 this event.');
 
     $this->checkFlagFormat('can_cancel_registration', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_cancel_registration'], 'The flag can_cancel_registration should be 0 this event.');
+    $this->assertEquals(
+      '0',
+      $event['can_cancel_registration'],
+      'The flag can_cancel_registration should be 0 this event.'
+    );
 
     // add a registration and try again
     $contact = $this->createContact();
@@ -62,10 +79,18 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
     $event = $this->getRemoteEvent($event['id']);
 
     $this->checkFlagFormat('registration_count', '/^[0-9]+$/', $event);
-    $this->assertEquals('1', $event['registration_count'], 'The "flag" registration_count should be 1 with a registration.');
+    $this->assertEquals(
+      '1',
+      $event['registration_count'],
+      'The "flag" registration_count should be 1 with a registration.'
+    );
 
     $this->checkFlagFormat('participant_registration_count', '/^[0-9]+$/', $event);
-    $this->assertEquals('0', $event['participant_registration_count'], 'The "flag" participant_registration_count should always be zero for an anonymous query.');
+    $this->assertEquals(
+      '0',
+      $event['participant_registration_count'],
+      'The "flag" participant_registration_count should always be zero for an anonymous query.'
+    );
 
     $this->checkFlagFormat('is_registered', '/^(0|1)$/', $event);
     $this->assertEquals('0', $event['is_registered'], 'The flag can_register should always be 0');
@@ -74,13 +99,21 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
     $this->assertEquals('1', $event['can_register'], 'The flag can_register should be 1 for a new event.');
 
     $this->checkFlagFormat('can_instant_register', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_instant_register'], 'The flag can_instant_register should be 0 for an event without OneClick profile.');
+    $this->assertEquals(
+      '0',
+      $event['can_instant_register'],
+      'The flag can_instant_register should be 0 for an event without OneClick profile.'
+    );
 
     $this->checkFlagFormat('can_edit_registration', '/^(0|1)$/', $event);
     $this->assertEquals('0', $event['can_edit_registration'], 'The flag can_edit_registration should be 0 this event.');
 
     $this->checkFlagFormat('can_cancel_registration', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_cancel_registration'], 'The flag can_cancel_registration should be 0 this event.');
+    $this->assertEquals(
+      '0',
+      $event['can_cancel_registration'],
+      'The flag can_cancel_registration should be 0 this event.'
+    );
 
     // todo: turn on instant registration
     // todo: turn on allow_selfcancelxfer
@@ -88,13 +121,27 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
   }
 
   /**
+   * Verify the flag format / value
+   *
+   * @param string $flag_name
+   * @param string $pattern
+   * @param array $data
+   */
+  protected function checkFlagFormat($flag_name, $pattern, $data) {
+    $this->assertArrayHasKey($flag_name, $data, "The flag {$flag_name} should always be there.");
+    $this->assertMatchesRegularExpression(
+      $pattern,
+      $data[$flag_name],
+      "The flag {$flag_name} has in invalid value: '{$data[$flag_name]}'"
+    );
+  }
+
+  /**
    * Test flags anonymously
    */
   public function testFlagsPersonalised() {
     // create an event
-    $event = $this->createRemoteEvent([
-      'allow_selfcancelxfer' => 0,
-    ]);
+    $event = $this->createRemoteEvent(['allow_selfcancelxfer' => 0]);
 
     // create a remote contact
     $contact = $this->createContact();
@@ -105,10 +152,18 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
 
     // check the flags for a newly created event
     $this->checkFlagFormat('registration_count', '/^[0-9]+$/', $event);
-    $this->assertEquals('0', $event['registration_count'], 'The "flag" registration_count should be zero for a new event.');
+    $this->assertEquals(
+      '0',
+      $event['registration_count'],
+      'The "flag" registration_count should be zero for a new event.'
+    );
 
     $this->checkFlagFormat('participant_registration_count', '/^[0-9]+$/', $event);
-    $this->assertEquals('0', $event['participant_registration_count'], 'The "flag" participant_registration_count should always be zero for a new event.');
+    $this->assertEquals(
+      '0',
+      $event['participant_registration_count'],
+      'The "flag" participant_registration_count should always be zero for a new event.'
+    );
 
     $this->checkFlagFormat('is_registered', '/^(0|1)$/', $event);
     $this->assertEquals('0', $event['is_registered'], 'The flag can_register should be 0 for a new event');
@@ -117,13 +172,21 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
     $this->assertEquals('1', $event['can_register'], 'The flag can_register should be 1 for a new event.');
 
     $this->checkFlagFormat('can_instant_register', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_instant_register'], 'The flag can_instant_register should be 0 for an event without OneClick profile.');
+    $this->assertEquals(
+      '0',
+      $event['can_instant_register'],
+      'The flag can_instant_register should be 0 for an event without OneClick profile.'
+    );
 
     $this->checkFlagFormat('can_edit_registration', '/^(0|1)$/', $event);
     $this->assertEquals('0', $event['can_edit_registration'], 'The flag can_edit_registration should be 0 this event.');
 
     $this->checkFlagFormat('can_cancel_registration', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_cancel_registration'], 'The flag can_cancel_registration should be 0 this event.');
+    $this->assertEquals(
+      '0',
+      $event['can_cancel_registration'],
+      'The flag can_cancel_registration should be 0 this event.'
+    );
 
     // add a registration and try again
     $this->registerRemote($event['id'], ['email' => $contact['email']]);
@@ -134,22 +197,38 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
     $this->assertEquals('1', $event['registration_count'], 'The registration_count should be 1 now.');
 
     $this->checkFlagFormat('participant_registration_count', '/^[0-9]+$/', $event);
-    $this->assertEquals('1', $event['participant_registration_count'], 'The participant_registration_count should be 1 now.');
+    $this->assertEquals(
+      '1',
+      $event['participant_registration_count'],
+      'The participant_registration_count should be 1 now.'
+    );
 
     $this->checkFlagFormat('is_registered', '/^(0|1)$/', $event);
     $this->assertEquals('1', $event['is_registered'], 'The flag can_register should be 1 when registered');
 
     $this->checkFlagFormat('can_register', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_register'], 'The flag can_register should be 0, because we already registered');
+    $this->assertEquals(
+      '0',
+      $event['can_register'],
+      'The flag can_register should be 0, because we already registered'
+    );
 
     $this->checkFlagFormat('can_instant_register', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_instant_register'], 'The flag can_register should be 0, because we already registered');
+    $this->assertEquals(
+      '0',
+      $event['can_instant_register'],
+      'The flag can_register should be 0, because we already registered'
+    );
 
     $this->checkFlagFormat('can_edit_registration', '/^(0|1)$/', $event);
     $this->assertEquals('0', $event['can_edit_registration'], 'The flag can_edit_registration should be 0 this event.');
 
     $this->checkFlagFormat('can_cancel_registration', '/^(0|1)$/', $event);
-    $this->assertEquals('0', $event['can_cancel_registration'], 'The flag can_cancel_registration should be 0 this event.');
+    $this->assertEquals(
+      '0',
+      $event['can_cancel_registration'],
+      'The flag can_cancel_registration should be 0 this event.'
+    );
   }
 
   /**
@@ -228,7 +307,11 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
     $this->assertEquals(1, $registered_events['count'], "There should be exactly one event we're registered to");
 
     // make sure the boost actually improves performance
-    $this->assertGreaterThan($runtime_with_boost, $runtime_without_boost, "The runtime boost doesn't seem to improve the runtime.");
+    $this->assertGreaterThan(
+      $runtime_with_boost,
+      $runtime_without_boost,
+      "The runtime boost doesn't seem to improve the runtime."
+    );
   }
 
   /**
@@ -265,38 +348,35 @@ class CRM_Remoteevent_EventFlagsTest extends CRM_Remoteevent_TestBase {
         $registered_event_ids = [];
         $offset = 0;
         foreach (range(0, ($EVENT_COUNT / $limit) + 1) as $iteration) {
-          $registered_events = $this->findRemoteEvents([
-            'is_registered' => 1,
-            'remote_contact_id' => $remote_key,
-            'option.limit' => $limit,
-            'option.offset' => $offset,
-          ]);
+          $registered_events = $this->findRemoteEvents(
+            [
+              'is_registered' => 1,
+              'remote_contact_id' => $remote_key,
+              'option.limit' => $limit,
+              'option.offset' => $offset,
+            ]
+          );
           foreach ($registered_events['values'] as $event) {
             $registered_event_ids[] = $event['id'];
           }
           $offset += $limit;
         }
 
-        // and finally compare
+        // … and finally compare.
         $registered_event_ids = array_unique($registered_event_ids);
         sort($registered_event_ids);
-        $this->assertEquals($random_event_ids, $registered_event_ids, "Registered events incorrect [performance-enhancement: {$performance_enhancement}, offset {$offset}, limit {$limit}]");
+        $this->assertEquals(
+          $random_event_ids,
+          $registered_event_ids,
+          // phpcs:ignore Generic.Files.LineLength.TooLong
+          "Registered events incorrect [performance-enhancement: {$performance_enhancement}, offset {$offset}, limit {$limit}]"
+        );
       }
       $runtime = (int) (microtime(TRUE) - $timestamp);
-      print_r('Runtime ' . ($performance_enhancement ? 'with' : 'without') . ' performance enhancement: ' . $runtime . "s\n");
+      print_r(
+        'Runtime ' . ($performance_enhancement ? 'with' : 'without') . ' performance enhancement: ' . $runtime . "s\n"
+      );
     }
-  }
-
-  /**
-   * Verify the flag format / value
-   *
-   * @param string $flag_name
-   * @param string $pattern
-   * @param array $data
-   */
-  protected function checkFlagFormat($flag_name, $pattern, $data) {
-    $this->assertArrayHasKey($flag_name, $data, "The flag {$flag_name} should always be there.");
-    $this->assertMatchesRegularExpression($pattern, $data[$flag_name], "The flag {$flag_name} has in invalid value: '{$data[$flag_name]}'");
   }
 
 }

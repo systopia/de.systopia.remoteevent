@@ -22,9 +22,9 @@ use CRM_Remoteevent_ExtensionUtil as E;
  */
 class CRM_Remoteevent_ChangeActivity {
 
-  const RECORD_PARTICIPANT_ID = 0;
-  const RECORD_PARTICIPANT_DATA = 1;
-  const RECORD_PARTICIPANT_UPDATE_HAS_NO_CUSTOM_FIELDS = 2;
+  public const RECORD_PARTICIPANT_ID = 0;
+  public const RECORD_PARTICIPANT_DATA = 1;
+  public const RECORD_PARTICIPANT_UPDATE_HAS_NO_CUSTOM_FIELDS = 2;
 
   /**
    * @var array stack of [participant_id, data] tuples */
@@ -90,6 +90,7 @@ class CRM_Remoteevent_ChangeActivity {
       if ($record[self::RECORD_PARTICIPANT_UPDATE_HAS_NO_CUSTOM_FIELDS] || $custom_fields_done) {
         $record = array_pop(self::$record_stack);
         $pre_participant_id = $record[self::RECORD_PARTICIPANT_ID];
+        // Only for non-new participants.
         if ($pre_participant_id) {
           if ($pre_participant_id != $participant_id) {
             Civi::log()->warning('RemoteEvent: Participant monitoring issue, stack inconsistent.');
@@ -99,9 +100,6 @@ class CRM_Remoteevent_ChangeActivity {
             $current_values = self::getParticipantData($participant_id);
             self::createDiffActivity($previous_values, $current_values);
           }
-        }
-        else {
-          // this is a new participant -> skip
         }
       }
     }
@@ -131,18 +129,12 @@ class CRM_Remoteevent_ChangeActivity {
     foreach ($participant_raw as $field_name => $value) {
       if (substr($field_name, 0, 12) == 'participant_') {
         $participant_filtered[$field_name] = $value;
-
       }
       elseif (preg_match('/^custom_[0-9]+$/', $field_name)) {
         $participant_filtered[$field_name] = $value;
-
       }
       elseif ($field_name == 'contact_id' || $field_name == 'event_id') {
         $participant_filtered[$field_name] = $value;
-
-      }
-      else {
-        // drop value
       }
     }
 
@@ -164,6 +156,7 @@ class CRM_Remoteevent_ChangeActivity {
    * @param array $previous_values
    * @param array $current_values
    */
+  // phpcs:ignore Generic.Metrics.NestingLevel.TooHigh, Generic.Metrics.CyclomaticComplexity.MaxExceeded
   protected static function createDiffActivity($previous_values, $current_values) {
     // see if there's a diff
     $differing_attributes = [];
@@ -288,7 +281,9 @@ class CRM_Remoteevent_ChangeActivity {
         civicrm_api3('Activity', 'create', $activity_data);
       }
       catch (CRM_Core_Exception $ex) {
-        Civi::log()->debug("Couldn't create activity: " . json_encode($activity_data) . ' - error was: ' . $ex->getMessage());
+        Civi::log()->debug(
+          "Couldn't create activity: " . json_encode($activity_data) . ' - error was: ' . $ex->getMessage()
+        );
       }
     }
   }

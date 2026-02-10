@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -50,7 +51,12 @@ class CRM_Remoteevent_GreetingsTest extends CRM_Remoteevent_TestBase {
     $this->assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // test getForm for update
-    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $registration1['participant_id'], NULL, 'update');
+    $token = CRM_Remotetools_SecureToken::generateEntityToken(
+      'Participant',
+      $registration1['participant_id'],
+      NULL,
+      'update'
+    );
     $reply = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
       'token'    => $token,
       'context'  => 'update',
@@ -63,7 +69,10 @@ class CRM_Remoteevent_GreetingsTest extends CRM_Remoteevent_TestBase {
     foreach ($reply['status_messages'] as $status_message) {
       $message_found |= (bool) strstr($status_message['message'], $contactA_before['first_name']);
     }
-    $this->assertTrue((bool) $message_found, 'There should be a greeting status message containing the first name in the reply.');
+    $this->assertTrue(
+      (bool) $message_found,
+      'There should be a greeting status message containing the first name in the reply.'
+    );
   }
 
 }

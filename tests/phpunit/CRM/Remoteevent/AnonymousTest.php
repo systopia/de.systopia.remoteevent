@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -77,7 +78,10 @@ class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestB
       'last_name'  => $contact['last_name'],
       'email'      => $contact['email'],
     ]);
-    $this->assertFalse((bool) $result['is_error'], 'You should be able to register anonymously with the Standard2 profile.');
+    $this->assertFalse(
+      (bool) $result['is_error'],
+      'You should be able to register anonymously with the Standard2 profile.'
+    );
   }
 
   /**
@@ -139,7 +143,10 @@ class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestB
       'last_name'  => $contact['last_name'],
       'email'      => $contact['email'],
     ]);
-    $this->assertFalse((bool) $result['is_error'], 'You should be able to register anonymously with the Standard2 profile.');
+    $this->assertFalse(
+      (bool) $result['is_error'],
+      'You should be able to register anonymously with the Standard2 profile.'
+    );
   }
 
 }

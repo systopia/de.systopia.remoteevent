@@ -55,12 +55,41 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
     $old_event_id = (int) $old_event_id;
     $new_event_id = (int) $new_event_id;
     self::executeQuery(
-        "
-       INSERT INTO civicrm_session (event_id,title,is_active,start_date,end_date,slot_id,category_id,type_id,description,max_participants,location,presenter_id,presenter_title)
-       SELECT {$new_event_id} AS event_id,title,is_active,start_date,end_date,slot_id,category_id,type_id,description,max_participants,location,presenter_id,presenter_title
-       FROM civicrm_session
-       WHERE event_id = {$old_event_id}
-      "
+      <<<SQL
+      INSERT INTO civicrm_session (
+        event_id,
+        title,
+        is_active,
+        start_date,
+        end_date,
+        slot_id,
+        category_id,
+        type_id,
+        description,
+        max_participants,
+        location,
+        presenter_id,
+        presenter_title
+      )
+      SELECT
+        {$new_event_id} AS event_id,
+        title,
+        is_active,
+        start_date,
+        end_date,
+        slot_id,
+        category_id,
+        type_id,
+        description,
+        max_participants,
+        location,
+        presenter_id,
+        presenter_title
+      FROM
+        civicrm_session
+      WHERE
+        event_id = {$old_event_id}
+      SQL
     );
   }
 
@@ -105,7 +134,6 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
       'event_id'     => ['IN' => $event_ids],
       'option.limit' => 0,
       'option.sort'  => 'start_date asc, id asc',
-        //'return'       => 'TODO',
     ])['values'];
 
     // sort all sessions into the events
@@ -120,8 +148,13 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
         $event_start_date = strtotime($event_data[$session['event_id']]['start_date']);
       }
       else {
-        Civi::log()->debug('CRM_Remoteevent_BAO_Session:cacheSessions separately loading event start dates. This should not happen, and is very slow.');
-        $event_start_date = strtotime(civicrm_api3('Event', 'getvalue', ['return' => 'start_date', 'id' => $session['event_id']]));
+        Civi::log()->debug(
+          // phpcs:ignore Generic.Files.LineLength.TooLong
+          'CRM_Remoteevent_BAO_Session:cacheSessions separately loading event start dates. This should not happen, and is very slow.'
+        );
+        $event_start_date = strtotime(
+          civicrm_api3('Event', 'getvalue', ['return' => 'start_date', 'id' => $session['event_id']])
+        );
       }
 
       // calculate day of event

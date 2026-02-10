@@ -266,10 +266,6 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  /****************************************************************
-   * *                       HELPER FUNCTIONS                     **
-   ****************************************************************/
-
   /**
    * Migrate previous profile option values to profile option names.
    */

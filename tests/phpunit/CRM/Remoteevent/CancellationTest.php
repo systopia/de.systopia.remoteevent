@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -55,7 +56,11 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
     catch (CRM_Core_Exception $ex) {
       // todo: check error message?
       $error_message = $ex->getMessage();
-      $this->assertMatchesRegularExpression('/no participants found/i', $error_message, 'This seems to be the wrong kind of exception');
+      $this->assertMatchesRegularExpression(
+        '/no participants found/i',
+        $error_message,
+        'This seems to be the wrong kind of exception'
+      );
     }
   }
 
@@ -85,7 +90,11 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
 
     // verify contact is cancelled
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-    $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
+    $this->assertParticipantStatus(
+      $participant['participant_id'],
+      'Cancelled',
+      "Participant doesn't seem to be cancelled"
+    );
   }
 
   /**
@@ -114,7 +123,11 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
 
     // verify contact is cancelled
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-    $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
+    $this->assertParticipantStatus(
+      $participant['participant_id'],
+      'Cancelled',
+      "Participant doesn't seem to be cancelled"
+    );
   }
 
   /**
@@ -145,7 +158,11 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
 
     // verify contact is cancelled
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-    $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
+    $this->assertParticipantStatus(
+      $participant['participant_id'],
+      'Cancelled',
+      "Participant doesn't seem to be cancelled"
+    );
   }
 
   /**
@@ -176,7 +193,11 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
 
     // verify contact is cancelled
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-    $this->assertParticipantStatus($participant['participant_id'], 'Cancelled', "Participant doesn't seem to be cancelled");
+    $this->assertParticipantStatus(
+      $participant['participant_id'],
+      'Cancelled',
+      "Participant doesn't seem to be cancelled"
+    );
   }
 
   /**
@@ -209,12 +230,19 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
     }
     catch (CRM_Core_Exception $ex) {
       // didn't work: verify it's for the right reason
-      $this->assertNotEmpty(strstr($ex->getMessage(), 'does not allow cancellation less than'), 'There should be an error message regarding the cancellation time restrictions');
+      $this->assertNotEmpty(
+        strstr($ex->getMessage(), 'does not allow cancellation less than'),
+        'There should be an error message regarding the cancellation time restrictions'
+      );
     }
 
     // verify contact NOT cancelled
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-    $this->assertParticipantStatus($participant['participant_id'], 'Registered', "Participant doesn't seem to be cancelled");
+    $this->assertParticipantStatus(
+      $participant['participant_id'],
+      'Registered',
+      "Participant doesn't seem to be cancelled"
+    );
   }
 
 }

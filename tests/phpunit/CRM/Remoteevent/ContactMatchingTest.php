@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -73,7 +74,10 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase {
   public function testRegistrationContactUpdate() {
 
     // set up an XCM update profile
-    $update_profile_data = json_decode(file_get_contents(E::path('tests/resources/xcm_profile_testing_update.json')), 1);
+    $update_profile_data = json_decode(
+      file_get_contents(E::path('tests/resources/xcm_profile_testing_update.json')),
+      1
+    );
     $this->assertNotEmpty($update_profile_data, "Couldn't load update profile data");
     $this->setUpXCMProfile('remoteevent_test_registration_update', $update_profile_data);
     Civi::settings()->set('remote_registration_xcm_profile_update', 'remoteevent_test_registration_update');
@@ -127,7 +131,11 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase {
 
     // find + load contact
     $current_contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contact2['id']]);
-    $this->assertEquals('Testinho', $current_contact['first_name'], "The name should've been updated, an update profile was set");
+    $this->assertEquals(
+      'Testinho',
+      $current_contact['first_name'],
+      "The name should've been updated, an update profile was set"
+    );
   }
 
 }

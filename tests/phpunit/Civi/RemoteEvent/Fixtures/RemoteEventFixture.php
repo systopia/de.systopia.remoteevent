@@ -41,10 +41,12 @@ final class RemoteEventFixture {
       'is_active' => TRUE,
       'event_remote_registration.remote_registration_enabled' => TRUE,
       'event_remote_registration.remote_disable_civicrm_registration' => TRUE,
+      // phpcs:disable Generic.Files.LineLength.TooLong
       'event_remote_registration.remote_registration_default_profile' => \CRM_Remoteevent_RegistrationProfile_Mock::NAME,
       'event_remote_registration.remote_registration_profiles' => [\CRM_Remoteevent_RegistrationProfile_Mock::NAME],
       'event_remote_registration.remote_registration_default_update_profile' => \CRM_Remoteevent_RegistrationProfile_Mock::NAME,
       'event_remote_registration.remote_registration_update_profiles' => [\CRM_Remoteevent_RegistrationProfile_Mock::NAME],
+      // phpcs:enable
     ];
 
     // Ensure default profiles are enabled
@@ -53,7 +55,11 @@ final class RemoteEventFixture {
       $values['event_remote_registration.remote_registration_profiles'][] = $defaultProfile;
     }
     $defaultUpdateProfile = $values['event_remote_registration.remote_registration_default_update_profile'];
-    if (!in_array($defaultUpdateProfile, $values['event_remote_registration.remote_registration_update_profiles'], TRUE)) {
+    if (!in_array(
+      $defaultUpdateProfile,
+      $values['event_remote_registration.remote_registration_update_profiles'],
+      TRUE
+    )) {
       $values['event_remote_registration.remote_registration_update_profiles'][] = $defaultUpdateProfile;
     }
 

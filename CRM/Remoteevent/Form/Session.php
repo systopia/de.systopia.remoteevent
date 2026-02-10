@@ -21,7 +21,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Session Editor
  */
 class CRM_Remoteevent_Form_Session extends CRM_Core_Form {
-  const SESSION_PROPERTIES = [
+  public const SESSION_PROPERTIES = [
     'title',
     'start_date',
     'end_date',
@@ -228,7 +228,9 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form {
 
     // verify the start date is not before the event's start date
     if (strtotime($this->_submitValues['start_date']) < strtotime($event['start_date'])) {
-      $this->_errors['start_date'] = E::ts('The start date of the session should not be before the start of the event.');
+      $this->_errors['start_date'] = E::ts(
+        'The start date of the session should not be before the start of the event.'
+      );
     }
 
     // verify the end date is not after the event's end date

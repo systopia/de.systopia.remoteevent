@@ -97,10 +97,6 @@ class CRM_Remoteevent_EventSpeaker {
       $role_id = (int) $role_id;
       // remark: unlike other padded fields, this one drops the padding in the front or back
       $role_conditions[] = "participant.role_id REGEXP '(^|{$value_separator}){$role_id}($|{$value_separator})'";
-      //            $role_conditions[] = "participant.role_id = '{$role_id}'";
-      //            $role_conditions[] = "participant.role_id LIKE '%{$value_separator}{$role_id}{$value_separator}%'";
-      //            $role_conditions[] = "participant.role_id LIKE '{$role_id}{$value_separator}%'";
-      //            $role_conditions[] = "participant.role_id LIKE '%{$value_separator}{$role_id}'";
     }
     $ROLE_CONDITION = implode(' OR ', $role_conditions);
 

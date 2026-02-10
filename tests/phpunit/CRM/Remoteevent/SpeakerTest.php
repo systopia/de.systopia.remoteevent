@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -172,7 +173,10 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
           $event_speaker_roles = explode(',', $event_speaker['roles']);
           foreach ($event_speaker_roles as $event_speaker_role) {
             $event_speaker_role = trim($event_speaker_role);
-            $this->assertTrue(in_array($event_speaker_role, $speaker_role_labels), 'The role given here should be one of the speaker roles');
+            $this->assertTrue(
+              in_array($event_speaker_role, $speaker_role_labels),
+              'The role given here should be one of the speaker roles'
+            );
           }
         }
       }

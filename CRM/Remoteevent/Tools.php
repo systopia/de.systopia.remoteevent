@@ -117,11 +117,20 @@ class CRM_Remoteevent_Tools {
         [1 => [$new_event_id, 'Integer']]);
     if (!$remote_registration_entry_exists) {
       // this *should* have been copied with the clone/copy routine, but it wasn't. So, we clone the line via SQL:
-      Civi::log()->debug("Looks like table {$custom_event_table_name} has not been copied from event template, copying data...");
-      CRM_Core_DAO::executeQuery("CREATE TEMPORARY TABLE _tmp_clone_remote_registration AS SELECT * FROM {$custom_event_table_name} WHERE entity_id = {$original_event_id};");
+      Civi::log()->debug(
+        "Looks like table {$custom_event_table_name} has not been copied from event template, copying data..."
+      );
+      CRM_Core_DAO::executeQuery(
+        // phpcs:ignore Generic.Files.LineLength.TooLong
+        "CREATE TEMPORARY TABLE _tmp_clone_remote_registration AS SELECT * FROM {$custom_event_table_name} WHERE entity_id = {$original_event_id};"
+      );
       CRM_Core_DAO::executeQuery("UPDATE _tmp_clone_remote_registration SET entity_id = {$new_event_id};");
-      CRM_Core_DAO::executeQuery("UPDATE _tmp_clone_remote_registration SET id = (1 + (SELECT MAX(id) FROM {$custom_event_table_name}));");
-      CRM_Core_DAO::executeQuery("INSERT INTO {$custom_event_table_name} SELECT * FROM _tmp_clone_remote_registration;");
+      CRM_Core_DAO::executeQuery(
+        "UPDATE _tmp_clone_remote_registration SET id = (1 + (SELECT MAX(id) FROM {$custom_event_table_name}));"
+      );
+      CRM_Core_DAO::executeQuery(
+        "INSERT INTO {$custom_event_table_name} SELECT * FROM _tmp_clone_remote_registration;"
+      );
       CRM_Core_DAO::executeQuery('DROP TABLE _tmp_clone_remote_registration;');
       Civi::log()->debug("Data of table {$custom_event_table_name} copied.");
     }

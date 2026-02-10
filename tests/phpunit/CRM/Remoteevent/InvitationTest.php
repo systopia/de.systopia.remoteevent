@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -158,7 +159,6 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // CONFIRM the registration
     $this->registerRemote(
@@ -193,7 +193,6 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // CONFIRM the registration
     $this->registerRemote(
@@ -362,7 +361,6 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // check if the prefill worked
     foreach (['first_name', 'last_name', 'email'] as $field) {
@@ -406,7 +404,6 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    //$this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // CONFIRM the registration
     $this->registerRemote(
@@ -547,7 +544,12 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
     );
 
     // now try to confirm the invitation
-    $invitation_token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, NULL, 'invite');
+    $invitation_token = CRM_Remotetools_SecureToken::generateEntityToken(
+      'Participant',
+      $participant_id,
+      NULL,
+      'invite'
+    );
     $this->registerRemote(
         $event['id'],
         [

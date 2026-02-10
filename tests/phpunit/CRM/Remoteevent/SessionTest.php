@@ -13,8 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-
-use CRM_Remoteevent_ExtensionUtil as E;
+declare(strict_types = 1);
 
 /**
  * Tests regarding general event registration
@@ -36,15 +35,26 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase {
 
     // register one contact
     $contactA = $this->createContact();
-    $registration1 = $this->registerRemote($event['id'], [
-      'email'                    => $contactA['email'],
-      "session{$session1['id']}" => 1,
-      "session{$session2['id']}" => 0,
-    ]);
+    $registration1 = $this->registerRemote(
+      $event['id'],
+      [
+        'email' => $contactA['email'],
+        "session{$session1['id']}" => 1,
+        "session{$session2['id']}" => 0,
+      ]
+    );
     $this->assertEmpty($registration1['is_error'], 'Registration Failed');
-    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registration1['participant_id']);
-    $this->assertTrue(in_array($session1['id'], $registered_session_ids), 'Participant should be registered for session 1');
-    $this->assertFalse(in_array($session2['id'], $registered_session_ids), 'Participant should NOT be registered for session 2');
+    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations(
+      $registration1['participant_id']
+    );
+    $this->assertTrue(
+      in_array($session1['id'], $registered_session_ids),
+      'Participant should be registered for session 1'
+    );
+    $this->assertFalse(
+      in_array($session2['id'], $registered_session_ids),
+      'Participant should NOT be registered for session 2'
+    );
   }
 
   /**
@@ -59,25 +69,46 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase {
 
     // register one contact
     $contactA = $this->createContact();
-    $registration1 = $this->registerRemote($event['id'], [
-      'email'                    => $contactA['email'],
-      "session{$session1['id']}" => 1,
-      "session{$session2['id']}" => 1,
-      "session{$session3['id']}" => 0,
-    ]);
+    $registration1 = $this->registerRemote(
+      $event['id'],
+      [
+        'email' => $contactA['email'],
+        "session{$session1['id']}" => 1,
+        "session{$session2['id']}" => 1,
+        "session{$session3['id']}" => 0,
+      ]
+    );
     $this->assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // see if the fields are prefilled for an update
-    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $registration1['participant_id'], NULL, 'update');
-    $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-      'token'    => $token,
-      'context'  => 'update',
-      'event_id' => $event['id'],
-    ])['values'];
+    $token = CRM_Remotetools_SecureToken::generateEntityToken(
+      'Participant',
+      $registration1['participant_id'],
+      NULL,
+      'update'
+    );
+    $fields = $this->traitCallAPISuccess(
+      'RemoteParticipant',
+      'get_form',
+      [
+        'token' => $token,
+        'context' => 'update',
+        'event_id' => $event['id'],
+      ]
+    )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertNotEmpty($fields["session{$session1['id']}"]['value'], "Session [{$session1['id']}] was not pre-filled");
-    $this->assertNotEmpty($fields["session{$session2['id']}"]['value'], "Session [{$session2['id']}] was not pre-filled");
-    $this->assertTrue(empty($fields["session{$session3['id']}"]['value']), "Session [{$session3['id']}] was pre-filled with 1");
+    $this->assertNotEmpty(
+      $fields["session{$session1['id']}"]['value'],
+      "Session [{$session1['id']}] was not pre-filled"
+    );
+    $this->assertNotEmpty(
+      $fields["session{$session2['id']}"]['value'],
+      "Session [{$session2['id']}] was not pre-filled"
+    );
+    $this->assertTrue(
+      empty($fields["session{$session3['id']}"]['value']),
+      "Session [{$session3['id']}] was pre-filled with 1"
+    );
   }
 
   /**
@@ -86,28 +117,46 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase {
   public function testMaxParticipants() {
     // create an event
     $event = $this->createRemoteEvent([]);
-    $session = $this->createEventSession($event['id'], [
-      'max_participants' => 1,
-    ]);
+    $session = $this->createEventSession(
+      $event['id'],
+      [
+        'max_participants' => 1,
+      ]
+    );
 
     // register one contact
     $contactA = $this->createContact();
-    $registrationA = $this->registerRemote($event['id'], [
-      'email'                   => $contactA['email'],
-      "session{$session['id']}" => 1,
-    ]);
+    $registrationA = $this->registerRemote(
+      $event['id'],
+      [
+        'email' => $contactA['email'],
+        "session{$session['id']}" => 1,
+      ]
+    );
     $this->assertEmpty($registrationA['is_error'], 'Registration Failed');
-    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registrationA['participant_id']);
-    $this->assertTrue(in_array($session['id'], $registered_session_ids), 'Participant should be registered for session');
+    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations(
+      $registrationA['participant_id']
+    );
+    $this->assertTrue(
+      in_array($session['id'], $registered_session_ids),
+      'Participant should be registered for session'
+    );
 
     // register another contact
     $contactB = $this->createContact();
-    $registrationB = $this->registerRemote($event['id'], [
-      'email'                   => $contactB['email'],
-      "session{$session['id']}" => 1,
-    ]);
+    $registrationB = $this->registerRemote(
+      $event['id'],
+      [
+        'email' => $contactB['email'],
+        "session{$session['id']}" => 1,
+      ]
+    );
     $this->assertNotEmpty($registrationB['is_error'], 'Registration should have failed Failed');
-    $this->assertEquals('Session is full', $registrationB['error_message'], 'The registration should have failed the session was full.');
+    $this->assertEquals(
+      'Session is full',
+      $registrationB['error_message'],
+      'The registration should have failed the session was full.'
+    );
   }
 
   /**
@@ -116,33 +165,57 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase {
   public function testMaxParticipantsRegistrationUpdate() {
     // create an event
     $event = $this->createRemoteEvent([]);
-    $sessionA = $this->createEventSession($event['id'], [
-      'max_participants' => 1,
-    ]);
-    $sessionB = $this->createEventSession($event['id'], [
-      'max_participants' => 1,
-    ]);
+    $sessionA = $this->createEventSession(
+      $event['id'],
+      [
+        'max_participants' => 1,
+      ]
+    );
+    $sessionB = $this->createEventSession(
+      $event['id'],
+      [
+        'max_participants' => 1,
+      ]
+    );
 
     // register one contact
     $contactA = $this->createContact();
-    $registrationA = $this->registerRemote($event['id'], [
-      'email'                   => $contactA['email'],
-      "session{$sessionA['id']}" => 1,
-    ]);
+    $registrationA = $this->registerRemote(
+      $event['id'],
+      [
+        'email' => $contactA['email'],
+        "session{$sessionA['id']}" => 1,
+      ]
+    );
     $this->assertEmpty($registrationA['is_error'], 'Registration Failed');
-    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registrationA['participant_id']);
-    $this->assertTrue(in_array($sessionA['id'], $registered_session_ids), 'Participant should be registered for session');
+    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations(
+      $registrationA['participant_id']
+    );
+    $this->assertTrue(
+      in_array($sessionA['id'], $registered_session_ids),
+      'Participant should be registered for session'
+    );
 
     // update registration
-    $registrationB = $this->updateRegistration([
-      'participant_id'           => $registrationA['participant_id'],
-      'email'                    => $contactA['email'],
-      "session{$sessionB['id']}" => 1,
-    ]);
+    $registrationB = $this->updateRegistration(
+      [
+        'participant_id' => $registrationA['participant_id'],
+        'email' => $contactA['email'],
+        "session{$sessionB['id']}" => 1,
+      ]
+    );
     $this->assertEmpty($registrationA['is_error'], 'Registration Failed');
-    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($registrationA['participant_id']);
-    $this->assertTrue(in_array($sessionB['id'], $registered_session_ids), 'Participant should now be registered for session B');
-    $this->assertFalse(in_array($sessionA['id'], $registered_session_ids), 'Participant should not be registered for session A any more');
+    $registered_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations(
+      $registrationA['participant_id']
+    );
+    $this->assertTrue(
+      in_array($sessionB['id'], $registered_session_ids),
+      'Participant should now be registered for session B'
+    );
+    $this->assertFalse(
+      in_array($sessionA['id'], $registered_session_ids),
+      'Participant should not be registered for session A any more'
+    );
   }
 
   /**
@@ -151,24 +224,36 @@ class CRM_Remoteevent_SessionTest extends CRM_Remoteevent_TestBase {
   public function testSessionEventInfoData() {
     // create an event with sessions
     $event = $this->createRemoteEvent([]);
-    $sessionA = $this->createEventSession($event['id'], [
-      'max_participants' => 1,
-    ]);
-    $sessionB = $this->createEventSession($event['id'], [
-      'max_participants' => 1,
-    ]);
+    $sessionA = $this->createEventSession(
+      $event['id'],
+      [
+        'max_participants' => 1,
+      ]
+    );
+    $sessionB = $this->createEventSession(
+      $event['id'],
+      [
+        'max_participants' => 1,
+      ]
+    );
 
     // test with the setting turned OFF
     Civi::settings()->set('remote_event_get_session_data', FALSE);
     $remote_event = $this->getRemoteEvent($event['id']);
-    $this->assertArrayNotHasKey('sessions', $remote_event,
-                             "When submitting session data is disabled, the 'sessions' key should not be there");
+    $this->assertArrayNotHasKey(
+      'sessions',
+      $remote_event,
+      "When submitting session data is disabled, the 'sessions' key should not be there"
+    );
 
     // test with the setting turned ON
     Civi::settings()->set('remote_event_get_session_data', TRUE);
     $remote_event = $this->getRemoteEvent($event['id']);
-    $this->assertArrayHasKey('sessions', $remote_event,
-                                "When submitting session data is enabled, the 'sessions' key should be there");
+    $this->assertArrayHasKey(
+      'sessions',
+      $remote_event,
+      "When submitting session data is enabled, the 'sessions' key should be there"
+    );
     $event_sessions = json_decode($remote_event['sessions'], TRUE);
     $this->assertNotNull($event_sessions, "Couldn't decode session json");
 

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -50,7 +51,12 @@ class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase {
     $this->assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // test getForm for update
-    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $registration1['participant_id'], NULL, 'update');
+    $token = CRM_Remotetools_SecureToken::generateEntityToken(
+      'Participant',
+      $registration1['participant_id'],
+      NULL,
+      'update'
+    );
     $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
       'token'    => $token,
       'context'  => 'update',
@@ -82,7 +88,11 @@ class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase {
       'first_name' => $contactA_before['first_name'],
       'last_name'  => $different_last_name,
     ]);
-    $this->assertEquals($registration1['participant_id'], $registration2['participant_id'], "The registration's participant ID has changed.");
+    $this->assertEquals(
+      $registration1['participant_id'],
+      $registration2['participant_id'],
+      "The registration's participant ID has changed."
+    );
     $contactA_after = $fields = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contactA_before['id']]);
     $this->assertEquals($different_last_name, $contactA_after['last_name'], 'Last name was not updated!');
   }

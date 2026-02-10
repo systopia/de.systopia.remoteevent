@@ -13,8 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-
-use CRM_Remoteevent_ExtensionUtil as E;
+declare(strict_types = 1);
 
 /**
  * Tests around event templating and instances
@@ -32,30 +31,57 @@ class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase {
    */
   public function testTemplateInstanceViaApi() {
     // create an event
-    $event_template = $this->createRemoteEventTemplate([
-      'event_remote_registration.remote_registration_enabled' => 1,
-      'event_remote_registration.remote_disable_civicrm_registration' => 1,
-      'event_remote_registration.remote_use_custom_event_location' => 1,
-      'event_remote_registration.remote_registration_gtac' => 'SOME GTAC',
-    ]);
+    $event_template = $this->createRemoteEventTemplate(
+      [
+        'event_remote_registration.remote_registration_enabled' => 1,
+        'event_remote_registration.remote_disable_civicrm_registration' => 1,
+        'event_remote_registration.remote_use_custom_event_location' => 1,
+        'event_remote_registration.remote_registration_gtac' => 'SOME GTAC',
+      ]
+    );
 
     // create instance
     $spawned_from_template = $this->createRemoteEvent(['template_id' => $event_template['id']], TRUE);
 
     // check if all parameters are there
-    $this->assertArrayHasKey('event_remote_registration.remote_registration_gtac', $spawned_from_template, 'The template instance should have the gtac');
-    $this->assertNotEmpty($spawned_from_template['event_remote_registration.remote_registration_gtac'], 'The template instance should have the gtac');
-    $this->assertEquals('SOME GTAC', $spawned_from_template['event_remote_registration.remote_registration_gtac'], 'The template instance should have the gtac');
+    $this->assertArrayHasKey(
+      'event_remote_registration.remote_registration_gtac',
+      $spawned_from_template,
+      'The template instance should have the gtac'
+    );
+    $this->assertNotEmpty(
+      $spawned_from_template['event_remote_registration.remote_registration_gtac'],
+      'The template instance should have the gtac'
+    );
+    $this->assertEquals(
+      'SOME GTAC',
+      $spawned_from_template['event_remote_registration.remote_registration_gtac'],
+      'The template instance should have the gtac'
+    );
 
     // check remote_registration_enabled
-    $this->assertArrayHasKey('remote_registration_enabled', $spawned_from_template, "The template instance should have the field 'remote_registration_enabled'.");
-    $this->assertNotEmpty($spawned_from_template['remote_registration_enabled'], "The template instance should have the flag 'remote_registration_enabled' set to true.");
+    $this->assertArrayHasKey(
+      'remote_registration_enabled',
+      $spawned_from_template,
+      "The template instance should have the field 'remote_registration_enabled'."
+    );
+    $this->assertNotEmpty(
+      $spawned_from_template['remote_registration_enabled'],
+      "The template instance should have the flag 'remote_registration_enabled' set to true."
+    );
 
     // check other fields
     foreach (['remote_disable_civicrm_registration', 'remote_use_custom_event_location'] as $field) {
       $field_key = 'event_remote_registration.' . $field;
-      $this->assertArrayHasKey($field_key, $spawned_from_template, "The template instance should have the field {$field_key}.");
-      $this->assertNotEmpty($spawned_from_template[$field_key], "The template instance should have the flag {$field_key} set to true.");
+      $this->assertArrayHasKey(
+        $field_key,
+        $spawned_from_template,
+        "The template instance should have the field {$field_key}."
+      );
+      $this->assertNotEmpty(
+        $spawned_from_template[$field_key],
+        "The template instance should have the flag {$field_key} set to true."
+      );
     }
   }
 
@@ -66,12 +92,14 @@ class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase {
    */
   public function testTemplateInstanceViaBAOCopy() {
     // create an event
-    $event_template = $this->createRemoteEventTemplate([
-      'event_remote_registration.remote_registration_enabled' => 1,
-      'event_remote_registration.remote_disable_civicrm_registration' => 1,
-      'event_remote_registration.remote_use_custom_event_location' => 1,
-      'event_remote_registration.remote_registration_gtac' => 'SOME GTAC',
-    ]);
+    $event_template = $this->createRemoteEventTemplate(
+      [
+        'event_remote_registration.remote_registration_enabled' => 1,
+        'event_remote_registration.remote_disable_civicrm_registration' => 1,
+        'event_remote_registration.remote_use_custom_event_location' => 1,
+        'event_remote_registration.remote_registration_gtac' => 'SOME GTAC',
+      ]
+    );
 
     // create instance
     $event_copy_bao = CRM_Event_BAO_Event::copy($event_template['id']);
@@ -80,19 +108,44 @@ class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase {
     $spawned_from_template = $this->getRemoteEvent($event_copy_bao->id);
 
     // check if all parameters are there
-    $this->assertArrayHasKey('event_remote_registration.remote_registration_gtac', $spawned_from_template, 'The template instance should have the gtac');
-    $this->assertNotEmpty($spawned_from_template['event_remote_registration.remote_registration_gtac'], 'The template instance should have the gtac');
-    $this->assertEquals('SOME GTAC', $spawned_from_template['event_remote_registration.remote_registration_gtac'], 'The template instance should have the gtac');
+    $this->assertArrayHasKey(
+      'event_remote_registration.remote_registration_gtac',
+      $spawned_from_template,
+      'The template instance should have the gtac'
+    );
+    $this->assertNotEmpty(
+      $spawned_from_template['event_remote_registration.remote_registration_gtac'],
+      'The template instance should have the gtac'
+    );
+    $this->assertEquals(
+      'SOME GTAC',
+      $spawned_from_template['event_remote_registration.remote_registration_gtac'],
+      'The template instance should have the gtac'
+    );
 
     // check remote_registration_enabled
-    $this->assertArrayHasKey('remote_registration_enabled', $spawned_from_template, "The template instance should have the field 'remote_registration_enabled'.");
-    $this->assertNotEmpty($spawned_from_template['remote_registration_enabled'], "The template instance should have the flag 'remote_registration_enabled' set to true.");
+    $this->assertArrayHasKey(
+      'remote_registration_enabled',
+      $spawned_from_template,
+      "The template instance should have the field 'remote_registration_enabled'."
+    );
+    $this->assertNotEmpty(
+      $spawned_from_template['remote_registration_enabled'],
+      "The template instance should have the flag 'remote_registration_enabled' set to true."
+    );
 
     // check other fields
     foreach (['remote_disable_civicrm_registration', 'remote_use_custom_event_location'] as $field) {
       $field_key = 'event_remote_registration.' . $field;
-      $this->assertArrayHasKey($field_key, $spawned_from_template, "The template instance should have the field {$field_key}.");
-      $this->assertNotEmpty($spawned_from_template[$field_key], "The template instance should have the flag {$field_key} set to true.");
+      $this->assertArrayHasKey(
+        $field_key,
+        $spawned_from_template,
+        "The template instance should have the field {$field_key}."
+      );
+      $this->assertNotEmpty(
+        $spawned_from_template[$field_key],
+        "The template instance should have the flag {$field_key} set to true."
+      );
     }
   }
 

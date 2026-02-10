@@ -25,6 +25,7 @@ use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 /**
  * Abstract base to all registration profile implementations
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Remoteevent_RegistrationProfile {
 
   /**
@@ -61,6 +62,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    * @param string $locale
    *   the locale to use, defaults to null none. Use 'default' for current
    *
+   * phpcs:disable Generic.Files.LineLength.TooLong
    * @return array field specs
    *   format is field_key => [
    *      'name'        => field_key
@@ -96,10 +98,14 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    *                            handled by the frontend, so the data received by this extension is unaffected.
    *                            (false, if not set.)
    *   ]
+   * phpcs:enable
    */
   abstract public function getFields($locale = NULL);
 
-  public function getAdditionalParticipantsFields(array $event, ?int $maxParticipants = NULL, ?string $locale = NULL): array {
+  public function getAdditionalParticipantsFields(array $event,
+    ?int $maxParticipants = NULL,
+    ?string $locale = NULL
+  ): array {
     $fields = [];
     if (!empty($event['is_multiple_registrations'])) {
       $maxParticipants = min(
@@ -115,7 +121,10 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         'name' => 'additional_participants',
         'label' => E::ts('Additional Participants'),
         'weight' => 1000,
-        'description' => E::ts('Register up to %1 additional participants', [1 => $event['max_additional_participants']]),
+        'description' => E::ts(
+          'Register up to %1 additional participants',
+          [1 => $event['max_additional_participants']]
+        ),
       ];
       for ($i = 1; $i <= $maxParticipants; $i++) {
         $fields['additional_' . $i] = [
@@ -129,7 +138,9 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         foreach ($additional_fields as $additional_field_name => $additional_field) {
           $additional_field['entity_field_name'] ??= $additional_field['name'];
           $additional_field['name'] = 'additional_' . $i . '_' . $additional_field['name'];
-          $additional_field['parent'] = empty($additional_field['parent']) ? 'additional_' . $i : 'additional_' . $i . '_' . $additional_field['parent'];
+          $additional_field['parent'] = empty($additional_field['parent'])
+            ? 'additional_' . $i
+            : 'additional_' . $i . '_' . $additional_field['parent'];
           $fields['additional_' . $i . '_' . $additional_field_name] = $additional_field;
         }
       }
@@ -173,7 +184,12 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         ->execute()
         ->single();
 
-      ParticipantFormEventUtil::mapToPrefill($participant, $participant_field_mapping, $resultsEvent, $participant_value_callbacks);
+      ParticipantFormEventUtil::mapToPrefill(
+        $participant,
+        $participant_field_mapping,
+        $resultsEvent,
+        $participant_value_callbacks
+      );
     }
   }
 
@@ -186,6 +202,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
    *      event triggered by the RemoteParticipant.validate or submit API call
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function validateSubmission($validationEvent) {
     $data = $validationEvent->getSubmission();
     $event = $validationEvent->getEvent();
@@ -221,7 +238,10 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         );
       }
       else {
-        $validationEvent->addValidationError('', $l10n->ts('Not enough vacancies for the number of requested participants.'));
+        $validationEvent->addValidationError(
+          '',
+          $l10n->ts('Not enough vacancies for the number of requested participants.')
+        );
       }
     }
 
@@ -319,10 +339,6 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     $this->adjustContactData($contact_data);
   }
 
-  /*************************************************************
-   *                HELPER / INFRASTRUCTURE                   **
-   *************************************************************/
-
   /**
    * Add the profile data to the get_form results
    *
@@ -377,9 +393,6 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    *
    * @param \Civi\RemoteParticipant\Event\GetParticipantFormEventBase $get_form_results
    *      event triggered by the RemoteParticipant.get_form API call
-   *
-   * @return array|null
-   *   returns API error if there is an issue
    */
   public static function addProfileData($get_form_results) {
     // simply add the fields from the profile
@@ -432,7 +445,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    *   the profile instance
    *
    * @throws Exception
-   *      if no profile implementation for this name is available
+   *   If no profile implementation for this name is available.
    */
   public static function getRegistrationProfile($profile_name) {
     $profile_list = new RegistrationProfileListEvent();
@@ -555,15 +568,15 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    * @param array $data
    *   input data
    *
-   * @param string mode
+   * @param string $mode
    *   'exception' (default) throws an exception if some of the data is invalid,
    *   'filter' will simply drop those
    *
    * @return array
    *   filtered data
    *
-   * @throws Exception
-   *   if mode=exception and at least one value validates
+   * @throws \Exception
+   *   If mode=exception and at least one value validates.
    */
   public function validateData($data, $mode = 'exception') {
     $fields        = $this->getFields();
@@ -607,6 +620,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    *   is the value valid
    *
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function validateFieldValue(array $field_spec, $value): bool {
     /** @var string $validation */
     $validation = $field_spec['validation'] ?? '';
@@ -688,6 +702,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    *   the formatted value
    *
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function formatFieldValue($field_spec, $value) {
     switch ($field_spec['validation'] ?? NULL) {
       case 'Integer':
@@ -741,7 +756,10 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    *
    * @deprecated Overwrite addDefaultValues() if necessary.
    */
-  public function addDefaultContactValues(GetParticipantFormEventBase $resultsEvent, $contact_fields, $attribute_mapping = []) {
+  public function addDefaultContactValues(GetParticipantFormEventBase $resultsEvent,
+    $contact_fields,
+    $attribute_mapping = []
+  ) {
     $contact_id = $resultsEvent->getContactID();
     if ($contact_id) {
       $value_callbacks = [];

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -31,9 +32,10 @@ class CRM_Remoteevent_GtacTest extends CRM_Remoteevent_TestBase {
   public function testWithGTAC() {
     // create an event
     $event = $this->createRemoteEvent(
-        [
-          'event_remote_registration.remote_registration_gtac' => 'Grant me one hour on love’s most sacred shores<br/>To clasp the bosom that my soul adores,<br/>Lie heart to heart and merge my soul with yours.',
-        ]
+      [
+        // phpcs:ignore Generic.Files.LineLength.TooLong
+        'event_remote_registration.remote_registration_gtac' => 'Grant me one hour on love’s most sacred shores<br/>To clasp the bosom that my soul adores,<br/>Lie heart to heart and merge my soul with yours.',
+      ]
     );
 
     // get the field
@@ -50,10 +52,16 @@ class CRM_Remoteevent_GtacTest extends CRM_Remoteevent_TestBase {
       $this->fail('GTAC text should be either in prefix or suffix or both');
     }
     if (!empty($gtac_field['prefix'])) {
-      $this->assertTrue(in_array($gtac_field['prefix_display'], ['inline', 'dialog']), 'GTAC prefix_display should be inline or dialogue');
+      $this->assertTrue(
+        in_array($gtac_field['prefix_display'], ['inline', 'dialog']),
+        'GTAC prefix_display should be inline or dialogue'
+      );
     }
     if (!empty($gtac_field['suffix'])) {
-      $this->assertTrue(in_array($gtac_field['suffix_display'], ['inline', 'dialog']), 'GTAC suffix_display should be inline or dialogue');
+      $this->assertTrue(
+        in_array($gtac_field['suffix_display'], ['inline', 'dialog']),
+        'GTAC suffix_display should be inline or dialogue'
+      );
     }
   }
 

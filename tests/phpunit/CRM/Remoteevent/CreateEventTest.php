@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -53,7 +54,11 @@ class CRM_Remoteevent_CreateEventTest extends CRM_Remoteevent_TestBase {
 
     // create an new event from the template
     $spawned_from_template = $this->createRemoteEvent(['template_id' => $template['id'], 'title' => NULL], TRUE);
-    $this->assertEquals("Copy of {$template['title']}", $spawned_from_template['title'], 'An event spawned from the template should have the same name');
+    $this->assertEquals(
+      "Copy of {$template['title']}",
+      $spawned_from_template['title'],
+      'An event spawned from the template should have the same name'
+    );
   }
 
 }

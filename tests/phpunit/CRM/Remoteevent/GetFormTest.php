@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -42,7 +43,10 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
     $this->assertGetFormStandardFields($fields, TRUE);
     $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
     $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
-    $this->assertTrue(empty($fields['email']['value']), "Field 'email' shouldn't come with a value in an anonymous call");
+    $this->assertTrue(
+      empty($fields['email']['value']),
+      "Field 'email' shouldn't come with a value in an anonymous call"
+    );
 
     // check Standard1 profile
     $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
@@ -52,7 +56,10 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
     $this->assertGetFormStandardFields($fields, TRUE);
     $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
     $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
-    $this->assertTrue(empty($fields['email']['value']), "Field 'email' shouldn't come with a value in an anonymous call");
+    $this->assertTrue(
+      empty($fields['email']['value']),
+      "Field 'email' shouldn't come with a value in an anonymous call"
+    );
 
     // check OneClick Profile
     $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
@@ -72,7 +79,11 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
     }
     catch (CRM_Core_Exception $ex) {
       $error_message = $ex->getMessage();
-      $this->assertMatchesRegularExpression('/cannot be used/', $error_message, 'This seems to be the wrong kind of exception');
+      $this->assertMatchesRegularExpression(
+        '/cannot be used/',
+        $error_message,
+        'This seems to be the wrong kind of exception'
+      );
     }
   }
 

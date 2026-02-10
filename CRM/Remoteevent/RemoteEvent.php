@@ -25,7 +25,7 @@ use Civi\Api4\ParticipantStatusType;
  * Basic function regarding remote events
  */
 class CRM_Remoteevent_RemoteEvent {
-  const STRIP_FIELDS = [
+  public const STRIP_FIELDS = [
     'is_online_registration',
     'event_full_text',
     'is_map',
@@ -126,10 +126,25 @@ class CRM_Remoteevent_RemoteEvent {
    *   token list event
    */
   public static function listTokens($tokenList) {
-    $tokenList->addToken('$cancellation_token', E::ts('Cancellation Token valid for one-click cancellation, if available.'));
-    $tokenList->addToken('$cancellation_link', E::ts('URL for one-click cancellation, if available. This also requires the base url to set in the RemoteEvent general settings.'));
+    $tokenList->addToken(
+      '$cancellation_token',
+      E::ts('Cancellation Token valid for one-click cancellation, if available.')
+    );
+    $tokenList->addToken(
+      '$cancellation_link',
+      E::ts(
+        // phpcs:ignore Generic.Files.LineLength.TooLong
+        'URL for one-click cancellation, if available. This also requires the base url to set in the RemoteEvent general settings.'
+      )
+    );
     $tokenList->addToken('$update_token', E::ts("Token to edit/update participant's registration."));
-    $tokenList->addToken('$update_link', E::ts("Link to a form to edit/update participant's registration. This also requires the base url to set in the RemoteEvent general settings."));
+    $tokenList->addToken(
+      '$update_link',
+      E::ts(
+      // phpcs:ignore Generic.Files.LineLength.TooLong
+        "Link to a form to edit/update participant's registration. This also requires the base url to set in the RemoteEvent general settings."
+      )
+    );
   }
 
   /**
@@ -253,10 +268,10 @@ class CRM_Remoteevent_RemoteEvent {
   /**
    * Get the type of the event
    *
-   * @param array $event_data
+   * @param array $event
    *   event data, looking for entry 'event_type_id'
    *
-   * @param CRM_Remoteevent_Localisation $locale
+   * @param \CRM_Remoteevent_Localisation $locale
    *   pass a localisation if you want the translated values
    *
    * @return string name of the event type
@@ -340,7 +355,10 @@ class CRM_Remoteevent_RemoteEvent {
       ->addWhere('id', '=', $participantId)
       ->execute()
       ->single();
-    $participants = CRM_Remoteevent_Registration::getRegistrations($participant['event_id'], $participant['contact_id']);
+    $participants = CRM_Remoteevent_Registration::getRegistrations(
+      $participant['event_id'],
+      $participant['contact_id']
+    );
     $nonNegativeParticipantStatusIds = ParticipantStatusType::get(FALSE)
       ->addSelect('id')
       ->addWhere('class:name', '!=', 'Negative')

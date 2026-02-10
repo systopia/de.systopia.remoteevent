@@ -22,17 +22,17 @@ use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
  * Class to execute event registration updates (RemoteParticipant.update)
  */
 class CRM_Remoteevent_RegistrationUpdate {
-  const STAGE1_PARTICIPANT_IDENTIFICATION = 5000;
-  const STAGE2_APPLY_CONTACT_CHANGES      = -5000;
-  const STAGE3_APPLY_PARTICIPANT_CHANGES  = -10000;
-  const STAGE4_COMMUNICATION              = -15000;
+  public const STAGE1_PARTICIPANT_IDENTIFICATION = 5000;
+  public const STAGE2_APPLY_CONTACT_CHANGES      = -5000;
+  public const STAGE3_APPLY_PARTICIPANT_CHANGES  = -10000;
+  public const STAGE4_COMMUNICATION              = -15000;
 
-  const BEFORE_PARTICIPANT_IDENTIFICATION = self::STAGE1_PARTICIPANT_IDENTIFICATION + 50;
-  const AFTER_PARTICIPANT_IDENTIFICATION  = self::STAGE1_PARTICIPANT_IDENTIFICATION - 50;
-  const BEFORE_APPLY_CONTACT_CHANGES      = self::STAGE2_APPLY_CONTACT_CHANGES + 50;
-  const AFTER_APPLY_CONTACT_CHANGES       = self::STAGE2_APPLY_CONTACT_CHANGES - 50;
-  const BEFORE_APPLY_PARTICIPANT_CHANGES  = self::STAGE3_APPLY_PARTICIPANT_CHANGES + 50;
-  const AFTER_APPLY_PARTICIPANT_CHANGES   = self::STAGE3_APPLY_PARTICIPANT_CHANGES - 50;
+  public const BEFORE_PARTICIPANT_IDENTIFICATION = self::STAGE1_PARTICIPANT_IDENTIFICATION + 50;
+  public const AFTER_PARTICIPANT_IDENTIFICATION  = self::STAGE1_PARTICIPANT_IDENTIFICATION - 50;
+  public const BEFORE_APPLY_CONTACT_CHANGES      = self::STAGE2_APPLY_CONTACT_CHANGES + 50;
+  public const AFTER_APPLY_CONTACT_CHANGES       = self::STAGE2_APPLY_CONTACT_CHANGES - 50;
+  public const BEFORE_APPLY_PARTICIPANT_CHANGES  = self::STAGE3_APPLY_PARTICIPANT_CHANGES + 50;
+  public const AFTER_APPLY_PARTICIPANT_CHANGES   = self::STAGE3_APPLY_PARTICIPANT_CHANGES - 50;
 
   /**
    * Adds a warning message indicating that additionally registered
@@ -43,7 +43,12 @@ class CRM_Remoteevent_RegistrationUpdate {
    * @return void
    */
   public static function addAdditionalParticipantInfo(GetUpdateParticipantFormEvent $event): void {
-    if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID() ?? 0, $event))) {
+    if (!empty(
+    $additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo(
+      $event->getParticipantID() ?? 0,
+      $event
+    )
+    )) {
       $event->addWarning($event->localise(
         'You registered additional participants which can not be updated: %1',
         [1 => '<ul><li>' . implode('</li><li>', array_column($additional_participants, 'message')) . '</li></ul>']
@@ -94,6 +99,7 @@ class CRM_Remoteevent_RegistrationUpdate {
    * @param \Civi\RemoteParticipant\Event\UpdateEvent $registration_update
    *   registration update event
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function addProfileData($registration_update) {
     // get the profile (has already been validated)
     $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registration_update);
@@ -202,7 +208,9 @@ class CRM_Remoteevent_RegistrationUpdate {
       }
       catch (CRM_Core_Exception $ex) {
         $l10n = $registration_update->getLocalisation();
-        $registration_update->addError($l10n->ts("Couldn't update participant: %1", [1 => $l10n->ts($ex->getMessage())]));
+        $registration_update->addError(
+          $l10n->ts("Couldn't update participant: %1", [1 => $l10n->ts($ex->getMessage())])
+        );
       }
     }
   }

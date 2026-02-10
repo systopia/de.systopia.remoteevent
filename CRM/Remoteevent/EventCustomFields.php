@@ -70,9 +70,11 @@ class CRM_Remoteevent_EventCustomFields {
     $custom_field = CRM_Remotetools_CustomData::getFieldSpecs($custom_field_id);
     $custom_group = CRM_Remotetools_CustomData::getGroupSpecs($custom_field['custom_group_id']);
     if ($custom_field && $custom_group) {
-      // remark: assuming
-      //  value=[IN => [values]] means "contains any of these"
-      //  value=[values]         means "contains all of these"
+      /**
+       * Remark: assuming
+       * value=[IN => [values]] means "contains any of these"
+       * value=[values]         means "contains all of these"
+       */
 
       // extract a list of AND groups
       $OR_AND_GROUPS = [];

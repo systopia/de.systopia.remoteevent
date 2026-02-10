@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use Civi\Api4\StateProvince;
 
 use CRM_Remoteevent_ExtensionUtil as E;

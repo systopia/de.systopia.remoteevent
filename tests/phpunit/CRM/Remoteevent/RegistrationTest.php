@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 use CRM_Remoteevent_ExtensionUtil as E;
@@ -48,7 +50,11 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
     $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
     $this->assertNotEmpty($registration2['is_error'],
                           'Second Validation should have failed, max_participants exceeded.');
-    $this->assertArraySubset(['Event is booked out'], $registration2['errors'], "The reason should have been 'Event booked out'");
+    $this->assertArraySubset(
+      ['Event is booked out'],
+      $registration2['errors'],
+      "The reason should have been 'Event booked out'"
+    );
   }
 
   /**
@@ -69,12 +75,19 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
 
     // Retrieve the event.
     $eventRetrieved = $this->getRemoteEvent($event['id']);
-    $this->assertNotEmpty($eventRetrieved['has_active_waitlist'], 'The flag "has_active_waitlist" should have the value "1".');
+    $this->assertNotEmpty(
+      $eventRetrieved['has_active_waitlist'],
+      'The flag "has_active_waitlist" should have the value "1".'
+    );
 
     // register another contact:
     $contactB = $this->createContact();
     $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
-    $this->assertArraySubset(['You have been added to the waitlist.'], $registration2['status'], "The status should have been 'You have been added to the waitlist'");
+    $this->assertArraySubset(
+      ['You have been added to the waitlist.'],
+      $registration2['status'],
+      "The status should have been 'You have been added to the waitlist'"
+    );
   }
 
   /**
@@ -83,14 +96,20 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
   public function testRegistrationSuspended() {
     // check if disabled by default
     $event1 = $this->createRemoteEvent();
-    $this->assertTrue(empty($event1['event_remote_registration.remote_registration_suspended']), "Registration shouldn't be suspended by default");
+    $this->assertTrue(
+      empty($event1['event_remote_registration.remote_registration_suspended']),
+      "Registration shouldn't be suspended by default"
+    );
     $this->assertNotEmpty($event1['can_register'], 'Registration should be possible');
 
     // check if it works when created
     $event2 = $this->createRemoteEvent(
         ['event_remote_registration.remote_registration_suspended' => 1]
     );
-    $this->assertNotEmpty($event2['event_remote_registration.remote_registration_suspended'], 'RegistrationSuspended not saved.');
+    $this->assertNotEmpty(
+      $event2['event_remote_registration.remote_registration_suspended'],
+      'RegistrationSuspended not saved.'
+    );
     $this->assertEmpty($event2['can_register'], 'Registration should NOT be possible (suspended)');
 
     // check if it works when added later

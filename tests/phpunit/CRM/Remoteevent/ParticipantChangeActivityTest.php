@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -48,7 +49,10 @@ class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_Test
       'target_id'        => $contact['id'],
       'activity_type_id' => 1,
     ]);
-    $this->assertEmpty($change_activities['values'], "There should NOT be an activity with that contact, because it's a new one");
+    $this->assertEmpty(
+      $change_activities['values'],
+      "There should NOT be an activity with that contact, because it's a new one"
+    );
 
     // NOW update the participant
     $participant = $this->traitCallAPISuccess('Participant', 'create', [
@@ -64,8 +68,14 @@ class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_Test
     $this->assertEquals(1, $change_activities['count'], 'There should be a change activity with that contact');
     $change_activity = reset($change_activities['values']);
     // look for the jumbled (md5) names instead of the real ones
-    $this->assertNotEmpty(strstr($change_activity['details'], md5('Registered')), 'The activity should mention the Registered->Cancelled change');
-    $this->assertNotEmpty(strstr($change_activity['details'], md5('Cancelled')), 'The activity should mention the Registered->Cancelled change');
+    $this->assertNotEmpty(
+      strstr($change_activity['details'], md5('Registered')),
+      'The activity should mention the Registered->Cancelled change'
+    );
+    $this->assertNotEmpty(
+      strstr($change_activity['details'], md5('Cancelled')),
+      'The activity should mention the Registered->Cancelled change'
+    );
   }
 
   /**
@@ -160,7 +170,10 @@ class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_Test
       'target_id'        => $contact['id'],
       'activity_type_id' => 1,
     ]);
-    $this->assertEmpty($change_activities['values'], "There should NOT be an activity with that contact, because it's a new one");
+    $this->assertEmpty(
+      $change_activities['values'],
+      "There should NOT be an activity with that contact, because it's a new one"
+    );
 
     // NOW update the participant
     $participant_update = [
@@ -179,8 +192,14 @@ class CRM_Remoteevent_ParticipantChangeActivityTest extends CRM_Remoteevent_Test
     // todo: this needs a post hook
     $this->assertEquals(1, $change_activities['count'], 'There should be a change activity with that contact');
     $change_activity = reset($change_activities['values']);
-    $this->assertNotEmpty(strstr($change_activity['details'], 'Twatter'), 'The activity should mention the Twitter->Twatter change');
-    $this->assertNotEmpty(strstr($change_activity['details'], '40-49'), 'The activity should mention the 30-39 to 40-49 change');
+    $this->assertNotEmpty(
+      strstr($change_activity['details'], 'Twatter'),
+      'The activity should mention the Twitter->Twatter change'
+    );
+    $this->assertNotEmpty(
+      strstr($change_activity['details'], '40-49'),
+      'The activity should mention the 30-39 to 40-49 change'
+    );
   }
 
 }

@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -51,9 +52,8 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase {
       $this->fail('RemoteParticipant.cancel without identification should fail');
     }
     catch (CRM_Core_Exception $ex) {
-      // todo: check error message?
-      // $error_message = $ex->getMessage();
-      // $this->assertMatchesRegularExpression('/invalid/', $error_message, "This seems to be the wrong kind of exception");
+      // @ignoreException
+      // TODO: Check error message?
     }
   }
 

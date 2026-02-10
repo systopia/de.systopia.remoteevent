@@ -159,7 +159,6 @@ class CRM_Remoteevent_EventSessions {
         }
       }
 
-      // finally: encode
       $event['sessions'] = json_encode($event['sessions']);
     }
   }
@@ -170,6 +169,7 @@ class CRM_Remoteevent_EventSessions {
    * @param \Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent $get_form_results
    *      event triggered by the RemoteParticipant.get_form API call
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function addSessionFields($get_form_results) {
     $l10n = $get_form_results->getLocalisation();
     $full_prefix = $l10n->ts('[FULL] ');
@@ -368,6 +368,7 @@ class CRM_Remoteevent_EventSessions {
    * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
    *      event triggered by the RemoteParticipant.validate or submit API call
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function validateSessionSubmission($validationEvent) {
     $event_id = $validationEvent->getEventID();
     if (!$event_id) {
@@ -428,7 +429,10 @@ class CRM_Remoteevent_EventSessions {
     $last_time = NULL;
     foreach ($sessions as $session) {
       if ($last_time && strtotime($session['start_date']) < $last_time) {
-        $validationEvent->addValidationError("session{$session['id']}", E::ts("You can't register for two sessions with overlapping time"));
+        $validationEvent->addValidationError(
+          "session{$session['id']}",
+          E::ts("You can't register for two sessions with overlapping time")
+        );
       }
       $last_time = strtotime($session['end_date']);
     }
@@ -439,7 +443,10 @@ class CRM_Remoteevent_EventSessions {
       if (!empty($session['slot_id'])) {
         $slot_id = $session['slot_id'];
         if (in_array($slot_id, $occupied_slots)) {
-          $validationEvent->addValidationError("session{$session['id']}", E::ts("You can't register for two sessions in the same slot"));
+          $validationEvent->addValidationError(
+            "session{$session['id']}",
+            E::ts("You can't register for two sessions in the same slot")
+          );
         }
         else {
           $occupied_slots[] = $slot_id;
@@ -510,9 +517,18 @@ class CRM_Remoteevent_EventSessions {
    *   token list event
    */
   public static function listTokens($tokenList) {
-    $tokenList->addToken('$participant_sessions', E::ts('List of sessions the participant is registered to (as array)'));
-    $tokenList->addToken('$participant_sessions_list_html', E::ts('List of sessions the participant is registered to (as html list).'));
-    $tokenList->addToken('$participant_sessions_list_txt', E::ts('List of sessions the participant is registered to (as ascii list).'));
+    $tokenList->addToken(
+      '$participant_sessions',
+      E::ts('List of sessions the participant is registered to (as array)')
+    );
+    $tokenList->addToken(
+      '$participant_sessions_list_html',
+      E::ts('List of sessions the participant is registered to (as html list).')
+    );
+    $tokenList->addToken(
+      '$participant_sessions_list_txt',
+      E::ts('List of sessions the participant is registered to (as ascii list).')
+    );
   }
 
   /**
@@ -530,7 +546,9 @@ class CRM_Remoteevent_EventSessions {
 
       // get sessions for this participant
       if (self::$sessions_in_progress === NULL) {
-        $participant_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations($tokens['participant']['id']);
+        $participant_session_ids = CRM_Remoteevent_BAO_Session::getParticipantRegistrations(
+          $tokens['participant']['id']
+        );
       }
       else {
         $participant_session_ids = self::$sessions_in_progress;
@@ -605,7 +623,6 @@ class CRM_Remoteevent_EventSessions {
         return $session_data['location'];
       }
       else {
-        //return CRM_Utils_String::htmlToText($session_data['location']);
         return strip_tags($session_data['location']);
       }
     }

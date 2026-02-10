@@ -13,6 +13,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use Civi\RemoteParticipant\Event\RegistrationEvent as RegistrationEvent;
 
 use CRM_Remoteevent_ExtensionUtil as E;
@@ -46,8 +48,10 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
     ]);
 
     Civi::dispatcher()->addListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
+      RegistrationEvent::NAME,
+      ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'],
+      CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20
+    );
 
     // register one contact
     $contact = $this->createContact();
@@ -63,7 +67,11 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
       'contact_id' => $contact['id'],
       'event_id'   => $event['id'],
     ]);
-    $this->assertEquals($campaign['id'], $participant['participant_campaign_id'], 'The campaign was not propagated to the participant!');
+    $this->assertEquals(
+      $campaign['id'],
+      $participant['participant_campaign_id'],
+      'The campaign was not propagated to the participant!'
+    );
   }
 
   /**
@@ -76,8 +84,10 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
     ]);
 
     Civi::dispatcher()->addListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
+      RegistrationEvent::NAME,
+      ['CRM_Remoteevent_ParticipantDataTest', 'registrationSetParticipantCampaign'],
+      CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20
+    );
 
     // create invite participant
     $contact = $this->createContact();
@@ -112,7 +122,11 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
       'contact_id' => $contact['id'],
       'event_id'   => $event['id'],
     ]);
-    $this->assertEquals($campaign['id'], $participant['participant_campaign_id'], 'The campaign was not propagated to the participant!');
+    $this->assertEquals(
+      $campaign['id'],
+      $participant['participant_campaign_id'],
+      'The campaign was not propagated to the participant!'
+    );
   }
 
 }
