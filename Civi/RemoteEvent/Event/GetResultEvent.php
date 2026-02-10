@@ -41,18 +41,6 @@ class GetResultEvent extends RemoteEvent {
   /**
    * @var array holds the RemoteEvent.get parameters to be applied */
   protected $event_data;
-
-  /**
-   * GetResultEvent constructor.
-   * @param array $params
-   *   the executed parameters of the Event.get query
-   *
-   * @param array $values
-   *   the list of events to return
-   *
-   * @param array $original_params
-   *   the original parameters of the Event.get query
-   */
   public function __construct($params, $event_data, $original_params) {
     $this->params = $params;
     $this->original_params = $original_params;

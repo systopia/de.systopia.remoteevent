@@ -83,7 +83,7 @@ class SpawnEvent extends AbstractAction {
   /**
    * Run the action
    *
-   * @param ParameterInterface $parameters
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
    *   The parameters to this action.
    * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
    *   The parameters this action can send back
