@@ -44,7 +44,10 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task {
     if (empty($this->event_id)) {
       // if this is multiple events, we bail - we can only work with one
       CRM_Core_Session::setStatus(
-        E::ts('The selected participants belong to more than one event. This task only works on participants of the same event. Sorry'),
+        E::ts(
+          // phpcs:ignore Generic.Files.LineLength.TooLong
+          'The selected participants belong to more than one event. This task only works on participants of the same event. Sorry'
+        ),
         E::ts('Multiple Events Selected'),
         'warn'
       );
@@ -68,8 +71,6 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task {
       // add slot
       if (!empty($session['slot_id'])) {
         $session_title .= " [{$slots[$session['slot_id']]}]";
-        //} else {
-        //    $session_title .= " [{$slots['no_slot']}]";
       }
 
       // add participant counts if restricted

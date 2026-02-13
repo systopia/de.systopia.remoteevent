@@ -60,15 +60,16 @@ function _civicrm_api3_remote_participant_get_form_spec(&$spec) {
     'name'         => 'token',
     'api.required' => 0,
     'title'        => E::ts('Token'),
-    'description'  => E::ts(
-            'You can submit an invite token that can be used to identify the contact, in which case the fields should come with the default data. This takes preference over the remote_contact_id'
+    'description' => E::ts(
+      // phpcs:ignore Generic.Files.LineLength.TooLong
+      'You can submit an invite token that can be used to identify the contact, in which case the fields should come with the default data. This takes preference over the remote_contact_id'
     ),
   ];
-  $spec['locale']            = [
-    'name'         => 'locale',
+  $spec['locale'] = [
+    'name' => 'locale',
     'api.required' => 0,
-    'title'        => E::ts('Locale'),
-    'description'  => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
+    'title' => E::ts('Locale'),
+    'description' => E::ts('Locale of the field labels/etc. NOT IMPLEMENTED YET'),
   ];
 }
 
@@ -81,6 +82,7 @@ function _civicrm_api3_remote_participant_get_form_spec(&$spec) {
  * @return array
  *   API3 response
  */
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function civicrm_api3_remote_participant_get_form($params) {
   unset($params['check_permissions']);
   $params['context'] = strtolower($params['context']);
@@ -112,9 +114,6 @@ function civicrm_api3_remote_participant_get_form($params) {
         // we can't do anything without event ID
         return RemoteEvent::createStaticAPI3Error(E::ts("Invalid token '%1'", [1 => $params['token']]));
       }
-      else {
-        // otherwise we'll use just ignore the token and press on anonymously ...
-      }
     }
     else {
       // token checks out, get the event_id
@@ -129,7 +128,9 @@ function civicrm_api3_remote_participant_get_form($params) {
       // verify the event_id
       if (isset($params['event_id'])) {
         if ($participant['event_id'] != $params['event_id']) {
-          return RemoteEvent::createStaticAPI3Error(E::ts("Token refers to another event '%1'", [1 => $params['token']]));
+          return RemoteEvent::createStaticAPI3Error(
+            E::ts("Token refers to another event '%1'", [1 => $params['token']])
+          );
         }
       }
       else {

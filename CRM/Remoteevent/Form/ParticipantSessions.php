@@ -26,6 +26,14 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
    * @var integer participant id */
   protected $participant_id = NULL;
 
+  private array $participant;
+
+  private array $event;
+
+  private array $sessions;
+
+  private array $registrations;
+
   public function buildQuickForm() {
     // load participant, sessions, registrations
     $this->participant_id = CRM_Utils_Request::retrieve('participant_id', 'Integer', $this, TRUE);
@@ -145,6 +153,7 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
    * @return array
    *   session items by slot
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function getSessionList($event_days) {
     $event_days = \CRM_Remoteevent_Form_EventSessions::getEventDays($event);
     $sessions_by_day_and_slot = [];
@@ -238,7 +247,6 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
           // add inactive icon
           if (empty($session['is_active'])) {
             $message = E::ts('This session is disabled');
-            //$icons[] = "<i title=\"{$message}\" class=\"crm-i fa-toggle-off\" aria-hidden=\"true\"></i>";
             $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-times\" aria-hidden=\"true\"></i>";
             $classes[] = ' remote-session-disabled disabled ';
           }
@@ -257,6 +265,7 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
 
           // add delete action
           $delete_text = E::ts('delete');
+          // phpcs:ignore Generic.Files.LineLength.TooLong
           $actions[] = "<a href=\"#\" onClick=\"remote_session_delete({$session['id']},false);\" class=\"action-item crm-hover-button\">{$delete_text}</a>";
 
           // add list action
@@ -283,9 +292,9 @@ class CRM_Remoteevent_Form_ParticipantSessions extends CRM_Core_Form {
    * @param CRM_Event_Page_Tab $page
    */
   public static function injectSessionsInfo($page) {
-    if (!empty($page->_id) && ($page instanceof CRM_Event_Page_Tab)) {
+    if (!empty($page->getVar('_id')) && ($page instanceof CRM_Event_Page_Tab)) {
       try {
-        $participant_id = (int) $page->_id;
+        $participant_id = (int) $page->getVar('_id');
         $event_id = (int) civicrm_api3('Participant', 'getvalue', [
           'id'     => $participant_id,
           'return' => 'event_id',

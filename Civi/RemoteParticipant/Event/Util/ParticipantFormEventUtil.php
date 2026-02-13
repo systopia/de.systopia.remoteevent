@@ -31,7 +31,11 @@ final class ParticipantFormEventUtil {
    *
    * @internal
    */
-  public static function mapToPrefill(array $values, array $mapping, GetParticipantFormEventBase $event, array $valueCallbacks): void {
+  public static function mapToPrefill(array $values,
+    array $mapping,
+    GetParticipantFormEventBase $event,
+    array $valueCallbacks
+  ): void {
     foreach ($mapping as $entity_field_name => $field_key) {
       if (array_key_exists($entity_field_name, $values)) {
         $value = isset($valueCallbacks[$field_key])

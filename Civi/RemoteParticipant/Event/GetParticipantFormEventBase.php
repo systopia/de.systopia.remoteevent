@@ -24,6 +24,7 @@ use Civi\RemoteEvent;
  *
  * This is the base event for the three GetParticipantFormEvents
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class GetParticipantFormEventBase extends RemoteEvent {
 
   /**

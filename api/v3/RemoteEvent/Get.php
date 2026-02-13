@@ -37,6 +37,7 @@ function _civicrm_api3_remote_event_get_spec(&$spec) {
  * @return array
  *   API3 response
  */
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function civicrm_api3_remote_event_get($params) {
   unset($params['check_permissions']);
 

@@ -41,6 +41,7 @@ class GetResultEvent extends RemoteEvent {
   /**
    * @var array holds the RemoteEvent.get parameters to be applied */
   protected $event_data;
+
   public function __construct($params, $event_data, $original_params) {
     $this->params = $params;
     $this->original_params = $original_params;
@@ -144,7 +145,6 @@ class GetResultEvent extends RemoteEvent {
       return (int) $this->original_params['option.offset'];
     }
 
-    // default is '0'
     return 0;
   }
 

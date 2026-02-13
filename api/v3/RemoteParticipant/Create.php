@@ -111,13 +111,20 @@ function civicrm_api3_remote_participant_create($params) {
     $participant = civicrm_api3('Participant', 'getsingle', ['id' => $registration_event->getParticipantID()]);
     $null = NULL;
 
-    return $registration_event->createAPI3Success('RemoteParticipant', 'create', 1, [
-      'event_id'           => $participant['event_id'],
-      'participant_id'     => $participant['id'],
-      'participant_role'   => $participant['participant_role'],
-      'participant_status' => $participant['participant_status'],
-      'participant_class'  => CRM_Remoteevent_Registration::getParticipantStatusClass($participant['participant_status_id']),
-      'additional_participants' => $registration_event->getAdditionalParticipantsData(),
-    ]);
+    return $registration_event->createAPI3Success(
+      'RemoteParticipant',
+      'create',
+      1,
+      [
+        'event_id' => $participant['event_id'],
+        'participant_id' => $participant['id'],
+        'participant_role' => $participant['participant_role'],
+        'participant_status' => $participant['participant_status'],
+        'participant_class' => CRM_Remoteevent_Registration::getParticipantStatusClass(
+          $participant['participant_status_id']
+        ),
+        'additional_participants' => $registration_event->getAdditionalParticipantsData(),
+      ]
+    );
   }
 }

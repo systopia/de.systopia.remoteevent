@@ -23,8 +23,10 @@ use Civi\RemoteEvent\Event\GetResultEvent;
  */
 class CRM_Remoteevent_EventFlags {
   /**
- * @var string[] list of additional event flags added by RemoteEvent */
-  const EVENT_FLAGS = [
+   * @phpstan-var list<string>
+   *   list of additional event flags added by RemoteEvent
+   */
+  public const EVENT_FLAGS = [
     'can_register',
     'can_instant_register',
     'can_edit_registration',
@@ -34,8 +36,10 @@ class CRM_Remoteevent_EventFlags {
   ];
 
   /**
- * @var string[] list of flags in the event configuration relevant for the UI (full name => internal name) */
-  const EVENT_CONFIG_FLAGS = [
+   * @phpstan-var list<string>
+   *   list of flags in the event configuration relevant for the UI (full name => internal name)
+   */
+  public const EVENT_CONFIG_FLAGS = [
     'event_remote_registration.remote_registration_enabled'           => 'remote_registration_enabled',
     'event_remote_registration.remote_use_custom_event_location'      => 'remote_use_custom_event_location',
     'event_remote_registration.remote_disable_civicrm_registration'   => 'remote_disable_civicrm_registration',
@@ -221,7 +225,9 @@ class CRM_Remoteevent_EventFlags {
         );
         $event['participant_registration_count'] = $valid_participant_registrations_count;
         $event['is_registered'] = (int) ($valid_participant_registrations_count > 0);
+        // phpcs:ignore Generic.Files.LineLength.TooLong
         $event['can_edit_registration'] = (int) ($event['can_edit_registration'] && ($all_participant_registrations_count > 0));
+        // phpcs:ignore Generic.Files.LineLength.TooLong
         $event['can_cancel_registration'] = (int) ($event['can_cancel_registration'] && ($all_participant_registrations_count > 0));
       }
     }

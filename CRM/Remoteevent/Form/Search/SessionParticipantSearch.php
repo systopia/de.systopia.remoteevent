@@ -20,6 +20,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
 /**
  * Search contacts based on event session participation
  */
+// phpcs:ignore Generic.Files.LineLength.TooLong
 class CRM_Remoteevent_Form_Search_SessionParticipantSearch extends CRM_Contact_Form_Search_Custom_Base implements CRM_Contact_Form_Search_Interface {
 
   public function __construct(&$formValues) {
@@ -104,7 +105,6 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch extends CRM_Contact_F
    * @return string, sql
    */
   public function all($offset = 0, $rowcount = 0, $sort = NULL, $includeContactIDs = FALSE, $justIDs = FALSE) {
-    // delegate to $this->sql(), $this->select(), $this->from(), $this->where(), etc.
     $query = $this->sql($this->select(), $offset, $rowcount, $sort, $includeContactIDs, 'GROUP BY contact_a.id');
     return $query;
   }
@@ -205,9 +205,7 @@ class CRM_Remoteevent_Form_Search_SessionParticipantSearch extends CRM_Contact_F
    *
    * @return void
    */
-  public function alterRow(&$row) {
-    //$row['contact_id'] = "[{$row['contact_id']}]";
-  }
+  public function alterRow(&$row) {}
 
   /**
    * Get the submitted session IDs. This is tricky,

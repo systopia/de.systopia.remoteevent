@@ -63,7 +63,9 @@ function civicrm_api3_remote_event_getfields_spawn($params) {
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => E::ts('Template ID'),
-    'description'  => E::ts('If the ID of an existing event or event template is given, the new event will be based on that.'),
+    'description' => E::ts(
+      'If the ID of an existing event or event template is given, the new event will be based on that.'
+    ),
   ];
 
   // remove some stuff

@@ -21,7 +21,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Basic settings page
  */
 class CRM_Remoteevent_Form_Settings extends CRM_Core_Form {
-  const SETTINGS = [
+  private const SETTINGS = [
     'remote_registration_blocking_status_list',
     'remote_registration_invitation_confirm_default_value',
     'remote_registration_speaker_roles',
@@ -113,14 +113,6 @@ class CRM_Remoteevent_Form_Settings extends CRM_Core_Form {
         FALSE,
         ['class' => 'crm-select2']
     );
-
-    //        $this->add(
-    //            'text',
-    //            'remote_registration_link',
-    //            E::ts("Registration Link"),
-    //            ['class' => 'huge']
-    //        );
-    //        $this->addRule('remote_registration_link', E::ts("Please enter a valid URL"), 'url');
 
     $this->add(
         'text',

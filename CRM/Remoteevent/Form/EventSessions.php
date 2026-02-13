@@ -65,8 +65,14 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
     }
 
     // more stuff
-    $this->assign('add_session_link', CRM_Utils_System::url('civicrm/event/session', "reset=1&event_id={$this->_id}"));
-    $this->assign('download_session_link', CRM_Utils_System::url('civicrm/event/manage/sessions', "id={$this->_id}&download_csv=1"));
+    $this->assign(
+      'add_session_link',
+      CRM_Utils_System::url('civicrm/event/session', "reset=1&event_id={$this->_id}")
+    );
+    $this->assign(
+      'download_session_link',
+      CRM_Utils_System::url('civicrm/event/manage/sessions', "id={$this->_id}&download_csv=1")
+    );
 
     parent::buildQuickForm();
 
@@ -128,6 +134,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
    * @return array
    *   session items by slot
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
   public static function getSessionList($event_days, $event_id) {
     $sessions_by_day_and_slot = [];
     foreach ($event_days as $event_day) {
@@ -231,7 +238,6 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
           // add inactive icon
           if (empty($session['is_active'])) {
             $message = E::ts('This session is disabled');
-            //$icons[] = "<i title=\"{$message}\" class=\"crm-i fa-toggle-off\" aria-hidden=\"true\"></i>";
             $icons[] = "<i title=\"{$message}\" class=\"crm-i fa-times\" aria-hidden=\"true\"></i>";
             $classes[] = ' remote-session-disabled disabled ';
           }
@@ -250,6 +256,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
 
           // add delete action
           $delete_text = E::ts('delete');
+          // phpcs:ignore: Generic.Files.LineLength.TooLong
           $actions[] = "<a href=\"#\" onClick=\"remote_session_delete({$session['id']},false);\" class=\"action-item crm-hover-button\">{$delete_text}</a>";
 
           // add list action
@@ -327,9 +334,6 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
 
   /**
    * Return string representation of the presenter
-   *
-   * @param integer $contact_id
-   *   contact ID
    *
    * @return string to be shown in UI
    *

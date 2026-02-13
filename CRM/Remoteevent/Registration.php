@@ -24,17 +24,17 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Class to execute event registrations (RemoteParticipant.create)
  */
 class CRM_Remoteevent_Registration {
-  const STAGE1_CONTACT_IDENTIFICATION = 5000;
-  const STAGE2_PARTICIPANT_CREATION   = 0;
-  const STAGE3_POSTPROCESSING         = -5000;
-  const STAGE4_COMMUNICATION          = -10000;
+  public const STAGE1_CONTACT_IDENTIFICATION = 5000;
+  public const STAGE2_PARTICIPANT_CREATION   = 0;
+  public const STAGE3_POSTPROCESSING         = -5000;
+  public const STAGE4_COMMUNICATION          = -10000;
 
-  const BEFORE_CONTACT_IDENTIFICATION = self::STAGE1_CONTACT_IDENTIFICATION + 50;
-  const AFTER_CONTACT_IDENTIFICATION  = self::STAGE1_CONTACT_IDENTIFICATION - 50;
-  const BEFORE_PARTICIPANT_CREATION   = self::STAGE2_PARTICIPANT_CREATION + 50;
-  const AFTER_PARTICIPANT_CREATION    = self::STAGE2_PARTICIPANT_CREATION - 50;
+  public const BEFORE_CONTACT_IDENTIFICATION = self::STAGE1_CONTACT_IDENTIFICATION + 50;
+  public const AFTER_CONTACT_IDENTIFICATION  = self::STAGE1_CONTACT_IDENTIFICATION - 50;
+  public const BEFORE_PARTICIPANT_CREATION   = self::STAGE2_PARTICIPANT_CREATION + 50;
+  public const AFTER_PARTICIPANT_CREATION    = self::STAGE2_PARTICIPANT_CREATION - 50;
 
-  const PARTICIPANT_FIELDS = ['id', 'contact_id', 'event_id', 'participant_status_id', 'participant_role_id'];
+  public const PARTICIPANT_FIELDS = ['id', 'contact_id', 'event_id', 'participant_status_id', 'participant_role_id'];
 
   /**
    * @var array list of [contact_id -> list of participant data] */
@@ -125,12 +125,6 @@ class CRM_Remoteevent_Registration {
 
   /**
    * Get a list of participant objects
-   *
-   * @param integer $event_id
-   *   the event
-   *
-   * @param integer $contact_id
-   *   the contact
    */
   public static function invalidateRegistrationCache($contact_id, $event_id) {
     // unset the registration data
@@ -158,6 +152,7 @@ class CRM_Remoteevent_Registration {
    * @return false|string
    *   is the registration not allowed? if not, returns string reason why not
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public static function cannotRegister($event_id, $contact_id = NULL, $event_data = NULL) {
     if (empty($event_data)) {
       $event_data = CRM_Remoteevent_EventCache::getEvent($event_id);
@@ -478,6 +473,7 @@ class CRM_Remoteevent_Registration {
     }
 
     $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
+    // phpcs:disable Generic.Files.LineLength.TooLong
     $query = "
             SELECT COUNT(participant.id)
             FROM civicrm_participant participant
@@ -499,6 +495,7 @@ class CRM_Remoteevent_Registration {
                   AND participant.event_id = {$event_id}
                   {$AND_STATUS_ID_IN_LIST}
                   {$AND_CONTACT_RESTRICTION}";
+    // phpcs:enable
     return (int) CRM_Core_DAO::singleValueQuery($query);
   }
 
@@ -543,7 +540,10 @@ class CRM_Remoteevent_Registration {
           $profile_name = $contact_identification['xcm_profile'];
           $xcm_config = CRM_Xcm_Configuration::getConfigProfile($profile_name);
           if (empty($xcm_config) || empty($xcm_config->getOptions()['match_contact_id'])) {
-            Civi::log()->warning("RemoteEvent: maybe you should activate the 'Match contacts by contact ID' option for your '{$profile_name}' profile, so that contact updates could also be applied if the participant is only identified by ID.");
+            Civi::log()->warning(
+              // phpcs:ignore Generic.Files.LineLength.TooLong
+              "RemoteEvent: maybe you should activate the 'Match contacts by contact ID' option for your '{$profile_name}' profile, so that contact updates could also be applied if the participant is only identified by ID."
+            );
           }
           else {
             throw new Exception(E::ts('Error while updating contact %1: %2', [
@@ -588,7 +588,11 @@ class CRM_Remoteevent_Registration {
     }
 
     // now, after the contact has been identified, make sure (s)he's not already registered
-    $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister($registration->getEventID(), $registration->getContactID(), $registration->getEvent());
+    $cant_register_reason = CRM_Remoteevent_Registration::cannotRegister(
+      $registration->getEventID(),
+      $registration->getContactID(),
+      $registration->getEvent()
+    );
     if ($cant_register_reason) {
       $registration->addError($cant_register_reason);
     }
@@ -769,8 +773,7 @@ class CRM_Remoteevent_Registration {
       }
 
       $additionalParticipantsData[$participantNo]['contact_id']
-              = $additionalContactsData[$participantNo]['id']
-              = $contactData['id'] = $match['id'];
+        = $additionalContactsData[$participantNo]['id'] = $contactData['id'] = $match['id'];
 
       // Check for existing participants for the identified contact.
       $cannotRegisterReason = CRM_Remoteevent_Registration::cannotRegister(
@@ -882,7 +885,6 @@ class CRM_Remoteevent_Registration {
           'weight' => 100,
           'required' => 1,
           'label' => $l10n->ts('I accept the following terms and conditions'),
-        //$l10n->ts("You have to accept the terms and conditions to participate in this event"),
           'description' => '',
           'parent' => 'gtacs',
           'suffix' => $event['event_remote_registration.remote_registration_gtac'],

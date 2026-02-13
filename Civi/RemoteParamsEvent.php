@@ -24,6 +24,7 @@ namespace Civi;
  *
  * This is the base for all API parameter manipulation events
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class RemoteParamsEvent extends RemoteEvent {
   /**
    * @var integer|false|null remote contact ID if this is a personalised query */
@@ -124,7 +125,6 @@ abstract class RemoteParamsEvent extends RemoteEvent {
       return (int) $this->request['option.offset'];
     }
 
-    // default is '0'
     return 0;
   }
 
@@ -166,7 +166,6 @@ abstract class RemoteParamsEvent extends RemoteEvent {
       return (int) $this->original_request['option.offset'];
     }
 
-    // default is '0'
     return 0;
   }
 

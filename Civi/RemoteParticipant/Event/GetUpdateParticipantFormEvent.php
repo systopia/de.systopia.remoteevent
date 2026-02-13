@@ -66,10 +66,6 @@ class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase {
           ]
           );
         }
-        else {
-          // todo: there IS a participant, and it's NOT an invite. anything to do here?
-
-        }
       }
       catch (\CRM_Core_Exception $ex) {
         // the participant probably doesn't exist:

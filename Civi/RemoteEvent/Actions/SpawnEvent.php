@@ -62,7 +62,9 @@ class SpawnEvent extends AbstractAction {
     $customGroups = $config->getCustomGroupsForEntity('Event');
     foreach ($customGroups as $customGroup) {
       if (!empty($customGroup['is_active'])) {
-        $specs->addSpecification(CustomField::getSpecForCustomGroup($customGroup['id'], $customGroup['name'], $customGroup['title']));
+        $specs->addSpecification(
+          CustomField::getSpecForCustomGroup($customGroup['id'], $customGroup['name'], $customGroup['title'])
+        );
       }
     }
 
@@ -88,6 +90,7 @@ class SpawnEvent extends AbstractAction {
    * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
    *   The parameters this action can send back
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output): void {
     // Get the contact and the event.
     $apiParams = CustomField::getCustomFieldsApiParameter($parameters, $this->getParameterSpecification());

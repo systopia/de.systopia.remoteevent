@@ -23,7 +23,7 @@ use Civi\EventMessages\MessageTokens as MessageTokens;
  * Functionality around the EventLocation
  */
 class CRM_Remoteevent_EventLocation {
-  const FIELDS = [
+  private const FIELDS = [
     'location_name',
     'location_remark',
     'location_street_address',

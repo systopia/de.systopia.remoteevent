@@ -29,7 +29,9 @@ function _civicrm_api3_remote_event_spawn_spec(&$spec) {
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => E::ts('Template ID'),
-    'description'  => E::ts('If the ID of an existing event or event template is given, the new event will be based on that.'),
+    'description' => E::ts(
+      'If the ID of an existing event or event template is given, the new event will be based on that.'
+    ),
   ];
   $spec['event_type_id'] = [
     'name'         => 'event_type_id',
@@ -108,7 +110,13 @@ function civicrm_api3_remote_event_spawn($params) {
     $event_create = array_merge($event_data, $event_create);
 
     // remove template data and api artifacts
-    unset($event_create['id'], $event_create['created_id'], $event_create['created_date'], $event_create['version'], $event_create['prettyprint']);
+    unset(
+      $event_create['id'],
+      $event_create['created_id'],
+      $event_create['created_date'],
+      $event_create['version'],
+      $event_create['prettyprint']
+    );
     if (empty($event_create['start_date'])) {
       $event_create['start_date'] = date('YmdHis');
     }
@@ -133,7 +141,6 @@ function civicrm_api3_remote_event_spawn($params) {
   else {
     // this is the scenario where no 'template_id' is given, so we'll just run a create
     CRM_Remoteevent_CustomData::resolveCustomFields($event_create);
-    //Civi::log()->debug("Event.create(via spawn) parameters: " . json_encode($event_create));
     $new_event = civicrm_api3('Event', 'create', $event_create);
   }
 

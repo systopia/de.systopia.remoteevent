@@ -26,6 +26,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  *
  * Abstract event class to provide some basic functions
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class RemoteEvent extends RemoteToolsRequest {
   /**
    * @var integer participant ID */
@@ -98,7 +99,6 @@ abstract class RemoteEvent extends RemoteToolsRequest {
       $origin = $backtrace[0]['file'];
     }
 
-    // todo: collect? return?
     \Civi::log()->debug("RemoteEvent({$origin}): {$message}");
   }
 
@@ -254,7 +254,9 @@ abstract class RemoteEvent extends RemoteToolsRequest {
       $remote_contact_key = $data['remote_contact_id'];
       if (!array_key_exists($remote_contact_key, $remote_contact_lookup_cache)) {
         // do the lookup
-        $remote_contact_lookup_cache[$remote_contact_key] = \CRM_Remotetools_Contact::getByKey($data['remote_contact_id']);
+        $remote_contact_lookup_cache[$remote_contact_key] = \CRM_Remotetools_Contact::getByKey(
+          $data['remote_contact_id']
+        );
       }
       return (int) $remote_contact_lookup_cache[$remote_contact_key];
     }

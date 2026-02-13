@@ -13,7 +13,7 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * @see https://docs.civicrm.org/dev/en/latest/framework/api-architecture/
  */
 function _civicrm_api3_session_create_spec(&$spec) {
-  // $spec['some_parameter']['api.required'] = 1;
+
 }
 
 /**

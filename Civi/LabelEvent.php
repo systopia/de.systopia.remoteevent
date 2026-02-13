@@ -30,11 +30,12 @@ class LabelEvent extends Event {
   public const NAME = 'civi.remoteevent.label';
 
   /**
-     * @var string context for adjusting the session group header, e.g. "Day 1"
-     *   WARNING: make sure not to use the same labels,
-     *   as it *will* overwrite/drop the sessions previously under this label
-     */
-  const CONTEXT_SESSION_GROUP_TITLE = 'remoteevent.session.groupheader';
+   * @var string
+   *   context for adjusting the session group header, e.g. "Day 1"
+   *   WARNING: make sure not to use the same labels,
+   *   as it *will* overwrite/drop the sessions previously under this label
+   */
+  public const CONTEXT_SESSION_GROUP_TITLE = 'remoteevent.session.groupheader';
 
   /**
    * @var string the render context identifier */

@@ -27,6 +27,7 @@ use Civi\RemoteEvent;
  * This is an event type that will actually perform changes to the DB,
  *  e.g. RemoteParticipant.create, RemoteParticipant.update, RemoteParticipant.cancel
  */
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class ChangingEvent extends RemoteEvent {
   /**
    * @var array holds the original RemoteParticipant.submit data */
@@ -77,7 +78,7 @@ abstract class ChangingEvent extends RemoteEvent {
 
   /**
    * @throws \Exception
-   *    if another contact ID has already been set
+   *   If another contact ID has already been set.
    */
   public function setContactID($contact_id): void {
     $contact_id = (int) $contact_id;
@@ -102,6 +103,7 @@ abstract class ChangingEvent extends RemoteEvent {
    *
    * @return string|null
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function getXcmMatchProfile() {
     // check if this is an override
     if ($this->xcm_profile) {

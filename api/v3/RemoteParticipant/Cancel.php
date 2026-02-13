@@ -60,6 +60,7 @@ function _civicrm_api3_remote_participant_cancel_spec(&$spec) {
  * @return array
  *   API3 response
  */
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function civicrm_api3_remote_participant_cancel($params) {
   unset($params['check_permissions']);
 
@@ -89,10 +90,13 @@ function civicrm_api3_remote_participant_cancel($params) {
       // load registrations
       try {
         $participant = civicrm_api3('Participant', 'getsingle', [
-          'id'     => $participant_id,
+          'id' => $participant_id,
           'return' => 'event_id,contact_id',
         ]);
-        $participants = CRM_Remoteevent_Registration::getRegistrations($participant['event_id'], $participant['contact_id']);
+        $participants = CRM_Remoteevent_Registration::getRegistrations(
+          $participant['event_id'],
+          $participant['contact_id']
+        );
       }
       catch (CRM_Core_Exception $ex) {
         return RemoteEvent::createStaticAPI3Error('Outdated Token!');
@@ -104,7 +108,14 @@ function civicrm_api3_remote_participant_cancel($params) {
   if (!empty($params['probe'])) {
     // this is the 'probe' mode: get information, don't cancel anything yet
     $null = NULL;
-    return civicrm_api3_create_success($participants, $params, 'RemoteParticipant', 'cancel', $null, ['event_id' => $event_id]);
+    return civicrm_api3_create_success(
+      $participants,
+      $params,
+      'RemoteParticipant',
+      'cancel',
+      $null,
+      ['event_id' => $event_id]
+    );
   }
 
   // pick the one that we want to cancel

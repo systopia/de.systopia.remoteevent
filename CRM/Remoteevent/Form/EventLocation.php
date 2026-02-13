@@ -70,7 +70,10 @@ class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent {
     $current_values = civicrm_api3('Event', 'getsingle', ['id' => $this->_id]);
     CRM_Remoteevent_CustomData::labelCustomFields($current_values);
     $prefix = 'event_alternative_location.';
-    $contact_field = CRM_Remoteevent_CustomData::getCustomFieldKey('event_alternative_location', 'event_alternativelocation_contact_id');
+    $contact_field = CRM_Remoteevent_CustomData::getCustomFieldKey(
+      'event_alternative_location',
+      'event_alternativelocation_contact_id'
+    );
     $defaults = [
       'event_alternativelocation_contact_id' => (int) $current_values["{$contact_field}_id"] ?? NULL,
       'event_alternativelocation_remark' =>
