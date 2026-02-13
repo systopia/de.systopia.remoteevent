@@ -677,12 +677,19 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
    */
   public function setUpXCMProfile($profile_name, $profile_data_override = NULL) {
     // set profile
+    /** @phpstan-var array<string, array<string, mixed>> $profiles */
     $profiles = Civi::settings()->get('xcm_config_profiles');
-    if ($profile_data_override) {
+    if (NULL !== $profile_data_override && [] !== $profile_data_override) {
       $profiles[$profile_name] = $profile_data_override;
     }
     else {
-      $profiles[$profile_name] = json_decode(file_get_contents(E::path('tests/resources/xcm_profile_testing.json')), 1);
+      $profileJson = file_get_contents(E::path('tests/resources/xcm_profile_testing.json'));
+      if (FALSE !== $profileJson) {
+        $profiles[$profile_name] = json_decode(
+          $profileJson,
+          TRUE
+        );
+      }
     }
     Civi::settings()->set('xcm_config_profiles', $profiles);
   }
