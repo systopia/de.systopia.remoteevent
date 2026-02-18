@@ -60,8 +60,8 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_single_test' => '2',
       ]
     );
-    $this->assertArrayHasKey('id', $search_result, 'The event could not be found by single custom field search');
-    $this->assertEquals(
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by single custom field search');
+    self::assertEquals(
       $event['id'],
       $search_result['id'],
       'The event could not be found by single custom field search'
@@ -76,8 +76,8 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_single_test' => ['IN' => [2, 3, 4]],
       ]
     );
-    $this->assertArrayHasKey('id', $search_result, 'The event could not be found by single custom field range search');
-    $this->assertEquals(
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by single custom field range search');
+    self::assertEquals(
       $event['id'],
       $search_result['id'],
       'The event could not be found by single custom field range search'
@@ -93,12 +93,12 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_multi_test' => ['IN' => [2]],
       ]
     );
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'id',
       $search_result,
       'The event could not be found by multi custom field search'
     );
-    $this->assertEquals(
+    self::assertEquals(
       $event['id'],
       $search_result['id'],
       'The event could not be found by multi custom field search'
@@ -113,8 +113,8 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_multi_test' => ['IN' => [2, 3]],
       ]
     );
-    $this->assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
-    $this->assertEquals(
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
       $event['id'],
       $search_result['id'],
       'The event could not be found by multi custom field range search'
@@ -129,8 +129,8 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_multi_test' => ['IN' => [3, 2]],
       ]
     );
-    $this->assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
-    $this->assertEquals(
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
       $event['id'],
       $search_result['id'],
       'The event could not be found by multi custom field range search'
@@ -145,8 +145,8 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_multi_test' => ['IN' => [2, 3, 4]],
       ]
     );
-    $this->assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
-    $this->assertEquals(
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
       $event['id'],
       $search_result['id'],
       'The event could not be found by multi custom field range search'
@@ -161,8 +161,8 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_multi_test' => [2, 3],
       ]
     );
-    $this->assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
-    $this->assertEquals(
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
       $event['id'],
       $search_result['id'],
       'The event could not be found by multi custom field range search'
@@ -177,7 +177,7 @@ class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
         'event_test2.event_multi_test' => [2, 3, 4],
       ]
     );
-    $this->assertEmpty(
+    self::assertEmpty(
       $search_result['id'] ?? NULL,
       'The should could not be found by this multi custom field equals operation'
     );

@@ -184,6 +184,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
    */
   public function addDefaultValues(GetParticipantFormEventBase $resultsEvent) {
     // add contact data
+    // @phpstan-ignore method.deprecated
     $this->addDefaultContactValues(
       $resultsEvent,
       ['prefix_id', 'email', 'formal_title', 'first_name', 'last_name', 'phone']
@@ -216,6 +217,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard3 extends CRM_Remoteevent_Regi
         }
       }
       catch (CRM_Core_Exception $ex) {
+        // @ignoreException
         // probably no primary address set
       }
     }

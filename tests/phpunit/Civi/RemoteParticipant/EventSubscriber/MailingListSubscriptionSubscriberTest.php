@@ -76,7 +76,7 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
   /**
    * @phpstan-param array<string, array<string, mixed>> $initialFields
    *
-   * @dataProvider provideInitialFields()
+   * @dataProvider provideInitialFields
    */
   public function testOnGetCreateParticipantForm(array $initialFields, int $expectedWeight): void {
     $event = new GetCreateParticipantFormEvent([], [
@@ -113,7 +113,7 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
   /**
    * @phpstan-param array<string, array<string, mixed>> $initialFields
    *
-   * @dataProvider provideInitialFields()
+   * @dataProvider provideInitialFields
    */
   public function testOnGetUpdateParticipantForm(array $initialFields, int $expectedWeight): void {
     $event = new GetUpdateParticipantFormEvent([], [
@@ -150,7 +150,7 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
   /**
    * @phpstan-return iterable<array{array<string, array<string, mixed>>, int}>
    */
-  public function provideInitialFields(): iterable {
+  public static function provideInitialFields(): iterable {
     yield [
       [],
       0,

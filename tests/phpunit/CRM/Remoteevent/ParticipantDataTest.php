@@ -60,14 +60,14 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
       'email' => $contact['email'],
       'campaign_id' => $campaign['id'],
     ]);
-    $this->assertEmpty($registration['is_error'], 'First Registration Failed');
+    self::assertEmpty($registration['is_error'], 'First Registration Failed');
 
     // load the participant
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
       'contact_id' => $contact['id'],
       'event_id'   => $event['id'],
     ]);
-    $this->assertEquals(
+    self::assertEquals(
       $campaign['id'],
       $participant['participant_campaign_id'],
       'The campaign was not propagated to the participant!'
@@ -115,14 +115,14 @@ class CRM_Remoteevent_ParticipantDataTest extends CRM_Remoteevent_TestBase {
       'email' => $contact['email'],
       'campaign_id' => $campaign['id'],
     ]);
-    $this->assertEmpty($registration['is_error'], 'First Registration Failed');
+    self::assertEmpty($registration['is_error'], 'First Registration Failed');
 
     // load the participant
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', [
       'contact_id' => $contact['id'],
       'event_id'   => $event['id'],
     ]);
-    $this->assertEquals(
+    self::assertEquals(
       $campaign['id'],
       $participant['participant_campaign_id'],
       'The campaign was not propagated to the participant!'

@@ -82,6 +82,7 @@ class CRM_Remoteevent_RegistrationProfile_Standard1 extends CRM_Remoteevent_Regi
         $resultsEvent->setPrefillValue('email', $primary_email['email']);
       }
       catch (CRM_Core_Exception $ex) {
+        // @ignoreException
         // there is no (unique) primary email
       }
     }

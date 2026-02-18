@@ -287,7 +287,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
             WHERE participant_id = {$participant_id}
             ");
     while ($participant_query->fetch()) {
-      $session_ids[] = $participant_query->session_id;
+      $session_ids[] = (int) $participant_query->session_id;
     }
     return $session_ids;
   }

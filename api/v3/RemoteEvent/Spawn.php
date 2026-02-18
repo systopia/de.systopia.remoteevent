@@ -84,7 +84,7 @@ function civicrm_api3_remote_event_spawn($params) {
   if (!empty($event_create['template_id'])) {
     $template_id = (int) $event_create['template_id'];
     if (!$template_id) {
-      throw new Exception('Invalid template ID');
+      throw new \RuntimeException('Invalid template ID');
     }
 
     // use APIv4 to handle this

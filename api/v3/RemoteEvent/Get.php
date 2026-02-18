@@ -132,7 +132,7 @@ function civicrm_api3_remote_event_get($params) {
   Civi::dispatcher()->dispatch(GetResultEvent::NAME, $result);
 
   // finally, apply the limit
-  if ($get_params->getLimit() != $get_params->getOriginalLimit()) {
+  if ($get_params->getLimit() !== $get_params->getOriginalLimit()) {
     $result->trimToLimit($get_params->getOriginalLimit(), $get_params->getOriginalOffset());
   }
 

@@ -86,7 +86,7 @@ function civicrm_api3_remote_participant_update($params) {
       $errors = $ex->getErrorData()['values'];
     }
     else {
-      $errors[] = $ex->getMessage();
+      $errors = [$ex->getMessage()];
     }
     return RemoteEvent::createStaticAPI3Error(reset($errors), ['errors' => $errors]);
   }

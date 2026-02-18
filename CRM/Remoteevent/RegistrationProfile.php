@@ -162,6 +162,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         continue;
       }
 
+      // @phpstan-ignore method.deprecated
       $entity_names = (array) ($field_spec['entity_name'] ?? $this->getFieldEntities($field_key));
       $entity_field_name = $field_spec['entity_field_name'] ?? $field_key;
       if (in_array('Contact', $entity_names, TRUE)) {
@@ -175,6 +176,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
       }
     }
 
+    // @phpstan-ignore method.deprecated
     $this->addDefaultContactValues($resultsEvent, array_keys($contact_field_mapping), $contact_field_mapping);
 
     if ([] !== $participant_field_mapping && $resultsEvent->getParticipantID() > 0) {
@@ -375,7 +377,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     }
 
     // check if valid
-    if (!in_array($params['profile'], $allowed_profiles)) {
+    if (!in_array($params['profile'], $allowed_profiles, TRUE)) {
       throw new CRM_Core_Exception(
         E::ts('Profile [%2] cannot be used with RemoteEvent [%1].', [
           1 => $event['id'],
@@ -804,8 +806,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         ParticipantFormEventUtil::mapToPrefill($contact_data, $attribute_mapping, $resultsEvent, $value_callbacks);
       }
       catch (CRM_Core_Exception $ex) {
+        // @ignoreException
         // there is no (unique) primary email
-        // @todo CRM_Core_Exception is an alias of CRM_Core_Exception so this catch is too broad.
       }
     }
   }

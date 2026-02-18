@@ -17,7 +17,7 @@ declare(strict_types = 1);
 
 use Civi\Test\Api3TestTrait;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
+use Civi\Core\HookInterface;
 use Civi\Test\TransactionalInterface;
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -118,7 +118,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     }
     // sanity check: default profile should be enabled
     $default_profile = $event_data['event_remote_registration.remote_registration_default_profile'];
-    if (!in_array($default_profile, $event_data['event_remote_registration.remote_registration_profiles'])) {
+    if (!in_array($default_profile, $event_data['event_remote_registration.remote_registration_profiles'], TRUE)) {
       $event_data['event_remote_registration.remote_registration_profiles'][] = $default_profile;
     }
     // resolve custom fields
@@ -254,7 +254,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     try {
       $result = civicrm_api3($entity, $action, $data);
       $result['is_error'] = 0;
-      $this->assertArrayHasKey(
+      self::assertArrayHasKey(
         'status_messages',
         $result,
         "API Call {$entity}.{$action} doesn't return 'status_messages'"
@@ -478,7 +478,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     }
 
     $verify_contact_id = CRM_Remotetools_Contact::getByKey($key);
-    $this->assertEquals($contact_id, $verify_contact_id, "Couldn't generate remote contact key.");
+    self::assertEquals($contact_id, $verify_contact_id, "Couldn't generate remote contact key.");
     return $key;
   }
 
@@ -529,11 +529,11 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
    */
   public function assertParticipantStatus($participant_id, $participant_status, $failure_msg) {
     $participant = $this->traitCallAPISuccess('Participant', 'get', ['id' => $participant_id]);
-    $this->assertGreaterThan(0, $participant['count'], $failure_msg . " (doesn't exist)");
-    $this->assertLessThan(2, $participant['count'], $failure_msg . ' (ambiguous)');
+    self::assertGreaterThan(0, $participant['count'], $failure_msg . " (doesn't exist)");
+    self::assertLessThan(2, $participant['count'], $failure_msg . ' (ambiguous)');
     $participant = reset($participant['values']);
 
-    $this->assertEquals(
+    self::assertEquals(
       $this->getParticipantStatusId($participant_status, TRUE),
       $participant['participant_status_id'],
       $failure_msg
@@ -567,7 +567,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
       }
     }
 
-    $this->assertArrayHasKey($status_name, $participant_statuses, "Participant status '{$status_name} doesn't exist.");
+    self::assertArrayHasKey($status_name, $participant_statuses, "Participant status '{$status_name} doesn't exist.");
     return $participant_statuses[$status_name];
   }
 
@@ -581,11 +581,11 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
    */
   public function assertGetFormStandardFields(&$fields, $strip_fields = FALSE) {
     // todo: check more?
-    $this->assertArrayHasKey('event_id', $fields, "RemoteContact.get_form should contain 'event_id' field");
+    self::assertArrayHasKey('event_id', $fields, "RemoteContact.get_form should contain 'event_id' field");
     $field_spec = $fields['event_id'];
-    $this->assertArrayHasKey('profile', $fields, "RemoteContact.get_form should contain 'profile' field");
+    self::assertArrayHasKey('profile', $fields, "RemoteContact.get_form should contain 'profile' field");
     $field_spec = $fields['profile'];
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'remote_contact_id',
       $fields,
       "RemoteContact.get_form should contain 'remote_contact_id' field"
@@ -644,10 +644,10 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     $result = [];
     foreach ($field_array as $field_spec) {
       if (!isset($field_spec[$key_field])) {
-        $this->fail("Field array doesn't have key field '{$key_field}'");
+        self::fail("Field array doesn't have key field '{$key_field}'");
       }
       if (!isset($field_spec[$value_field])) {
-        $this->fail("Field array doesn't have value field '{$value_field}'");
+        self::fail("Field array doesn't have value field '{$value_field}'");
       }
       $result[$field_spec[$key_field]] = $field_spec[$value_field];
     }

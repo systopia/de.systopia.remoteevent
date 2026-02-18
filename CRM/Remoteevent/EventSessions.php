@@ -396,7 +396,7 @@ class CRM_Remoteevent_EventSessions {
 
     // CHECK IF SPACE AVAILABLE IN REQUESTED SESSIONS
     foreach ($requested_session_ids as $requested_session_id) {
-      if (in_array($requested_session_id, $registered_session_ids)) {
+      if (in_array((int) $requested_session_id, $registered_session_ids, TRUE)) {
         // we don't need to check, if contact already registered there
         continue;
       }
@@ -441,8 +441,8 @@ class CRM_Remoteevent_EventSessions {
     $occupied_slots = [];
     foreach ($sessions as $session) {
       if (!empty($session['slot_id'])) {
-        $slot_id = $session['slot_id'];
-        if (in_array($slot_id, $occupied_slots)) {
+        $slot_id = (int) $session['slot_id'];
+        if (in_array($slot_id, $occupied_slots, TRUE)) {
           $validationEvent->addValidationError(
             "session{$session['id']}",
             E::ts("You can't register for two sessions in the same slot")
@@ -557,7 +557,7 @@ class CRM_Remoteevent_EventSessions {
       $participant_sessions = [];
       // use this inverse lookup to maintain the order
       foreach ($all_event_sessions as $session) {
-        if (in_array($session['id'], $participant_session_ids)) {
+        if (in_array((int) $session['id'], $participant_session_ids, TRUE)) {
           $session['category']      = self::getSessionCategory($session);
           $session['type']          = self::getSessionType($session);
           $session['presenter_txt'] = self::getSessionPresenterText($session);

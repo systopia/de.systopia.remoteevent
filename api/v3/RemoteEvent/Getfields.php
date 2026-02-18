@@ -98,7 +98,7 @@ function civicrm_api3_remote_event_getfields_get($params) {
   // resolve custom fields
   CRM_Remoteevent_CustomData::labelCustomFields($fields['values']);
   foreach ($fields['values'] as $field_name => &$field_data) {
-    if ($field_name != $field_data['name']) {
+    if ($field_name !== $field_data['name']) {
       $field_data['name'] = $field_name;
     }
   }

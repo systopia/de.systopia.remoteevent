@@ -43,7 +43,7 @@ class CRM_Remoteevent_BasicTest extends CRM_Remoteevent_TestBase {
     // do some basic comparison
     $params_to_compare = ['id', 'title', 'start_date', 'event_type_id', 'is_active'];
     foreach ($params_to_compare as $param) {
-      $this->assertEquals($event[$param], $remote_event[$param], "Parameter {$param} differs");
+      self::assertEquals($event[$param], $remote_event[$param], "Parameter {$param} differs");
     }
 
     // get the registration form and see if the fields are there
@@ -52,7 +52,7 @@ class CRM_Remoteevent_BasicTest extends CRM_Remoteevent_TestBase {
     $this->assertGetFormStandardFields($fields, TRUE);
     $expected_fields = ['email', 'prefix_id', 'formal_title', 'last_name'];
     foreach ($expected_fields as $expected_field) {
-      $this->assertTrue(array_key_exists($expected_field, $fields), "Field {$expected_field} not in registration form");
+      self::assertTrue(array_key_exists($expected_field, $fields), "Field {$expected_field} not in registration form");
     }
   }
 
@@ -72,7 +72,7 @@ class CRM_Remoteevent_BasicTest extends CRM_Remoteevent_TestBase {
 
     // make sure they're both there
     $result = $this->traitCallAPISuccess('RemoteEvent', 'get', []);
-    $this->assertEquals(2, $result['count'], 'There should be two events');
+    self::assertEquals(2, $result['count'], 'There should be two events');
 
     // create an invited contact
     $contact = $this->createContact();
@@ -95,8 +95,8 @@ class CRM_Remoteevent_BasicTest extends CRM_Remoteevent_TestBase {
         'RemoteEvent',
         'get',
         ['token' => $token]);
-    $this->assertEquals(1, $result['count'], 'This should only return the event linked by token');
-    $this->assertEquals($event['id'], $result['id'], 'This should only return the event linked by token');
+    self::assertEquals(1, $result['count'], 'This should only return the event linked by token');
+    self::assertEquals($event['id'], $result['id'], 'This should only return the event linked by token');
     $result = $this->traitCallAPISuccess(
         'RemoteEvent',
         'getsingle',

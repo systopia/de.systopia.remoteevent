@@ -90,7 +90,7 @@ class CRM_Remoteevent_Tools {
     $all_tables = CRM_Core_DAO::executeQuery("SELECT table_name FROM civicrm_custom_group WHERE extends = 'Event';");
     while ($all_tables->fetch()) {
       $table_name = $all_tables->table_name;
-      if (!in_array($table_name, $exclude_tables)) {
+      if (!in_array($table_name, $exclude_tables, TRUE)) {
         self::cloneEventCustomDataTable($table_name, $original_event_id, $new_event_id);
       }
     }

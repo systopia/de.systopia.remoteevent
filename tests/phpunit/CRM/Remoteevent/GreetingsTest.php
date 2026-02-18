@@ -48,7 +48,7 @@ class CRM_Remoteevent_GreetingsTest extends CRM_Remoteevent_TestBase {
       'first_name' => $contactA_before['first_name'],
       'last_name'  => $contactA_before['last_name'],
     ]);
-    $this->assertEmpty($registration1['is_error'], 'Registration Failed');
+    self::assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // test getForm for update
     $token = CRM_Remotetools_SecureToken::generateEntityToken(
@@ -64,12 +64,12 @@ class CRM_Remoteevent_GreetingsTest extends CRM_Remoteevent_TestBase {
     ]);
 
     // now there should be at least one status_message with the last_name in it
-    $this->assertArrayHasKey('status_messages', $reply, 'There should be a greeting status message in the reply.');
+    self::assertArrayHasKey('status_messages', $reply, 'There should be a greeting status message in the reply.');
     $message_found = FALSE;
     foreach ($reply['status_messages'] as $status_message) {
       $message_found |= (bool) strstr($status_message['message'], $contactA_before['first_name']);
     }
-    $this->assertTrue(
+    self::assertTrue(
       (bool) $message_found,
       'There should be a greeting status message containing the first name in the reply.'
     );

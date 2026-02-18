@@ -35,7 +35,8 @@ abstract class ChangingEvent extends RemoteEvent {
 
   protected $contact_was_updated = FALSE;
   protected $participant_was_updated = FALSE;
-  protected $xcm_profile = NULL;
+  protected ?string $xcm_profile = NULL;
+  protected ?string $xcm_update_profile = NULL;
 
   public function __construct(array $submission_data, ?array $event = NULL) {
     parent::__construct($submission_data, $event);

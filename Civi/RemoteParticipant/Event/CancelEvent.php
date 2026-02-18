@@ -29,6 +29,12 @@ class CancelEvent extends ChangingEvent {
   public const NAME = 'civi.remoteevent.registration.cancel';
 
   /**
+   * @var array
+   *   holds the current participant data
+   */
+  protected $participant = NULL;
+
+  /**
    * @var array holds the participants originally identified  */
   protected $participants_identified;
 

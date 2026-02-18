@@ -48,7 +48,7 @@ class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase {
       'first_name' => $contactA_before['first_name'],
       'last_name'  => $contactA_before['last_name'],
     ]);
-    $this->assertEmpty($registration1['is_error'], 'Registration Failed');
+    self::assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // test getForm for update
     $token = CRM_Remotetools_SecureToken::generateEntityToken(
@@ -63,8 +63,8 @@ class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase {
       'event_id' => $event['id'],
     ])['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
-    $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
+    self::assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
+    self::assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
 
     // test registration update
     $different_last_name = $this->createContact()['last_name'];
@@ -88,13 +88,13 @@ class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase {
       'first_name' => $contactA_before['first_name'],
       'last_name'  => $different_last_name,
     ]);
-    $this->assertEquals(
+    self::assertEquals(
       $registration1['participant_id'],
       $registration2['participant_id'],
       "The registration's participant ID has changed."
     );
     $contactA_after = $fields = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contactA_before['id']]);
-    $this->assertEquals($different_last_name, $contactA_after['last_name'], 'Last name was not updated!');
+    self::assertEquals($different_last_name, $contactA_after['last_name'], 'Last name was not updated!');
   }
 
 }

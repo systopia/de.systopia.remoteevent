@@ -51,7 +51,7 @@ class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestB
           'email' => $contact['email'],
         ]
     );
-    $this->assertTrue((bool) $result['is_error'], "You shouldn't be able to register anonymously.");
+    self::assertTrue((bool) $result['is_error'], "You shouldn't be able to register anonymously.");
   }
 
   /**
@@ -78,7 +78,7 @@ class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestB
       'last_name'  => $contact['last_name'],
       'email'      => $contact['email'],
     ]);
-    $this->assertFalse(
+    self::assertFalse(
       (bool) $result['is_error'],
       'You should be able to register anonymously with the Standard2 profile.'
     );
@@ -112,7 +112,7 @@ class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestB
           'email' => $contact['email'],
         ]
     );
-    $this->assertTrue((bool) $result['is_error'], "You shouldn't be able to register anonymously.");
+    self::assertTrue((bool) $result['is_error'], "You shouldn't be able to register anonymously.");
   }
 
   /**
@@ -143,7 +143,7 @@ class CRM_RemoteEvent_AnonymousTest_InvitationTest extends CRM_Remoteevent_TestB
       'last_name'  => $contact['last_name'],
       'email'      => $contact['email'],
     ]);
-    $this->assertFalse(
+    self::assertFalse(
       (bool) $result['is_error'],
       'You should be able to register anonymously with the Standard2 profile.'
     );

@@ -44,28 +44,28 @@ class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase {
     $spawned_from_template = $this->createRemoteEvent(['template_id' => $event_template['id']], TRUE);
 
     // check if all parameters are there
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'event_remote_registration.remote_registration_gtac',
       $spawned_from_template,
       'The template instance should have the gtac'
     );
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $spawned_from_template['event_remote_registration.remote_registration_gtac'],
       'The template instance should have the gtac'
     );
-    $this->assertEquals(
+    self::assertEquals(
       'SOME GTAC',
       $spawned_from_template['event_remote_registration.remote_registration_gtac'],
       'The template instance should have the gtac'
     );
 
     // check remote_registration_enabled
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'remote_registration_enabled',
       $spawned_from_template,
       "The template instance should have the field 'remote_registration_enabled'."
     );
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $spawned_from_template['remote_registration_enabled'],
       "The template instance should have the flag 'remote_registration_enabled' set to true."
     );
@@ -73,12 +73,12 @@ class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase {
     // check other fields
     foreach (['remote_disable_civicrm_registration', 'remote_use_custom_event_location'] as $field) {
       $field_key = 'event_remote_registration.' . $field;
-      $this->assertArrayHasKey(
+      self::assertArrayHasKey(
         $field_key,
         $spawned_from_template,
         "The template instance should have the field {$field_key}."
       );
-      $this->assertNotEmpty(
+      self::assertNotEmpty(
         $spawned_from_template[$field_key],
         "The template instance should have the flag {$field_key} set to true."
       );
@@ -108,28 +108,28 @@ class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase {
     $spawned_from_template = $this->getRemoteEvent($event_copy_bao->id);
 
     // check if all parameters are there
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'event_remote_registration.remote_registration_gtac',
       $spawned_from_template,
       'The template instance should have the gtac'
     );
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $spawned_from_template['event_remote_registration.remote_registration_gtac'],
       'The template instance should have the gtac'
     );
-    $this->assertEquals(
+    self::assertEquals(
       'SOME GTAC',
       $spawned_from_template['event_remote_registration.remote_registration_gtac'],
       'The template instance should have the gtac'
     );
 
     // check remote_registration_enabled
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'remote_registration_enabled',
       $spawned_from_template,
       "The template instance should have the field 'remote_registration_enabled'."
     );
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $spawned_from_template['remote_registration_enabled'],
       "The template instance should have the flag 'remote_registration_enabled' set to true."
     );
@@ -137,12 +137,12 @@ class CRM_Remoteevent_TemplateTest extends CRM_Remoteevent_TestBase {
     // check other fields
     foreach (['remote_disable_civicrm_registration', 'remote_use_custom_event_location'] as $field) {
       $field_key = 'event_remote_registration.' . $field;
-      $this->assertArrayHasKey(
+      self::assertArrayHasKey(
         $field_key,
         $spawned_from_template,
         "The template instance should have the field {$field_key}."
       );
-      $this->assertNotEmpty(
+      self::assertNotEmpty(
         $spawned_from_template[$field_key],
         "The template instance should have the flag {$field_key} set to true."
       );

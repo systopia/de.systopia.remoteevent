@@ -86,7 +86,7 @@ function _civicrm_api3_remote_participant_get_form_spec(&$spec) {
 function civicrm_api3_remote_participant_get_form($params) {
   unset($params['check_permissions']);
   $params['context'] = strtolower($params['context']);
-  if (!in_array($params['context'], ['create', 'cancel', 'update'])) {
+  if (!in_array($params['context'], ['create', 'cancel', 'update'], TRUE)) {
     return RemoteEvent::createStaticAPI3Error(E::ts("Invalid context '%1'", [1 => $params['context']]));
   }
 
@@ -127,7 +127,7 @@ function civicrm_api3_remote_participant_get_form($params) {
 
       // verify the event_id
       if (isset($params['event_id'])) {
-        if ($participant['event_id'] != $params['event_id']) {
+        if ((int) $participant['event_id'] !== (int) $params['event_id']) {
           return RemoteEvent::createStaticAPI3Error(
             E::ts("Token refers to another event '%1'", [1 => $params['token']])
           );

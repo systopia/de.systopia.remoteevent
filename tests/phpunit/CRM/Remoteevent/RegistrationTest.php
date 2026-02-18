@@ -43,14 +43,14 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
     // register one contact
     $contactA = $this->createContact();
     $registration1 = $this->registerRemote($event['id'], ['email' => $contactA['email']]);
-    $this->assertEmpty($registration1['is_error'], 'First Registration Failed');
+    self::assertEmpty($registration1['is_error'], 'First Registration Failed');
 
     // register another contact:
     $contactB = $this->createContact();
     $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
-    $this->assertNotEmpty($registration2['is_error'],
+    self::assertNotEmpty($registration2['is_error'],
                           'Second Validation should have failed, max_participants exceeded.');
-    $this->assertArraySubset(
+    self::assertArraySubset(
       ['Event is booked out'],
       $registration2['errors'],
       FALSE,
@@ -72,11 +72,11 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
     // register one contact
     $contactA = $this->createContact();
     $registration1 = $this->registerRemote($event['id'], ['email' => $contactA['email']]);
-    $this->assertEmpty($registration1['is_error'], 'First Registration Failed');
+    self::assertEmpty($registration1['is_error'], 'First Registration Failed');
 
     // Retrieve the event.
     $eventRetrieved = $this->getRemoteEvent($event['id']);
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $eventRetrieved['has_active_waitlist'],
       'The flag "has_active_waitlist" should have the value "1".'
     );
@@ -84,7 +84,7 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
     // register another contact:
     $contactB = $this->createContact();
     $registration2 = $this->registerRemote($event['id'], ['email' => $contactB['email']]);
-    $this->assertArraySubset(
+    self::assertArraySubset(
       ['You have been added to the waitlist.'],
       $registration2['status'],
       FALSE,
@@ -98,32 +98,32 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
   public function testRegistrationSuspended() {
     // check if disabled by default
     $event1 = $this->createRemoteEvent();
-    $this->assertTrue(
+    self::assertTrue(
       empty($event1['event_remote_registration.remote_registration_suspended']),
       "Registration shouldn't be suspended by default"
     );
-    $this->assertNotEmpty($event1['can_register'], 'Registration should be possible');
+    self::assertNotEmpty($event1['can_register'], 'Registration should be possible');
 
     // check if it works when created
     $event2 = $this->createRemoteEvent(
         ['event_remote_registration.remote_registration_suspended' => 1]
     );
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $event2['event_remote_registration.remote_registration_suspended'],
       'RegistrationSuspended not saved.'
     );
-    $this->assertEmpty($event2['can_register'], 'Registration should NOT be possible (suspended)');
+    self::assertEmpty($event2['can_register'], 'Registration should NOT be possible (suspended)');
 
     // check if it works when added later
     $event3 = $this->createRemoteEvent();
-    $this->assertNotEmpty($event3['can_register'], 'Registration should be possible');
+    self::assertNotEmpty($event3['can_register'], 'Registration should be possible');
     // set suspended flag
     $set_suspended = ['id' => $event3['id'], 'event_remote_registration.remote_registration_suspended' => 1];
     CRM_Remotetools_CustomData::resolveCustomFields($set_suspended);
     $this->traitCallAPISuccess('Event', 'create', $set_suspended);
     // verify result
     $event3 = $this->getRemoteEvent($event3['id']);
-    $this->assertEmpty($event3['can_register'], 'Registration should NOT be possible');
+    self::assertEmpty($event3['can_register'], 'Registration should NOT be possible');
   }
 
   /**
@@ -142,7 +142,7 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
       'last_name'  => $contact1['last_name'],
       'email'      => $contact1['email'],
     ]);
-    $this->assertEmpty($registration1['is_error'], 'Registration failed event without field length violation');
+    self::assertEmpty($registration1['is_error'], 'Registration failed event without field length violation');
 
     // test registering contact
     $contact2 = $this->createContact([]);

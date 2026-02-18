@@ -48,10 +48,10 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase {
     ])['values'];
 
     // check for Germany (English)
-    $this->assertTrue(isset($fields['country_id']['options']), 'Field country_id incomplete');
+    self::assertTrue(isset($fields['country_id']['options']), 'Field country_id incomplete');
     $country_options = $fields['country_id']['options'];
-    $this->assertTrue(isset($country_options[1082]), 'Country Germany [1082] not listed');
-    $this->assertEquals('Germany', $country_options[1082], 'Country name not in the right language');
+    self::assertTrue(isset($country_options[1082]), 'Country Germany [1082] not listed');
+    self::assertEquals('Germany', $country_options[1082], 'Country name not in the right language');
 
     // check for Germany (German: Deutschland)
     // multi-language not yet implemented
@@ -60,10 +60,10 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase {
       'event_id' => $event['id'],
       'locale' => 'de_DE',
     ])['values'];
-    $this->assertTrue(isset($de_fields['country_id']['options']), 'Field country_id incomplete');
+    self::assertTrue(isset($de_fields['country_id']['options']), 'Field country_id incomplete');
     $de_country_options = $de_fields['country_id']['options'];
-    $this->assertTrue(isset($de_country_options[1082]), 'Country Germany [1082] not listed');
-    $this->assertEquals('Deutschland', $de_country_options[1082], 'Country name not in the right language');
+    self::assertTrue(isset($de_country_options[1082]), 'Country Germany [1082] not listed');
+    self::assertEquals('Deutschland', $de_country_options[1082], 'Country name not in the right language');
   }
 
   /**
@@ -100,7 +100,7 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase {
         ]
     );
     if (!empty($result['is_error'])) {
-      $this->fail('State/Province ID cleanup failed: ' . $result['error_message']);
+      self::fail('State/Province ID cleanup failed: ' . $result['error_message']);
     }
   }
 

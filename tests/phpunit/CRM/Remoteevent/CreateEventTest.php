@@ -33,7 +33,7 @@ class CRM_Remoteevent_CreateEventTest extends CRM_Remoteevent_TestBase {
     // just run a simple comparison
     $test_internal = $this->createRemoteEvent();
     $test_via_spawn = $this->createRemoteEvent([], TRUE);
-    $this->assertEquals(
+    self::assertEquals(
         array_keys($test_internal),
         array_keys($test_via_spawn),
         'The internal and external creation produce different results'
@@ -54,7 +54,7 @@ class CRM_Remoteevent_CreateEventTest extends CRM_Remoteevent_TestBase {
 
     // create an new event from the template
     $spawned_from_template = $this->createRemoteEvent(['template_id' => $template['id'], 'title' => NULL], TRUE);
-    $this->assertEquals(
+    self::assertEquals(
       "Copy of {$template['title']}",
       $spawned_from_template['title'],
       'An event spawned from the template should have the same name'

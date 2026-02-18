@@ -256,7 +256,7 @@ class CRM_Remoteevent_Form_Task_ParticipantSession extends CRM_Event_Form_Task {
           $errors = $submission_event->getErrors();
           foreach ($errors as $error) {
             $error_field = $error[1];
-            if (($key = array_search($error_field, $session_list)) !== FALSE) {
+            if (($key = array_search($error_field, $session_list, TRUE)) !== FALSE) {
               unset($session_list[$key]);
               $subscription_failed_counter += 1;
             }

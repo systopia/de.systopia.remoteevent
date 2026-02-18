@@ -42,24 +42,24 @@ class CRM_Remoteevent_GtacTest extends CRM_Remoteevent_TestBase {
     $registration_form = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', ['event_id' => $event['id']]);
     $fields = $registration_form['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertTrue(array_key_exists('gtac', $fields), "Field 'gtac' not in registration form");
+    self::assertTrue(array_key_exists('gtac', $fields), "Field 'gtac' not in registration form");
     $gtac_field = $fields['gtac'];
-    $this->assertEquals('Checkbox', $gtac_field['type'], 'GTAC field should be checkbox');
-    $this->assertEquals('1', $gtac_field['required'], 'GTAC field should be required');
-    $this->assertNotEmpty($gtac_field['label'], 'GTAC label should be set');
-    $this->assertNotEmpty($gtac_field['parent'], 'GTAC parent should be set');
+    self::assertEquals('Checkbox', $gtac_field['type'], 'GTAC field should be checkbox');
+    self::assertEquals('1', $gtac_field['required'], 'GTAC field should be required');
+    self::assertNotEmpty($gtac_field['label'], 'GTAC label should be set');
+    self::assertNotEmpty($gtac_field['parent'], 'GTAC parent should be set');
     if (empty($gtac_field['prefix']) && empty($gtac_field['suffix'])) {
-      $this->fail('GTAC text should be either in prefix or suffix or both');
+      self::fail('GTAC text should be either in prefix or suffix or both');
     }
     if (!empty($gtac_field['prefix'])) {
-      $this->assertTrue(
-        in_array($gtac_field['prefix_display'], ['inline', 'dialog']),
+      self::assertTrue(
+        in_array($gtac_field['prefix_display'], ['inline', 'dialog'], TRUE),
         'GTAC prefix_display should be inline or dialogue'
       );
     }
     if (!empty($gtac_field['suffix'])) {
-      $this->assertTrue(
-        in_array($gtac_field['suffix_display'], ['inline', 'dialog']),
+      self::assertTrue(
+        in_array($gtac_field['suffix_display'], ['inline', 'dialog'], TRUE),
         'GTAC suffix_display should be inline or dialogue'
       );
     }
@@ -82,7 +82,7 @@ class CRM_Remoteevent_GtacTest extends CRM_Remoteevent_TestBase {
     $registration_form = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', ['event_id' => $event['id']]);
     $fields = $registration_form['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertArrayNotHasKey('gtac', $fields, "Field 'gtac' listed in registration form although no gtac provided");
+    self::assertArrayNotHasKey('gtac', $fields, "Field 'gtac' listed in registration form although no gtac provided");
   }
 
 }

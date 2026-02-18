@@ -107,6 +107,7 @@ class CRM_Remoteevent_RegistrationUpdate {
     $submission_data = $registration_update->getQueryParameters();
     foreach ($profile->getFields() as $field_key => $field_spec) {
       if (isset($submission_data[$field_key])) {
+        // @phpstan-ignore method.deprecated
         $entity_names = (array) ($field_spec['entity_name'] ?? $profile->getFieldEntities($field_key));
         $entity_field_name = $field_spec['entity_field_name'] ?? $field_key;
         $value = isset($field_spec['value_callback'])

@@ -31,11 +31,11 @@ class UpdateEvent extends ChangingEvent {
   public const NAME = 'civi.remoteevent.registration.update';
 
   /**
-   * @var array holds the current participant data  */
+   * @var array|null holds the current participant data  */
   protected $participant = NULL;
 
   /**
-   * @var array holds the current contact data  */
+   * @var array|null holds the current contact data  */
   protected $contact = NULL;
 
   /**
@@ -59,7 +59,7 @@ class UpdateEvent extends ChangingEvent {
   public function setParticipant($participant_data) {
     if ($this->participant === NULL) {
       $this->participant = $participant_data;
-      if ($this->participant_id && $this->participant_id != $participant_data['id']) {
+      if ($this->participant_id && $this->participant_id !== (int) $participant_data['id']) {
         \Civi::log()->debug('UpdateEvent: Participant ID overruled');
       }
       $this->participant_id = $participant_data['id'];
@@ -77,7 +77,7 @@ class UpdateEvent extends ChangingEvent {
   public function setContact($contact_data) {
     if ($this->contact === NULL) {
       $this->contact = $contact_data;
-      if ($this->contact_id && $this->contact_id != $contact_data['id']) {
+      if ($this->contact_id && $this->contact_id !== (int) $contact_data['id']) {
         \Civi::log()->debug('UpdateEvent: Contact ID overruled');
       }
       $this->contact_id = (int) $contact_data['id'];

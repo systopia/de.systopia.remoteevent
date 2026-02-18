@@ -41,9 +41,9 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
       'event_id' => $event['id'],
     ])['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
-    $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
-    $this->assertTrue(
+    self::assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
+    self::assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
+    self::assertTrue(
       empty($fields['email']['value']),
       "Field 'email' shouldn't come with a value in an anonymous call"
     );
@@ -54,9 +54,9 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
       'profile'  => 'Standard1',
     ])['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
-    $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
-    $this->assertTrue(
+    self::assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
+    self::assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
+    self::assertTrue(
       empty($fields['email']['value']),
       "Field 'email' shouldn't come with a value in an anonymous call"
     );
@@ -67,7 +67,7 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
       'profile'  => 'OneClick',
     ])['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertEmpty($fields, 'OneClick Profile should not list any fields');
+    self::assertEmpty($fields, 'OneClick Profile should not list any fields');
 
     // check illegal profile
     try {
@@ -75,11 +75,11 @@ class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
         'event_id' => $event['id'],
         'profile'  => 'Standard3',
       ]);
-      $this->fail('RemoteParticipant.get_form with an illegal profile should cause an exception');
+      self::fail('RemoteParticipant.get_form with an illegal profile should cause an exception');
     }
     catch (CRM_Core_Exception $ex) {
       $error_message = $ex->getMessage();
-      $this->assertMatchesRegularExpression(
+      self::assertMatchesRegularExpression(
         '/cannot be used/',
         $error_message,
         'This seems to be the wrong kind of exception'

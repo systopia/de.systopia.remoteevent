@@ -88,7 +88,7 @@ function civicrm_api3_remote_participant_validate($params) {
   }
 
   // special case: invitation decline (confirm=0) skips validation
-  if (isset($params['confirm']) && $params['confirm'] == '0') {
+  if (isset($params['confirm']) && 0 === (int) $params['confirm']) {
     return $validation->createAPI3Success('RemoteEvent', 'validate');
   }
 

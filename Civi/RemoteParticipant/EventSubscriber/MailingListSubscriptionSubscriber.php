@@ -159,10 +159,8 @@ final class MailingListSubscriptionSubscriber implements EventSubscriberInterfac
     $doubleOptIn = $event->getEvent()['event_remote_registration.is_mailing_list_double_optin'] ?? FALSE;
     if ($doubleOptIn) {
       /** @var string $subject */
-      // @phpstan-ignore offsetAccess.notFound
       $subject = $event->getEvent()['event_remote_registration.mailing_list_double_optin_subject'];
       /** @var string $text */
-      // @phpstan-ignore offsetAccess.notFound
       $text = $event->getEvent()['event_remote_registration.mailing_list_double_optin_text'];
     }
 

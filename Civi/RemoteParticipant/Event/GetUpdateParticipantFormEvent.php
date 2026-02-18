@@ -46,7 +46,7 @@ class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase {
           'return' => 'participant_status_id',
         ]);
         $status_name = \CRM_Remoteevent_Registration::getParticipantStatusName($participant_status_id);
-        if ($status_name == 'Invited') {
+        if ('Invited' === $status_name) {
           // this IS an invitation
           $l10n = $this->getLocalisation();
           $this->addFields(

@@ -39,11 +39,11 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
     // register one contact
     $contactA = $this->createContact();
     $registration1 = $this->registerRemote($event['id'], ['email' => $contactA['email']]);
-    $this->assertEmpty($registration1['is_error'], 'Registration Failed');
+    self::assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // get the event data
     $remote_event = $this->getRemoteEvent($event['id']);
-    $this->assertTrue(!isset($remote_event['speakers']),
+    self::assertTrue(!isset($remote_event['speakers']),
                                 "When speakers are disabled, the 'speakers' key should not be there.");
   }
 
@@ -60,13 +60,13 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
     // register one contact
     $contactA = $this->createContact();
     $registration1 = $this->registerRemote($event['id'], ['email' => $contactA['email']]);
-    $this->assertEmpty($registration1['is_error'], 'Registration Failed');
+    self::assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // get the event data
     $remote_event = $this->getRemoteEvent($event['id']);
-    $this->assertArrayHasKey('speakers', $remote_event,
+    self::assertArrayHasKey('speakers', $remote_event,
                                 "When speakers are enabled, the 'speakers' key should be there");
-    $this->assertEquals('[]', $remote_event['speakers'],
+    self::assertEquals('[]', $remote_event['speakers'],
                              'Speakers should be (json) empty');
   }
 
@@ -75,7 +75,7 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
    */
   public function testSpeakers() {
     // @todo See https://github.com/systopia/de.systopia.remoteevent/pull/95
-    $this->markTestSkipped('Roles are currently not supported');
+    self::markTestSkipped('Roles are currently not supported');
 
     // disable speakers
     $this->setSpeakerRoles([4]);
@@ -89,7 +89,7 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
       'email'   => $contact1['email'],
       'role_id' => 1,
     ]);
-    $this->assertEmpty($registration1['is_error'], 'Registration Failed');
+    self::assertEmpty($registration1['is_error'], 'Registration Failed');
 
     // register speaker only contact
     $contact2 = $this->createContact();
@@ -97,7 +97,7 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
       'email'   => $contact2['email'],
       'role_id' => 4,
     ]);
-    $this->assertEmpty($registration2['is_error'], 'Registration Failed');
+    self::assertEmpty($registration2['is_error'], 'Registration Failed');
 
     // register mixed contact
     $contact3 = $this->createContact();
@@ -105,24 +105,24 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
       'email'   => $contact3['email'],
       'role_id' => [1, 4],
     ]);
-    $this->assertEmpty($registration3['is_error'], 'Registration Failed');
+    self::assertEmpty($registration3['is_error'], 'Registration Failed');
 
     // get the results
     $remote_event = $this->getRemoteEvent($event['id']);
-    $this->assertArrayHasKey('speakers', $remote_event,
+    self::assertArrayHasKey('speakers', $remote_event,
                              "When speakers are enabled, the 'speakers' key should be there");
     $event_speakers = json_decode($remote_event['speakers'], TRUE);
-    $this->assertNotNull($event_speakers, "Couldn't decode speakers json");
+    self::assertNotNull($event_speakers, "Couldn't decode speakers json");
 
     // check speakers and get speaker IDs
     $speaker_ids = [];
     foreach ($event_speakers as $event_speaker_fields) {
       $event_speaker = $this->mapFieldArray($event_speaker_fields);
-      $this->assertNotEmpty($event_speaker['name'], 'Speaker should have a name');
-      $this->assertNotEmpty($event_speaker['first_name'], 'Speaker should have a first_name');
-      $this->assertNotEmpty($event_speaker['last_name'], 'Speaker should have a last_name');
-      $this->assertNotEmpty($event_speaker['roles'], 'Speaker should have at least one role');
-      $this->assertNotEmpty($event_speaker['contact_id'], 'Speaker contact_id should be set.');
+      self::assertNotEmpty($event_speaker['name'], 'Speaker should have a name');
+      self::assertNotEmpty($event_speaker['first_name'], 'Speaker should have a first_name');
+      self::assertNotEmpty($event_speaker['last_name'], 'Speaker should have a last_name');
+      self::assertNotEmpty($event_speaker['roles'], 'Speaker should have at least one role');
+      self::assertNotEmpty($event_speaker['contact_id'], 'Speaker contact_id should be set.');
       $speaker_ids[] = $event_speaker['contact_id'];
     }
 
@@ -130,10 +130,10 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
     $this->assertFalse(in_array($contact1['id'], $speaker_ids), 'Contact1 should not be in the speaker list');
 
     // contact 2 _should_ be in the speakers list
-    $this->assertTrue(in_array($contact2['id'], $speaker_ids), 'Contact2 should be in the speaker list');
+    self::assertTrue(in_array($contact2['id'], $speaker_ids), 'Contact2 should be in the speaker list');
 
     // contact 3 _should_ be in the speakers list
-    $this->assertTrue(in_array($contact3['id'], $speaker_ids), 'Contact3 should be in the speaker list');
+    self::assertTrue(in_array($contact3['id'], $speaker_ids), 'Contact3 should be in the speaker list');
   }
 
   /**
@@ -152,7 +152,7 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
           'email'   => $contact['email'],
           'role_id' => $this->randomSubset($roles),
         ]);
-        $this->assertEmpty($registration['is_error'], 'Registration Failed');
+        self::assertEmpty($registration['is_error'], 'Registration Failed');
       }
     }
 
@@ -167,14 +167,14 @@ class CRM_Remoteevent_SpeakerTest extends CRM_Remoteevent_TestBase {
       $remote_events = $this->getRemoteEvents(array_keys($events));
       foreach ($remote_events as $remote_event) {
         $event_speakers = json_decode($remote_event['speakers'], TRUE);
-        $this->assertNotNull($event_speakers, "Couldn't decode speakers json");
+        self::assertNotNull($event_speakers, "Couldn't decode speakers json");
         foreach ($event_speakers as $event_speaker_spec) {
           $event_speaker = $this->mapFieldArray($event_speaker_spec);
           $event_speaker_roles = explode(',', $event_speaker['roles']);
           foreach ($event_speaker_roles as $event_speaker_role) {
             $event_speaker_role = trim($event_speaker_role);
-            $this->assertTrue(
-              in_array($event_speaker_role, $speaker_role_labels),
+            self::assertTrue(
+              in_array($event_speaker_role, $speaker_role_labels, TRUE),
               'The role given here should be one of the speaker roles'
             );
           }

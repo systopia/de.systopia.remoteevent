@@ -418,7 +418,7 @@ function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
  * Add event configuration tabs
  */
 function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context) {
-  if ($tabsetName == 'civicrm/event/manage') {
+  if ('civicrm/event/manage' === $tabsetName) {
     if (!empty($context['event_id'])) {
       CRM_Remoteevent_UI::updateEventTabs($context['event_id'], $tabs);
     }
@@ -432,7 +432,7 @@ function remoteevent_civicrm_tabset($tabsetName, &$tabs, $context) {
  * Implements hook_civicrm_copy().
  */
 function remoteevent_civicrm_copy($objectName, &$object) {
-  if ($objectName == 'Event') {
+  if ('Event' === $objectName) {
     // we have the new event ID...
     $new_event_id = (int) $object->id;
     $original_event_id = NULL;
@@ -441,7 +441,7 @@ function remoteevent_civicrm_copy($objectName, &$object) {
     $callstack = debug_backtrace();
     foreach ($callstack as $call) {
       if (isset($call['class']) && isset($call['function'])) {
-        if ($call['class'] == 'CRM_Event_BAO_Event' && $call['function'] == 'copy') {
+        if ('CRM_Event_BAO_Event' === $call['class'] && 'copy' === $call['function']) {
           // this should be it:
           $original_event_id = (int) $call['args'][0];
           CRM_Remoteevent_BAO_Session::copySessions($original_event_id, $new_event_id);
@@ -462,7 +462,7 @@ function remoteevent_civicrm_copy($objectName, &$object) {
  * Monitor Participant objects
  */
 function remoteevent_civicrm_pre($op, $objectName, $id, &$params) {
-  if (($op == 'edit' || $op == 'create') && $objectName == 'Participant') {
+  if (('edit' === $op || 'create' === $op) && 'Participant' === $objectName) {
     CRM_Remoteevent_ChangeActivity::recordPre($id, $params);
   }
 }
@@ -483,7 +483,7 @@ function remoteevent_civicrm_custom($op, $groupID, $entityID, &$params): void {
  * Implements hook_civicrm_post().
  */
 function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-  if (($op == 'edit' || $op == 'create') && $objectName == 'Participant') {
+  if (('edit' === $op || 'create' === $op) && 'Participant' === $objectName) {
     CRM_Remoteevent_ChangeActivity::recordPost($objectId);
   }
 }
@@ -493,7 +493,7 @@ function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
  */
 function remoteevent_civicrm_pageRun(&$page) {
   $pageName = $page->getVar('_name');
-  if ($pageName == 'CRM_Event_Page_Tab') {
+  if ('CRM_Event_Page_Tab' === $pageName) {
     CRM_Remoteevent_Form_ParticipantSessions::injectSessionsInfo($page);
   }
 }
@@ -502,7 +502,7 @@ function remoteevent_civicrm_pageRun(&$page) {
  * Implements hook_civicrm_links().
  */
 function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
-  if ($objectName == 'Participant' && $op == 'participant.selector.row') {
+  if ('Participant' === $objectName && 'participant.selector.row' === $op) {
     $links[] = [
       'name' => E::ts('Sessions'),
       'url' => CRM_Utils_System::url('civicrm/event/participant/sessions', "participant_id={$objectId}&reset=1"),
@@ -517,7 +517,7 @@ function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask,
  */
 function remoteevent_civicrm_searchTasks($objectType, &$tasks) {
   // add "Session Registration" task to participant list
-  if ($objectType == 'event') {
+  if ('event' === $objectType) {
     $tasks[] = [
       'title' => E::ts('Session Registration'),
       'class' => 'CRM_Remoteevent_Form_Task_ParticipantSession',

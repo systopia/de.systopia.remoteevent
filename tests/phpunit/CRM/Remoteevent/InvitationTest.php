@@ -72,7 +72,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+    self::assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // CONFIRM the registration
     $this->registerRemote(
@@ -112,7 +112,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+    self::assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // CONFIRM the registration
     $this->registerRemote(
@@ -259,11 +259,11 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+    self::assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // check if the prefill worked
     foreach (['first_name', 'last_name', 'email'] as $field) {
-      $this->assertEquals(
+      self::assertEquals(
         $contact[$field],
         $fields[$field]['value'],
         "Prefill for field '{$field}' did not work"
@@ -311,7 +311,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+    self::assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // CONFIRM the registration
     $this->registerRemote(
@@ -364,7 +364,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
 
     // check if the prefill worked
     foreach (['first_name', 'last_name', 'email'] as $field) {
-      $this->assertEquals(
+      self::assertEquals(
         $contact[$field],
         $fields[$field]['value'],
         "Prefill for field '{$field}' did not work"
@@ -475,11 +475,11 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+    self::assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // check if the prefill worked
     foreach (['first_name', 'last_name', 'email'] as $field) {
-      $this->assertEquals(
+      self::assertEquals(
         $contact[$field],
         $fields[$field]['value'],
         "Prefill for field '{$field}' did not work"
@@ -606,11 +606,11 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
         ]
     )['values'];
     $this->assertGetFormStandardFields($fields, TRUE);
-    $this->assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
+    self::assertTrue(array_key_exists('confirm', $fields), "Field 'confirm' not in registration form");
 
     // check if the prefill worked
     foreach (['first_name', 'last_name', 'email'] as $field) {
-      $this->assertEquals(
+      self::assertEquals(
         $contact[$field],
         $fields[$field]['value'],
         "Prefill for field '{$field}' did not work"
@@ -629,7 +629,7 @@ class CRM_Remoteevent_InvitationTest extends CRM_Remoteevent_TestBase {
           'confirm' => 0,
         ]
     )['values'];
-    $this->assertEmpty($validation_errors, 'There should not be validation errors for confirm=0.');
+    self::assertEmpty($validation_errors, 'There should not be validation errors for confirm=0.');
 
     // then: RemoteParticipant.create
     $this->registerRemote(

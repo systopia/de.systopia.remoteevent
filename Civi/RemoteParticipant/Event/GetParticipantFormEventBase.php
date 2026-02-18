@@ -167,7 +167,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
 
     try {
       // add a greeting for updating registrations
-      if ($context == 'update' && $participant_id) {
+      if ('update' === $context && $participant_id) {
         $contact_name = \civicrm_api3('Contact', 'getvalue', [
           'id'     => $contact_id,
           'return' => 'display_name',
@@ -182,7 +182,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
       }
 
       // add a greeting for invitations
-      if ($context == 'create' && $participant_id) {
+      if ('create' === $context && $participant_id) {
         // first: find out the participant status
         $participant_status_id = (int) \civicrm_api3('Participant', 'getvalue', [
           'id'     => $participant_id,
@@ -212,7 +212,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
       }
 
       // add a greeting for cancellations
-      if ($context == 'cancel' && $participant_id) {
+      if ('cancel' === $context && $participant_id) {
         $contact_name = \civicrm_api3('Contact', 'getvalue', [
           'id'     => $contact_id,
           'return' => 'display_name',

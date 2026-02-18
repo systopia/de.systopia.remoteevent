@@ -49,7 +49,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase {
           'email' => $contact['email'],
         ]
       );
-      $this->fail('RemoteParticipant.cancel without identification should fail');
+      self::fail('RemoteParticipant.cancel without identification should fail');
     }
     catch (CRM_Core_Exception $ex) {
       // @ignoreException
@@ -83,7 +83,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase {
 
     // verify contact is cancelled
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-    $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+    self::assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
   }
 
   /**
@@ -112,7 +112,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase {
 
     // verify contact is cancelled
     $participant = $this->traitCallAPISuccess('Participant', 'getsingle', ['id' => $participant_id]);
-    $this->assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
+    self::assertEquals('Cancelled', $participant['participant_status'], "Participant doesn't seem to be cancelled");
   }
 
 }

@@ -40,6 +40,7 @@ final class RegistrationEventFactory {
     $participantData = [];
     foreach ($profile->getFields() as $fieldKey => $fieldSpec) {
       if (array_key_exists($fieldKey, $submissionData)) {
+        // @phpstan-ignore method.deprecated
         $entityNames = (array) ($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
         $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
         $value = isset($fieldSpec['value_callback'])
@@ -80,7 +81,7 @@ final class RegistrationEventFactory {
    */
   private function getDefaultRoleId(array $event): int {
     // 1 = Attendee
-    return (int) ($event['default_role_id'] ?: 1);
+    return is_numeric($event['default_role_id'] ?? NULL) ? (int) $event['default_role_id'] : 1;
   }
 
   /**
@@ -100,6 +101,7 @@ final class RegistrationEventFactory {
     foreach ($profile->getAdditionalParticipantsFields($event) as $fieldKey => $fieldSpec) {
       $participantNo = $this->getAdditionalParticipantNo($fieldKey);
       if (NULL !== $participantNo && array_key_exists($fieldKey, $submissionData)) {
+        // @phpstan-ignore method.deprecated
         $entityNames = (array) ($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
         $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
         $value = isset($fieldSpec['value_callback'])
