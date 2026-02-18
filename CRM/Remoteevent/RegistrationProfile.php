@@ -615,7 +615,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    * @phpstan-param array<string, array<string, mixed>> $field_spec
    *    specs, see getFields()
    *
-   * @param string $value
+   * @param string|null $value
    *    field value
    *
    * @return boolean
@@ -628,7 +628,9 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     $validation = $field_spec['validation'] ?? '';
     switch ($validation) {
       case 'Email':
-        return preg_match('#^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$#', $value) > 0;
+        // Since CiviCRM Core uses \CRM_Utils_Rule::email() for validating e-mail addresses, we rely on it here.
+        // \CRM_Utils_Rule::email() returns TRUE for unset or empty values, therefore require a value here.
+        return NULL !== $value && '' !== $value && \CRM_Utils_Rule::email($value);
 
       case 'Integer':
       case 'Int':
@@ -654,7 +656,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
       default:
         // check for regex
         if (substr($validation, 0, 6) == 'regex:') {
-          if (strlen($value) > 0) {
+          if (NULL !== $value && strlen($value) > 0) {
             return preg_match(substr($validation, 6), $value) > 0;
           }
           else {
