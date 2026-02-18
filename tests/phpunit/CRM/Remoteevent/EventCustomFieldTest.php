@@ -13,10 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use Civi\Test\Api3TestTrait;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -24,127 +21,166 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Some very basic tests around CiviRemote Event
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
-class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase
-{
-    /**
-     * Search a set of values in a single value custom fields
-     */
-    public function testRemoteEventGetCustom()
-    {
-        // create custom group
-        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-        $customData->syncOptionGroup(E::path('tests/resources/option_group_age_range.json'));
-        $customData->syncCustomGroup(E::path('tests/resources/custom_group_event_test2.json'));
+class CRM_Remoteevent_EventCustomFieldTest extends CRM_Remoteevent_TestBase {
 
-        // create decoy events
-        $decoy1 = $this->createRemoteEvent();
-        $decoy2 = $this->createRemoteEvent();
-        $decoy3 = $this->createRemoteEvent();
-        $decoy4 = $this->createRemoteEvent();
+  /**
+   * Search a set of values in a single value custom fields
+   */
+  public function testRemoteEventGetCustom() {
+    // create custom group
+    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+    $customData->syncOptionGroup(E::path('tests/resources/option_group_age_range.json'));
+    $customData->syncCustomGroup(E::path('tests/resources/custom_group_event_test2.json'));
 
-        // create an event with custom fields
-        $event = $this->createRemoteEvent([
-              'title' => "Event with values",
-              'event_test2.event_single_test' => '2',
-              'event_test2.event_multi_test'  => [2,3],
-          ]);
+    // create decoy events
+    $decoy1 = $this->createRemoteEvent();
+    $decoy2 = $this->createRemoteEvent();
+    $decoy3 = $this->createRemoteEvent();
+    $decoy4 = $this->createRemoteEvent();
 
-        // SINGLE VALUE CUSTOM FIELD
-        // run a simple search for the custom field
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 2,
-            'event_test2.event_single_test' => '2'
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by single custom field search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by single custom field search");
+    // create an event with custom fields
+    $event = $this->createRemoteEvent(
+      [
+        'title' => 'Event with values',
+        'event_test2.event_single_test' => '2',
+        'event_test2.event_multi_test' => [2, 3],
+      ]
+    );
 
-        // run a simple search for the custom field
-        /* TODO: should this be working?
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 2,
-            'event_test2.event_single_test' => '2,3,4'
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by single custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by single custom field range search");
-        */
+    // SINGLE VALUE CUSTOM FIELD
+    // run a simple search for the custom field
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 2,
+        'event_test2.event_single_test' => '2',
+      ]
+    );
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by single custom field search');
+    self::assertEquals(
+      $event['id'],
+      $search_result['id'],
+      'The event could not be found by single custom field search'
+    );
 
-        // run a simple search for the custom field
-        /* TODO: should this be working?
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 2,
-            'event_test2.event_single_test' => [2,3,4]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by single custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by single custom field range search");
-        */
+    // run a simple search for the custom field
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 2,
+        'event_test2.event_single_test' => ['IN' => [2, 3, 4]],
+      ]
+    );
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by single custom field range search');
+    self::assertEquals(
+      $event['id'],
+      $search_result['id'],
+      'The event could not be found by single custom field range search'
+    );
 
-        // run a simple search for the custom field
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 2,
-            'event_test2.event_single_test' => ['IN' => [2,3,4]]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by single custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by single custom field range search");
+    // MULTI VALUE CUSTOM FIELD
+    // run a simple search for the custom field
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 2,
+        'event_test2.event_multi_test' => ['IN' => [2]],
+      ]
+    );
+    self::assertArrayHasKey(
+      'id',
+      $search_result,
+      'The event could not be found by multi custom field search'
+    );
+    self::assertEquals(
+      $event['id'],
+      $search_result['id'],
+      'The event could not be found by multi custom field search'
+    );
 
-        /* run a simple search for the custom field, bad format
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 2,
-            'event_test2.event_single_test' => [2,3,4]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by single custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by single custom field range search");
-        */
+    // run a simple search for the custom field
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 3,
+        'event_test2.event_multi_test' => ['IN' => [2, 3]],
+      ]
+    );
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
+      $event['id'],
+      $search_result['id'],
+      'The event could not be found by multi custom field range search'
+    );
 
+    // run a simple search for the custom field
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 3,
+        'event_test2.event_multi_test' => ['IN' => [3, 2]],
+      ]
+    );
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
+      $event['id'],
+      $search_result['id'],
+      'The event could not be found by multi custom field range search'
+    );
 
-        // MULTI VALUE CUSTOM FIELD
-        // run a simple search for the custom field
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 2,
-            'event_test2.event_multi_test' => ['IN' => [2]]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field search");
+    // run a simple search for the custom field
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 3,
+        'event_test2.event_multi_test' => ['IN' => [2, 3, 4]],
+      ]
+    );
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
+      $event['id'],
+      $search_result['id'],
+      'The event could not be found by multi custom field range search'
+    );
 
-        // run a simple search for the custom field
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 3,
-            'event_test2.event_multi_test' => ['IN' => [2,3]]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field range search");
+    // run a search for the custom field with the precise values
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 3,
+        'event_test2.event_multi_test' => [2, 3],
+      ]
+    );
+    self::assertArrayHasKey('id', $search_result, 'The event could not be found by multi custom field range search');
+    self::assertEquals(
+      $event['id'],
+      $search_result['id'],
+      'The event could not be found by multi custom field range search'
+    );
 
-        // run a simple search for the custom field
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 3,
-            'event_test2.event_multi_test' => ['IN' => [3,2]]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field range search");
-
-
-        // run a simple search for the custom field
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 3,
-            'event_test2.event_multi_test' => ['IN' => [2,3,4]]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field range search");
-
-        // run a search for the custom field with the precise values
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 3,
-            'event_test2.event_multi_test' => [2,3]
-        ]);
-        $this->assertArrayHasKey('id', $search_result, "The event could not be found by multi custom field range search");
-        $this->assertEquals($event['id'], $search_result['id'], "The event could not be found by multi custom field range search");
-
-        // run a search for the custom field field with more than the precise values
-        $search_result = $this->traitCallAPISuccess('RemoteEvent', 'get', [
-            'option.limit'                  => 3,
-            'event_test2.event_multi_test' => [2,3,4]
-        ]);
-        $this->assertEmpty(CRM_Utils_Array::value('id', $search_result), "The should could not be found by this multi custom field equals operation");
-    }
+    // run a search for the custom field field with more than the precise values
+    $search_result = $this->traitCallAPISuccess(
+      'RemoteEvent',
+      'get',
+      [
+        'option.limit' => 3,
+        'event_test2.event_multi_test' => [2, 3, 4],
+      ]
+    );
+    self::assertEmpty(
+      $search_result['id'] ?? NULL,
+      'The should could not be found by this multi custom field equals operation'
+    );
+  }
 
 }

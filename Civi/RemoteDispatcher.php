@@ -13,10 +13,9 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class RemoteEvent
@@ -25,30 +24,29 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * Abstract event class to provide some basic functions
  */
-class RemoteDispatcher
-{
-    /** @var EventDispatcherInterface */
-    protected $dispatcher = null;
+class RemoteDispatcher {
+  /**
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+  protected $dispatcher = NULL;
 
-    public function __construct()
-    {
-        $this->dispatcher = \Civi::dispatcher();
-    }
+  public function __construct() {
+    $this->dispatcher = \Civi::dispatcher();
+  }
 
-    /**
-     * Adds an event listener that listens on the specified events.
-     *
-     * @param string   $eventName The event to listen on
-     * @param callable $listener  The listener
-     * @param int      $priority  The higher this value, the earlier an event
-     *                            listener will be triggered in the chain (defaults to 0)
-     */
-    public function addUniqueListener($eventName, $listener, $priority = 0)
-    {
-        // first remove to avoid duplicate registrations
-        $this->dispatcher->removeListener($eventName, $listener);
+  /**
+   * Adds an event listener that listens on the specified events.
+   *
+   * @param string $eventName
+   * @param callable $listener  The listener
+   * @param int $priority
+   *                            listener will be triggered in the chain (defaults to 0)
+   */
+  public function addUniqueListener($eventName, $listener, $priority = 0) {
+    // first remove to avoid duplicate registrations
+    $this->dispatcher->removeListener($eventName, $listener);
 
-        // then register the event
-        $this->dispatcher->addListener($eventName, $listener, $priority);
-    }
+    // then register the event
+    $this->dispatcher->addListener($eventName, $listener, $priority);
+  }
+
 }

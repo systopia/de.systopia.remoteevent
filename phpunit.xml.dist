@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
-<!-- convertWarningsToExceptions is disabled because of undefined array key access. -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          colors="true"
          convertWarningsToExceptions="false"
          failOnRisky="true"
          failOnWarning="true"
-         forceCoversAnnotation="false"
+         forceCoversAnnotation="true"
          bootstrap="tests/phpunit/bootstrap.php">
 
   <php>

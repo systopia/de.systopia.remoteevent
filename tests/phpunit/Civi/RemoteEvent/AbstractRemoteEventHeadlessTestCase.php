@@ -26,6 +26,7 @@ use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\ClockMock;
 
+// phpcs:ignore Generic.Files.LineLength.TooLong
 abstract class AbstractRemoteEventHeadlessTestCase extends TestCase implements HeadlessInterface, TransactionalInterface {
 
   public static function tearDownAfterClass(): void {
@@ -44,9 +45,7 @@ abstract class AbstractRemoteEventHeadlessTestCase extends TestCase implements H
 
   protected function setUp(): void {
     parent::setUp();
-    // @phpstan-ignore-next-line
     \CRM_Core_Config::singleton()->userFrameworkBaseURL = 'http://localhost/';
-    // @phpstan-ignore-next-line
     \CRM_Core_Config::singleton()->cleanURL = 1;
     $this->setUserPermissions(['access CiviCRM']);
 
@@ -58,7 +57,6 @@ abstract class AbstractRemoteEventHeadlessTestCase extends TestCase implements H
    */
   protected function setUserPermissions(?array $permissions): void {
     $userPermissions = \CRM_Core_Config::singleton()->userPermissionClass;
-    // @phpstan-ignore-next-line
     $userPermissions->permissions = $permissions;
   }
 

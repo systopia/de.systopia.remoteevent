@@ -13,195 +13,207 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
-use Civi\RemoteParticipant\Event\UpdateEvent as UpdateEvent;
 
 /**
  * Class to execute event registration updates (RemoteParticipant.update)
  */
-class CRM_Remoteevent_RegistrationUpdate
-{
-    const STAGE1_PARTICIPANT_IDENTIFICATION = 5000;
-    const STAGE2_APPLY_CONTACT_CHANGES      = -5000;
-    const STAGE3_APPLY_PARTICIPANT_CHANGES  = -10000;
-    const STAGE4_COMMUNICATION              = -15000;
+class CRM_Remoteevent_RegistrationUpdate {
+  public const STAGE1_PARTICIPANT_IDENTIFICATION = 5000;
+  public const STAGE2_APPLY_CONTACT_CHANGES      = -5000;
+  public const STAGE3_APPLY_PARTICIPANT_CHANGES  = -10000;
+  public const STAGE4_COMMUNICATION              = -15000;
 
-    const BEFORE_PARTICIPANT_IDENTIFICATION = self::STAGE1_PARTICIPANT_IDENTIFICATION + 50;
-    const AFTER_PARTICIPANT_IDENTIFICATION  = self::STAGE1_PARTICIPANT_IDENTIFICATION - 50;
-    const BEFORE_APPLY_CONTACT_CHANGES      = self::STAGE2_APPLY_CONTACT_CHANGES + 50;
-    const AFTER_APPLY_CONTACT_CHANGES       = self::STAGE2_APPLY_CONTACT_CHANGES - 50;
-    const BEFORE_APPLY_PARTICIPANT_CHANGES  = self::STAGE3_APPLY_PARTICIPANT_CHANGES + 50;
-    const AFTER_APPLY_PARTICIPANT_CHANGES   = self::STAGE3_APPLY_PARTICIPANT_CHANGES - 50;
+  public const BEFORE_PARTICIPANT_IDENTIFICATION = self::STAGE1_PARTICIPANT_IDENTIFICATION + 50;
+  public const AFTER_PARTICIPANT_IDENTIFICATION  = self::STAGE1_PARTICIPANT_IDENTIFICATION - 50;
+  public const BEFORE_APPLY_CONTACT_CHANGES      = self::STAGE2_APPLY_CONTACT_CHANGES + 50;
+  public const AFTER_APPLY_CONTACT_CHANGES       = self::STAGE2_APPLY_CONTACT_CHANGES - 50;
+  public const BEFORE_APPLY_PARTICIPANT_CHANGES  = self::STAGE3_APPLY_PARTICIPANT_CHANGES + 50;
+  public const AFTER_APPLY_PARTICIPANT_CHANGES   = self::STAGE3_APPLY_PARTICIPANT_CHANGES - 50;
 
-    /**
-     * Adds a warning message indicating that additionally registered
-     * participants can not be updated.
-     *
-     * @param \Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent $event
-     *
-     * @return void
-     */
-    public static function addAdditionalParticipantInfo(GetUpdateParticipantFormEvent $event): void {
-        if (!empty($additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo($event->getParticipantID() ?? 0, $event))) {
-            $event->addWarning($event->localise(
-                'You registered additional participants which can not be updated: %1',
-                [1 => '<ul><li>' . implode('</li><li>', array_column($additional_participants, 'message')) . '</li></ul>']
-            ));
-        }
+  /**
+   * Adds a warning message indicating that additionally registered
+   * participants can not be updated.
+   *
+   * @param \Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent $event
+   *
+   * @return void
+   */
+  public static function addAdditionalParticipantInfo(GetUpdateParticipantFormEvent $event): void {
+    if (!empty(
+    $additional_participants = CRM_Remoteevent_RemoteEvent::getAdditionalParticipantInfo(
+      $event->getParticipantID() ?? 0,
+      $event
+    )
+    )) {
+      $event->addWarning($event->localise(
+        'You registered additional participants which can not be updated: %1',
+        [1 => '<ul><li>' . implode('</li><li>', array_column($additional_participants, 'message')) . '</li></ul>']
+      ));
+    }
+  }
+
+  /**
+   * Will load the participant data
+   *
+   * @param \Civi\RemoteParticipant\Event\UpdateEvent $registration_update
+   *   registration update event
+   */
+  public static function loadParticipant($registration_update) {
+    $l10n = $registration_update->getLocalisation();
+
+    // of there is already an issue, don't waste any more time on this
+    if ($registration_update->hasErrors()) {
+      return;
     }
 
-    /**
-     * Will load the participant data
-     *
-     * @param UpdateEvent $registration_update
-     *   registration update event
-     */
-    public static function loadParticipant($registration_update)
-    {
-        $l10n = $registration_update->getLocalisation();
-
-        // of there is already an issue, don't waste any more time on this
-        if ($registration_update->hasErrors()) {
-            return;
-        }
-
-        // load the current participant
-        if (empty($registration_update->getParticipant())) {
-            $participant_id = $registration_update->getParticipantID();
-            if (empty($participant_id)) {
-                $registration_update->addError($l10n->ts("Participant could not be identified."));
-            } else {
-                $registration_update->setParticipant(civicrm_api3('Participant', 'getsingle', ['id' => $participant_id]));
-            }
-        }
-
-        // load the current contact
-        if (empty($registration_update->getContact())) {
-            $contact_id = $registration_update->getContactID();
-            if (empty($contact_id)) {
-                $registration_update->addError($l10n->ts("Contact could not be identified."));
-            } else {
-                $registration_update->setContact(civicrm_api3('Contact', 'getsingle', ['id' => $contact_id]));
-            }
-        }
+    // load the current participant
+    if (empty($registration_update->getParticipant())) {
+      $participant_id = $registration_update->getParticipantID();
+      if (empty($participant_id)) {
+        $registration_update->addError($l10n->ts('Participant could not be identified.'));
+      }
+      else {
+        $registration_update->setParticipant(civicrm_api3('Participant', 'getsingle', ['id' => $participant_id]));
+      }
     }
 
-    /**
-     * Apply all profile data as update
-     *
-     * @param UpdateEvent $registration_update
-     *   registration update event
-     */
-    public static function addProfileData($registration_update)
-    {
-        // get the profile (has already been validated)
-        $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registration_update);
+    // load the current contact
+    if (empty($registration_update->getContact())) {
+      $contact_id = $registration_update->getContactID();
+      if (empty($contact_id)) {
+        $registration_update->addError($l10n->ts('Contact could not be identified.'));
+      }
+      else {
+        $registration_update->setContact(civicrm_api3('Contact', 'getsingle', ['id' => $contact_id]));
+      }
+    }
+  }
 
-        $submission_data = $registration_update->getQueryParameters();
-        foreach ($profile->getFields() as $field_key => $field_spec) {
-            if (isset($submission_data[$field_key])) {
-                $entity_names = (array) ($field_spec['entity_name'] ?? $profile->getFieldEntities($field_key));
-                $entity_field_name = $field_spec['entity_field_name'] ?? $field_key;
-                $value = isset($field_spec['value_callback'])
+  /**
+   * Apply all profile data as update
+   *
+   * @param \Civi\RemoteParticipant\Event\UpdateEvent $registration_update
+   *   registration update event
+   */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+  public static function addProfileData($registration_update) {
+    // get the profile (has already been validated)
+    $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registration_update);
+
+    $submission_data = $registration_update->getQueryParameters();
+    foreach ($profile->getFields() as $field_key => $field_spec) {
+      if (isset($submission_data[$field_key])) {
+        // @phpstan-ignore method.deprecated
+        $entity_names = (array) ($field_spec['entity_name'] ?? $profile->getFieldEntities($field_key));
+        $entity_field_name = $field_spec['entity_field_name'] ?? $field_key;
+        $value = isset($field_spec['value_callback'])
                     ? $field_spec['value_callback']($submission_data[$field_key], $submission_data)
                     : $submission_data[$field_key];
 
-                if ($field_spec['type'] === 'File') {
-                    // Do nothing if no file is submitted on update.
-                    if (NULL === $value) {
-                        continue;
-                    }
+        if ($field_spec['type'] === 'File') {
+          // Do nothing if no file is submitted on update.
+          if (NULL === $value) {
+            continue;
+          }
 
-                    if (is_array($value)) {
-                        // The previous file, if any, might become orphaned.
-                        /** @var \Civi\RemoteTools\Helper\FilePersisterInterface $filePersister */
-                        $filePersister = \Civi::service('remoteevent.file_persister');
-                        $value = $filePersister->persistFileFromForm($value, NULL, $registration_update->getContactID());
-                    }
-                }
-
-                if (in_array('Contact', $entity_names, TRUE)) {
-                    $registration_update->addContactUpdate($entity_field_name, $value);
-                }
-                if (in_array('Participant', $entity_names, TRUE)) {
-                    $registration_update->addParticipantUpdate($entity_field_name, $value);
-                }
-            }
+          if (is_array($value)) {
+            // The previous file, if any, might become orphaned.
+            /** @var \Civi\RemoteTools\Helper\FilePersisterInterface $filePersister */
+            $filePersister = \Civi::service('remoteevent.file_persister');
+            $value = $filePersister->persistFileFromForm($value, NULL, $registration_update->getContactID());
+          }
         }
+
+        if (in_array('Contact', $entity_names, TRUE)) {
+          $registration_update->addContactUpdate($entity_field_name, $value);
+        }
+        if (in_array('Participant', $entity_names, TRUE)) {
+          $registration_update->addParticipantUpdate($entity_field_name, $value);
+        }
+      }
+    }
+  }
+
+  /**
+   * Apply any contact updates
+   *
+   * @param \Civi\RemoteParticipant\Event\UpdateEvent $registration_update
+   *   registration update event
+   */
+  public static function updateContact($registration_update) {
+    // of there is already an issue, don't waste any more time on this
+    if ($registration_update->hasErrors()) {
+      return;
     }
 
-    /**
-     * Apply any contact updates
-     *
-     * @param UpdateEvent $registration_update
-     *   registration update event
-     */
-    public static function updateContact($registration_update)
-    {
-        // of there is already an issue, don't waste any more time on this
-        if ($registration_update->hasErrors()) {
-            return;
+    // check if there is any updates
+    $contact_updates = $registration_update->getContactUpdates();
+    if (!empty($contact_updates) && !$registration_update->isContactUpdated()) {
+      $contact_updates['id'] = $registration_update->getContactID();
+      CRM_Remoteevent_CustomData::resolveCustomFields($contact_updates);
+      try {
+        $xcm_profile = $registration_update->getXcmMatchProfile();
+        if ($xcm_profile && $xcm_profile != 'off') {
+          // if there is an XCM profile -> let's run it
+          // in this case we use the XCM with the update profile with the ID set
+          $contact_updates['xcm_profile'] = $xcm_profile;
+          try {
+            civicrm_api3('Contact', 'getorcreate', $contact_updates);
+            $registration_update->setContactUpdated();
+          }
+          catch (Exception $ex) {
+            throw new Exception(
+                  E::ts("Couldn't update contact: ") . $ex->getMessage());
+          }
+
         }
+        else {
+          // else just write to the DB
+          civicrm_api3('Contact', 'create', $contact_updates);
+          $registration_update->setContactUpdated();
 
-        // check if there is any updates
-        $contact_updates = $registration_update->getContactUpdates();
-        if (!empty($contact_updates) && !$registration_update->isContactUpdated()) {
-            $contact_updates['id'] = $registration_update->getContactID();
-            CRM_Remoteevent_CustomData::resolveCustomFields($contact_updates);
-            try {
-                $xcm_profile = $registration_update->getXcmMatchProfile();
-                if ($xcm_profile && $xcm_profile != 'off') {
-                    // if there is an XCM profile -> let's run it
-                    // in this case we use the XCM with the update profile with the ID set
-                    $contact_updates['xcm_profile'] = $xcm_profile;
-                    try {
-                        civicrm_api3('Contact', 'getorcreate', $contact_updates);
-                        $registration_update->setContactUpdated();
-                    } catch (Exception $ex) {
-                        throw new Exception(
-                            E::ts("Couldn't update contact: ") . $ex->getMessage());
-                    }
-
-                } else {
-                    // else just write to the DB
-                    civicrm_api3('Contact', 'create', $contact_updates);
-                    $registration_update->setContactUpdated();
-
-                }
-            } catch (CRM_Core_Exception $ex) {
-                $l10n = $registration_update->getLocalisation();
-                $registration_update->addError($l10n->ts("Couldn't update contact: %1", [1 => $l10n->ts($ex->getMessage())]));
-            }
         }
+      }
+      catch (CRM_Core_Exception $ex) {
+        $l10n = $registration_update->getLocalisation();
+        $registration_update->addError($l10n->ts("Couldn't update contact: %1", [1 => $l10n->ts($ex->getMessage())]));
+      }
+    }
+  }
+
+  /**
+   * Apply any participant updates
+   *
+   * @param \Civi\RemoteParticipant\Event\UpdateEvent $registration_update
+   *   registration update event
+   */
+  public static function updateParticipant($registration_update) {
+    // of there is already an issue, don't waste any more time on this
+    if ($registration_update->hasErrors()) {
+      return;
     }
 
-    /**
-     * Apply any participant updates
-     *
-     * @param UpdateEvent $registration_update
-     *   registration update event
-     */
-    public static function updateParticipant($registration_update)
-    {
-        // of there is already an issue, don't waste any more time on this
-        if ($registration_update->hasErrors()) {
-            return;
-        }
-
-        // check if there is any updates
-        $participant_updates = $registration_update->getParticipantUpdates();
-        if (!empty($participant_updates) && !$registration_update->isParticipantUpdated()) {
-            $participant_updates['id'] = $registration_update->getParticipantID();
-            $participant_updates['force_trigger_eventmessage'] = 1;
-            CRM_Remoteevent_CustomData::resolveCustomFields($participant_updates);
-            try {
-                civicrm_api3('Participant', 'create', $participant_updates);
-                $registration_update->setParticipantUpdated();
-            } catch (CRM_Core_Exception $ex) {
-                $l10n = $registration_update->getLocalisation();
-                $registration_update->addError($l10n->ts("Couldn't update participant: %1", [1 => $l10n->ts($ex->getMessage())]));
-            }
-        }
+    // check if there is any updates
+    $participant_updates = $registration_update->getParticipantUpdates();
+    if (!empty($participant_updates) && !$registration_update->isParticipantUpdated()) {
+      $participant_updates['id'] = $registration_update->getParticipantID();
+      $participant_updates['force_trigger_eventmessage'] = 1;
+      CRM_Remoteevent_CustomData::resolveCustomFields($participant_updates);
+      try {
+        civicrm_api3('Participant', 'create', $participant_updates);
+        $registration_update->setParticipantUpdated();
+      }
+      catch (CRM_Core_Exception $ex) {
+        $l10n = $registration_update->getLocalisation();
+        $registration_update->addError(
+          $l10n->ts("Couldn't update participant: %1", [1 => $l10n->ts($ex->getMessage())])
+        );
+      }
     }
+  }
+
 }

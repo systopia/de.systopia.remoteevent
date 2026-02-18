@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\RemoteEvent\Event;
 
@@ -25,62 +26,58 @@ use Symfony\Contracts\EventDispatcher\Event;
  *
  * This event compiles a list of Registration Profiles for Remote Events
  */
-class RegistrationProfileListEvent extends Event
-{
+class RegistrationProfileListEvent extends Event {
 
-    public const NAME = 'civi.remoteevent.registration.profile.list';
+  public const NAME = 'civi.remoteevent.registration.profile.list';
 
-    /**
-     * @var  \Civi\RemoteEvent\Event\EventProfile[]
-     */
-    protected array $profiles = [];
+  /**
+   * @var  \Civi\RemoteEvent\Event\EventProfile[]
+   */
+  protected array $profiles = [];
 
-    /**
-     * @return \Civi\RemoteEvent\Event\EventProfile[]
-     */
-    public function getProfiles(): array
-    {
-        return $this->profiles;
+  /**
+   * @return \Civi\RemoteEvent\Event\EventProfile[]
+   */
+  public function getProfiles(): array {
+    return $this->profiles;
+  }
+
+  /**
+   * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
+   */
+  public function getProfileInstance(string $name): \CRM_Remoteevent_RegistrationProfile {
+    return $this->getProfile($name)->getInstance();
+  }
+
+  /**
+   * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
+   */
+  public function getProfile(string $name): \Civi\RemoteEvent\Event\EventProfile {
+    if (isset($this->profiles[$name])) {
+      return $this->profiles[$name];
     }
 
-    /**
-     * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
-     */
-    public function getProfileInstance(string $name): \CRM_Remoteevent_RegistrationProfile
-    {
-        return $this->getProfile($name)->getInstance();
-    }
+    throw new \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException("Profile {$name} is not available");
+  }
 
-    /**
-     * @throws \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException
-     */
-    public function getProfile(string $name): \Civi\RemoteEvent\Event\EventProfile
-    {
-        if (isset($this->profiles[$name])) {
-          return $this->profiles[$name];
-        }
-
-        throw new \CRM_Remoteevent_Exceptions_RegistrationProfileNotFoundException("Profile {$name} is not available");
+  /**
+   * @param string $class_name
+   *   FQCN that extends CRM_Remoteevent_RegistrationProfile.
+   * @param string $name
+   *   Unique profile name. Must be the same as returned by getName() in
+   *   profile class.
+   * @param callable|null $new_instance_callback
+   *   Callback to create a new profile instance. If not specified the class
+   *   constructor is used.
+   */
+  public function addProfile(string $class_name, string $name, string $label, $new_instance_callback = NULL): void {
+    if (isset($this->profiles[$name])) {
+      \Civi::log()->error(sprintf('A profile named "%s" is already registered.', $name));
     }
-
-    /**
-     * @param string $class_name
-     *   FQCN that extends CRM_Remoteevent_RegistrationProfile.
-     * @param string $name
-     *   Unique profile name. Must be the same as returned by getName() in
-     *   profile class.
-     * @param callable|null $new_instance_callback
-     *   Callback to create a new profile instance. If not specified the class
-     *   constructor is used.
-     */
-    public function addProfile(string $class_name, string $name, string $label, $new_instance_callback = NULL): void
-    {
-        if (isset($this->profiles[$name])) {
-            \Civi::log()->error(sprintf('A profile named "%s" is already registered.', $name));
-        } else {
-           $profile_data = new \Civi\RemoteEvent\Event\EventProfile($class_name, $name, $label, $new_instance_callback);
-           $this->profiles[$name] = $profile_data;
-        }
+    else {
+      $profile_data = new \Civi\RemoteEvent\Event\EventProfile($class_name, $name, $label, $new_instance_callback);
+      $this->profiles[$name] = $profile_data;
     }
+  }
 
 }

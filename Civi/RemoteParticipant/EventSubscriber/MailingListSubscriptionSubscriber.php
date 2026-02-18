@@ -19,7 +19,6 @@ declare(strict_types = 1);
 
 namespace Civi\RemoteParticipant\EventSubscriber;
 
-use Civi\Api4\Group;
 use Civi\RemoteParticipant\Event\ChangingEvent;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase;
@@ -160,10 +159,8 @@ final class MailingListSubscriptionSubscriber implements EventSubscriberInterfac
     $doubleOptIn = $event->getEvent()['event_remote_registration.is_mailing_list_double_optin'] ?? FALSE;
     if ($doubleOptIn) {
       /** @var string $subject */
-      // @phpstan-ignore offsetAccess.notFound
       $subject = $event->getEvent()['event_remote_registration.mailing_list_double_optin_subject'];
       /** @var string $text */
-      // @phpstan-ignore offsetAccess.notFound
       $text = $event->getEvent()['event_remote_registration.mailing_list_double_optin_text'];
     }
 

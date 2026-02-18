@@ -20,7 +20,6 @@ declare(strict_types = 1);
 namespace Civi\RemoteParticipant\EventSubscriber;
 
 use Civi\Api4\Generic\Result;
-use Civi\Api4\Group;
 use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
@@ -36,10 +35,10 @@ use PHPUnit\Framework\TestCase;
  */
 final class MailingListSubscriptionSubscriberTest extends TestCase {
 
-    /**
-     * @var \Civi\RemoteTools\Api4\Api4Interface&\PHPUnit\Framework\MockObject\MockObject
-     */
-    private MockObject $api4Mock;
+  /**
+   * @var \Civi\RemoteTools\Api4\Api4Interface&\PHPUnit\Framework\MockObject\MockObject
+   */
+  private MockObject $api4Mock;
 
   /**
    * @var \Civi\RemoteParticipant\MailingList\MailingListSubscriptionManager&\PHPUnit\Framework\MockObject\MockObject
@@ -48,13 +47,13 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
 
   private MailingListSubscriptionSubscriber $subscriber;
 
-    protected function setUp(): void {
+  protected function setUp(): void {
     parent::setUp();
     $this->api4Mock = $this->createMock(Api4Interface::class);
     $this->subscriptionManagerMock = $this->createMock(MailingListSubscriptionManager::class);
     $this->subscriber = new MailingListSubscriptionSubscriber(
-      $this->api4Mock,
-      $this->subscriptionManagerMock
+    $this->api4Mock,
+    $this->subscriptionManagerMock
     );
   }
 
@@ -77,44 +76,44 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
   /**
    * @phpstan-param array<string, array<string, mixed>> $initialFields
    *
-   * @dataProvider provideInitialFields()
+   * @dataProvider provideInitialFields
    */
   public function testOnGetCreateParticipantForm(array $initialFields, int $expectedWeight): void {
-      $event = new GetCreateParticipantFormEvent([], [
-        'event_remote_registration.mailing_list_group_ids' => [2, 3],
-        'event_remote_registration.mailing_list_subscriptions_label' => 'Test Label',
-      ]);
+    $event = new GetCreateParticipantFormEvent([], [
+      'event_remote_registration.mailing_list_group_ids' => [2, 3],
+      'event_remote_registration.mailing_list_subscriptions_label' => 'Test Label',
+    ]);
 
-      $event->addFields($initialFields);
+    $event->addFields($initialFields);
 
-      $this->api4Mock->method('execute')
-        ->with('Group', 'get', [
-          'select' => ['id', 'title'],
-          'where' => [
+    $this->api4Mock->method('execute')
+      ->with('Group', 'get', [
+        'select' => ['id', 'title'],
+        'where' => [
             ['id', 'IN', [2, 3]],
             ['is_active', '=', TRUE],
-          ],
-          'orderBy' => ['title' => 'ASC'],
-        ])
-        ->willReturn(new Result([['id' => 2, 'title' => 'Group2']]));
-
-      $this->subscriber->onGetCreateParticipantForm($event);
-      static::assertEquals($initialFields + [
-        'mailing_list_group_ids' => [
-          'name' => 'mailing_list_group_ids',
-          'entity_name' => 'Custom',
-          'label' => 'Test Label',
-          'type' => 'Multi-Select',
-          'options' => [2 => 'Group2'],
-          'weight' => $expectedWeight,
         ],
-      ], $event->getResult());
+        'orderBy' => ['title' => 'ASC'],
+      ])
+      ->willReturn(new Result([['id' => 2, 'title' => 'Group2']]));
+
+    $this->subscriber->onGetCreateParticipantForm($event);
+    static::assertEquals($initialFields + [
+      'mailing_list_group_ids' => [
+        'name' => 'mailing_list_group_ids',
+        'entity_name' => 'Custom',
+        'label' => 'Test Label',
+        'type' => 'Multi-Select',
+        'options' => [2 => 'Group2'],
+        'weight' => $expectedWeight,
+      ],
+    ], $event->getResult());
   }
 
   /**
    * @phpstan-param array<string, array<string, mixed>> $initialFields
    *
-   * @dataProvider provideInitialFields()
+   * @dataProvider provideInitialFields
    */
   public function testOnGetUpdateParticipantForm(array $initialFields, int $expectedWeight): void {
     $event = new GetUpdateParticipantFormEvent([], [
@@ -137,21 +136,21 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
 
     $this->subscriber->onGetUpdateParticipantForm($event);
     static::assertEquals($initialFields + [
-        'mailing_list_group_ids' => [
-          'name' => 'mailing_list_group_ids',
-          'entity_name' => 'Custom',
-          'label' => 'Test Label',
-          'type' => 'Multi-Select',
-          'options' => [2 => 'Group2'],
-          'weight' => $expectedWeight,
-        ],
-      ], $event->getResult());
+      'mailing_list_group_ids' => [
+        'name' => 'mailing_list_group_ids',
+        'entity_name' => 'Custom',
+        'label' => 'Test Label',
+        'type' => 'Multi-Select',
+        'options' => [2 => 'Group2'],
+        'weight' => $expectedWeight,
+      ],
+    ], $event->getResult());
   }
 
   /**
    * @phpstan-return iterable<array{array<string, array<string, mixed>>, int}>
    */
-  public function provideInitialFields(): iterable {
+  public static function provideInitialFields(): iterable {
     yield [
       [],
       0,
@@ -160,8 +159,8 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
     yield [
       [
         'foo' => [
-        'name' => 'foo',
-        'type' => 'Text',
+          'name' => 'foo',
+          'type' => 'Text',
         ],
       ],
       0,
@@ -213,7 +212,6 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
     $this->subscriptionManagerMock->expects(static::once())->method('subscribeWithDoubleOptIn')
       ->with(23, 2, 'Test Subject', 'Test Text');
 
-
     $this->subscriber->onRegistrationEvent($event);
   }
 
@@ -228,7 +226,6 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
 
     $this->subscriptionManagerMock->expects(static::once())->method('subscribe')
       ->with(23, 2);
-
 
     $this->subscriber->onUpdateEvent($event);
   }
@@ -246,7 +243,6 @@ final class MailingListSubscriptionSubscriberTest extends TestCase {
 
     $this->subscriptionManagerMock->expects(static::once())->method('subscribeWithDoubleOptIn')
       ->with(23, 2, 'Test Subject', 'Test Text');
-
 
     $this->subscriber->onUpdateEvent($event);
   }

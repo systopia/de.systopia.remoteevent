@@ -13,100 +13,95 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
-use \Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
-use \Civi\RemoteEvent\Event\GetFieldsEvent as GetFieldsEvent;
+use Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
 
 /**
  * Functionality around the speakers of the event
  */
-class CRM_Remoteevent_EventSpeaker
-{
-    /**
-     * Extend the data returned by RemoteEvent.get by the location data
-     *
-     * @todo l10n
-     *
-     * @param GetResultEvent $result
-     */
-    public static function addSpeakerData(GetResultEvent $result)
-    {
-        // see if speakers are turned on
-        $speaker_roles = Civi::settings()->get('remote_registration_speaker_roles');
-        if (empty($speaker_roles) || !is_array($speaker_roles)) {
-            return;
-        }
+class CRM_Remoteevent_EventSpeaker {
 
-        // extract event_ids
-        $events = [];
-        foreach ($result->getEventData() as &$event) {
-            $event['speakers'] = '[]'; // set default to none
-            $events[$event['id']] = &$event;
-        }
-        if (empty($events)) {
-            // nothing to do
-            return;
-        }
-
-        // get the data
-        $speakers_by_event = self::getSpeakersByEvent(array_keys($events), $speaker_roles);
-        foreach ($speakers_by_event as $event_id => $speakers) {
-            $events[$event_id]['speakers'] = json_encode($speakers);
-        }
+  /**
+   * Extend the data returned by RemoteEvent.get by the location data
+   *
+   * @todo l10n
+   *
+   * @param \Civi\RemoteEvent\Event\GetResultEvent $result
+   */
+  public static function addSpeakerData(GetResultEvent $result) {
+    // see if speakers are turned on
+    $speaker_roles = Civi::settings()->get('remote_registration_speaker_roles');
+    if (empty($speaker_roles) || !is_array($speaker_roles)) {
+      return;
     }
 
-    /**
-     * Add the fields to the RemoteEvent.get_fields list
-     *
-     * @param GetFieldsEvent $fields_collection
-     */
-    public static function addFieldSpecs($fields_collection)
-    {
-        // don't submit if turned off
-        $speaker_roles = Civi::settings()->get('remote_registration_speaker_roles');
-        if (empty($speaker_roles) || !is_array($speaker_roles)) {
-            return;
-        }
-
-        $fields_collection->setFieldSpec('speakers', [
-            'name'          => 'speakers',
-            'type'          => CRM_Utils_Type::T_STRING,
-            'format'        => 'json',
-            'title'         => E::ts("Speaker List"),
-            'description'   => E::ts("List of speakers of the event (json encoded)"),
-            'localizable'   => 1,
-            'is_core_field' => false,
-        ]);
+    // extract event_ids
+    $events = [];
+    foreach ($result->getEventData() as &$event) {
+      // set default to none
+      $event['speakers'] = '[]';
+      $events[$event['id']] = &$event;
+    }
+    if (empty($events)) {
+      // nothing to do
+      return;
     }
 
-    /**
-     * @param array $event_ids
-     *  list of events (event_id => event) to find speakers for
-     *
-     * @return array
-     *   event_id => speaker list
-     */
-    protected static function getSpeakersByEvent($event_ids, $role_ids)
-    {
-        // make sure it's all INTs
-        $event_id_list = implode(',', array_map('intval', $event_ids));
+    // get the data
+    $speakers_by_event = self::getSpeakersByEvent(array_keys($events), $speaker_roles);
+    foreach ($speakers_by_event as $event_id => $speakers) {
+      $events[$event_id]['speakers'] = json_encode($speakers);
+    }
+  }
 
-        // get the role condition
-        $role_conditions = [];
-        $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
-        foreach ($role_ids as $role_id) {
-            $role_id = (int) $role_id;
-            // remark: unlike other padded fields, this one drops the padding in the front or back
-            $role_conditions[] = "participant.role_id REGEXP '(^|{$value_separator}){$role_id}($|{$value_separator})'";
-//            $role_conditions[] = "participant.role_id = '{$role_id}'";
-//            $role_conditions[] = "participant.role_id LIKE '%{$value_separator}{$role_id}{$value_separator}%'";
-//            $role_conditions[] = "participant.role_id LIKE '{$role_id}{$value_separator}%'";
-//            $role_conditions[] = "participant.role_id LIKE '%{$value_separator}{$role_id}'";
-        }
-        $ROLE_CONDITION = implode(' OR ', $role_conditions);
+  /**
+   * Add the fields to the RemoteEvent.get_fields list
+   *
+   * @param \Civi\RemoteEvent\Event\GetFieldsEvent $fields_collection
+   */
+  public static function addFieldSpecs($fields_collection) {
+    // don't submit if turned off
+    $speaker_roles = Civi::settings()->get('remote_registration_speaker_roles');
+    if (empty($speaker_roles) || !is_array($speaker_roles)) {
+      return;
+    }
 
-        // build the query
-        $query = "
+    $fields_collection->setFieldSpec('speakers', [
+      'name'          => 'speakers',
+      'type'          => CRM_Utils_Type::T_STRING,
+      'format'        => 'json',
+      'title'         => E::ts('Speaker List'),
+      'description'   => E::ts('List of speakers of the event (json encoded)'),
+      'localizable'   => 1,
+      'is_core_field' => FALSE,
+    ]);
+  }
+
+  /**
+   * @param array $event_ids
+   *  list of events (event_id => event) to find speakers for
+   *
+   * @return array
+   *   event_id => speaker list
+   */
+  protected static function getSpeakersByEvent($event_ids, $role_ids) {
+    // make sure it's all INTs
+    $event_id_list = implode(',', array_map('intval', $event_ids));
+
+    // get the role condition
+    $role_conditions = [];
+    $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
+    foreach ($role_ids as $role_id) {
+      $role_id = (int) $role_id;
+      // remark: unlike other padded fields, this one drops the padding in the front or back
+      $role_conditions[] = "participant.role_id REGEXP '(^|{$value_separator}){$role_id}($|{$value_separator})'";
+    }
+    $ROLE_CONDITION = implode(' OR ', $role_conditions);
+
+    // build the query
+    $query = "
         SELECT
             participant.event_id              AS event_id,
             contact.display_name              AS name,
@@ -124,87 +119,86 @@ class CRM_Remoteevent_EventSpeaker
           AND status_type.class IN ('Positive', 'Pending')
         GROUP BY participant.event_id, participant.contact_id
         ";
-        $speaker = CRM_Core_DAO::executeQuery($query);
-        $speakers = [];
-        while ($speaker->fetch()) {
-            $speakers[$speaker->event_id][] = [
+    $speaker = CRM_Core_DAO::executeQuery($query);
+    $speakers = [];
+    while ($speaker->fetch()) {
+      $speakers[$speaker->event_id][] = [
                 [
-                    'name'        => 'name',
-                    'type'        => CRM_Utils_Type::T_STRING,
-                    'value'       => $speaker->name,
-                    'title'       => E::ts("Speaker Name"),
-                    'localizable' => 0,
+                  'name'        => 'name',
+                  'type'        => CRM_Utils_Type::T_STRING,
+                  'value'       => $speaker->name,
+                  'title'       => E::ts('Speaker Name'),
+                  'localizable' => 0,
                 ],
                 [
-                    'name'        => 'contact_id',
-                    'type'        => CRM_Utils_Type::T_INT,
-                    'value'       => $speaker->contact_id,
-                    'title'       => E::ts("Contact ID"),
-                    'localizable' => 0,
+                  'name'        => 'contact_id',
+                  'type'        => CRM_Utils_Type::T_INT,
+                  'value'       => $speaker->contact_id,
+                  'title'       => E::ts('Contact ID'),
+                  'localizable' => 0,
                 ],
                 [
-                    'name'        => 'last_name',
-                    'type'        => CRM_Utils_Type::T_STRING,
-                    'value'       => $speaker->last_name,
-                    'title'       => E::ts("Last Name"),
-                    'localizable' => 0,
+                  'name'        => 'last_name',
+                  'type'        => CRM_Utils_Type::T_STRING,
+                  'value'       => $speaker->last_name,
+                  'title'       => E::ts('Last Name'),
+                  'localizable' => 0,
                 ],
                 [
-                    'name'        => 'first_name',
-                    'type'        => CRM_Utils_Type::T_STRING,
-                    'value'       => $speaker->first_name,
-                    'title'       => E::ts("First Name"),
-                    'localizable' => 0,
+                  'name'        => 'first_name',
+                  'type'        => CRM_Utils_Type::T_STRING,
+                  'value'       => $speaker->first_name,
+                  'title'       => E::ts('First Name'),
+                  'localizable' => 0,
                 ],
                 [
-                    'name'        => 'roles',
-                    'type'        => CRM_Utils_Type::T_STRING,
-                    'value'       => self::translateRoles($speaker->roles, $role_ids),
-                    'title'       => E::ts("Speaker Roles"),
-                    'localizable' => 0,
+                  'name'        => 'roles',
+                  'type'        => CRM_Utils_Type::T_STRING,
+                  'value'       => self::translateRoles($speaker->roles, $role_ids),
+                  'title'       => E::ts('Speaker Roles'),
+                  'localizable' => 0,
                 ],
-            ];
-        }
-
-        return $speakers;
+      ];
     }
 
+    return $speakers;
+  }
 
-    /**
-     * Get a comma separated list of speaker roles
-     *
-     * @param string $field_value
-     *   the padded value as stored in the DB
-     * @param array $speaker_roles
-     *   the list of roles that are considered speakers
-     *
-     * @return string list of roles
-     */
-    protected static function translateRoles($field_value, $speaker_roles)
-    {
-        // first of all, it's possible the roles have been GROUP_CONCAT'ed
-        $all_roles = [];
-        foreach (explode(',', $field_value) as $roles_blob) {
-            $roles = CRM_Utils_Array::explodePadded($roles_blob);
-            $all_roles = array_merge($all_roles, $roles);
-        }
-
-        // filter to the ones that actually count
-        $relevant_roles = array_intersect($all_roles, $speaker_roles);
-
-        // now translate those roles to text
-        if (!empty($relevant_roles)) {
-            // todo: l10n
-            $all_roles = CRM_Remoteevent_EventCache::getRoles();
-            $roles_names = [];
-            foreach ($relevant_roles as $relevant_role_id) {
-                $roles_names[] = $all_roles[$relevant_role_id];
-            }
-            return implode(', ', $roles_names);
-
-        } else {
-            return '';
-        }
+  /**
+   * Get a comma separated list of speaker roles
+   *
+   * @param string $field_value
+   *   the padded value as stored in the DB
+   * @param array $speaker_roles
+   *   the list of roles that are considered speakers
+   *
+   * @return string list of roles
+   */
+  protected static function translateRoles($field_value, $speaker_roles) {
+    // first of all, it's possible the roles have been GROUP_CONCAT'ed
+    $all_roles = [];
+    foreach (explode(',', $field_value) as $roles_blob) {
+      $roles = CRM_Utils_Array::explodePadded($roles_blob);
+      $all_roles = array_merge($all_roles, $roles);
     }
+
+    // filter to the ones that actually count
+    $relevant_roles = array_intersect($all_roles, $speaker_roles);
+
+    // now translate those roles to text
+    if (!empty($relevant_roles)) {
+      // todo: l10n
+      $all_roles = CRM_Remoteevent_EventCache::getRoles();
+      $roles_names = [];
+      foreach ($relevant_roles as $relevant_role_id) {
+        $roles_names[] = $all_roles[$relevant_role_id];
+      }
+      return implode(', ', $roles_names);
+
+    }
+    else {
+      return '';
+    }
+  }
 
 }

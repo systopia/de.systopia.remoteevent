@@ -13,30 +13,31 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
-class CRM_Remoteevent_BAO_ParticipantSession extends CRM_Remoteevent_DAO_ParticipantSession
-{
-    /**
-     * Create a new ParticipantSession based on array-data
-     *
-     * @param array $params key-value pairs
-     *
-     * @return CRM_Remoteevent_DAO_ParticipantSession|NULL
-     */
-    public static function create($params)
-    {
-        $className = 'CRM_Remoteevent_DAO_ParticipantSession';
-        $entityName = 'ParticipantSession';
-        $hook = empty($params['id']) ? 'create' : 'edit';
+class CRM_Remoteevent_BAO_ParticipantSession extends CRM_Remoteevent_DAO_ParticipantSession {
 
-        CRM_Utils_Hook::pre($hook, $entityName, $params['id'] ?? NULL, $params);
-        $instance = new $className();
-        $instance->copyValues($params);
-        $instance->save();
-        CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
+  /**
+   * Create a new ParticipantSession based on array-data
+   *
+   * @param array $params key-value pairs
+   *
+   * @return CRM_Remoteevent_DAO_ParticipantSession|NULL
+   */
+  public static function create($params) {
+    $className = 'CRM_Remoteevent_DAO_ParticipantSession';
+    $entityName = 'ParticipantSession';
+    $hook = empty($params['id']) ? 'create' : 'edit';
 
-        return $instance;
-    }
+    CRM_Utils_Hook::pre($hook, $entityName, $params['id'] ?? NULL, $params);
+    $instance = new $className();
+    $instance->copyValues($params);
+    $instance->save();
+    CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
+
+    return $instance;
+  }
 
 }

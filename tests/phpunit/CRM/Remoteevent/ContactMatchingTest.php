@@ -13,10 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use Civi\Test\Api3TestTrait;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -24,114 +21,121 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests regarding general event registration
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
-class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase
-{
-    /**
-     * Test registration without a contact
-     *  expected: contact is created
-     */
-    public function testRegistrationWithoutContact()
-    {
-        // create an event
-        $event = $this->createRemoteEvent(
-            [
-                'event_remote_registration.remote_registration_default_profile' => 'Standard2',
-            ]
-        );
+class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase {
 
-        // generate some contact data without contact
-        $contact_data = $this->createContact();
-        civicrm_api3('Contact', 'delete', ['id' => $contact_data['id']]);
+  /**
+   * Test registration without a contact
+   *  expected: contact is created
+   */
+  public function testRegistrationWithoutContact() {
+    // create an event
+    $event = $this->createRemoteEvent(
+        [
+          'event_remote_registration.remote_registration_default_profile' => 'Standard2',
+        ]
+    );
 
-        // register contact
-        $registration_result = $this->registerRemote(
-            $event['id'],
-            [
-                'prefix_id' => $contact_data['prefix_id'],
-                'first_name' => $contact_data['first_name'],
-                'last_name' => $contact_data['last_name'],
-                'email' => $contact_data['email'],
-            ]
-        );
-        $this->assertNotEmpty($registration_result['participant_id'], "Registration failed.");
+    // generate some contact data without contact
+    $contact_data = $this->createContact();
+    civicrm_api3('Contact', 'delete', ['id' => $contact_data['id']]);
 
-        // find + load contact
-        $result = $this->traitCallAPISuccess(
-            'Contact',
-            'get',
-            [
-                'first_name' => $contact_data['first_name'],
-                'last_name' => $contact_data['last_name'],
-                'email' => $contact_data['email'],
-            ]
-        );
-        $this->assertEquals(1, $result['count'], "There should now be one contact with this data");
-    }
+    // register contact
+    $registration_result = $this->registerRemote(
+        $event['id'],
+        [
+          'prefix_id' => $contact_data['prefix_id'],
+          'first_name' => $contact_data['first_name'],
+          'last_name' => $contact_data['last_name'],
+          'email' => $contact_data['email'],
+        ]
+    );
+    self::assertNotEmpty($registration_result['participant_id'], 'Registration failed.');
 
-    /**
-     * Test registration with an existing contact
-     *  expected: contact is updated
-     */
-    public function testRegistrationContactUpdate()
-    {
+    // find + load contact
+    $result = $this->traitCallAPISuccess(
+        'Contact',
+        'get',
+        [
+          'first_name' => $contact_data['first_name'],
+          'last_name' => $contact_data['last_name'],
+          'email' => $contact_data['email'],
+        ]
+    );
+    self::assertEquals(1, $result['count'], 'There should now be one contact with this data');
+  }
 
-        // set up an XCM update profile
-        $update_profile_data = json_decode(file_get_contents(E::path('tests/resources/xcm_profile_testing_update.json')), 1);
-        $this->assertNotEmpty($update_profile_data, "Couldn't load update profile data");
-        $this->setUpXCMProfile('remoteevent_test_registration_update', $update_profile_data);
-        Civi::settings()->set('remote_registration_xcm_profile_update', 'remoteevent_test_registration_update');
-        Civi::settings()->set('remote_registration_xcm_profile', 'remoteevent_test_registration_update');
-        CRM_Xcm_Configuration::flushProfileCache();
+  /**
+   * Test registration with an existing contact
+   *  expected: contact is updated
+   */
+  public function testRegistrationContactUpdate() {
 
-        // FIRST TEST: REGISTRATION
-        // create an event
-        $event = $this->createRemoteEvent(
-            [
-                'event_remote_registration.remote_registration_default_profile' => 'Standard2',
-            ]
-        );
+    // set up an XCM update profile
+    $update_profile_data = json_decode(
+      file_get_contents(E::path('tests/resources/xcm_profile_testing_update.json')),
+      TRUE
+    );
+    self::assertNotEmpty($update_profile_data, "Couldn't load update profile data");
+    $this->setUpXCMProfile('remoteevent_test_registration_update', $update_profile_data);
+    Civi::settings()->set('remote_registration_xcm_profile_update', 'remoteevent_test_registration_update');
+    Civi::settings()->set('remote_registration_xcm_profile', 'remoteevent_test_registration_update');
+    CRM_Xcm_Configuration::flushProfileCache();
 
-        // generate some contact data without contact
-        $contact = $this->createContact();
+    // FIRST TEST: REGISTRATION
+    // create an event
+    $event = $this->createRemoteEvent(
+        [
+          'event_remote_registration.remote_registration_default_profile' => 'Standard2',
+        ]
+    );
 
-        // register contact
-        $registration_result = $this->registerRemote(
-            $event['id'],
-            [
-                'first_name' => $contact['first_name'],
-                'prefix_id' => $contact['prefix_id'],
-                'last_name' => $contact['last_name'],
-                'email' => $contact['email'],
-                'remote_contact_id' => $this->getRemoteContactKey($contact['id'])
-            ]
-        );
-        $this->assertNotEmpty($registration_result['participant_id'], "Registration failed.");
+    // generate some contact data without contact
+    $contact = $this->createContact();
 
-        // find + load contact
-        $current_contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contact['id']]);
-        $this->assertNotEquals('Testinho', $current_contact['first_name'], "The name should not have been updated");
+    // register contact
+    $registration_result = $this->registerRemote(
+        $event['id'],
+        [
+          'first_name' => $contact['first_name'],
+          'prefix_id' => $contact['prefix_id'],
+          'last_name' => $contact['last_name'],
+          'email' => $contact['email'],
+          'remote_contact_id' => $this->getRemoteContactKey($contact['id']),
+        ]
+    );
+    self::assertNotEmpty($registration_result['participant_id'], 'Registration failed.');
 
+    // find + load contact
+    $current_contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contact['id']]);
+    self::assertNotEquals('Testinho', $current_contact['first_name'], 'The name should not have been updated');
 
-        // SECOND TEST: UPDATE
-        // generate some contact data without contact
-        $contact2 = $this->createContact();
+    // SECOND TEST: UPDATE
+    // generate some contact data without contact
+    $contact2 = $this->createContact();
 
-        // register contact
-        $registration_result2 = $this->registerRemote(
-            $event['id'],
-            [
-                'first_name' => 'Testinho',
-                'prefix_id' => $contact2['prefix_id'],
-                'last_name' => $contact2['last_name'],
-                'email' => $contact2['email'],
-                'remote_contact_id' => $this->getRemoteContactKey($contact2['id'])
-            ]
-        );
-        $this->assertNotEmpty($registration_result2['participant_id'], "Registration failed.");
+    // register contact
+    $registration_result2 = $this->registerRemote(
+        $event['id'],
+        [
+          'first_name' => 'Testinho',
+          'prefix_id' => $contact2['prefix_id'],
+          'last_name' => $contact2['last_name'],
+          'email' => $contact2['email'],
+          'remote_contact_id' => $this->getRemoteContactKey($contact2['id']),
+        ]
+    );
+    self::assertNotEmpty($registration_result2['participant_id'], 'Registration failed.');
 
-        // find + load contact
-        $current_contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contact2['id']]);
-        $this->assertEquals('Testinho', $current_contact['first_name'], "The name should've been updated, an update profile was set");
-    }
+    // find + load contact
+    $current_contact = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contact2['id']]);
+    self::assertEquals(
+      'Testinho',
+      $current_contact['first_name'],
+      "The name should've been updated, an update profile was set"
+    );
+  }
+
 }

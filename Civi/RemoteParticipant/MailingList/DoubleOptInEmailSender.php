@@ -62,7 +62,6 @@ class DoubleOptInEmailSender {
     $url = str_replace('{token}', $token, $url);
     $text = str_replace('{subscribe.url}', $url, $text);
 
-    // @phpstan-ignore argument.type
     $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), [
       'controller' => __CLASS__,
       'schema' => ['contactId', 'groupId'],

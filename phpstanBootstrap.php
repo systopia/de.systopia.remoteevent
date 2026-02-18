@@ -24,18 +24,38 @@ $bootstrapFiles = $container->getParameter('bootstrapFiles');
 foreach ($bootstrapFiles as $bootstrapFile) {
   if (str_ends_with($bootstrapFile, 'vendor/autoload.php')) {
     $vendorDir = dirname($bootstrapFile);
+    // Installation via composer (e.g. as Drupal module)
     $civiCrmVendorDir = $vendorDir . '/civicrm';
     $civiCrmCoreDir = $civiCrmVendorDir . '/civicrm-core';
+    $civiCrmPackagesDir = $civiCrmVendorDir . '/civicrm-packages';
+    // Installation without composer (e.g. as WordPress plugin)
+    if (!is_dir($civiCrmCoreDir) || !is_dir($civiCrmPackagesDir)) {
+      $civiCrmCoreDir = $vendorDir . '/..';
+      $civiCrmPackagesDir = $civiCrmCoreDir . '/packages';
+    }
+    if (!is_dir($civiCrmCoreDir) || !is_dir($civiCrmPackagesDir)) {
+      continue;
+    }
     if (file_exists($civiCrmCoreDir)) {
       set_include_path(get_include_path()
         . PATH_SEPARATOR . $civiCrmCoreDir
-        . PATH_SEPARATOR . $civiCrmVendorDir . '/civicrm-packages'
+        . PATH_SEPARATOR . $civiCrmPackagesDir
       );
       // $bootstrapFile might not be included, yet. It is required for the
       // following require_once, though.
       require_once $bootstrapFile;
       // Prevent error "Class 'CRM_Core_Exception' not found in file".
       require_once $civiCrmCoreDir . '/CRM/Core/Exception.php';
+
+      // The class \Smarty extended by \CRM_Core_SmartyCompatibility uses the
+      // __call() method to delegate method calls to \Smarty\Smarty, but hasn't
+      // defined the methods itself which results in method not found errors. By
+      // aliasing \Smarty\Smarty to \Smarty we avoid these errors.
+      $smartyAutoloadFile = $civiCrmPackagesDir . '/smarty5/vendor/autoload.php';
+      if (file_exists($smartyAutoloadFile)) {
+        require_once $smartyAutoloadFile;
+        class_alias(\Smarty\Smarty::class, 'Smarty');
+      }
 
       break;
     }

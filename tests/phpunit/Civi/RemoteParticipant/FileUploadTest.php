@@ -29,6 +29,8 @@ use Civi\RemoteEvent\Fixtures\RemoteEventFixture;
 
 /**
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
 final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
 
@@ -45,12 +47,12 @@ final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
 
     try {
       $customField = CustomField::create(FALSE)->setValues([
-          'custom_group_id.name' => 'test_participant_custom_group',
-          'name' => 'file',
-          'label' => 'File Test',
-          'data_type' => 'File',
-          'html_type' => 'File',
-        ])->execute()->single();
+        'custom_group_id.name' => 'test_participant_custom_group',
+        'name' => 'file',
+        'label' => 'File Test',
+        'data_type' => 'File',
+        'html_type' => 'File',
+      ])->execute()->single();
 
       \Civi\Core\Transaction\Manager::singleton()->inc();
       \Civi\Core\Transaction\Manager::singleton()->getFrame()->setRollbackOnly();
@@ -78,7 +80,8 @@ final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
           'remote_contact_id' => 'remoteId',
           'file' => NULL,
         ]);
-      } catch (\CRM_Core_Exception $e) {
+      }
+      catch (\CRM_Core_Exception $e) {
         static::assertSame('Required', $e->getMessage());
       }
       static::assertNotNull($e);
@@ -200,7 +203,8 @@ final class FileUploadTest extends AbstractRemoteEventHeadlessTestCase {
             'content' => base64_encode('this is too long'),
           ],
         ]);
-      } catch (\CRM_Core_Exception $e) {
+      }
+      catch (\CRM_Core_Exception $e) {
         static::assertSame('File too large', $e->getMessage());
       }
       static::assertNotNull($e);

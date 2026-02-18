@@ -13,223 +13,212 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use CRM_Remoteevent_ExtensionUtil as E;
+declare(strict_types = 1);
 
+use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
  * Basic settings page
  */
-class CRM_Remoteevent_Form_Settings extends CRM_Core_Form
-{
-    const SETTINGS = [
+class CRM_Remoteevent_Form_Settings extends CRM_Core_Form {
+  private const SETTINGS = [
+    'remote_registration_blocking_status_list',
+    'remote_registration_invitation_confirm_default_value',
+    'remote_registration_speaker_roles',
+    'remote_registration_link',
+    'remote_registration_modify_link',
+    'remote_registration_cancel_link',
+    'remote_registration_xcm_profile',
+    'remote_registration_xcm_profile_update',
+    'remote_participant_change_activity_type_id',
+    'remote_event_get_performance_enhancement',
+    'remote_event_get_session_data',
+    'remote_event_mailing_list_subscription_confirm_link',
+  ];
+
+  public function buildQuickForm() {
+    $this->setTitle(E::ts('CiviRemote Event - General Configuration'));
+
+    $this->add(
+        'select',
         'remote_registration_blocking_status_list',
+        E::ts('Statuses blocking (re)registration'),
+        $this->getNegativeStatusList(),
+        FALSE,
+        ['class' => 'crm-select2', 'multiple' => 'multiple']
+    );
+
+    $this->add(
+        'select',
         'remote_registration_invitation_confirm_default_value',
+        E::ts('Default value for confirmation of invitations'),
+        [
+          0 => E::ts('Decline Invitation'),
+          1 => E::ts('Accept Invitation'),
+        ],
+        TRUE,
+        ['class' => 'crm-select2']
+    );
+
+    $this->add(
+        'select',
         'remote_registration_speaker_roles',
-        'remote_registration_link',
-        'remote_registration_modify_link',
-        'remote_registration_cancel_link',
-        'remote_registration_xcm_profile',
-        'remote_registration_xcm_profile_update',
-        'remote_participant_change_activity_type_id',
-        'remote_event_get_performance_enhancement',
+        E::ts('Speaker Roles'),
+        CRM_Remoteevent_EventCache::getRoles(),
+        FALSE,
+        ['class' => 'crm-select2', 'multiple' => 'multiple']
+    );
+
+    $this->add(
+        'select',
         'remote_event_get_session_data',
-        'remote_event_mailing_list_subscription_confirm_link',
-    ];
+        E::ts('Submit Session Data'),
+        [0 => E::ts('no'), 1 => E::ts('yes')],
+        FALSE,
+        ['class' => 'crm-select2']
+    );
 
-    public function buildQuickForm()
-    {
-        $this->setTitle(E::ts("CiviRemote Event - General Configuration"));
+    $this->add(
+        'select',
+        'remote_participant_change_activity_type_id',
+        E::ts('Participant Update Activity Type'),
+        $this->getActivityTypes(),
+        FALSE,
+        ['class' => 'crm-select2']
+    );
 
-        $this->add(
-            'select',
-            'remote_registration_blocking_status_list',
-            E::ts("Statuses blocking (re)registration"),
-            $this->getNegativeStatusList(),
-            false,
-            ['class' => 'crm-select2', 'multiple' => 'multiple']
-        );
+    $this->add(
+        'select',
+        'remote_registration_xcm_profile',
+        E::ts('Default Matcher Profile (XCM)'),
+        CRM_Xcm_Configuration::getProfileList(),
+        FALSE,
+        ['class' => 'crm-select2']
+    );
 
-        $this->add(
-            'select',
-            'remote_registration_invitation_confirm_default_value',
-            E::ts('Default value for confirmation of invitations'),
-            [
-                0 => E::ts('Decline Invitation'),
-                1 => E::ts('Accept Invitation'),
-            ],
-            true,
-            ['class' => 'crm-select2']
-        );
+    $this->add(
+        'select',
+        'remote_registration_xcm_profile_update',
+        E::ts('Default Update Profile (XCM)'),
+        ['off' => E::ts('No Updates')] + CRM_Xcm_Configuration::getProfileList(),
+        FALSE,
+        ['class' => 'crm-select2']
+    );
 
-        $this->add(
-            'select',
-            'remote_registration_speaker_roles',
-            E::ts("Speaker Roles"),
-            CRM_Remoteevent_EventCache::getRoles(),
-            false,
-            ['class' => 'crm-select2', 'multiple' => 'multiple']
-        );
+    $this->add(
+        'select',
+        'remote_event_get_performance_enhancement',
+        E::ts('Speed up API'),
+        [0 => E::ts('no'), 1 => E::ts('yes')],
+        FALSE,
+        ['class' => 'crm-select2']
+    );
 
-        $this->add(
-            'select',
-            'remote_event_get_session_data',
-            E::ts("Submit Session Data"),
-            [0 => E::ts("no"), 1 => E::ts("yes")],
-            false,
-            ['class' => 'crm-select2']
-        );
-
-        $this->add(
-            'select',
-            'remote_participant_change_activity_type_id',
-            E::ts("Participant Update Activity Type"),
-            $this->getActivityTypes(),
-            false,
-            ['class' => 'crm-select2']
-        );
-
-        $this->add(
-            'select',
-            'remote_registration_xcm_profile',
-            E::ts("Default Matcher Profile (XCM)"),
-            CRM_Xcm_Configuration::getProfileList(),
-            false,
-            ['class' => 'crm-select2']
-        );
-
-        $this->add(
-            'select',
-            'remote_registration_xcm_profile_update',
-            E::ts("Default Update Profile (XCM)"),
-            ['off' => E::ts("No Updates")] + CRM_Xcm_Configuration::getProfileList(),
-            false,
-            ['class' => 'crm-select2']
-        );
-
-        $this->add(
-            'select',
-            'remote_event_get_performance_enhancement',
-            E::ts("Speed up API"),
-            [0 => E::ts("no"), 1 => E::ts("yes")],
-            false,
-            ['class' => 'crm-select2']
-        );
-
-
-//        $this->add(
-//            'text',
-//            'remote_registration_link',
-//            E::ts("Registration Link"),
-//            ['class' => 'huge']
-//        );
-//        $this->addRule('remote_registration_link', E::ts("Please enter a valid URL"), 'url');
-
-        $this->add(
-            'text',
-            'remote_registration_modify_link',
-            E::ts("Registration Modification Link"),
-            ['class' => 'huge']
-        );
-        $this->addRule('remote_registration_modify_link', E::ts("Please enter a valid URL"), 'url');
-        $this->addRule(
-            'remote_registration_modify_link',
-            E::ts('The link must include the placeholder <code>{token}</code>.'),
-            'regex',
-            '/\{token\}/'
-        );
-
-        $this->add(
-            'text',
-            'remote_registration_cancel_link',
-            E::ts("Registration Cancellation Link"),
-            ['class' => 'huge']
-        );
-        $this->addRule('remote_registration_cancel_link', E::ts("Please enter a valid URL"), 'url');
-        $this->addRule(
-            'remote_registration_modify_link',
-            E::ts('The link must include the placeholder <code>{token}</code>.'),
-            'regex',
-            '/\{token\}/'
-        );
-
-      $this->add(
+    $this->add(
         'text',
-        'remote_event_mailing_list_subscription_confirm_link',
-        E::ts('Mailing List Subscription Confirm Link'),
+        'remote_registration_modify_link',
+        E::ts('Registration Modification Link'),
         ['class' => 'huge']
-      );
-      $this->addRule('remote_event_mailing_list_subscription_confirm_link', E::ts('Please enter a valid URL'), 'url');
-      $this->addRule(
-        'remote_event_mailing_list_subscription_confirm_link',
+    );
+    $this->addRule('remote_registration_modify_link', E::ts('Please enter a valid URL'), 'url');
+    $this->addRule(
+        'remote_registration_modify_link',
         E::ts('The link must include the placeholder <code>{token}</code>.'),
         'regex',
         '/\{token\}/'
-      );
+    );
 
-        $this->addButtons(
+    $this->add(
+        'text',
+        'remote_registration_cancel_link',
+        E::ts('Registration Cancellation Link'),
+        ['class' => 'huge']
+    );
+    $this->addRule('remote_registration_cancel_link', E::ts('Please enter a valid URL'), 'url');
+    $this->addRule(
+        'remote_registration_modify_link',
+        E::ts('The link must include the placeholder <code>{token}</code>.'),
+        'regex',
+        '/\{token\}/'
+    );
+
+    $this->add(
+    'text',
+    'remote_event_mailing_list_subscription_confirm_link',
+    E::ts('Mailing List Subscription Confirm Link'),
+    ['class' => 'huge']
+    );
+    $this->addRule('remote_event_mailing_list_subscription_confirm_link', E::ts('Please enter a valid URL'), 'url');
+    $this->addRule(
+    'remote_event_mailing_list_subscription_confirm_link',
+    E::ts('The link must include the placeholder <code>{token}</code>.'),
+    'regex',
+    '/\{token\}/'
+    );
+
+    $this->addButtons(
+        [
             [
-                [
-                    'type' => 'submit',
-                    'name' => E::ts('Save'),
-                    'isDefault' => true,
-                ],
-            ]
-        );
+              'type' => 'submit',
+              'name' => E::ts('Save'),
+              'isDefault' => TRUE,
+            ],
+        ]
+    );
 
-        // add defaults
-        foreach (self::SETTINGS as $setting_key) {
-            $this->setDefaults([$setting_key => Civi::settings()->get($setting_key)]);
-        }
-
-        parent::buildQuickForm();
+    // add defaults
+    foreach (self::SETTINGS as $setting_key) {
+      $this->setDefaults([$setting_key => Civi::settings()->get($setting_key)]);
     }
 
-    public function postProcess()
-    {
-        $values = $this->exportValues();
+    parent::buildQuickForm();
+  }
 
-        foreach (self::SETTINGS as $setting_key) {
-            Civi::settings()->set($setting_key, $values[$setting_key] ?? NULL);
-        }
-        CRM_Core_Session::setStatus(E::ts("Configuration Updated"));
-        parent::postProcess();
-    }
+  public function postProcess() {
+    $values = $this->exportValues();
 
-    /**
-     * Get a list of negative registration statuses
-     *
-     * @return array
-     *   status id => status label
-     */
-    public function getNegativeStatusList() {
-        $list = [];
-        $query = civicrm_api3('ParticipantStatusType', 'get', [
-            'option.limit' => 0,
-            'class'        => 'Negative',
-            'return'       => 'id,label'
-        ]);
-        foreach ($query['values'] as $status) {
-            $list[$status['id']] = $status['label'];
-        }
-        return $list;
+    foreach (self::SETTINGS as $setting_key) {
+      Civi::settings()->set($setting_key, $values[$setting_key] ?? NULL);
     }
+    CRM_Core_Session::setStatus(E::ts('Configuration Updated'));
+    parent::postProcess();
+  }
 
-    /**
-     * Get a list of activity types
-     */
-    private function getActivityTypes()
-    {
-        $types = ['' => E::ts("-- don't record changes --")];
-        $query = civicrm_api3('OptionValue', 'get', [
-            'option_group_id' => 'activity_type',
-            'is_reserved'     => 0,
-            'component_id'    => ['IS NULL' => 1],
-            'option.limit'    => 0,
-            'return'          => 'label,value'
-        ]);
-        foreach ($query['values'] as $type) {
-            $types[$type['value']] = $type['label'];
-        }
-        return $types;
+  /**
+   * Get a list of negative registration statuses
+   *
+   * @return array
+   *   status id => status label
+   */
+  public function getNegativeStatusList() {
+    $list = [];
+    $query = civicrm_api3('ParticipantStatusType', 'get', [
+      'option.limit' => 0,
+      'class'        => 'Negative',
+      'return'       => 'id,label',
+    ]);
+    foreach ($query['values'] as $status) {
+      $list[$status['id']] = $status['label'];
     }
+    return $list;
+  }
+
+  /**
+   * Get a list of activity types
+   */
+  private function getActivityTypes() {
+    $types = ['' => E::ts("-- don't record changes --")];
+    $query = civicrm_api3('OptionValue', 'get', [
+      'option_group_id' => 'activity_type',
+      'is_reserved'     => 0,
+      'component_id'    => ['IS NULL' => 1],
+      'option.limit'    => 0,
+      'return'          => 'label,value',
+    ]);
+    foreach ($query['values'] as $type) {
+      $types[$type['value']] = $type['label'];
+    }
+    return $types;
+  }
+
 }

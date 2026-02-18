@@ -13,10 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use Civi\Test\Api3TestTrait;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -24,70 +21,80 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests regarding event registration updates
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
-class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase
-{
-    /**
-     * Test simple upgrade
-     */
-    public function testSimpleRegistrationUpdate()
-    {
-        // create an event
-        $event = $this->createRemoteEvent([
-            'event_remote_registration.remote_registration_default_profile'        => 'Standard2',
-            'event_remote_registration.remote_registration_profiles'               => ['Standard2'],
-            'event_remote_registration.remote_registration_default_update_profile' => 'Standard2',
-            'event_remote_registration.remote_registration_update_profiles'        => ['Standard2'],
-            'has_waitlist' => 0,
-            'max_participants' => 1,
-        ]);
+class CRM_Remoteevent_RegistrationUpdateTest extends CRM_Remoteevent_TestBase {
 
-        // register one contact
-        $contactA_before = $this->createContact();
-        $registration1 = $this->registerRemote($event['id'], [
-            'email'      => $contactA_before['email'],
-            'prefix_id'  => $contactA_before['prefix_id'],
-            'first_name' => $contactA_before['first_name'],
-            'last_name'  => $contactA_before['last_name'],
-            ]);
-        $this->assertEmpty($registration1['is_error'], "Registration Failed");
+  /**
+   * Test simple upgrade
+   */
+  public function testSimpleRegistrationUpdate() {
+    // create an event
+    $event = $this->createRemoteEvent([
+      'event_remote_registration.remote_registration_default_profile'        => 'Standard2',
+      'event_remote_registration.remote_registration_profiles'               => ['Standard2'],
+      'event_remote_registration.remote_registration_default_update_profile' => 'Standard2',
+      'event_remote_registration.remote_registration_update_profiles'        => ['Standard2'],
+      'has_waitlist' => 0,
+      'max_participants' => 1,
+    ]);
 
-        // test getForm for update
-        $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $registration1['participant_id'], null, 'update');
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'token'    => $token,
-            'context'  => 'update',
-            'event_id' => $event['id'],
-        ])['values'];
-        $this->assertGetFormStandardFields($fields, true);
-        $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
-        $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
+    // register one contact
+    $contactA_before = $this->createContact();
+    $registration1 = $this->registerRemote($event['id'], [
+      'email'      => $contactA_before['email'],
+      'prefix_id'  => $contactA_before['prefix_id'],
+      'first_name' => $contactA_before['first_name'],
+      'last_name'  => $contactA_before['last_name'],
+    ]);
+    self::assertEmpty($registration1['is_error'], 'Registration Failed');
 
-        // test registration update
-        $different_last_name = $this->createContact()['last_name'];
+    // test getForm for update
+    $token = CRM_Remotetools_SecureToken::generateEntityToken(
+      'Participant',
+      $registration1['participant_id'],
+      NULL,
+      'update'
+    );
+    $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+      'token'    => $token,
+      'context'  => 'update',
+      'event_id' => $event['id'],
+    ])['values'];
+    $this->assertGetFormStandardFields($fields, TRUE);
+    self::assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
+    self::assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
 
-        // first validate
-        $validation = $this->traitCallAPISuccess('RemoteParticipant', 'validate', [
-               'token'      => $token,
-               'context'    => 'update',
-               'event_id'   => $event['id'],
-               'email'      => $contactA_before['email'],
-               'prefix_id'  => $contactA_before['prefix_id'],
-               'first_name' => $contactA_before['first_name'],
-               'last_name'  => $different_last_name
-           ]);
+    // test registration update
+    $different_last_name = $this->createContact()['last_name'];
 
+    // first validate
+    $validation = $this->traitCallAPISuccess('RemoteParticipant', 'validate', [
+      'token'      => $token,
+      'context'    => 'update',
+      'event_id'   => $event['id'],
+      'email'      => $contactA_before['email'],
+      'prefix_id'  => $contactA_before['prefix_id'],
+      'first_name' => $contactA_before['first_name'],
+      'last_name'  => $different_last_name,
+    ]);
 
-        // then: update
-        $registration2 = $this->updateRegistration([
-            'token'      => $token,
-            'email'      => $contactA_before['email'],
-            'prefix_id'  => $contactA_before['prefix_id'],
-            'first_name' => $contactA_before['first_name'],
-            'last_name'  => $different_last_name
-        ]);
-        $this->assertEquals($registration1['participant_id'], $registration2['participant_id'], "The registration's participant ID has changed.");
-        $contactA_after = $fields = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contactA_before['id']]);
-        $this->assertEquals($different_last_name, $contactA_after['last_name'], "Last name was not updated!");
-    }
+    // then: update
+    $registration2 = $this->updateRegistration([
+      'token'      => $token,
+      'email'      => $contactA_before['email'],
+      'prefix_id'  => $contactA_before['prefix_id'],
+      'first_name' => $contactA_before['first_name'],
+      'last_name'  => $different_last_name,
+    ]);
+    self::assertEquals(
+      $registration1['participant_id'],
+      $registration2['participant_id'],
+      "The registration's participant ID has changed."
+    );
+    $contactA_after = $fields = $this->traitCallAPISuccess('Contact', 'getsingle', ['id' => $contactA_before['id']]);
+    self::assertEquals($different_last_name, $contactA_after['last_name'], 'Last name was not updated!');
+  }
+
 }

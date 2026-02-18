@@ -10,21 +10,6 @@ if (file_exists(__DIR__ . '/bootstrap.local.php')) {
   require_once __DIR__ . '/bootstrap.local.php';
 }
 
-/*
- * The return value of this function call is used in the strftime()
- * implementation used in CiviCRM. If it is 'C' this results in this error:
- * datefmt_create: invalid locale: U_ILLEGAL_ARGUMENT_ERROR
- *
- * Patch applied by CiviCRM containing strftime():
- * https://patch-diff.githubusercontent.com/raw/pear/Log/pull/23.patch
- *
- * https://lab.civicrm.org/dev/core/-/issues/4739
- * Fixed in 5.67.0 https://github.com/civicrm/civicrm-core/pull/27981
- */
-if ('C' === setlocale(LC_TIME, '0')) {
-  setlocale(LC_TIME, 'en_US.UTF-8');
-}
-
 // phpcs:disable Drupal.Functions.DiscouragedFunctions.Discouraged
 eval(cv('php:boot --level=classloader', 'phpcode'));
 // phpcs:enable
@@ -41,7 +26,6 @@ require_once __DIR__ . '/../../remoteevent.civix.php';
 // Add test classes to class loader.
 addExtensionDirToClassLoader(__DIR__);
 addExtensionToClassLoader('de.systopia.remoteevent');
-addExtensionToClassLoader('de.systopia.remotetools');
 
 if (!function_exists('ts')) {
   // Ensure function ts() is available - it's declared in the same file as CRM_Core_I18n in CiviCRM < 5.74.

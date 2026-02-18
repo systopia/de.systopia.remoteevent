@@ -13,6 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\RemoteParticipant\Event;
 
@@ -26,64 +27,60 @@ use CRM_Remoteevent_ExtensionUtil as E;
  *
  * @todo: same as GetCreateParticipantFormEvent?
  */
-class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase
-{
-    public const NAME = 'civi.remoteevent.registration_update.getform';
+class GetUpdateParticipantFormEvent extends GetParticipantFormEventBase {
+  public const NAME = 'civi.remoteevent.registration_update.getform';
 
-    /**
-     * GetUpdateParticipantFormEvent constructor.
-     */
-    public function __construct($params, $event)
-    {
-        parent::__construct($params, $event);
+  /**
+   * GetUpdateParticipantFormEvent constructor.
+   */
+  public function __construct($params, $event) {
+    parent::__construct($params, $event);
 
-        // add 'confirm' field if there already is a participant
-        $participant_id = $this->getParticipantID();
-        if ($participant_id) {
-            try {
-                // check if the participant in status 'Invited'
-                $participant_status_id = (int)\civicrm_api3('Participant', 'getvalue', [
-                    'id' => $participant_id,
-                    'return' => 'participant_status_id',
-                ]);
-                $status_name = \CRM_Remoteevent_Registration::getParticipantStatusName($participant_status_id);
-                if ($status_name == 'Invited') {
-                    // this IS an invitation
-                    $l10n = $this->getLocalisation();
-                    $this->addFields(
-                        [
-                            'confirm' => [
-                                'name' => 'confirm',
-                                'type' => 'Select',
-                                'options' => [
-                                    1 => $l10n->ts('Accept Invitation'),
-                                    0 => $l10n->ts('Decline Invitation'),
-                                ],
-                                'validation' => '',
-                                'weight' => -10,
-                                'required' => 1,
-                                'label' => $l10n->ts('Invitation Feedback'),
-                            ],
-                        ]
-                    );
-                } else {
-                    // todo: there IS a participant, and it's NOT an invite. anything to do here?
-
-                }
-            } catch (\CRM_Core_Exception $ex) {
-                // the participant probably doesn't exist:
-                $this->addWarning(E::ts("The link or reference you're using is no longer valid."));
-            }
+    // add 'confirm' field if there already is a participant
+    $participant_id = $this->getParticipantID();
+    if ($participant_id) {
+      try {
+        // check if the participant in status 'Invited'
+        $participant_status_id = (int) \civicrm_api3('Participant', 'getvalue', [
+          'id' => $participant_id,
+          'return' => 'participant_status_id',
+        ]);
+        $status_name = \CRM_Remoteevent_Registration::getParticipantStatusName($participant_status_id);
+        if ('Invited' === $status_name) {
+          // this IS an invitation
+          $l10n = $this->getLocalisation();
+          $this->addFields(
+          [
+            'confirm' => [
+              'name' => 'confirm',
+              'type' => 'Select',
+              'options' => [
+                1 => $l10n->ts('Accept Invitation'),
+                0 => $l10n->ts('Decline Invitation'),
+              ],
+              'validation' => '',
+              'weight' => -10,
+              'required' => 1,
+              'label' => $l10n->ts('Invitation Feedback'),
+            ],
+          ]
+          );
         }
+      }
+      catch (\CRM_Core_Exception $ex) {
+        // the participant probably doesn't exist:
+        $this->addWarning(E::ts("The link or reference you're using is no longer valid."));
+      }
     }
+  }
 
-    /**
-     * Get the token usage key for this event type
-     *
-     * @return array
-     */
-    protected function getTokenUsages()
-    {
-        return ['update', 'invite'];
-    }
+  /**
+   * Get the token usage key for this event type
+   *
+   * @return array
+   */
+  protected function getTokenUsages() {
+    return ['update', 'invite'];
+  }
+
 }

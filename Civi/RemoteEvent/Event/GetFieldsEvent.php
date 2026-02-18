@@ -13,7 +13,10 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\RemoteEvent\Event;
+
 use Civi\RemoteEvent;
 
 /**
@@ -24,61 +27,57 @@ use Civi\RemoteEvent;
  * This event will be triggered to populate the reply of the
  *    RemoteEvent.get_remote_event_fields field specs
  */
-class GetFieldsEvent extends RemoteEvent
-{
-    public const NAME = 'civi.remoteevent.getfields';
+class GetFieldsEvent extends RemoteEvent {
+  public const NAME = 'civi.remoteevent.getfields';
 
-    /** @var array holds the list of the RemoteEvent.get field specs */
-    protected $field_specs;
+  /**
+   * @var array holds the list of the RemoteEvent.get field specs */
+  protected $field_specs;
 
-    public function __construct($field_specs)
-    {
-        $this->field_specs  = $field_specs;
-    }
+  public function __construct($field_specs) {
+    $this->field_specs = $field_specs;
+  }
 
-    /**
-     * Get the current field specs
-     *
-     * @return array
-     *   the key => spec list
-     */
-    public function getFieldSpecs()
-    {
-        return $this->field_specs;
-    }
+  /**
+   * Get the current field specs
+   *
+   * @return array
+   *   the key => spec list
+   */
+  public function getFieldSpecs() {
+    return $this->field_specs;
+  }
 
-    /**
-     * Set/add a particular field spec
-     *
-     * @param string $field_name
-     *   the field name
-     * @param array $spec
-     *   the field spec
-     */
-    public function setFieldSpec($field_name, $spec)
-    {
-        $this->field_specs[$field_name] = $spec;
-    }
+  /**
+   * Set/add a particular field spec
+   *
+   * @param string $field_name
+   *   the field name
+   * @param array $spec
+   *   the field spec
+   */
+  public function setFieldSpec($field_name, $spec) {
+    $this->field_specs[$field_name] = $spec;
+  }
 
-    /**
-     * Remove a particular field spec
-     *
-     * @param string $field_name
-     *   the field name
-     */
-    public function removeFieldSpec($field_name)
-    {
-        unset($this->field_specs[$field_name]);
-    }
+  /**
+   * Remove a particular field spec
+   *
+   * @param string $field_name
+   *   the field name
+   */
+  public function removeFieldSpec($field_name) {
+    unset($this->field_specs[$field_name]);
+  }
 
-    /**
-     * Get the parameters of the original query
-     *
-     * @return array
-     *   parameters of the query
-     */
-    public function getQueryParameters()
-    {
-        return [];
-    }
+  /**
+   * Get the parameters of the original query
+   *
+   * @return array
+   *   parameters of the query
+   */
+  public function getQueryParameters() {
+    return [];
+  }
+
 }

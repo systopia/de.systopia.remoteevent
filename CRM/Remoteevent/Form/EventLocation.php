@@ -13,92 +13,94 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
  * Form controller for event location settings
  */
-class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent
-{
-    /**
-     * Set variables up before form is built.
-     */
-    public function preProcess()
-    {
-        parent::preProcess();
-        $this->setSelectedChild('alternativelocation');
-    }
+class CRM_Remoteevent_Form_EventLocation extends CRM_Event_Form_ManageEvent {
 
-    public function buildQuickForm()
-    {
-        $event_location_type = CRM_Remoteevent_EventLocation::singleton($this->_id)->getEventContactType();
+  /**
+   * Set variables up before form is built.
+   */
+  public function preProcess() {
+    parent::preProcess();
+    $this->setSelectedChild('alternativelocation');
+  }
 
-        $this->addEntityRef(
-            'event_alternativelocation_contact_id',
-            E::ts('Event Location'),
-            [
-                'entity' => 'Contact',
-                'api' => [
-                    'params' => [
-                        'contact_type' => 'Organization',
-                        'contact_sub_type' => $event_location_type['name'],
-                    ]
-                ]
+  public function buildQuickForm() {
+    $event_location_type = CRM_Remoteevent_EventLocation::singleton($this->_id)->getEventContactType();
+
+    $this->addEntityRef(
+        'event_alternativelocation_contact_id',
+        E::ts('Event Location'),
+        [
+          'entity' => 'Contact',
+          'api' => [
+            'params' => [
+              'contact_type' => 'Organization',
+              'contact_sub_type' => $event_location_type['name'],
             ],
-            false
-        );
+          ],
+        ],
+        FALSE
+    );
 
-        $this->add(
-            'wysiwyg',
-            'event_alternativelocation_remark',
-            E::ts("Additional Information for this Event"),
-            [],
-            false
-        );
+    $this->add(
+        'wysiwyg',
+        'event_alternativelocation_remark',
+        E::ts('Additional Information for this Event'),
+        [],
+        FALSE
+    );
 
-        $this->addButtons(
+    $this->addButtons(
+        [
             [
-                [
-                    'type'      => 'submit',
-                    'name'      => E::ts('Add Session'),
-                    'isDefault' => true,
-                ],
-            ]
-        );
+              'type'      => 'submit',
+              'name'      => E::ts('Add Session'),
+              'isDefault' => TRUE,
+            ],
+        ]
+    );
 
-        // prepare some variables
-        $current_values = civicrm_api3('Event', 'getsingle', ['id' => $this->_id]);
-        CRM_Remoteevent_CustomData::labelCustomFields($current_values);
-        $prefix = 'event_alternative_location.';
-        $contact_field = CRM_Remoteevent_CustomData::getCustomFieldKey('event_alternative_location', 'event_alternativelocation_contact_id');
-        $defaults = [
-            'event_alternativelocation_contact_id' => (int)
-                CRM_Utils_Array::value("{$contact_field}_id", $current_values),
-            'event_alternativelocation_remark' =>
-                $current_values["{$prefix}event_alternativelocation_remark"] ?? NULL,
-        ];
-        $this->setDefaults($defaults);
+    // prepare some variables
+    $current_values = civicrm_api3('Event', 'getsingle', ['id' => $this->_id]);
+    CRM_Remoteevent_CustomData::labelCustomFields($current_values);
+    $prefix = 'event_alternative_location.';
+    $contact_field = CRM_Remoteevent_CustomData::getCustomFieldKey(
+      'event_alternative_location',
+      'event_alternativelocation_contact_id'
+    );
+    $defaults = [
+      'event_alternativelocation_contact_id' => (int) $current_values["{$contact_field}_id"] ?? NULL,
+      'event_alternativelocation_remark' =>
+      $current_values["{$prefix}event_alternativelocation_remark"] ?? NULL,
+    ];
+    $this->setDefaults($defaults);
 
-        parent::buildQuickForm();
-    }
+    parent::buildQuickForm();
+  }
 
-    public function postProcess()
-    {
-        $values = $this->exportValues();
-        // store values
-        $event_update = [
-            'id' => $this->_id,
-            'is_template'
-                    => CRM_Remoteevent_RemoteEvent::isTemplate($this->_id),
-            'event_alternative_location.event_alternativelocation_contact_id'
-                    => $values['event_alternativelocation_contact_id'] ?? NULL,
-            'event_alternative_location.event_alternativelocation_remark'
-                    => $values['event_alternativelocation_remark'] ?? NULL,
-        ];
-        CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
-        civicrm_api3('Event', 'create', $event_update);
+  public function postProcess() {
+    $values = $this->exportValues();
+    // store values
+    $event_update = [
+      'id' => $this->_id,
+      'is_template'
+      => CRM_Remoteevent_RemoteEvent::isTemplate($this->_id),
+      'event_alternative_location.event_alternativelocation_contact_id'
+      => $values['event_alternativelocation_contact_id'] ?? NULL,
+      'event_alternative_location.event_alternativelocation_remark'
+      => $values['event_alternativelocation_remark'] ?? NULL,
+    ];
+    CRM_Remoteevent_CustomData::resolveCustomFields($event_update);
+    civicrm_api3('Event', 'create', $event_update);
 
-        $this->_action = CRM_Core_Action::UPDATE;
-        parent::endPostProcess();
-    }
+    $this->_action = CRM_Core_Action::UPDATE;
+    parent::endPostProcess();
+  }
+
 }

@@ -13,69 +13,66 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Remoteevent_ExtensionUtil as E;
-use \Civi\RemoteParticipant\Event\ValidateEvent as ValidateEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 
 /**
  * Implements profile 'Standard1': Email only
  */
-class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_RegistrationProfile
-{
-    /**
-     * Get the internal name of the profile represented
-     *
-     * @return string name
-     */
-    public function getName()
-    {
-        return 'OneClick';
-    }
+class CRM_Remoteevent_RegistrationProfile_OneClick extends CRM_Remoteevent_RegistrationProfile {
 
-    /**
-     * @param string $locale
-     *   the locale to use, defaults to null (current locale)
-     *
-     * @return array field specs
-     * @see CRM_Remoteevent_RegistrationProfile::getFields()
-     *
-     */
-    public function getFields($locale = null)
-    {
-        return [];
-    }
+  /**
+   * Get the internal name of the profile represented
+   *
+   * @return string name
+   */
+  public function getName() {
+    return 'OneClick';
+  }
 
-    /**
-     * Add the default values to the form data, so people using this profile
-     *  don't have to enter everything themselves
-     *
-     * @param GetParticipantFormEventBase $resultsEvent
-     *   the locale to use, defaults to null none. Use 'default' for current
-     *
-     */
-    public function addDefaultValues(GetParticipantFormEventBase $resultsEvent)
-    {
-        // nothing to do here
-    }
+  /**
+   * @param string $locale
+   *   the locale to use, defaults to null (current locale)
+   *
+   * @return array field specs
+   * @see CRM_Remoteevent_RegistrationProfile::getFields()
+   *
+   */
+  public function getFields($locale = NULL) {
+    return [];
+  }
 
-    /**
-     * Validate the profile fields individually.
-     * This only validates the mere data types,
-     *   more complex validation (e.g. over multiple fields)
-     *   have to be performed by the profile implementations
-     *
-     * @param ValidateEvent $validationEvent
-     *      event triggered by the RemoteParticipant.validate or submit API call
-     */
-    public function validateSubmission($validationEvent)
-    {
-        parent::validateSubmission($validationEvent);
+  /**
+   * Add the default values to the form data, so people using this profile
+   *  don't have to enter everything themselves
+   *
+   * @param \Civi\RemoteParticipant\Event\GetParticipantFormEventBase $resultsEvent
+   *   the locale to use, defaults to null none. Use 'default' for current
+   *
+   */
+  public function addDefaultValues(GetParticipantFormEventBase $resultsEvent) {
+    // nothing to do here
+  }
 
-        // just make sure we have the contact
-        if (!$validationEvent->getContactID() && !$validationEvent->getParticipantID()) {
-            $l10n = $validationEvent->getLocalisation();
-            $validationEvent->addError($l10n->ts("User must be identified to use one-click registration"));
-        }
+  /**
+   * Validate the profile fields individually.
+   * This only validates the mere data types,
+   *   more complex validation (e.g. over multiple fields)
+   *   have to be performed by the profile implementations
+   *
+   * @param \Civi\RemoteParticipant\Event\ValidateEvent $validationEvent
+   *      event triggered by the RemoteParticipant.validate or submit API call
+   */
+  public function validateSubmission($validationEvent) {
+    parent::validateSubmission($validationEvent);
+
+    // just make sure we have the contact
+    if (!$validationEvent->getContactID() && !$validationEvent->getParticipantID()) {
+      $l10n = $validationEvent->getLocalisation();
+      $validationEvent->addError($l10n->ts('User must be identified to use one-click registration'));
     }
+  }
 
 }

@@ -13,10 +13,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-use Civi\Test\Api3TestTrait;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
+declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 
@@ -24,85 +21,96 @@ use CRM_Remoteevent_ExtensionUtil as E;
  * Tests regarding the RemoteParticipant.get_form API
  *
  * @group headless
+ * @coversNothing
+ *   TODO: Document actual coverage.
  */
-class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase
-{
-    /**
-     * Test RemoteParticipant.get_form context=create API anonymously
-     */
-    public function testCreateAnonymous()
-    {
-        // create an event
-        $event = $this->createRemoteEvent([
-              'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-              'event_remote_registration.remote_registration_profiles'        => ['Standard2','Standard1','OneClick'],
-        ]);
+class CRM_Remoteevent_GetFormTest extends CRM_Remoteevent_TestBase {
 
-        // check default profile
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
-        ])['values'];
-        $this->assertGetFormStandardFields($fields, true);
-        $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
-        $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
-        $this->assertTrue(empty($fields['email']['value']), "Field 'email' shouldn't come with a value in an anonymous call");
+  /**
+   * Test RemoteParticipant.get_form context=create API anonymously
+   */
+  public function testCreateAnonymous() {
+    // create an event
+    $event = $this->createRemoteEvent([
+      'event_remote_registration.remote_registration_default_profile' => 'Standard1',
+      'event_remote_registration.remote_registration_profiles'        => ['Standard2', 'Standard1', 'OneClick'],
+    ]);
 
-        // check Standard1 profile
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
-            'profile'  => 'Standard1'
-        ])['values'];
-        $this->assertGetFormStandardFields($fields, true);
-        $this->assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
-        $this->assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
-        $this->assertTrue(empty($fields['email']['value']), "Field 'email' shouldn't come with a value in an anonymous call");
+    // check default profile
+    $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+      'event_id' => $event['id'],
+    ])['values'];
+    $this->assertGetFormStandardFields($fields, TRUE);
+    self::assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
+    self::assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
+    self::assertTrue(
+      empty($fields['email']['value']),
+      "Field 'email' shouldn't come with a value in an anonymous call"
+    );
 
-        // check OneClick Profile
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'event_id' => $event['id'],
-            'profile'  => 'OneClick'
-        ])['values'];
-        $this->assertGetFormStandardFields($fields, true);
-        $this->assertEmpty($fields, "OneClick Profile should not list any fields");
+    // check Standard1 profile
+    $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+      'event_id' => $event['id'],
+      'profile'  => 'Standard1',
+    ])['values'];
+    $this->assertGetFormStandardFields($fields, TRUE);
+    self::assertArrayHasKey('email', $fields, "Should have reported listed field 'email' from profile Standard1");
+    self::assertGreaterThan(5, count($fields['email']), "Field specs for 'email' has too little properties");
+    self::assertTrue(
+      empty($fields['email']['value']),
+      "Field 'email' shouldn't come with a value in an anonymous call"
+    );
 
-        // check illegal profile
-        try {
-            civicrm_api3('RemoteParticipant', 'get_form', [
-                'event_id' => $event['id'],
-                'profile'  => 'Standard3'
-            ]);
-            $this->fail("RemoteParticipant.get_form with an illegal profile should cause an exception");
-        } catch (CRM_Core_Exception $ex) {
-            $error_message = $ex->getMessage();
-            $this->assertMatchesRegularExpression('/cannot be used/', $error_message, "This seems to be the wrong kind of exception");
-        }
+    // check OneClick Profile
+    $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+      'event_id' => $event['id'],
+      'profile'  => 'OneClick',
+    ])['values'];
+    $this->assertGetFormStandardFields($fields, TRUE);
+    self::assertEmpty($fields, 'OneClick Profile should not list any fields');
+
+    // check illegal profile
+    try {
+      civicrm_api3('RemoteParticipant', 'get_form', [
+        'event_id' => $event['id'],
+        'profile'  => 'Standard3',
+      ]);
+      self::fail('RemoteParticipant.get_form with an illegal profile should cause an exception');
     }
-
-    /**
-     * Test RemoteParticipant.get_form context=cancel API anonymously
-     */
-    public function testCancel(): void
-    {
-        // create an event
-        $event = $this->createRemoteEvent([
-              'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-              'event_remote_registration.remote_registration_profiles'        => ['Standard2','Standard1','OneClick'],
-        ]);
-
-        // register one participant
-        $contact = $this->createContact();
-        $this->registerRemote($event['id'], ['email' => $contact['email']]);
-
-        // check cancellation with default profile
-        $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
-            'context' => 'cancel',
-            'remote_contact_id' => $this->getRemoteContactKey($contact['id']),
-            'event_id' => $event['id'],
-        ])['values'];
-        $this->assertGetFormStandardFields($fields, true);
-
-        // todo: i don't know what we're expecting here, I don't think cancellation has any fields
-
+    catch (CRM_Core_Exception $ex) {
+      $error_message = $ex->getMessage();
+      self::assertMatchesRegularExpression(
+        '/cannot be used/',
+        $error_message,
+        'This seems to be the wrong kind of exception'
+      );
     }
+  }
+
+  /**
+   * Test RemoteParticipant.get_form context=cancel API anonymously
+   */
+  public function testCancel(): void {
+    // create an event
+    $event = $this->createRemoteEvent([
+      'event_remote_registration.remote_registration_default_profile' => 'Standard1',
+      'event_remote_registration.remote_registration_profiles'        => ['Standard2', 'Standard1', 'OneClick'],
+    ]);
+
+    // register one participant
+    $contact = $this->createContact();
+    $this->registerRemote($event['id'], ['email' => $contact['email']]);
+
+    // check cancellation with default profile
+    $fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
+      'context' => 'cancel',
+      'remote_contact_id' => $this->getRemoteContactKey($contact['id']),
+      'event_id' => $event['id'],
+    ])['values'];
+    $this->assertGetFormStandardFields($fields, TRUE);
+
+    // todo: i don't know what we're expecting here, I don't think cancellation has any fields
+
+  }
 
 }
