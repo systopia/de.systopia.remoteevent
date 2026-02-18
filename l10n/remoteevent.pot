@@ -50,7 +50,7 @@ msgstr ""
 msgid "Unique Session ID"
 msgstr ""
 
-#: CRM/Remoteevent/DAO/Session.php Civi/RemoteEvent/Actions/SpawnEvent.php api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: CRM/Remoteevent/DAO/Session.php Civi/RemoteEvent/Actions/SpawnEvent.php api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Event ID"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "Day"
 msgstr ""
 
-#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/RegistrationProfile/Standard2.php Civi/RemoteEvent/Actions/SpawnEvent.php resources/remote_session_description.tpl templates/CRM/Remoteevent/Form/EventSessions.tpl templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php Civi/RemoteEvent/Actions/SpawnEvent.php resources/remote_session_description.tpl templates/CRM/Remoteevent/Form/EventSessions.tpl templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Title"
 msgstr ""
 
@@ -239,10 +239,6 @@ msgid "Presenter"
 msgstr ""
 
 #: CRM/Remoteevent/EventSessions.php
-msgid "[FULL] "
-msgstr ""
-
-#: CRM/Remoteevent/EventSessions.php
 msgid "Workshops"
 msgstr ""
 
@@ -258,11 +254,11 @@ msgstr ""
 msgid "Workshops - Day %1"
 msgstr ""
 
-#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Registration.php resources/remote_session_description.tpl
+#: CRM/Remoteevent/EventSessions.php resources/remote_session_description.tpl
 msgid "Details"
 msgstr ""
 
-#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
 msgid "Session is full"
 msgstr ""
 
@@ -286,11 +282,11 @@ msgstr ""
 msgid "List of sessions the participant is registered to (as ascii list)."
 msgstr ""
 
-#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
 msgid "Given by %1"
 msgstr ""
 
-#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/EventSessions.php CRM/Remoteevent/Form/EventSessions.php
 msgid "%1 is %2"
 msgstr ""
 
@@ -334,11 +330,11 @@ msgstr ""
 msgid "Contact ID"
 msgstr ""
 
-#: CRM/Remoteevent/EventSpeaker.php CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: CRM/Remoteevent/EventSpeaker.php
 msgid "Last Name"
 msgstr ""
 
-#: CRM/Remoteevent/EventSpeaker.php CRM/Remoteevent/RegistrationProfile/Standard2.php
+#: CRM/Remoteevent/EventSpeaker.php
 msgid "First Name"
 msgstr ""
 
@@ -354,51 +350,51 @@ msgstr ""
 msgid "Add Session"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "Day %1 (%2)"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "H:i"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "%1h - %2h"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "%1 minutes"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "No description"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php resources/remote_session_description.tpl
+#: CRM/Remoteevent/Form/EventSessions.php resources/remote_session_description.tpl
 msgid "None"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "%1 / %2"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "Session restricted to %1 participants"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "This session is disabled"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "edit"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php
+#: CRM/Remoteevent/Form/EventSessions.php
 msgid "delete"
 msgstr ""
 
-#: CRM/Remoteevent/Form/EventSessions.php CRM/Remoteevent/Form/ParticipantSessions.php templates/CRM/Remoteevent/Form/EventSessions.tpl templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
+#: CRM/Remoteevent/Form/EventSessions.php templates/CRM/Remoteevent/Form/EventSessions.tpl templates/CRM/Remoteevent/Form/ParticipantSessions.tpl
 msgid "Participants"
 msgstr ""
 
@@ -726,11 +722,11 @@ msgstr ""
 msgid "Default value for confirmation of invitations"
 msgstr ""
 
-#: CRM/Remoteevent/Form/Settings.php Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
+#: CRM/Remoteevent/Form/Settings.php
 msgid "Decline Invitation"
 msgstr ""
 
-#: CRM/Remoteevent/Form/Settings.php Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
+#: CRM/Remoteevent/Form/Settings.php
 msgid "Accept Invitation"
 msgstr ""
 
@@ -930,74 +926,6 @@ msgstr ""
 msgid "Additional participant %1: %2"
 msgstr ""
 
-#: CRM/Remoteevent/Registration.php
-msgid "General Terms and Conditions"
-msgstr ""
-
-#: CRM/Remoteevent/Registration.php
-msgid "I accept the following terms and conditions"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/OneClick.php
-msgid "User must be identified to use one-click registration"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard1.php CRM/Remoteevent/RegistrationProfile/Standard2.php CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Contact Data"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard1.php CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Email"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard2.php
-msgid "Prefix"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Phone Number"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Please include country code"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Contact Address"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Street Address"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Participant's street and house number"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Supplemental Address"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Supplemental Address 2"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Postal Code"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "City"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "Country"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile/Standard3.php
-msgid "State or Province"
-msgstr ""
-
 #: CRM/Remoteevent/RegistrationProfile.php templates/CRM/Remoteevent/Form/RegistrationConfig.tpl
 msgid "Additional Participants"
 msgstr ""
@@ -1015,30 +943,6 @@ msgid "Registration data for additional participant %1"
 msgstr ""
 
 #: CRM/Remoteevent/RegistrationProfile.php
-msgid "Not enough vacancies for the number of requested participants."
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "%1 participant(s) will be added to the waiting list."
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "Required"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile.php Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
-msgid "Invalid value"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "File too large"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile.php
-msgid "Value too long"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationProfile.php
 msgid "Profile [%2] cannot be used with RemoteEvent [%1]."
 msgstr ""
 
@@ -1047,23 +951,7 @@ msgid "Value '%1' for field %2 is not valid"
 msgstr ""
 
 #: CRM/Remoteevent/RegistrationUpdate.php
-msgid "Participant could not be identified."
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationUpdate.php
-msgid "Contact could not be identified."
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationUpdate.php
 msgid "Couldn't update contact: "
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationUpdate.php
-msgid "Couldn't update contact: %1"
-msgstr ""
-
-#: CRM/Remoteevent/RegistrationUpdate.php
-msgid "Couldn't update participant: %1"
 msgstr ""
 
 #: CRM/Remoteevent/RemoteEvent.php
@@ -1151,27 +1039,7 @@ msgid "RemoteEvent spawn"
 msgstr ""
 
 #: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
-msgid "Invitation Feedback"
-msgstr ""
-
-#: Civi/RemoteParticipant/Event/GetCreateParticipantFormEvent.php Civi/RemoteParticipant/Event/GetUpdateParticipantFormEvent.php
 msgid "The link or reference you're using is no longer valid."
-msgstr ""
-
-#: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
-msgid "Welcome %1. You are modifying your registration for event '%2'"
-msgstr ""
-
-#: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
-msgid "Welcome %1. You may now confirm or decline your invitation to event '%2'"
-msgstr ""
-
-#: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
-msgid "Welcome %1. You are about to cancel your registration for the event '%2'"
-msgstr ""
-
-#: Civi/RemoteParticipant/EventSubscriber/MailingListSubscriptionSubscriber.php
-msgid "I want to subscribe to the following mailing lists."
 msgstr ""
 
 #: api/v3/RemoteEvent/Getfields.php api/v3/RemoteEvent/Spawn.php
@@ -1210,11 +1078,11 @@ msgstr ""
 msgid "New Event"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Internal ID of the event the registration form is needed for"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Remote Contact ID"
 msgstr ""
 
@@ -1222,7 +1090,7 @@ msgstr ""
 msgid "You can cancel with a remote contact ID, to determine the CiviCRM contact"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Remote Registration Token"
 msgstr ""
 
@@ -1230,11 +1098,11 @@ msgstr ""
 msgid "You can cancel with a as generated by emails"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Locale"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
+#: api/v3/RemoteParticipant/Cancel.php api/v3/RemoteParticipant/Create.php api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Update.php api/v3/RemoteParticipant/Validate.php
 msgid "Locale of the field labels/etc. NOT IMPLEMENTED YET"
 msgstr ""
 
@@ -1250,20 +1118,16 @@ msgstr ""
 msgid "You can submit a remote contact ID, to determine the CiviCRM contact"
 msgstr ""
 
-#: api/v3/RemoteParticipant/Get.php api/v3/RemoteParticipant/GetForm.php
-msgid "You can submit a remote contact, in which case the fields should come with the default data"
-msgstr ""
-
-#: api/v3/RemoteParticipant/Get.php
-msgid "Token to view your registration"
-msgstr ""
-
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
 msgid "Context"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php api/v3/RemoteParticipant/Validate.php
 msgid "Which context/action is the form for (create/cancel/update)"
+msgstr ""
+
+#: api/v3/RemoteParticipant/GetForm.php
+msgid "You can submit a remote contact, in which case the fields should come with the default data"
 msgstr ""
 
 #: api/v3/RemoteParticipant/GetForm.php managed/CustomGroup_remote_event_mailing_list.mgd.php
