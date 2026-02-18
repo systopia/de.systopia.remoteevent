@@ -76,7 +76,7 @@ class CRM_Remoteevent_ContactMatchingTest extends CRM_Remoteevent_TestBase {
     // set up an XCM update profile
     $update_profile_data = json_decode(
       file_get_contents(E::path('tests/resources/xcm_profile_testing_update.json')),
-      1
+      TRUE
     );
     $this->assertNotEmpty($update_profile_data, "Couldn't load update profile data");
     $this->setUpXCMProfile('remoteevent_test_registration_update', $update_profile_data);

@@ -53,6 +53,7 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
     $this->assertArraySubset(
       ['Event is booked out'],
       $registration2['errors'],
+      FALSE,
       "The reason should have been 'Event booked out'"
     );
   }
@@ -86,6 +87,7 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
     $this->assertArraySubset(
       ['You have been added to the waitlist.'],
       $registration2['status'],
+      FALSE,
       "The status should have been 'You have been added to the waitlist'"
     );
   }
