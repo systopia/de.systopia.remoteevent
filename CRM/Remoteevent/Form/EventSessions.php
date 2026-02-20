@@ -203,8 +203,12 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
           }
 
           // resolve type and category
-          $session['category'] = $categories[$session['category_id']] ?? E::ts('None');
-          $session['type'] = $types[$session['type_id']] ?? E::ts('None');
+          $session['category'] = isset($session['category_id']) && isset($categories[$session['category_id']])
+            ? $categories[$session['category_id']]
+            : E::ts('None');
+          $session['type'] = isset($session['type_id']) && isset($types[$session['type_id']])
+            ? $types[$session['type_id']]
+            : E::ts('None');
 
           // participant count
           $session['participant_count'] = $participant_counts[$session['id']] ?? 0;
@@ -284,6 +288,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
    */
   public static function getSlots() {
     $slots = ['' => E::ts('No Slot')];
+    /** @phpstan-var array{values: array<int, array{value: string, label: string}>} $slot_query */
     $slot_query = civicrm_api3('OptionValue', 'get', [
       'option_group_id' => 'session_slot',
       'option.limit'    => 0,
@@ -303,6 +308,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
    */
   public static function getCategories() {
     $categories = ['' => E::ts('None')];
+    /** @phpstan-var array{values: array<int, array{value: string, label: string}>} $category_query */
     $category_query = civicrm_api3('OptionValue', 'get', [
       'option_group_id' => 'session_category',
       'option.limit'    => 0,
@@ -321,6 +327,7 @@ class CRM_Remoteevent_Form_EventSessions extends CRM_Event_Form_ManageEvent {
    */
   public static function getTypes() {
     $types = ['' => E::ts('None')];
+    /** @phpstan-var array{values: array<int, array{value: string, label: string}>} $type_query */
     $type_query = civicrm_api3('OptionValue', 'get', [
       'option_group_id' => 'session_type',
       'option.limit'    => 0,

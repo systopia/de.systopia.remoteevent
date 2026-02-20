@@ -119,8 +119,8 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form {
         'select',
         'type_id',
         E::ts('Session Type'),
-        $this->getOptionValues('session_type'),
-        TRUE,
+        $this->getOptionValues('session_type', 'No Type'),
+        FALSE,
         ['class' => 'crm-select2']
     );
 
@@ -128,8 +128,8 @@ class CRM_Remoteevent_Form_Session extends CRM_Core_Form {
         'select',
         'category_id',
         E::ts('Session Category'),
-        $this->getOptionValues('session_category'),
-        TRUE,
+        $this->getOptionValues('session_category', 'No Category'),
+        FALSE,
         ['class' => 'crm-select2']
     );
 

@@ -78,83 +78,83 @@ class CRM_Remoteevent_EventSessions {
       foreach ($session_data as $session) {
         if (!empty($session['is_active'])) {
           $event['sessions'][] = [
-                        [
-                          'name'        => 'start_date',
-                          'type'        => CRM_Utils_Type::T_TIME,
-                          'value'       => $session['start_date'],
-                          'title'       => E::ts('Starts'),
-                          'localizable' => 0,
-                        ],
-                        [
-                          'name'        => 'end_date',
-                          'type'        => CRM_Utils_Type::T_TIME,
-                          'value'       => $session['end_date'],
-                          'title'       => E::ts('Ends'),
-                          'localizable' => 0,
-                        ],
-                        [
-                          'name'        => 'day',
-                          'type'        => CRM_Utils_Type::T_INT,
-                          'value'       => $session['day'],
-                          'title'       => E::ts('Day'),
-                          'localizable' => 0,
-                        ],
-                        [
-                          'name'        => 'title',
-                          'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => $session['title'],
-                          'title'       => E::ts('Title'),
-                          'localizable' => 1,
-                        ],
-                        [
-                          'name'        => 'description',
-                          'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => $session['description'],
-                          'title'       => E::ts('Description'),
-                          'localizable' => 1,
-                        ],
-                        [
-                          'name'        => 'location',
-                          'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => $session['location'] ?? '',
-                          'title'       => E::ts('Location'),
-                          'localizable' => 1,
-                        ],
-                        [
-                          'name'        => 'slot',
-                          'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => CRM_Remoteevent_BAO_Session::getSlotLabel($session['slot_id'] ?? NULL),
-                          'title'       => E::ts('Slot'),
-                          'localizable' => 1,
-                        ],
-                        [
-                          'name'        => 'category',
-                          'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => CRM_Remoteevent_EventSessions::getSessionCategory($session),
-                          'title'       => E::ts('Category'),
-                          'localizable' => 1,
-                        ],
-                        [
-                          'name'        => 'type',
-                          'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => CRM_Remoteevent_EventSessions::getSessionType($session),
-                          'title'       => E::ts('Type'),
-                          'localizable' => 1,
-                        ],
-                        [
-                          'name'        => 'max_participants',
-                          'type'        => CRM_Utils_Type::T_INT,
-                          'value'       => $session['max_participants'],
-                          'title'       => E::ts('Max Participants'),
-                          'localizable' => 1,
-                        ],
-                        [
-                          'name'        => 'presenter',
-                          'type'        => CRM_Utils_Type::T_STRING,
-                          'value'       => self::getSessionPresenterText($session),
-                          'title'       => E::ts('Presenter'),
-                          'localizable' => 1,
-                        ],
+            [
+              'name' => 'start_date',
+              'type' => CRM_Utils_Type::T_TIME,
+              'value' => $session['start_date'],
+              'title' => E::ts('Starts'),
+              'localizable' => 0,
+            ],
+            [
+              'name' => 'end_date',
+              'type' => CRM_Utils_Type::T_TIME,
+              'value' => $session['end_date'],
+              'title' => E::ts('Ends'),
+              'localizable' => 0,
+            ],
+            [
+              'name' => 'day',
+              'type' => CRM_Utils_Type::T_INT,
+              'value' => $session['day'],
+              'title' => E::ts('Day'),
+              'localizable' => 0,
+            ],
+            [
+              'name' => 'title',
+              'type' => CRM_Utils_Type::T_STRING,
+              'value' => $session['title'],
+              'title' => E::ts('Title'),
+              'localizable' => 1,
+            ],
+            [
+              'name' => 'description',
+              'type' => CRM_Utils_Type::T_STRING,
+              'value' => $session['description'],
+              'title' => E::ts('Description'),
+              'localizable' => 1,
+            ],
+            [
+              'name' => 'location',
+              'type' => CRM_Utils_Type::T_STRING,
+              'value' => $session['location'] ?? '',
+              'title' => E::ts('Location'),
+              'localizable' => 1,
+            ],
+            [
+              'name' => 'slot',
+              'type' => CRM_Utils_Type::T_STRING,
+              'value' => CRM_Remoteevent_BAO_Session::getSlotLabel($session['slot_id'] ?? NULL),
+              'title' => E::ts('Slot'),
+              'localizable' => 1,
+            ],
+            [
+              'name' => 'category',
+              'type' => CRM_Utils_Type::T_STRING,
+              'value' => CRM_Remoteevent_BAO_Session::getSessionCategoryLabel($session['category_id'] ?? NULL),
+              'title' => E::ts('Category'),
+              'localizable' => 1,
+            ],
+            [
+              'name' => 'type',
+              'type' => CRM_Utils_Type::T_STRING,
+              'value' => CRM_Remoteevent_BAO_Session::getSessionTypeLabel($session['type_id'] ?? NULL),
+              'title' => E::ts('Type'),
+              'localizable' => 1,
+            ],
+            [
+              'name' => 'max_participants',
+              'type' => CRM_Utils_Type::T_INT,
+              'value' => $session['max_participants'],
+              'title' => E::ts('Max Participants'),
+              'localizable' => 1,
+            ],
+            [
+              'name' => 'presenter',
+              'type' => CRM_Utils_Type::T_STRING,
+              'value' => self::getSessionPresenterText($session),
+              'title' => E::ts('Presenter'),
+              'localizable' => 1,
+            ],
           ];
         }
       }
@@ -291,9 +291,9 @@ class CRM_Remoteevent_EventSessions {
         foreach ($sessions as $session) {
           // enrich the session data
           $weight += 1;
-          $session['type'] = CRM_Remoteevent_BAO_Session::getSessionTypeLabel($session['type_id']);
+          $session['type'] = CRM_Remoteevent_BAO_Session::getSessionTypeLabel($session['type_id'] ?? NULL);
           $session['category'] = CRM_Remoteevent_BAO_Session::getSessionCategoryLabel(
-          $session['category_id']
+            $session['category_id'] ?? NULL
           );
 
           if ($slot_id) {
@@ -557,11 +557,11 @@ class CRM_Remoteevent_EventSessions {
       $participant_sessions = [];
       // use this inverse lookup to maintain the order
       foreach ($all_event_sessions as $session) {
-        if (in_array((int) $session['id'], $participant_session_ids, TRUE)) {
-          $session['category']      = self::getSessionCategory($session);
-          $session['type']          = self::getSessionType($session);
+        if (in_array($session['id'], $participant_session_ids, TRUE)) {
+          $session['category'] = CRM_Remoteevent_BAO_Session::getSessionCategoryLabel($session['category_id'] ?? NULL);
+          $session['type'] = CRM_Remoteevent_BAO_Session::getSessionTypeLabel($session['type_id'] ?? NULL);
           $session['presenter_txt'] = self::getSessionPresenterText($session);
-          $session['location_txt']  = self::getSessionLocationText($session, FALSE);
+          $session['location_txt'] = self::getSessionLocationText($session, FALSE);
           $session['location_html'] = self::getSessionLocationText($session, TRUE);
           $participant_sessions[] = $session;
         }
@@ -661,70 +661,6 @@ class CRM_Remoteevent_EventSessions {
       else {
         return E::ts('%1 is %2', [1 => $session_data['presenter_title'], 2 => $presenter_names[$presenter_id]]);
       }
-    }
-  }
-
-  /**
-   * Get the category label for the given session data
-   *
-   * @param array $session_data
-   *    session data
-   *
-   * @return string
-   *   session category
-   */
-  public static function getSessionType($session_data) {
-    static $types = NULL;
-    if ($types === NULL) {
-      $types = [];
-      $query = civicrm_api3('OptionValue', 'get', [
-        'option_group_id' => 'session_type',
-        'option.limit'    => 0,
-        'return'          => 'label,value',
-      ]);
-      foreach ($query['values'] as $type) {
-        $types[$type['value']] = $type['label'];
-      }
-    }
-
-    if (empty($session_data['type_id'])) {
-      // this shouldn't happen
-      return E::ts('no type');
-    }
-    else {
-      return $types[$session_data['type_id']] ?? E::ts('unknown');
-    }
-  }
-
-  /**
-   * Get the category label for the given session data
-   *
-   * @param array $session_data
-   *    session data
-   *
-   * @return string
-   *   session category
-   */
-  public static function getSessionCategory($session_data) {
-    static $categories = NULL;
-    if ($categories === NULL) {
-      $categories = [];
-      $query = civicrm_api3('OptionValue', 'get', [
-        'option_group_id' => 'session_category',
-        'option.limit'    => 0,
-        'return'          => 'label,value',
-      ]);
-      foreach ($query['values'] as $category) {
-        $categories[$category['value']] = $category['label'];
-      }
-    }
-
-    if (empty($session_data['category_id'])) {
-      // this shouldn't happen
-      return E::ts('no category');
-    }
-    else {
-      return $categories[$session_data['category_id']] ?? E::ts('unknown');
     }
   }
 
