@@ -16,6 +16,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.0.1\n"
 
+#: CRM/Remoteevent/BAO/Session.php CRM/Remoteevent/Form/EventSessions.php
+#: resources/remote_session_description.tpl
+msgid "None"
+msgstr "Keine"
+
 #: CRM/Remoteevent/ChangeActivity.php
 msgid "%1 (invalid)"
 msgstr "%1 (ungültig)"
@@ -354,18 +359,6 @@ msgid "%1 is %2"
 msgstr "%1 ist %2"
 
 #: CRM/Remoteevent/EventSessions.php
-msgid "no type"
-msgstr "ohne Typ"
-
-#: CRM/Remoteevent/EventSessions.php
-msgid "unknown"
-msgstr "unbekannt"
-
-#: CRM/Remoteevent/EventSessions.php
-msgid "no category"
-msgstr "ohne Kategorie"
-
-#: CRM/Remoteevent/EventSessions.php
 msgid ""
 "The event has no start date, so the session dates are probably not right."
 msgstr ""
@@ -442,11 +435,6 @@ msgstr "%1 Minuten"
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "No description"
 msgstr "Keine Beschreibung"
-
-#: CRM/Remoteevent/Form/EventSessions.php
-#: resources/remote_session_description.tpl
-msgid "None"
-msgstr "Keine"
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "%1 / %2"
@@ -1949,6 +1937,15 @@ msgstr "Teilnehmerrolle"
 #: templates/CRM/Remoteevent/Page/SessionParticipantList.tpl
 msgid "(not counted)"
 msgstr "(nicht gezählt)"
+
+#~ msgid "no type"
+#~ msgstr "ohne Typ"
+
+#~ msgid "unknown"
+#~ msgstr "unbekannt"
+
+#~ msgid "no category"
+#~ msgstr "ohne Kategorie"
 
 #~ msgid "[FULL] "
 #~ msgstr "[AUSGEBUCHT] "

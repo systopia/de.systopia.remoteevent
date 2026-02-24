@@ -1,3 +1,7 @@
+#: CRM/Remoteevent/BAO/Session.php CRM/Remoteevent/Form/EventSessions.php resources/remote_session_description.tpl
+msgid "None"
+msgstr ""
+
 #: CRM/Remoteevent/ChangeActivity.php
 msgid "%1 (invalid)"
 msgstr ""
@@ -291,18 +295,6 @@ msgid "%1 is %2"
 msgstr ""
 
 #: CRM/Remoteevent/EventSessions.php
-msgid "no type"
-msgstr ""
-
-#: CRM/Remoteevent/EventSessions.php
-msgid "unknown"
-msgstr ""
-
-#: CRM/Remoteevent/EventSessions.php
-msgid "no category"
-msgstr ""
-
-#: CRM/Remoteevent/EventSessions.php
 msgid "The event has no start date, so the session dates are probably not right."
 msgstr ""
 
@@ -368,10 +360,6 @@ msgstr ""
 
 #: CRM/Remoteevent/Form/EventSessions.php
 msgid "No description"
-msgstr ""
-
-#: CRM/Remoteevent/Form/EventSessions.php resources/remote_session_description.tpl
-msgid "None"
 msgstr ""
 
 #: CRM/Remoteevent/Form/EventSessions.php
