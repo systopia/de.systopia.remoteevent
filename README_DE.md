@@ -119,7 +119,7 @@ werden, hängt von der Gestaltung Ihres externen Systems ab.
 
 Die anderen Grundeinstellungen von CiviCRM für Veranstaltungen gelten weiterhin
 und können in Ihrem externen System verwendet werden, z.B. Titel,
-Beschreibungen, Start- und Enddatum, maximale Teilnehmerzahl,
+Beschreibungen, Start- und Enddatum, maximale Teilnehmer*innenzahl,
 Wartelisteneinstellungen usw.
 
 ### Einstellungen für alternative Veranstaltungsorte
