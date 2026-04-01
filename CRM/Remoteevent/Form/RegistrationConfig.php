@@ -293,7 +293,10 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         ->single();
 
       foreach ($field_list as $custom_key => $form_key) {
-        $this->setDefaults([$form_key => $values[$custom_key] ?? NULL]);
+        // Note: The value of the default XCM profile is the empty string which
+        // results in NULL being stored and loaded. To have the correct select
+        // option being selected the fallback must be the empty string.
+        $this->setDefaults([$form_key => $values[$custom_key] ?? '']);
       }
     }
 
