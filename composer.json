@@ -20,8 +20,11 @@
     },
     "require": {
         "php": "^8.1",
-        "civicrm/civicrm-core": ">=5.76",
-        "civicrm/civicrm-packages": ">=5.76"
+        "civicrm/civicrm-core": ">=6.2",
+        "civicrm/civicrm-packages": ">=6.2"
+    },
+    "suggest": {
+        "systopia/de.systopia.eventmessages": "Send emails to participants"
     },
     "autoload": {
         "classmap": ["ComposerHelper.php"]

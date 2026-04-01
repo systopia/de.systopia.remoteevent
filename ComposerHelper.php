@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Remoteevent;
 
 use Composer\Package\Link;
-use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 
 final class ComposerHelper {
