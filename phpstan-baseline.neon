@@ -63,25 +63,7 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 6
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
-			message: '#^Method CRM_Remoteevent_BAO_Session\:\:cacheSessions\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
-			message: '#^Method CRM_Remoteevent_BAO_Session\:\:cacheSessions\(\) has parameter \$event_data with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
-			message: '#^Method CRM_Remoteevent_BAO_Session\:\:cacheSessions\(\) has parameter \$event_ids with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
+			count: 4
 			path: CRM/Remoteevent/BAO/Session.php
 
 		-
@@ -127,12 +109,6 @@ parameters:
 			path: CRM/Remoteevent/BAO/Session.php
 
 		-
-			message: '#^Method CRM_Remoteevent_BAO_Session\:\:getSessions\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
 			message: '#^Method CRM_Remoteevent_BAO_Session\:\:setParticipantRegistrations\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -151,32 +127,14 @@ parameters:
 			path: CRM/Remoteevent/BAO/Session.php
 
 		-
-			message: '#^Only numeric types are allowed in \-, int\|false given on the right side\.$#'
-			identifier: minus.rightNonNumeric
+			message: '#^PHPDoc tag @var with type string is not subtype of type array\|int\.$#'
+			identifier: varTag.type
 			count: 2
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
-			message: '#^Parameter \#1 \$datetime of function strtotime expects string, array\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
-			message: '#^Parameter \#1 \$string of function substr expects string, array\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
 			path: CRM/Remoteevent/BAO/Session.php
 
 		-
 			message: '#^Parameter \#3 \$objectId of static method CRM_Utils_Hook\:\:post\(\) expects int, int\|string\|null given\.$#'
 			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
-			message: '#^Property CRM_Remoteevent_BAO_Session\:\:\$session_cache type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: CRM/Remoteevent/BAO/Session.php
 
@@ -967,9 +925,9 @@ parameters:
 			path: CRM/Remoteevent/EventSessions.php
 
 		-
-			message: '#^Only booleans are allowed in an if condition, \(int\|string\) given\.$#'
+			message: '#^Only booleans are allowed in an if condition, int\<min, \-1\>\|int\<1, max\>\|string given\.$#'
 			identifier: if.condNotBoolean
-			count: 1
+			count: 2
 			path: CRM/Remoteevent/EventSessions.php
 
 		-
@@ -979,14 +937,14 @@ parameters:
 			path: CRM/Remoteevent/EventSessions.php
 
 		-
-			message: '#^Only booleans are allowed in an if condition, int\|string given\.$#'
+			message: '#^Only booleans are allowed in an if condition, string given\.$#'
 			identifier: if.condNotBoolean
 			count: 1
 			path: CRM/Remoteevent/EventSessions.php
 
 		-
-			message: '#^Only booleans are allowed in an if condition, string given\.$#'
-			identifier: if.condNotBoolean
+			message: '#^Parameter \#1 \$eventId of static method CRM_Remoteevent_BAO_Session\:\:getSessions\(\) expects int, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: CRM/Remoteevent/EventSessions.php
 
@@ -997,13 +955,7 @@ parameters:
 			path: CRM/Remoteevent/EventSessions.php
 
 		-
-			message: '#^Parameter \#1 \$event_id of static method CRM_Remoteevent_BAO_Session\:\:getSessions\(\) expects int, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/EventSessions.php
-
-		-
-			message: '#^Parameter \#3 \$start_date of static method CRM_Remoteevent_BAO_Session\:\:getSessions\(\) expects string\|null, mixed given\.$#'
+			message: '#^Parameter \#3 \$eventStartDate of static method CRM_Remoteevent_BAO_Session\:\:getSessions\(\) expects string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: CRM/Remoteevent/EventSessions.php
@@ -1273,6 +1225,18 @@ parameters:
 			path: CRM/Remoteevent/Form/EventSessions.php
 
 		-
+			message: '#^Only numeric types are allowed in \-, int\|false given on the left side\.$#'
+			identifier: minus.leftNonNumeric
+			count: 1
+			path: CRM/Remoteevent/Form/EventSessions.php
+
+		-
+			message: '#^Only numeric types are allowed in \-, int\|false given on the right side\.$#'
+			identifier: minus.rightNonNumeric
+			count: 1
+			path: CRM/Remoteevent/Form/EventSessions.php
+
+		-
 			message: '#^Parameter \#1 \$event of static method CRM_Remoteevent_EventSessions\:\:getSessionWarnings\(\) expects array, array\|int given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1299,14 +1263,8 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$timestamp of function date expects int\|null, int\|false given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 5
 			path: CRM/Remoteevent/Form/EventSessions.php
-
-		-
-			message: '#^Argument of an invalid type array\|null supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: CRM/Remoteevent/Form/ParticipantSessions.php
 
 		-
 			message: '#^BooleanAnd\: Condition between true and false are always false\.$#'
