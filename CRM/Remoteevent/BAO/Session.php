@@ -15,23 +15,46 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Session;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
  * @phpstan-type sessionT array{
  *     id: int,
- *     event_id: string,
- *     type_id: string,
- *     category_id: string,
+ *     event_id: int,
+ *     title: string,
+ *     description: string|null,
+ *     slot_id: int|null,
+ *     type_id: int|null,
+ *     category_id: int|null,
  *     start_date: string,
  *     end_date: string,
+ *     max_participants: int|null,
+ *     location: string|null,
+ *   }
+ *
+ * @phpstan-type sessionWithDayT array{
+ *     id: int,
+ *     event_id: int,
+ *     title: string,
+ *     description: string|null,
+ *     slot_id: int|null,
+ *     type_id: int|null,
+ *     category_id: int|null,
+ *     start_date: string,
+ *     end_date: string,
+ *     max_participants: int|null,
+ *     location: string|null,
+ *     day: int,
  *   }
  */
 class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
 
   /**
-   * @var array cached session data by event_id */
-  protected static $session_cache = [];
+   * @phpstan-var array<int, array<int, sessionWithDayT>>
+   *   cached session data by event_id
+   */
+  protected static array $sessionCache = [];
 
   /**
    * Create a new Session based on array-data
@@ -126,73 +149,53 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
   /**
    * Cache the given sessions to be queried with getSessions
    *
-   * @param array $event_ids
-   *  event IDs
+   * @param list<int> $eventIds
+   *   Event IDs
+   * @param array<int, array<string, mixed>> $eventData
+   *   Event data by event ID.
    */
-  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
-  public static function cacheSessions($event_ids, $event_data) {
-    // make sure there are no bogous IDs
-    $event_ids = array_map('intval', $event_ids);
-    if (empty($event_ids)) {
+  public static function cacheSessions(array $eventIds, array $eventData): void {
+    // make sure there are no bogus IDs
+    $eventIds = array_map('intval', $eventIds);
+    if ([] === $eventIds) {
       return;
     }
 
     // this is what we want to collect and cache
-    $session_list_by_event = [];
+    $sessionsByEvent = [];
 
     // now load all sessions
-    /** @phpstan-var array{values: array<int, sessionT>} $sessionsResult */
-    $sessionsResult = civicrm_api3('Session', 'get', [
-      'event_id'     => ['IN' => $event_ids],
-      'option.limit' => 0,
-      'option.sort'  => 'start_date asc, id asc',
-    ]);
+    /** @phpstan-var list<sessionT> $sessions */
+    $sessions = Session::get(FALSE)
+      ->addWhere('event_id', 'IN', $eventIds)
+      ->addWhere('start_date', 'IS NOT NULL')
+      ->addWhere('end_date', 'IS NOT NULL')
+      ->addWhere('title', 'IS NOT NULL')
+      ->addOrderBy('start_date')
+      ->addOrderBy('id')
+      ->execute()
+      ->getArrayCopy();
 
-    // sort all sessions into the events
-    foreach ($sessionsResult['values'] as $session) {
-      // detached session? skip!
-      if (empty($session['event_id'])) {
-        continue;
-      }
+    foreach ($eventIds as $eventId) {
+      self::$sessionCache[$eventId] = [];
+    }
 
-      // get the event start date, so we can the session day
-      if (isset($event_data[$session['event_id']]['start_date'])) {
-        $event_start_date = strtotime($event_data[$session['event_id']]['start_date']);
+    foreach ($sessions as $session) {
+      // get the event start date, so we can calculate the session day
+      if (is_string($eventData[$session['event_id']]['start_date'] ?? NULL)) {
+        $eventStartDate = $eventData[$session['event_id']]['start_date'];
       }
       else {
         Civi::log()->debug(
           // phpcs:ignore Generic.Files.LineLength.TooLong
           'CRM_Remoteevent_BAO_Session:cacheSessions separately loading event start dates. This should not happen, and is very slow.'
         );
-        $event_start_date = strtotime(
-          civicrm_api3('Event', 'getvalue', ['return' => 'start_date', 'id' => $session['event_id']])
-        );
+        /** @var string $eventStartDate */
+        $eventStartDate = civicrm_api3('Event', 'getvalue', ['return' => 'start_date', 'id' => $session['event_id']]);
       }
 
-      // calculate day of event
-      $sessionStartDate = strtotime($session['start_date']);
-      if (FALSE === $sessionStartDate) {
-        throw new \RuntimeException('Invalid session start date.');
-      }
-      $session['day'] = 1 + (int) (($sessionStartDate - $event_start_date) / (60 * 60 * 24));
-
-      if (is_numeric($session['type_id'] ?? NULL)) {
-        $session['type_id'] = (int) $session['type_id'];
-      }
-      if (is_numeric($session['category_id'] ?? NULL)) {
-        $session['category_id'] = (int) $session['category_id'];
-      }
-      if (is_numeric($session['slot_id'] ?? NULL)) {
-        $session['slot_id'] = (int) $session['slot_id'];
-      }
-
-      // store
-      $session_list_by_event[$session['event_id']][$session['id']] = $session;
-    }
-
-    // cache
-    foreach ($session_list_by_event as $event_id => $session_list) {
-      self::$session_cache[$event_id] = $session_list;
+      $session['day'] = self::calcSessionDay($session['start_date'], $eventStartDate);
+      self::$sessionCache[$session['event_id']][$session['id']] = $session;
     }
   }
 
@@ -202,27 +205,27 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
    *  with additional attributes such as
    *   'day': number of day (1 = first, 2 = second, ...)
    *
-   * @param integer $event_id
+   * @param int $eventId
    *  event ID
-   *
-   * @param boolean $cached
+   * @param bool $cached
    *  use a cached result, or reload (and refresh cache)
-   *
-   * @param string $start_date
+   * @param string|null $eventStartDate
    *  event start_date. if empty, will be loaded from the event
+   *
+   * @phpstan-return array<int, sessionWithDayT>
    */
-  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
-  public static function getSessions($event_id, $cached = TRUE, $start_date = NULL) {
-    $event_id = (int) $event_id;
-    if ($cached && isset(self::$session_cache[$event_id])) {
-      return self::$session_cache[$event_id];
+  public static function getSessions($eventId, bool $cached = TRUE, ?string $eventStartDate = NULL): array {
+    $eventId = (int) $eventId;
+    if ($cached && isset(self::$sessionCache[$eventId])) {
+      return self::$sessionCache[$eventId];
     }
 
     // first: get the start date if it's not passed
-    if (empty($start_date)) {
+    if (empty($eventStartDate)) {
       try {
-        $start_date = civicrm_api3('Event', 'getvalue', [
-          'id'     => $event_id,
+        /** @var string $eventStartDate */
+        $eventStartDate = civicrm_api3('Event', 'getvalue', [
+          'id'     => $eventId,
           'return' => 'start_date',
         ]);
       }
@@ -231,43 +234,28 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
         return [];
       }
     }
-    $start_day = strtotime(substr($start_date, 0, 10));
 
     // now load all sessions
-    $session_list = [];
-    /** @phpstan-var array{values: array<int, sessionT>} $sessionsResult */
-    $sessionsResult = civicrm_api3('Session', 'get', [
-      'event_id'     => $event_id,
-      'option.limit' => 0,
-      'option.sort'  => 'start_date asc, id asc',
-    ]);
+    /** @phpstan-var array<int, sessionT> $sessions */
+    $sessions = Session::get(FALSE)
+      ->addWhere('event_id', '=', $eventId)
+      ->addWhere('start_date', 'IS NOT NULL')
+      ->addWhere('end_date', 'IS NOT NULL')
+      ->addWhere('title', 'IS NOT NULL')
+      ->addOrderBy('start_date')
+      ->addOrderBy('id')
+      ->execute()
+      ->indexBy('id')
+      ->getArrayCopy();
 
-    foreach ($sessionsResult['values'] as $session) {
-      // calculate day of event
-      $session_day = strtotime(substr($session['start_date'], 0, 10));
-      if (FALSE === $session_day) {
-        throw new \RuntimeException('Invalid session start date.');
-      }
-      $session['day'] = 1 + (int) (($session_day - $start_day) / (60 * 60 * 24));
-
-      if (is_numeric($session['type_id'] ?? NULL)) {
-        $session['type_id'] = (int) $session['type_id'];
-      }
-      if (is_numeric($session['category_id'] ?? NULL)) {
-        $session['category_id'] = (int) $session['category_id'];
-      }
-      if (is_numeric($session['slot_id'] ?? NULL)) {
-        $session['slot_id'] = (int) $session['slot_id'];
-      }
-
-      // store
-      $session_list[(int) $session['id']] = $session;
+    foreach ($sessions as &$session) {
+      $session['day'] = self::calcSessionDay($session['start_date'], $eventStartDate);
     }
 
     // cache
-    self::$session_cache[$event_id] = $session_list;
+    self::$sessionCache[$eventId] = $sessions;
 
-    return $session_list;
+    return $sessions;
   }
 
   /**
@@ -469,14 +457,19 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
   /**
    * Get the label of the session category
    *
-   * @param integer $slot_id
+   * @param integer|null $slot_id
    *   the slot id
    *
    * @return string
    *   resolved label
    */
-  public static function getSlotLabel($slot_id) {
+  public static function getSlotLabel(?int $slot_id): string {
     $noneLabel = E::ts('None');
+
+    if (NULL === $slot_id) {
+      return $noneLabel;
+    }
+
     // gather types
     static $slots = NULL;
     if ($slots === NULL) {
@@ -494,6 +487,22 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
 
     // resolve
     return $slots[$slot_id] ?? $noneLabel;
+  }
+
+  /**
+   * @return int
+   *   The number of the event day, when the session starts.
+   *   (1 = first day of event, 2 = second day of event, ...)
+   */
+  private static function calcSessionDay(string $sessionStartDate, string $eventStartDate): int {
+    $sessionStartDate = (new \DateTime($sessionStartDate))->setTime(0, 0);
+    $eventEndDate = (new \DateTime($eventStartDate))->setTime(0, 0);
+    $diff = $sessionStartDate->diff($eventEndDate);
+    if (!is_int($diff->days)) {
+      throw new \InvalidArgumentException('Calculating date diff failed');
+    }
+
+    return $diff->days + 1;
   }
 
 }

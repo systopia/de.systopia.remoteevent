@@ -123,14 +123,14 @@ class CRM_Remoteevent_EventSessions {
             [
               'name' => 'slot',
               'type' => CRM_Utils_Type::T_STRING,
-              'value' => CRM_Remoteevent_BAO_Session::getSlotLabel($session['slot_id'] ?? NULL),
+              'value' => CRM_Remoteevent_BAO_Session::getSlotLabel($session['slot_id']),
               'title' => E::ts('Slot'),
               'localizable' => 1,
             ],
             [
               'name' => 'category',
               'type' => CRM_Utils_Type::T_STRING,
-              'value' => CRM_Remoteevent_BAO_Session::getSessionCategoryLabel($session['category_id'] ?? NULL),
+              'value' => CRM_Remoteevent_BAO_Session::getSessionCategoryLabel($session['category_id']),
               'title' => E::ts('Category'),
               'localizable' => 1,
             ],
