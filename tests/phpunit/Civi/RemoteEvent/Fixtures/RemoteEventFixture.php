@@ -28,7 +28,7 @@ final class RemoteEventFixture {
   /**
    * @phpstan-param array<string, mixed> $values
    *
-   * @phpstan-return array<string, mixed>
+   * @phpstan-return array{id: int, ...}
    *
    * @throws \CRM_Core_Exception
    */
@@ -63,6 +63,7 @@ final class RemoteEventFixture {
       $values['event_remote_registration.remote_registration_update_profiles'][] = $defaultUpdateProfile;
     }
 
+    // @phpstan-ignore return.type
     return Event::create(FALSE)
       ->setValues($values)
       ->execute()
