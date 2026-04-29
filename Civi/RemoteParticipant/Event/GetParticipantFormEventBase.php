@@ -33,7 +33,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
 
   /**
    * @var array holds the RemoteParticipant.get_form result to be modified/extended */
-  protected $result;
+  protected ?array $result = NULL;
 
   /**
    * @phpstan-param array<string, mixed> $params

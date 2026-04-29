@@ -53,15 +53,15 @@ abstract class RemoteEvent extends RemoteToolsRequest {
 
   /**
    * @var array holds the list of error messages */
-  protected $error_list = [];
+  protected array $error_list = [];
 
   /**
    * @var array holds the list of warning messages */
-  protected $warning_list = [];
+  protected array $warning_list = [];
 
   /**
    * @var array holds the list of info/status messages */
-  protected $info_list = [];
+  protected array $info_list = [];
 
   public function __construct(array $original_request = [], ?array $event = NULL) {
     parent::__construct($original_request);
@@ -120,7 +120,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
           $token_usage
           );
           if ($participant_id) {
-            $this->participant_id = (int) $participant_id;
+            $this->participant_id = $participant_id;
             break;
           }
         }
@@ -340,7 +340,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * @return bool
    *   true if there is errors
    */
-  public function hasErrors() {
+  public function hasErrors(): bool {
     return !empty($this->error_list);
   }
 
@@ -353,7 +353,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * @param string $reference
    *   a reference, e.g. e a field name
    */
-  public function addError($message, $reference = '') {
+  public function addError($message, $reference = ''): void {
     $this->error_list[] = [$message, $reference];
   }
 
@@ -363,7 +363,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * @return array
    *   complete error list
    */
-  public function getErrors() {
+  public function getErrors(): array {
     return $this->error_list;
   }
 
@@ -372,7 +372,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * @return bool
    *   true if there is errors
    */
-  public function hasWarnings() {
+  public function hasWarnings(): bool {
     return !empty($this->warning_list);
   }
 
@@ -385,7 +385,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * @param string $reference
    *   a reference, e.g. e a field name
    */
-  public function addWarning($message, $reference = '') {
+  public function addWarning($message, $reference = ''): void {
     $this->warning_list[] = [$message, $reference];
   }
 
@@ -398,7 +398,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * @param string $reference
    *   a reference, e.g. e a field name
    */
-  public function addStatus($message, $reference = '') {
+  public function addStatus($message, $reference = ''): void {
     $this->info_list[] = [$message, $reference];
   }
 
@@ -409,7 +409,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    *   severity: status|warning|error
    *   reference: (optional) message reference, e.g. field name
    */
-  public function getStatusMessageList() {
+  public function getStatusMessageList(): array {
     $messages = [];
     foreach ($this->error_list as $error) {
       $messages[] = [
@@ -445,7 +445,7 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    * @return array
    *   [reference => message/error] list
    */
-  public function getReferencedStatusList($classes = ['error']) {
+  public function getReferencedStatusList($classes = ['error']): array {
     $result = [];
     foreach ($this->getStatusMessageList() as $message) {
       if (in_array($message['severity'], $classes) && !empty($message['reference'])) {
@@ -457,16 +457,20 @@ abstract class RemoteEvent extends RemoteToolsRequest {
 
   /**
    * Generate an API3 error
+   *
+   * @phpstan-return array<string, mixed>
    */
-  public function createAPI3Error() {
+  public function createAPI3Error(): array {
     $first_error = reset($this->error_list);
     return civicrm_api3_create_error($first_error[0], ['status_messages' => $this->getStatusMessageList()]);
   }
 
   /**
    * Generate an API3 error
+   *
+   * @phpstan-return array<string, mixed>
    */
-  public function createAPI3Success($entity, $action, $values = [], $extraReturnValues = [], $params = []) {
+  public function createAPI3Success($entity, $action, $values = [], $extraReturnValues = [], $params = []): array {
     // add status messages
     $extraReturnValues['status_messages'] = $this->getStatusMessageList();
 
@@ -480,9 +484,9 @@ abstract class RemoteEvent extends RemoteToolsRequest {
    *
    * @param $error_message
    *
-   *
+   * @phpstan-return array<string, mixed>
    */
-  public static function createStaticAPI3Error($error_message) {
+  public static function createStaticAPI3Error($error_message): array {
     return civicrm_api3_create_error($error_message, [
       'status_messages' => [
             [

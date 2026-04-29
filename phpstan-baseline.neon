@@ -3434,6 +3434,12 @@ parameters:
 			path: Civi/RemoteEvent.php
 
 		-
+			message: '#^Method Civi\\RemoteEvent\:\:getStatusMessageList\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: Civi/RemoteEvent.php
+
+		-
 			message: '#^Cannot access offset ''id'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -3969,6 +3975,12 @@ parameters:
 		-
 			message: '#^Civi\\RemoteParticipant\\Event\\GetParticipantFormEventBase\:\:__construct\(\) does not call parent constructor from Civi\\RemoteEvent\.$#'
 			identifier: constructor.missingParentCall
+			count: 1
+			path: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
+
+		-
+			message: '#^Method Civi\\RemoteParticipant\\Event\\GetParticipantFormEventBase\:\:getResult\(\) should return array<string, array<string, mixed>> but returns array\|null\.$#'
+			identifier: return.type
 			count: 1
 			path: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
 
