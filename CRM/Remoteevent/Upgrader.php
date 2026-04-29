@@ -267,6 +267,20 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   /**
+   * Clears is_view on registration profile fields so they are carried over
+   * when an event is copied.
+   *
+   * @throws \Exception
+   */
+  public function upgrade_0022(): bool {
+    $this->ctx->log->info('Updating data structures');
+    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+
+    return TRUE;
+  }
+
+  /**
    * Migrate previous profile option values to profile option names.
    */
   protected function migrate_profile_option_values_to_option_names(): void {
