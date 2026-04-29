@@ -57,7 +57,7 @@ class RegistrationEvent extends ChangingEvent {
    * @return bool
    *   true if there is errors
    */
-  public function hasErrors(): bool {
+  public function hasErrors() {
     return !empty($this->error_list);
   }
 

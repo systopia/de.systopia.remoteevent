@@ -44,7 +44,7 @@ class CancelEvent extends ChangingEvent {
 
   /**
    * @var array holds a list of (minor) errors */
-  protected array $error_list;
+  protected $error_list;
 
   public function __construct($submission_data, $participants, ?array $event = NULL) {
     parent::__construct($submission_data, $event);
@@ -134,7 +134,7 @@ class CancelEvent extends ChangingEvent {
    * @return bool
    *   true if there is errors
    */
-  public function hasErrors(): bool {
+  public function hasErrors() {
     return !empty($this->error_list);
   }
 
@@ -144,7 +144,7 @@ class CancelEvent extends ChangingEvent {
    * @return array
    *   complete error list
    */
-  public function getErrors(): array {
+  public function getErrors() {
     return $this->error_list;
   }
 
