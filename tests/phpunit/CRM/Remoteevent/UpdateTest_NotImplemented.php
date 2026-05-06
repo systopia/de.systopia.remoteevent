@@ -105,7 +105,7 @@ class CRM_Remoteevent_UpdateTest extends CRM_Remoteevent_TestBase {
     ]);
 
     // cancel via token
-    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, NULL, 'update');
+    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', (int) $participant_id, NULL, 'update');
     $this->traitCallAPISuccess('RemoteParticipant', 'update', [
       'token' => $token,
     ]);

@@ -89,7 +89,7 @@
       "is_searchable": "1",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {
@@ -107,7 +107,7 @@
       "is_searchable": "0",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {
@@ -123,7 +123,7 @@
       "is_searchable": "1",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {
@@ -139,7 +139,7 @@
       "is_searchable": "0",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {
@@ -187,7 +187,7 @@
       "is_searchable": "1",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {
@@ -205,7 +205,7 @@
       "is_searchable": "0",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {
@@ -271,7 +271,7 @@
       "is_searchable": "0",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {
@@ -287,7 +287,7 @@
       "is_searchable": "0",
       "is_search_range": "0",
       "is_active": "1",
-      "is_view": "1",
+      "is_view": "0",
       "in_selector": "1"
     },
     {

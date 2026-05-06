@@ -116,7 +116,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
     ]);
 
     // cancel via token
-    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, NULL, 'cancel');
+    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', (int) $participant_id, NULL, 'cancel');
     $this->traitCallAPISuccess('RemoteParticipant', 'cancel', [
       'token' => $token,
     ]);
@@ -149,7 +149,7 @@ class CRM_Remoteevent_CancellationTest extends CRM_Remoteevent_TestBase {
     ]);
 
     // cancel
-    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', $participant_id, NULL, 'cancel');
+    $token = CRM_Remotetools_SecureToken::generateEntityToken('Participant', (int) $participant_id, NULL, 'cancel');
     $this->traitCallAPISuccess('RemoteParticipant', 'cancel', [
       'event_id' => $event['id'],
       'remote_contact_id' => $this->getRemoteContactKey($contact['id']),

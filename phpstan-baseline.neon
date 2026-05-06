@@ -5470,12 +5470,6 @@ parameters:
 			path: tests/phpunit/CRM/Remoteevent/CancellationTest.php
 
 		-
-			message: '#^Parameter \#2 \$entity_id of static method CRM_Remotetools_SecureToken\:\:generateEntityToken\(\) expects int, array\|int given\.$#'
-			identifier: argument.type
-			count: 2
-			path: tests/phpunit/CRM/Remoteevent/CancellationTest.php
-
-		-
 			message: '#^Cannot access offset ''count'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -6282,12 +6276,6 @@ parameters:
 		-
 			message: '#^Method CRM_Remoteevent_UpdateTest\:\:testUpdateViaToken\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: tests/phpunit/CRM/Remoteevent/UpdateTest_NotImplemented.php
-
-		-
-			message: '#^Parameter \#2 \$entity_id of static method CRM_Remotetools_SecureToken\:\:generateEntityToken\(\) expects int, array\|int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: tests/phpunit/CRM/Remoteevent/UpdateTest_NotImplemented.php
 
