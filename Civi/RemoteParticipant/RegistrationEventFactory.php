@@ -20,7 +20,6 @@ declare(strict_types = 1);
 namespace Civi\RemoteParticipant;
 
 use Civi\RemoteParticipant\Event\RegistrationEvent;
-use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
 use CRM_Remoteevent_RegistrationProfile;
 
@@ -32,15 +31,17 @@ final class RegistrationEventFactory {
     $this->filePersister = $filePersister;
   }
 
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function createRegistrationEvent(array $submissionData): RegistrationEvent {
     $registrationEvent = new RegistrationEvent($submissionData);
-    $profile = CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
+    $profile = \CRM_Remoteevent_RegistrationProfile::getProfile($registrationEvent);
     $event = $registrationEvent->getEvent();
 
     $contactData = [];
     $participantData = [];
     foreach ($profile->getFields() as $fieldKey => $fieldSpec) {
       if (array_key_exists($fieldKey, $submissionData)) {
+        // @phpstan-ignore method.deprecated
         $entityNames = (array) ($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
         $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
         $value = isset($fieldSpec['value_callback'])
@@ -81,16 +82,16 @@ final class RegistrationEventFactory {
    */
   private function getDefaultRoleId(array $event): int {
     // 1 = Attendee
-    return (int) ($event['default_role_id'] ?: 1);
+    return is_numeric($event['default_role_id'] ?? NULL) ? (int) $event['default_role_id'] : 1;
   }
 
   /**
    * Handles additional participants' data in the submission data and sets the
    * resulting data in the event.
    */
-  private function handleAdditionalParticipants(
-    RegistrationEvent $registrationEvent,
-    CRM_Remoteevent_RegistrationProfile $profile
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+  private function handleAdditionalParticipants(RegistrationEvent $registrationEvent,
+    \CRM_Remoteevent_RegistrationProfile $profile
   ): void {
     $event = $registrationEvent->getEvent();
 
@@ -101,6 +102,7 @@ final class RegistrationEventFactory {
     foreach (CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantsFields($event) as $fieldKey => $fieldSpec) {
       $participantNo = self::getAdditionalParticipantNo($fieldKey);
       if (NULL !== $participantNo && array_key_exists($fieldKey, $submissionData)) {
+        // @phpstan-ignore method.deprecated
         $entityNames = (array) ($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
         $entityFieldName = $fieldSpec['entity_field_name'] ?? $fieldKey;
         $value = isset($fieldSpec['value_callback'])
@@ -124,7 +126,7 @@ final class RegistrationEventFactory {
       return;
     }
 
-    $additionalParticipantsProfile = CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
+    $additionalParticipantsProfile = \CRM_Remoteevent_RegistrationProfile::getRegistrationProfile(
       $event['event_remote_registration.remote_registration_additional_participants_profile']
     );
     $additionalParticipantCount = 0;
@@ -146,6 +148,7 @@ final class RegistrationEventFactory {
         && \CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
         // Primary participant has not yet been created or its status is not counted, thus add 1.
         // TODO: This has to be dependent on price field participant counts, which might be more than 1 per participant.
+        // phpcs:ignore Drupal.Formatting.SpaceUnaryOperator.PlusMinus        
         + 1
         + $additionalParticipantCount
         - $event['max_participants'] > 0

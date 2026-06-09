@@ -85,10 +85,12 @@ class SpawnEvent extends AbstractAction {
   /**
    * Run the action
    *
-   * @param $parameters
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
    *   The parameters to this action.
-   * @param $output
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
    *   The parameters this action can send back
+   *
+   * @todo remove dublicated 'template_id' parameterExists query
    */
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output): void {
@@ -140,8 +142,8 @@ class SpawnEvent extends AbstractAction {
       $result = civicrm_api3('RemoteEvent', 'spawn', $apiParams);
       $output->setParameter('id', $result['id']);
     }
-    catch (\CRM_Core_Exception $e) {
-      throw new \RuntimeException(E::ts('Could not update or create an event.'), $e->getCode(), $e);
+    catch (\Exception $e) {
+      throw new ExecutionException(E::ts('Could not update or create an event.'), $e->getCode(), $e);
     }
   }
 

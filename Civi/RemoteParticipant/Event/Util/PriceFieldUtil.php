@@ -20,7 +20,6 @@ declare(strict_types = 1);
 namespace Civi\RemoteParticipant\Event\Util;
 
 use Civi\Api4\PriceFieldValue;
-use CRM_Remoteevent_Localisation;
 
 class PriceFieldUtil {
 
