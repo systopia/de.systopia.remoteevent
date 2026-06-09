@@ -35,9 +35,8 @@ class ValidateEvent extends RemoteEvent {
   public const NAME = 'civi.remoteevent.registration.validate';
 
   /**
-   * @phpstan-return array<string, mixed>
-   */
-  protected array $submission;
+   * @var array<string, mixed> holds the original RemoteParticipant.validate submission */
+  protected $submission;
 
   public function __construct($submission_data, $error_list = []) {
     $this->submission = $submission_data;
@@ -59,14 +58,25 @@ class ValidateEvent extends RemoteEvent {
     return $this->submission;
   }
 
-  public function addValidationError(string $fieldName, string $errorMessage): void {
+  /**
+   * Add an error to the given field
+   *
+   * @param string $fieldName
+   *   field name
+   *
+   * @param string $errorMessage
+   *   error message to be displayed to the user
+   */
+  public function addValidationError($fieldName, $errorMessage): void {
+    // just pass to the underlying error system
     $this->addError($errorMessage, $fieldName);
   }
 
   /**
    * @phpstan-return list<string>
+   *   $validation error list (reference!)
    */
-  public function &modifyValidationErrors(): array {
+  public function &modifyValidationErrors() {
     return $this->error_list;
   }
 

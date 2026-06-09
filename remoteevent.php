@@ -32,8 +32,8 @@ use Civi\RemoteParticipant\Event\UpdateEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
 use Civi\RemoteParticipant\EventSubscriber\MailingListSubscriptionSubscriber;
 use Civi\RemoteParticipant\MailingList\DoubleOptInEmailSender;
-use Civi\RemoteParticipant\MailingList\DoubleOptInTokenGenerator;
 use Civi\RemoteParticipant\MailingList\MailingListSubscriptionManager;
+use Civi\RemoteParticipant\MailingList\DoubleOptInTokenGenerator;
 use Civi\RemoteParticipant\RegistrationEventFactory;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
 use CRM_Remoteevent_ExtensionUtil as E;
@@ -205,6 +205,16 @@ function remoteevent_civicrm_config(&$config) {
   );
   $dispatcher->addUniqueListener(
     RegistrationEvent::NAME,
+    ['CRM_Remoteevent_Registration', 'createOrder'],
+    CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION
+  );
+  $dispatcher->addUniqueListener(
+    RegistrationEvent::NAME,
+    ['CRM_Remoteevent_Registration', 'createPayment'],
+    CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION
+  );
+  $dispatcher->addUniqueListener(
+    RegistrationEvent::NAME,
     ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'],
     CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION
   );
@@ -263,43 +273,17 @@ function remoteevent_civicrm_config(&$config) {
     ['CRM_Remoteevent_RemoteEvent', 'listTokens']
   );
 
-    // EVENT REGISTRATION.SUBMIT
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_EventSessions', 'extractSessions'], CRM_Remoteevent_Registration::BEFORE_CONTACT_IDENTIFICATION);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'identifyRemoteContact'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'createContactXCM'], CRM_Remoteevent_Registration::STAGE1_CONTACT_IDENTIFICATION);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'verifyContactNotRegistered'], CRM_Remoteevent_Registration::AFTER_CONTACT_IDENTIFICATION);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'confirmExistingParticipant'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 40);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'determineParticipantStatus'], CRM_Remoteevent_Registration::BEFORE_PARTICIPANT_CREATION + 20);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'createParticipant'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'registerAdditionalParticipants'], CRM_Remoteevent_Registration::STAGE2_PARTICIPANT_CREATION);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'createOrder'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_Registration', 'createPayment'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
+  // 2) SESSION TOKENS
+  $dispatcher->addUniqueListener(
+    'civi.eventmessages.tokens',
+    ['CRM_Remoteevent_EventSessions', 'addTokens']
+  );
+  $dispatcher->addUniqueListener(
+    'civi.eventmessages.tokenlist',
+    ['CRM_Remoteevent_EventSessions', 'listTokens']
+  );
 
-    $dispatcher->addUniqueListener(
-        RegistrationEvent::NAME,
-        ['CRM_Remoteevent_EventSessions', 'synchroniseSessions'], CRM_Remoteevent_Registration::AFTER_PARTICIPANT_CREATION);
-
-  // 2) EVENT LOCATION TOKENS
+  // 3) EVENT LOCATION TOKENS
   $dispatcher->addUniqueListener(
     'civi.eventmessages.tokens',
     ['CRM_Remoteevent_EventLocation', 'addTokens']
@@ -317,7 +301,11 @@ function remoteevent_civicrm_config(&$config) {
 }
 
 /**
- * Implements hook_civicrm_container().
+ * Implements hook_civicrm_container()
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
+ *
+ * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function remoteevent_civicrm_container(ContainerBuilder $container) {
   $container->addResource(new FileResource(__FILE__));
@@ -404,6 +392,7 @@ function remoteevent_civicrm_permission(&$permissions) {
 
 /**
  * Implements hook_civicrm_alterAPIPermissions().
+ * Set permissions RemoteEvent API
  */
 function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   // RemoteEvent entity
@@ -507,6 +496,7 @@ function remoteevent_civicrm_custom($op, $groupID, $entityID, &$params): void {
 
 /**
  * Implements hook_civicrm_post().
+ * Monitor Participant objects
  */
 function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if (('edit' === $op || 'create' === $op) && 'Participant' === $objectName) {
@@ -516,6 +506,7 @@ function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
 
 /**
  * Implements hook_civicrm_pageRun().
+ * Inject session information
  */
 function remoteevent_civicrm_pageRun(&$page) {
   $pageName = $page->getVar('_name');
@@ -540,6 +531,7 @@ function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask,
 
 /**
  * Implements hook_civicrm_searchTasks().
+ * Inject our 'Session Registration' task
  */
 function remoteevent_civicrm_searchTasks($objectType, &$tasks) {
   // add "Session Registration" task to participant list
