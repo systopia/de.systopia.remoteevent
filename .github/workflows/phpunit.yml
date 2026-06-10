@@ -76,6 +76,9 @@ jobs:
           # Prevent this git error: The repository does not have the correct ownership and git refuses to use it
           git config --global --add safe.directory "$PWD"
 
+          git clone --depth=1 https://github.com/systopia/de.systopia.remotetools.git ../de.systopia.remotetools
+          git clone --depth=1 https://github.com/systopia/de.systopia.xcm.git ../de.systopia.xcm
+
           EXT_DIR=$PWD
           EXT_COMPOSER_NAME=$(composer show --self --name-only)
           composer composer-phpunit -- update --no-progress --optimize-autoloader
