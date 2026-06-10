@@ -301,11 +301,10 @@ function remoteevent_civicrm_config(&$config) {
 }
 
 /**
- * Implements hook_civicrm_container()
+ * Implements hook_civicrm_container().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
  *
- * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function remoteevent_civicrm_container(ContainerBuilder $container) {
   $container->addResource(new FileResource(__FILE__));
@@ -392,6 +391,7 @@ function remoteevent_civicrm_permission(&$permissions) {
 
 /**
  * Implements hook_civicrm_alterAPIPermissions().
+ *
  * Set permissions RemoteEvent API
  */
 function remoteevent_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
@@ -496,6 +496,7 @@ function remoteevent_civicrm_custom($op, $groupID, $entityID, &$params): void {
 
 /**
  * Implements hook_civicrm_post().
+ *
  * Monitor Participant objects
  */
 function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
@@ -506,6 +507,7 @@ function remoteevent_civicrm_post($op, $objectName, $objectId, &$objectRef) {
 
 /**
  * Implements hook_civicrm_pageRun().
+ *
  * Inject session information
  */
 function remoteevent_civicrm_pageRun(&$page) {
@@ -531,6 +533,7 @@ function remoteevent_civicrm_links($op, $objectName, $objectId, &$links, &$mask,
 
 /**
  * Implements hook_civicrm_searchTasks().
+ *
  * Inject our 'Session Registration' task
  */
 function remoteevent_civicrm_searchTasks($objectType, &$tasks) {

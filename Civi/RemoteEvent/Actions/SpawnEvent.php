@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Civi\RemoteEvent\Actions;
 
 use Civi\ActionProvider\Action\AbstractAction;
-use Civi\ActionProvider\Action\Contact\ContactActionUtils;
 use Civi\ActionProvider\ConfigContainer;
 use Civi\ActionProvider\Exception\ExecutionException;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;

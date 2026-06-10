@@ -57,9 +57,9 @@ class RegistrationEvent extends ChangingEvent {
   /**
    * @phpstan-var array<string, mixed>
    */
-    protected array $order_data = [];
+  protected array $order_data = [];
 
-    /**
+  /**
    * Check if the submission has errors
    * @return bool
    *   true if there is errors
@@ -146,11 +146,11 @@ class RegistrationEvent extends ChangingEvent {
   /**
    * @phpstan-return array<string, mixed>
    */
-    public function getOrderData(): array {
-      return $this->order_data;
-    }
+  public function getOrderData(): array {
+    return $this->order_data;
+  }
 
-    /**
+  /**
    * @phpstan-param array<array<string, mixed>> $additional_participants_data
    */
   public function setAdditionalParticipantsData(array $additional_participants_data): void {
@@ -160,11 +160,11 @@ class RegistrationEvent extends ChangingEvent {
   /**
    * @phpstan-param array<string, mixed> $order_data
    */
-    public function setOrderData(array $order_data): void {
-      $this->order_data = $order_data;
-    }
+  public function setOrderData(array $order_data): void {
+    $this->order_data = $order_data;
+  }
 
-    /**
+  /**
    * Set the contact_data object, which is used for
    *   contact identification / creation
    *

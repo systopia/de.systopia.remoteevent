@@ -16,7 +16,6 @@
 declare(strict_types = 1);
 
 use Civi\Api4\Participant;
-use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteParticipant\Event\UpdateParticipantEvent;
 use CRM_Remoteevent_ExtensionUtil as E;
@@ -126,12 +125,13 @@ class CRM_Remoteevent_Registration {
 
   /**
    * Get a list of participant objects
-     *
-     * @param integer $event_id
-     *   the event
-     *
-     * @param integer $contact_id
-     *   the contact
+   *
+   * @param integer $contact_id
+   *   the contact
+   *
+   * @param integer $event_id
+   *   the event
+   *
    */
   public static function invalidateRegistrationCache($contact_id, $event_id) {
     // unset the registration data
@@ -204,7 +204,8 @@ class CRM_Remoteevent_Registration {
       if ($registered_count >= $event_data['max_participants']) {
         if (empty($event_data['event_full_text'])) {
           return E::ts('Event is booked out');
-        } else {
+        }
+        else {
           return $event_data['event_full_text'];
         }
       }
@@ -298,13 +299,15 @@ class CRM_Remoteevent_Registration {
     if (empty($event_data['selfcancelxfer_time'])) {
       // no restrictions
       return TRUE;
-    } else {
+    }
+    else {
       $min_seconds_before_start = 60 * 60 * (int) $event_data['selfcancelxfer_time'];
       $current_seconds_before_start = strtotime($event_data['start_date']) - strtotime('now');
       if ($current_seconds_before_start > $min_seconds_before_start) {
         // we can still cancel
         return TRUE;
-      } else {
+      }
+      else {
         // we're too close to the event starting date
         return FALSE;
       }
@@ -389,7 +392,8 @@ class CRM_Remoteevent_Registration {
     if (!empty($event_data['enabled_profiles'])) {
       $enabled_profiles = explode(',', $event_data['enabled_profiles']);
       return in_array('OneClick', $enabled_profiles);
-    } else {
+    }
+    else {
       return FALSE;
     }
   }
@@ -552,13 +556,15 @@ class CRM_Remoteevent_Registration {
         CRM_Remoteevent_CustomData::resolveCustomFields($contact_identification);
         $match = civicrm_api3('Contact', 'getorcreate', $contact_identification);
 
-      } catch (Exception $ex) {
+      }
+      catch (Exception $ex) {
         if (empty($contact_identification['id'])) {
           // no contact ID given -> there must be some data missing
           throw new Exception(
           E::ts("Couldn't find or create contact: ") . $ex->getMessage());
 
-        } else {
+        }
+        else {
           // the contact ID ws passed, but it still failed.
           // first: check if options.match_contact_id is set
           $profile_name = $contact_identification['xcm_profile'];
@@ -568,7 +574,8 @@ class CRM_Remoteevent_Registration {
               // phpcs:ignore Generic.Files.LineLength.TooLong
               "RemoteEvent: maybe you should activate the 'Match contacts by contact ID' option for your '{$profile_name}' profile, so that contact updates could also be applied if the participant is only identified by ID."
             );
-          } else {
+          }
+          else {
             throw new Exception(E::ts('Error while updating contact %1: %2', [
               1 => $contact_identification['id'],
               2 => $ex->getMessage(),
@@ -645,14 +652,16 @@ class CRM_Remoteevent_Registration {
         if (empty($submission['confirm'])) {
           // participant want's out
           $new_status = 'Rejected';
-        } else {
+        }
+        else {
           // participant wants to confirm
           if (CRM_Remoteevent_RemoteEvent::hasActiveWaitingList(
                 $registration->getEventID(),
                 $registration->getEvent()
             )) {
             $new_status = 'On waitlist';
-          } else {
+          }
+          else {
             $new_status = 'Registered';
           }
         }
@@ -669,7 +678,8 @@ class CRM_Remoteevent_Registration {
         // mark as updated to avoid additional calls
         // see also: https://github.com/systopia/de.systopia.remoteevent/issues/19
         $registration->setParticipantUpdated();
-      } else {
+      }
+      else {
         // there is no pre-existing participant, just add to the general to-be-created one
         if (empty($submission['confirm'])) {
           $participant = &$registration->getParticipantData();
@@ -707,7 +717,8 @@ class CRM_Remoteevent_Registration {
 
         if (!empty($event_data['waitlist_text'])) {
           $registration->addStatus($event_data['waitlist_text']);
-        } else {
+        }
+        else {
           $registration->addStatus(E::ts('You have been added to the waitlist.'));
         }
       }
@@ -749,7 +760,8 @@ class CRM_Remoteevent_Registration {
         $participant_data['force_trigger_eventmessage'] = 1;
       }
 
-        } else {
+    }
+    else {
       // we're creating an all new participant
       if (!isset($participant_data['contact_id'])) {
         $participant_data['contact_id'] = $registration->getContactID();
@@ -792,7 +804,7 @@ class CRM_Remoteevent_Registration {
 
       $additionalParticipantsData[$participantNo]['contact_id']
         = $additionalContactsData[$participantNo]['id']
-        = $contactData['id'] = $match['id'];
+          = $contactData['id'] = $match['id'];
 
       // Check for existing participants for the identified contact.
       $cannotRegisterReason = CRM_Remoteevent_Registration::cannotRegister(
@@ -844,7 +856,7 @@ class CRM_Remoteevent_Registration {
           'payment_instrument_id' => static::getPaymentInstrumentForPaymentMethod(
             $registration->getSubmittedValue('payment_method'),
             $event
-          )
+          ),
         ]);
       foreach ($registration->getPriceFieldValues() as $value) {
         $order->addLineItem([
@@ -1001,12 +1013,13 @@ class CRM_Remoteevent_Registration {
           'weight' => 100,
           'required' => 1,
           'label' => $l10n->ts('I accept the following terms and conditions'),
-          'description' => '', //$l10n->ts("You have to accept the terms and conditions to participate in this event"),
+          /** $l10n->ts("You have to accept the terms and conditions to participate in this event"), */
+          'description' => '',
           'parent' => 'gtacs',
           'suffix' => $event['event_remote_registration.remote_registration_gtac'],
           'suffix_display' => 'inline',
           'suffix_dialog_label' => $l10n->ts('Details'),
-        ]
+        ],
       ]);
     }
   }

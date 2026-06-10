@@ -20,7 +20,6 @@ use Civi\RemoteParticipant\Event\Util\ParticipantFormEventUtil;
 use CRM_Remoteevent_ExtensionUtil as E;
 
 use Civi\Api4\Participant;
-use Civi\RemoteEvent as RemoteEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
@@ -288,7 +287,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         $event['event_remote_registration.remote_registration_additional_participants_profile']
       );
       $additional_fields = $additional_participants_profile->getFields($locale);
-            $additional_fields += self::getProfilePriceFields($event, $locale);
+      $additional_fields += self::getProfilePriceFields($event, $locale);
       $fields['additional_participants'] = [
         'type' => 'fieldset',
         'name' => 'additional_participants',
@@ -419,6 +418,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     }
   }
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function validateFieldValues(ValidateEvent $validationEvent): void {
     $data = $validationEvent->getSubmission();
     $event = $validationEvent->getEvent();
@@ -471,6 +471,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
   /**
    * @throws \CRM_Core_Exception
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function validatePriceFields(ValidateEvent $validationEvent): void {
     /** @phpstan-var array<string, mixed> $event*/
     $event = $validationEvent->getEvent();
@@ -589,7 +590,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     if (preg_match('/^custom_/', $field_key)
         || preg_match('/^\w+[.]\w+$/', $field_key)) {
       return ['Contact', 'Participant'];
-    } else {
+    }
+    else {
       return ['Contact'];
     }
   }
@@ -622,11 +624,11 @@ abstract class CRM_Remoteevent_RegistrationProfile {
     $this->adjustContactData($contact_data);
   }
 
-  /*************************************************************
-   *                HELPER / INFRASTRUCTURE                   **
-   *************************************************************/
+  //*************************************************************
+  //*                HELPER / INFRASTRUCTURE                   **
+  //*************************************************************
 
-    /**
+  /**
    * Add the profile data to the get_form results
    *
    * @param \Civi\RemoteEvent $remote_event
@@ -681,8 +683,6 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    * @param \Civi\RemoteParticipant\Event\GetParticipantFormEventBase $get_form_results
    *   event triggered by the RemoteParticipant.get_form API call
    *
-   * @return array|null
-   *   returns API error if there is an issue
    */
   public static function addProfileData($get_form_results) {
     // simply add the fields from the profile
@@ -817,7 +817,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
       $default_profile_name = $event['event_remote_registration.remote_registration_default_profile'];
       if (isset($profiles[$default_profile_name])) {
         $event['default_profile'] = $default_profile_name;
-      } else {
+      }
+      else {
         $event['default_profile'] = '';
       }
       unset($event['event_remote_registration.remote_registration_default_profile']);
@@ -834,7 +835,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
       $default_profile_name = $event['event_remote_registration.remote_registration_default_update_profile'];
       if (isset($profiles[$default_profile_name])) {
         $event['default_update_profile'] = $default_profile_name;
-      } else {
+      }
+      else {
         $event['default_update_profile'] = '';
       }
       unset($event['event_remote_registration.remote_registration_default_update_profile']);
@@ -846,7 +848,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
       $enabled_profile_names = array_intersect($enabled_profiles, array_keys($profiles));
       $event['enabled_update_profiles'] = implode(',', $enabled_profile_names);
       unset($event['event_remote_registration.remote_registration_update_profiles']);
-    } else {
+    }
+    else {
       $event['enabled_update_profiles'] = [];
     }
 
@@ -872,7 +875,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    * @param array $data
    *   input data
    *
-   * @param string mode
+   * @param string $mode
    *   'exception' (default) throws an exception if some of the data is invalid,
    *   'filter' will simply drop those
    *
@@ -891,7 +894,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         $value = $data[$field_key];
         if ($this->validateFieldValue($field_spec, $value)) {
           $return_values[$field_key] = $value;
-        } else {
+        }
+        else {
           if ($mode == 'exception') {
             throw new Exception(
             E::ts(
@@ -949,7 +953,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         try {
           CRM_Utils_Type::validate($value, $validation);
           return TRUE;
-        } catch (Exception $ex) {
+        }
+        catch (Exception $ex) {
           return FALSE;
         }
 
@@ -958,7 +963,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         if (substr($validation, 0, 6) == 'regex:') {
           if (NULL !== $value && strlen($value) > 0) {
             return preg_match(substr($validation, 6), $value) > 0;
-          } else {
+          }
+          else {
             return TRUE;
           }
         }
@@ -1106,7 +1112,8 @@ abstract class CRM_Remoteevent_RegistrationProfile {
         ]);
         $contact_data += $legacy_contact_data;
         ParticipantFormEventUtil::mapToPrefill($contact_data, $attribute_mapping, $resultsEvent, $value_callbacks);
-      } catch (CRM_Core_Exception $ex) {
+      }
+      catch (CRM_Core_Exception $ex) {
         // @ignoreException
         // there is no (unique) primary email
       }

@@ -62,9 +62,9 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     $profile = CRM_Xcm_Configuration::getConfigProfile('default');
 
     // jumble the participant status labels so we're sure we only using the names
-    CRM_Core_DAO::executeQuery("UPDATE civicrm_participant_status_type SET label = MD5(name);");
+    CRM_Core_DAO::executeQuery('UPDATE civicrm_participant_status_type SET label = MD5(name);');
 
-    //Civi::settings()->set('remote_event_get_performance_enhancement', true);
+    /** Civi::settings()->set('remote_event_get_performance_enhancement', true); */
   }
 
   protected function tearDown(): void {
@@ -74,7 +74,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     parent::tearDown();
   }
 
-    /**
+  /**
    * Create a new remote event. All of the
    *  vital fields will have default values, that can be overwritten by
    *  the array passed
@@ -103,7 +103,8 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     foreach ($event_details as $key => $value) {
       if (NULL === $value) {
         unset($event_data[$key]);
-      } else {
+      }
+      else {
         $event_data[$key] = $value;
       }
     }
@@ -119,7 +120,8 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     if ($use_remote_api) {
       $result = $this->traitCallAPISuccess('RemoteEvent', 'spawn', $event_data);
       $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
-    } else {
+    }
+    else {
       $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
       $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
       CRM_Remoteevent_CustomData::labelCustomFields($event);
@@ -162,86 +164,86 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
    * @phpstan-return list<array<string, mixed>>
    *   A list of price fields added to the event.
    */
-    public function addPriceFields(int $eventId): array {
-      $priceFields = [];
+  public function addPriceFields(int $eventId): array {
+    $priceFields = [];
 
-      $priceSet = \Civi\Api4\PriceSet::create(TRUE)
-        ->addValue('title', 'Test Price Set')
-        ->addValue('extends:name', ['CiviEvent'])
-        ->addValue('name', 'test_price_set')
-        ->execute()
-        ->single();
+    $priceSet = \Civi\Api4\PriceSet::create(TRUE)
+      ->addValue('title', 'Test Price Set')
+      ->addValue('extends:name', ['CiviEvent'])
+      ->addValue('name', 'test_price_set')
+      ->execute()
+      ->single();
 
-      $optionsPriceField = \Civi\Api4\PriceField::create(TRUE)
-        ->addValue('price_set_id', $priceSet['id'])
-        ->addValue('name', 'test_price_options_field')
-        ->addValue('label', 'Test Price Options Field')
-        ->addValue('html_type', 'Select')
-        ->execute()
-        ->single();
-      $priceFields[] = $optionsPriceField;
-      $priceFieldValueRegular = \Civi\Api4\PriceFieldValue::create(TRUE)
-        ->addValue('label', 'Regular Fee')
-        ->addValue('amount', 20)
+    $optionsPriceField = \Civi\Api4\PriceField::create(TRUE)
+      ->addValue('price_set_id', $priceSet['id'])
+      ->addValue('name', 'test_price_options_field')
+      ->addValue('label', 'Test Price Options Field')
+      ->addValue('html_type', 'Select')
+      ->execute()
+      ->single();
+    $priceFields[] = $optionsPriceField;
+    $priceFieldValueRegular = \Civi\Api4\PriceFieldValue::create(TRUE)
+      ->addValue('label', 'Regular Fee')
+      ->addValue('amount', 20)
         // price_field_id.name does not seem to be accepted, so use the actual ID.
-        ->addValue('price_field_id', $optionsPriceField['id'])
-        ->addValue('financial_type_id:name', 'Event Fee')
-        ->execute();
-      $priceFieldValueDiscount = \Civi\Api4\PriceFieldValue::create(TRUE)
-        ->addValue('label', 'Discount Fee')
-        ->addValue('amount', 10)
-        ->addValue('price_field_id', $optionsPriceField['id'])
-        ->addValue('financial_type_id:name', 'Event Fee')
-        ->execute();
+      ->addValue('price_field_id', $optionsPriceField['id'])
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->execute();
+    $priceFieldValueDiscount = \Civi\Api4\PriceFieldValue::create(TRUE)
+      ->addValue('label', 'Discount Fee')
+      ->addValue('amount', 10)
+      ->addValue('price_field_id', $optionsPriceField['id'])
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->execute();
 
-      $amountPriceField = \Civi\Api4\PriceField::create(TRUE)
-        ->addValue('price_set_id', $priceSet['id'])
-        ->addValue('name', 'test_price_amount_field')
-        ->addValue('label', 'Test Price Amount Field')
-        ->addValue('html_type', 'Text')
-        ->addValue('is_enter_qty', TRUE)
-        ->execute()
-        ->single();
-      $priceFieldValueAmount = \Civi\Api4\PriceFieldValue::create(TRUE)
-        ->addValue('label', 'Amount of Stuff')
-        ->addValue('amount', 25)
-        ->addValue('price_field_id', $amountPriceField['id'])
-        ->addValue('financial_type_id:name', 'Event Fee')
-        ->execute();
-      $priceFields[] = $amountPriceField;
+    $amountPriceField = \Civi\Api4\PriceField::create(TRUE)
+      ->addValue('price_set_id', $priceSet['id'])
+      ->addValue('name', 'test_price_amount_field')
+      ->addValue('label', 'Test Price Amount Field')
+      ->addValue('html_type', 'Text')
+      ->addValue('is_enter_qty', TRUE)
+      ->execute()
+      ->single();
+    $priceFieldValueAmount = \Civi\Api4\PriceFieldValue::create(TRUE)
+      ->addValue('label', 'Amount of Stuff')
+      ->addValue('amount', 25)
+      ->addValue('price_field_id', $amountPriceField['id'])
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->execute();
+    $priceFields[] = $amountPriceField;
 
-      // Make the event monetary and assign a financial type.
-      \Civi\Api4\Event::update(TRUE)
-        ->addValue('is_monetary', TRUE)
-        ->addValue('financial_type_id:name', 'Event Fee')
-        ->addValue('fee_label', 'Test Fee Label')
-        ->addValue('currency', 'EUR')
-        ->addWhere('id', '=', $eventId)
-        ->execute();
+    // Make the event monetary and assign a financial type.
+    \Civi\Api4\Event::update(TRUE)
+      ->addValue('is_monetary', TRUE)
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->addValue('fee_label', 'Test Fee Label')
+      ->addValue('currency', 'EUR')
+      ->addWhere('id', '=', $eventId)
+      ->execute();
 
-      // Assign the price set to the event.
-      \Civi\Api4\PriceSetEntity::create(TRUE)
-        ->addValue('entity_table', 'civicrm_event')
-        ->addValue('entity_id', $eventId)
-        ->addValue('price_set_id', $priceSet['id'])
-        ->execute();
+    // Assign the price set to the event.
+    \Civi\Api4\PriceSetEntity::create(TRUE)
+      ->addValue('entity_table', 'civicrm_event')
+      ->addValue('entity_id', $eventId)
+      ->addValue('price_set_id', $priceSet['id'])
+      ->execute();
 
-      return $priceFields;
-    }
+    return $priceFields;
+  }
 
-    /**
-     * Create a new session
-     *
-     * @params
-     * @param array $session_details
-     *   overrides the default values
-     *
-     * @return array
-     *   contact data
-     */
+  /**
+   * Create a new session
+   *
+   * @params
+   * @param array $session_details
+   *   overrides the default values
+   *
+   * @return array
+   *   contact data
+   */
   public function createEventSession($event_id, $session_details = []) {
-        // prepare event
-        $session_data = [
+    // prepare event
+    $session_data = [
       'event_id' => $event_id,
       'title' => $this->randomString(50),
       'is_active' => 1,
@@ -251,16 +253,16 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
       'type_id' => 1,
       'description' => $this->randomString(50),
       'max_participants' => NULL,
-        ];
-        foreach ($session_details as $key => $value) {
-            $session_data[$key] = $value;
-        }
-
-        // create contact
-        $result = $this->traitCallAPISuccess('Session', 'create', $session_data);
-        $session = $this->traitCallAPISuccess('Session', 'getsingle', ['id' => $result['id']]);
-        return $session;
+    ];
+    foreach ($session_details as $key => $value) {
+      $session_data[$key] = $value;
     }
+
+    // create contact
+    $result = $this->traitCallAPISuccess('Session', 'create', $session_data);
+    $session = $this->traitCallAPISuccess('Session', 'getsingle', ['id' => $result['id']]);
+    return $session;
+  }
 
   /**
    * Create a number of events with the same setup,
@@ -312,14 +314,16 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
         "API Call {$entity}.{$action} doesn't return 'status_messages'"
       );
       $status_messages = $result['status_messages'];
-    } catch (CRM_Core_Exception $ex) {
+    }
+    catch (CRM_Core_Exception $ex) {
       $result = [
         'is_error' => 1,
         'error_message' => $ex->getMessage(),
       ];
       if (isset($ex->getErrorData()['status_messages'])) {
         $status_messages = $ex->getErrorData()['status_messages'];
-      } else {
+      }
+      else {
         $status_messages = [];
       }
     }
@@ -437,7 +441,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
       // simply try again (recursively). Is this dangerous? Yes, but veeeery unlikely... :)
       return $this->randomString($length);
     }
-    // mark as 'generated':
+    /** mark as 'generated' */
     $generated_strings[$candidate] = 1;
     return $candidate;
   }
@@ -457,7 +461,8 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     $profiles = Civi::settings()->get('xcm_config_profiles');
     if (NULL !== $profile_data_override && [] !== $profile_data_override) {
       $profiles[$profile_name] = $profile_data_override;
-    } else {
+    }
+    else {
       $profileJson = file_get_contents(E::path('tests/resources/xcm_profile_testing.json'));
       if (FALSE !== $profileJson) {
         $profiles[$profile_name] = json_decode(
@@ -733,7 +738,8 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     static $last_timestamp = NULL;
     if (NULL === $last_timestamp) {
       $last_timestamp = strtotime('now + 1 hour');
-    } else {
+    }
+    else {
       $last_timestamp = strtotime('+5 minutes', $last_timestamp);
     }
     return date('YmdHis', $last_timestamp);
@@ -775,4 +781,5 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     }
     return $result;
   }
+
 }

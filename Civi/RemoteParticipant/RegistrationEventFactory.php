@@ -20,7 +20,6 @@ declare(strict_types = 1);
 namespace Civi\RemoteParticipant;
 
 use Civi\RemoteParticipant\Event\RegistrationEvent;
-use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
 use CRM_Remoteevent_RegistrationProfile;
 
@@ -148,7 +147,7 @@ final class RegistrationEventFactory {
         && !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
         && \CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
         // Primary participant has not yet been created or its status is not counted, thus add 1.
-        // TODO: This has to be dependent on price field participant counts, which might be more than 1 per participant.                
+        // TODO: This has to be dependent on price field participant counts, which might be more than 1 per participant.
         // phpcs:ignore Drupal.Formatting.SpaceUnaryOperator.PlusMinus        
         + 1
         + $additionalParticipantCount
