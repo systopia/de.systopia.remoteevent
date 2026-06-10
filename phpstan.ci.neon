@@ -2,18 +2,8 @@ includes:
 	- phpstan.neon.dist
 
 parameters:
-	scanDirectories:
-		- ci/vendor/civicrm/civicrm-core/api/
-		- ci/vendor/civicrm/civicrm-core/CRM/
-		- ci/vendor/civicrm/civicrm-core/Civi/
-		- ci/vendor/civicrm/civicrm-core/ext/civi_event/Civi/Api4/
-		- ci/vendor/civicrm/civicrm-core/ext/civi_contribute/Civi/Api4/
-		- ci/vendor/civicrm/civicrm-core/ext/legacycustomsearches/CRM/
-		- ci/vendor/civicrm/civicrm-packages/HTML/
-		- ci/vendor/civicrm/civicrm-packages/DB/
 	bootstrapFiles:
-		- ci/vendor/autoload.php
-		- ci/vendor/civicrm/civicrm-core/api/Exception.php
+		- vendor/autoload.php
 	# Because we test with different versions in CI we may have unmatched errors.
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
@@ -21,6 +11,3 @@ parameters:
 
 		# Required with symfony/event-dispatcher <4.4.27
 		- '#::getSubscribedEvents\(\) return type has no value type specified in iterable type array.$#'
-
-		# Required with symfony/dependency-injection < 6.3.0
-		- '#^Method Civi\\RemoteEvent\\CompilerPass\:\:process\(\) has no return type specified\.$#'
