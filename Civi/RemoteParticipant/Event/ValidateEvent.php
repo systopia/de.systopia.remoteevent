@@ -100,7 +100,7 @@ class ValidateEvent extends RemoteEvent {
       $priceFields,
       $additionalParticipantsCount
     ) as $fieldName => $priceFieldId) {
-      /** @var $participantNo 0 for the initial participant, 1-N for additional participants */
+      /** @var int $participantNo 0 for the initial participant, 1-N for additional participants */
       $participantNo = RegistrationEventFactory::getAdditionalParticipantNo($fieldName) ?? 0;
       $priceField = $priceFields[$priceFieldId];
       $priceFieldValues = PriceFieldUtil::getPriceFieldValues($priceField['price_field.id']);

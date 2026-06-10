@@ -1944,7 +1944,7 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 35
+			count: 33
 			path: CRM/Remoteevent/Registration.php
 
 		-
@@ -2091,18 +2091,6 @@ parameters:
 			path: CRM/Remoteevent/Registration.php
 
 		-
-			message: '#^Method CRM_Remoteevent_Registration\:\:invalidateRegistrationCache\(\) has parameter \$contact_id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Remoteevent/Registration.php
-
-		-
-			message: '#^Method CRM_Remoteevent_Registration\:\:invalidateRegistrationCache\(\) has parameter \$event_id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Remoteevent/Registration.php
-
-		-
 			message: '#^Method CRM_Remoteevent_Registration\:\:isRegistrationSuspended\(\) has parameter \$event_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2175,12 +2163,6 @@ parameters:
 			path: CRM/Remoteevent/Registration.php
 
 		-
-			message: '#^Parameter \#1 \$profile_name of static method CRM_Xcm_Configuration\:\:getConfigProfile\(\) expects string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/Registration.php
-
-		-
 			message: '#^Part \$profile_name \(mixed\) of encapsed string cannot be cast to string\.$#'
 			identifier: encapsedStringPart.nonString
 			count: 1
@@ -2195,16 +2177,6 @@ parameters:
 		-
 			message: '#^Property CRM_Remoteevent_Registration\:\:\$cached_registration_event_ids type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Remoteevent/Registration.php
-
-		-
-			message: '#^Thrown exceptions in a catch block must bundle the previous exception \(see throw statement line 533\)\.$#'
-			count: 1
-			path: CRM/Remoteevent/Registration.php
-
-		-
-			message: '#^Thrown exceptions in a catch block must bundle the previous exception \(see throw statement line 549\)\.$#'
 			count: 1
 			path: CRM/Remoteevent/Registration.php
 
@@ -2259,7 +2231,7 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 11
+			count: 13
 			path: CRM/Remoteevent/RegistrationProfile.php
 
 		-
@@ -2286,12 +2258,6 @@ parameters:
 
 		-
 			message: '#^Method CRM_Remoteevent_RegistrationProfile\:\:addDefaultValues\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Remoteevent/RegistrationProfile.php
-
-		-
-			message: '#^Method CRM_Remoteevent_RegistrationProfile\:\:addProfileData\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: CRM/Remoteevent/RegistrationProfile.php
@@ -2507,18 +2473,6 @@ parameters:
 			path: CRM/Remoteevent/RegistrationProfile.php
 
 		-
-			message: '#^Parameter \#1 \$array of function array_reduce expects array, array\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/RegistrationProfile.php
-
-		-
-			message: '#^Parameter \#1 \$event of method CRM_Remoteevent_RegistrationProfile\:\:getAdditionalParticipantsFields\(\) expects array, array\<string, mixed\>\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: CRM/Remoteevent/RegistrationProfile.php
-
-		-
 			message: '#^Parameter \#1 \$event_id of static method CRM_Remoteevent_Registration\:\:getRegistrationCount\(\) expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2599,12 +2553,6 @@ parameters:
 		-
 			message: '#^Cannot access offset ''city''\|''country_id''\|''postal_code''\|''state_province_id''\|''street_address''\|''supplemental_address_1''\|''supplemental_address_2'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Remoteevent/RegistrationProfile/Standard3.php
-
-		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
 			count: 1
 			path: CRM/Remoteevent/RegistrationProfile/Standard3.php
 
@@ -4045,12 +3993,6 @@ parameters:
 			path: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
 
 		-
-			message: '#^PHPDoc type array of property Civi\\RemoteParticipant\\Event\\GetParticipantFormEventBase\:\:\$result is not the same as PHPDoc type array\|null of overridden property Civi\\RemoteToolsRequest\:\:\$result\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: Civi/RemoteParticipant/Event/GetParticipantFormEventBase.php
-
-		-
 			message: '#^Property Civi\\RemoteEvent\:\:\$participant_id \(int\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -4363,31 +4305,7 @@ parameters:
 			path: Civi/RemoteParticipant/Event/ValidateEvent.php
 
 		-
-			message: '#^Method Civi\\RemoteParticipant\\Event\\ValidateEvent\:\:addValidationError\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: Civi/RemoteParticipant/Event/ValidateEvent.php
-
-		-
 			message: '#^Method Civi\\RemoteParticipant\\Event\\ValidateEvent\:\:getQueryParameters\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/RemoteParticipant/Event/ValidateEvent.php
-
-		-
-			message: '#^Method Civi\\RemoteParticipant\\Event\\ValidateEvent\:\:getSubmission\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/RemoteParticipant/Event/ValidateEvent.php
-
-		-
-			message: '#^Method Civi\\RemoteParticipant\\Event\\ValidateEvent\:\:modifyValidationErrors\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/RemoteParticipant/Event/ValidateEvent.php
-
-		-
-			message: '#^Property Civi\\RemoteParticipant\\Event\\ValidateEvent\:\:\$submission type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: Civi/RemoteParticipant/Event/ValidateEvent.php
@@ -4449,12 +4367,6 @@ parameters:
 		-
 			message: '#^Offset ''event_remote_registration\.remote_registration_additional_participants_xcm_profile'' might not exist on array\<string, mixed\>\|null\.$#'
 			identifier: offsetAccess.notFound
-			count: 1
-			path: Civi/RemoteParticipant/RegistrationEventFactory.php
-
-		-
-			message: '#^Parameter \#1 \$event of method CRM_Remoteevent_RegistrationProfile\:\:getAdditionalParticipantsFields\(\) expects array, array\<string, mixed\>\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: Civi/RemoteParticipant/RegistrationEventFactory.php
 
@@ -5580,7 +5492,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 5
 			path: tests/phpunit/CRM/Remoteevent/GetFormTest.php
 
 		-
@@ -5998,12 +5910,6 @@ parameters:
 			path: tests/phpunit/CRM/Remoteevent/TestBase.php
 
 		-
-			message: '#^Method CRM_Remoteevent_TestBase\:\:assertParticipantStatus\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/phpunit/CRM/Remoteevent/TestBase.php
-
-		-
 			message: '#^Method CRM_Remoteevent_TestBase\:\:callRemoteEventAPI\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -6198,12 +6104,6 @@ parameters:
 		-
 			message: '#^Method CRM_Remoteevent_TestBase\:\:registerRemote\(\) has parameter \$participant_details with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Remoteevent/TestBase.php
-
-		-
-			message: '#^Method CRM_Remoteevent_TestBase\:\:setSpeakerRoles\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: tests/phpunit/CRM/Remoteevent/TestBase.php
 

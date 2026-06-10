@@ -696,7 +696,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
   public function assertGetFormPriceFields(&$fields, $priceFields): void {
     foreach ($priceFields as $priceField) {
       $formFieldName = 'price_' . $priceField['name'];
-      $this->assertArrayHasKey(
+      self::assertArrayHasKey(
         $formFieldName,
         $fields,
         sprintf("RemoteContact.get_form should contain '%s' field", $formFieldName)

@@ -166,7 +166,7 @@ final class RegistrationEventFactory {
     $registrationEvent->setAdditionalParticipantsData($additionalParticipantsData);
   }
 
-  private function getAdditionalParticipantNo(string $fieldKey): ?int {
+  public static function getAdditionalParticipantNo(string $fieldKey): ?int {
     $matches = [];
     if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
       return (int) $matches[1];

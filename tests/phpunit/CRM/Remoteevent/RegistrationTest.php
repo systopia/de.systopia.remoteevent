@@ -197,10 +197,10 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
         ->getArrayCopy();
 
       // Assert number of line items.
-      $this->assertCount(2, $lineItems, sprintf("Expected 2 line items but found %d", count($lineItems)));
+      self::assertCount(2, $lineItems, sprintf("Expected 2 line items but found %d", count($lineItems)));
 
       // Assert line item for the option price field.
-      $this->assertArraySubset(
+      self::assertArraySubset(
         [
           'price_field_id' => $priceFields[0]['id'],
           'price_field_value_id' => $priceFieldOneValue,
@@ -215,7 +215,7 @@ class CRM_Remoteevent_RegistrationTest extends CRM_Remoteevent_TestBase {
       );
 
       // Assert line item for the amount price field.
-      $this->assertArraySubset(
+      self::assertArraySubset(
         [
           'price_field_id' => $priceFields[1]['id'],
           'qty' => $priceFieldTwoValue,

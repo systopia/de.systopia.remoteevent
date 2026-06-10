@@ -24,6 +24,7 @@ use Civi\RemoteEvent as RemoteEvent;
 use Civi\RemoteParticipant\Event\GetParticipantFormEventBase as GetParticipantFormEventBase;
 use Civi\RemoteEvent\Event\RegistrationProfileListEvent;
 use Civi\RemoteParticipant\Event\ValidateEvent;
+use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
 
 /**
  * Abstract base to all registration profile implementations
@@ -468,19 +469,15 @@ abstract class CRM_Remoteevent_RegistrationProfile {
   }
 
   /**
-   * @phpstan-param array<string, mixed> $event
-   * @phpstan-param array<string, mixed> $submission
-   *
-   * @phpstan-return array<string, string>
-   *   An array with field names as keys and corresponding localised error
-   *   messages as values.
    * @throws \CRM_Core_Exception
    */
   protected function validatePriceFields(ValidateEvent $validationEvent): void {
+    /** @phpstan-var array<string, mixed> $event*/
     $event = $validationEvent->getEvent();
     if (!(bool) $event['is_monetary']) {
       return;
     }
+    /* @phpstan-var array<string, mixed> $submission*/
     $submission = $validationEvent->getSubmission();
     $l10n = $validationEvent->getLocalisation();
     $additionalParticipantsCount = $validationEvent->getAdditionalParticipantsCount();
@@ -513,7 +510,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
           || !array_key_exists((int) $submission[$fieldName], $priceFieldValues)
         )
       ) {
-        $validationEvent->addValidationError($field_name, $l10n->ts('Invalid value'));
+        $validationEvent->addValidationError($fieldName, $l10n->ts('Invalid value'));
       }
 
       // Validate availability of price options.

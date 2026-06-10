@@ -17,6 +17,8 @@ declare(strict_types = 1);
 
 namespace Civi\RemoteParticipant\Event;
 
+use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
+
 /**
  * Class ValidateEvent
  *
@@ -53,6 +55,11 @@ class RegistrationEvent extends ChangingEvent {
   protected array $additional_participants_data = [];
 
   /**
+   * @phpstan-var array<string, mixed>
+   */
+    protected array $order_data = [];
+
+    /**
    * Check if the submission has errors
    * @return bool
    *   true if there is errors
@@ -137,6 +144,13 @@ class RegistrationEvent extends ChangingEvent {
   }
 
   /**
+   * @phpstan-return array<string, mixed>
+   */
+    public function getOrderData(): array {
+      return $this->order_data;
+    }
+
+    /**
    * @phpstan-param array<array<string, mixed>> $additional_participants_data
    */
   public function setAdditionalParticipantsData(array $additional_participants_data): void {
@@ -144,6 +158,13 @@ class RegistrationEvent extends ChangingEvent {
   }
 
   /**
+   * @phpstan-param array<string, mixed> $order_data
+   */
+    public function setOrderData(array $order_data): void {
+      $this->order_data = $order_data;
+    }
+
+    /**
    * Set the contact_data object, which is used for
    *   contact identification / creation
    *
@@ -185,6 +206,57 @@ class RegistrationEvent extends ChangingEvent {
    */
   public function getSubmittedValue($value_name) {
     return $this->submission[$value_name] ?? NULL;
+  }
+
+  /**
+   * @phpstan-return array<string, mixed>
+   * @throws \CRM_Core_Exception
+   */
+  public function getPriceFieldValues(): array {
+    $values = [];
+
+    $event = $this->getEvent();
+    if (!(bool) $event['is_monetary']) {
+      return $values;
+    }
+
+    $priceFields = PriceFieldUtil::getPriceFields($event);
+
+    /**
+     * @var $participants
+     *   An array of participants to be registered, indexed by number of additional participant;
+     *   0 for the initial participant.
+     */
+    $participants = [
+      0 => ['id' => $this->getParticipantID()],
+    ] + $this->getAdditionalParticipantsData();
+
+    foreach ($participants as $participantNo => $participant) {
+      foreach ($priceFields as $priceField) {
+        $fieldName = ($participantNo > 0 ? "additional_{$participantNo}_" : '')
+          . "price_{$priceField['price_field.name']}";
+        $participantId = $participant['id'];
+        // The submitted value is either the selected price option (price field value ID) or the quantity of a specific
+        // price field value.
+        $value = $this->submission[$fieldName] ?? NULL;
+        if (is_numeric($value)) {
+          // phpcs:disable Drupal.Arrays.Array.ArrayIndentation
+          $values[] = [
+            'participant_id' => $participantId,
+            'price_field_id' => $priceField['price_field.id'],
+            'price_field_name' => $priceField['price_field.name'],
+            // If the price field has a single price field value, its ID is part of the price field metadata.
+            'price_field_value_id' => (bool) $priceField['price_field.is_enter_qty']
+              ? $priceField['price_field_value.id']
+              : $value,
+            'qty' => (bool) $priceField['price_field.is_enter_qty'] ? $value : 1,
+          ];
+          // phpcs:enable
+        }
+      }
+    }
+
+    return $values;
   }
 
 }
