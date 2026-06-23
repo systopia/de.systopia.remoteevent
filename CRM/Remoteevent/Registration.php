@@ -561,8 +561,10 @@ class CRM_Remoteevent_Registration {
         if (empty($contact_identification['id'])) {
           // no contact ID given -> there must be some data missing
           throw new Exception(
-          E::ts("Couldn't find or create contact: ") . $ex->getMessage());
-
+            E::ts("Couldn't find or create contact: ") . $ex->getMessage(),
+            0,
+            $ex
+          );
         }
         else {
           // the contact ID ws passed, but it still failed.

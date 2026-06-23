@@ -684,7 +684,7 @@ abstract class CRM_Remoteevent_RegistrationProfile {
    *   event triggered by the RemoteParticipant.get_form API call
    *
    */
-  public static function addProfileData($get_form_results) {
+  public static function addProfileData($get_form_results): void {
     // simply add the fields from the profile
     $profile = self::getProfile($get_form_results);
 
