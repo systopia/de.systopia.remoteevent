@@ -56,6 +56,8 @@ class CRM_RemoteEvent_IssuesTest extends CRM_Remoteevent_TestBase {
     // check for Germany (German: Deutschland)
     // multi-language not yet implemented
     CRM_Core_I18n::singleton()->setLocale('de_DE');
+    self::assertEquals(CRM_Core_I18n::getLocale(), 'de_DE', 'Locale is not set correctly');
+
     $de_fields = $this->traitCallAPISuccess('RemoteParticipant', 'get_form', [
       'event_id' => $event['id'],
       'locale' => 'de_DE',
