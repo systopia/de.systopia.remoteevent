@@ -2525,6 +2525,18 @@ parameters:
 			path: CRM/Remoteevent/RegistrationProfile.php
 
 		-
+			message: '#^Parameter \#1 \$field_spec of method CRM_Remoteevent_RegistrationProfile\:\:validateFieldLength\(\) expects array, null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Remoteevent/RegistrationProfile.php
+
+		-
+			message: '#^Parameter \#1 \$field_spec of method CRM_Remoteevent_RegistrationProfile\:\:validateFieldValue\(\) expects array\<string, array\<string, mixed\>\>, null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Remoteevent/RegistrationProfile.php
+
+		-
 			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 2
