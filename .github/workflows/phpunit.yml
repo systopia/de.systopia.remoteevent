@@ -125,14 +125,14 @@ jobs:
           export PATH="$(realpath vendor/bin):$PATH"
           cv core:install --db="$DATABASE_URL" --comp="$CIVICRM_COMPONENTS"
           export CV_CONFIG="$HOME/.cv.json"
-        cv vars:fill --quiet
-        sed -i "s#\"TEST_DB_DSN\": \".*\"#\"TEST_DB_DSN\": \"$DATABASE_URL\"#g" "$CV_CONFIG"
+          cv vars:fill --quiet
+          sed -i "s#\"TEST_DB_DSN\": \".*\"#\"TEST_DB_DSN\": \"$DATABASE_URL\"#g" "$CV_CONFIG"
 
-        cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.193/action-provider-1.193.zip"
+          cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.193/action-provider-1.193.zip"
 
-    - name: Run PHPUnit
-      run: |
-        export PATH="$(realpath ../civicrm-standalone/vendor/bin):$PATH"
+      - name: Run PHPUnit
+        run: |
+          export PATH="$(realpath ../civicrm-standalone/vendor/bin):$PATH"
           export CV_CONFIG="$HOME/.cv.json"
           cd ../civicrm-standalone/ext/$(basename "$PWD")
           composer phpunit
