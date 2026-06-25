@@ -128,7 +128,11 @@ jobs:
           cv vars:fill --quiet
           sed -i "s#\"TEST_DB_DSN\": \".*\"#\"TEST_DB_DSN\": \"$DATABASE_URL\"#g" "$CV_CONFIG"
 
-          cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.193/action-provider-1.193.zip"
+          cv ext:download "de.systopia.remotetools@https://github.com/systopia/de.systopia.remotetools/releases/download/1.2.0/de.systopia.remotetools-1.2.0.zip"
+          cv ext:download "de.systopia.eventmessages@https://github.com/systopia/de.systopia.eventmessages/releases/download/1.6.0/de.systopia.eventmessages-1.6.0.zip"
+          cv ext:download "de.systopia.xportx@https://github.com/systopia/de.systopia.xportx/archive/refs/tags/0.9-alpha1.zip"
+          cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.196/action-provider-1.196.zip"
+          cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/1.13.0/org.project60.sepa-1.13.0.zip"
 
       - name: Run PHPUnit
         run: |
