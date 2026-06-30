@@ -131,7 +131,7 @@ jobs:
           cv ext:download "de.systopia.eventmessages@https://github.com/systopia/de.systopia.eventmessages/releases/download/1.6.0/de.systopia.eventmessages-1.6.0.zip"
           cv ext:download "de.systopia.xportx@https://github.com/systopia/de.systopia.xportx/archive/refs/tags/0.9-alpha1.zip"
           cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.196/action-provider-1.196.zip"
-          cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/1.13.0/org.project60.sepa-1.13.0.zip"
+          cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/1.14.0-beta2/org.project60.sepa-1.14.0-beta2.zip"
 
       - name: Run PHPUnit
         run: |
