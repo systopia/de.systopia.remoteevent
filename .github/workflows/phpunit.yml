@@ -96,11 +96,6 @@ jobs:
               "civicrm/civicrm-packages:${{ inputs.civicrm-version }}"
           fi
 
-          # Until systopia/de.systopia.remotetools is officially released as composer package.
-          git clone --depth=1 https://github.com/systopia/de.systopia.remotetools.git ../de.systopia.remotetools
-          composer config repositories.remotetools path $(dirname $PWD)/de.systopia.remotetools
-          composer require --no-update systopia/de.systopia.remotetools
-
           # Install dev dependencies from extension's composer.json.
           jq -r '.["require-dev"] | to_entries[] | "\"\(.key):\(.value)\""' "$EXT_DIR/composer.json" 2>/dev/null | xargs -r composer require --dev --no-update
 

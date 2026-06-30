@@ -21,7 +21,8 @@
     "require": {
         "php": "^8.1",
         "civicrm/civicrm-core": ">=6.2",
-        "civicrm/civicrm-packages": ">=6.2"
+        "civicrm/civicrm-packages": ">=6.2",
+        "systopia/de.systopia.remotetools": "^1.2"
     },
     "suggest": {
         "systopia/de.systopia.eventmessages": "Send emails to participants"
