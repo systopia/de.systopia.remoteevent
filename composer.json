@@ -21,7 +21,8 @@
     "require": {
         "php": "^8.1",
         "civicrm/civicrm-core": ">=6.2",
-        "civicrm/civicrm-packages": ">=6.2"
+        "civicrm/civicrm-packages": ">=6.2",
+        "systopia/de.systopia.remotetools": "^1.2"
     },
     "suggest": {
         "systopia/de.systopia.eventmessages": "Send emails to participants"
@@ -66,11 +67,10 @@
         ]
     },
     "conflict": {
-        "pear/mail_mime": "<1.10.2"
+        "pear/mail_mime": "<1.10.2",
+        "pear/pear-core-minimal": "<1.10.16"
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.5.x-dev"
-        }
-    }
+    "_comment": [
+      "PEAR_ErrorStack::singleton() overridden in CRM_Core_Error is static since pear/pear-core v1.10.16"
+    ]
 }
