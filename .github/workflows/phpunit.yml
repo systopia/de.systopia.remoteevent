@@ -128,6 +128,15 @@ jobs:
           cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.196/action-provider-1.196.zip"
           cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/1.14.0-beta2/org.project60.sepa-1.14.0-beta2.zip"
 
+      - name: Enable Language Packs
+        run: |
+          cd ../civicrm-standalone
+          export PATH="$(realpath vendor/bin):$PATH"
+          export CV_CONFIG="$HOME/.cv.json"
+          cv ext:download "uplang@https://lab.civicrm.org/extensions/uplang/-/archive/1.4.2/uplang-1.4.2.zip"
+          cv ext:en uplang
+          cv api Uplang.Fetch locales="de_DE"
+
       - name: Run PHPUnit
         run: |
           export PATH="$(realpath ../civicrm-standalone/vendor/bin):$PATH"
