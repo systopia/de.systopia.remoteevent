@@ -89,6 +89,8 @@ class SpawnEvent extends AbstractAction {
    *   The parameters to this action.
    * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
    *   The parameters this action can send back
+   *
+   * @todo remove dublicated 'template_id' parameterExists query
    */
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output): void {

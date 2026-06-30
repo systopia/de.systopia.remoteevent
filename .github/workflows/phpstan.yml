@@ -62,6 +62,13 @@ jobs:
             export COMPOSER_NO_SECURITY_BLOCKING=1
           fi
 
+          git clone --depth=1 https://github.com/systopia/de.systopia.remotetools.git ../de.systopia.remotetools
+          git clone --depth=1 https://github.com/systopia/de.systopia.xcm.git ../de.systopia.xcm
+          git clone --depth=1 https://github.com/systopia/de.systopia.eventmessages ../de.systopia.eventmessages
+          git clone --depth=1 https://github.com/systopia/de.systopia.xportx ../de.systopia.xportx
+          git clone --depth=1 https://lab.civicrm.org/extensions/action-provider.git ../action-provider
+          git clone --depth=1 https://github.com/Project60/org.project60.sepa.git ../org.project60.sepa
+
           composer config --no-plugins allow-plugins.civicrm/composer-compile-plugin false
           composer config --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
           composer config --no-plugins allow-plugins.composer/installers true
@@ -74,11 +81,6 @@ jobs:
           composer require --no-update "civicrm/civicrm-core:${{ inputs.civicrm-version }}" \
             "civicrm/civicrm-packages:${{ inputs.civicrm-version }}"
           fi
-
-          # Until systopia/de.systopia.remotetools is officially released as composer package.
-          git clone --depth=1 https://github.com/systopia/de.systopia.remotetools.git ../de.systopia.remotetools
-          composer config repositories.remotetools path $(dirname $PWD)/de.systopia.remotetools
-          composer require --no-update systopia/de.systopia.remotetools
 
           composer suggests --list | xargs -r composer require --no-update --${{ matrix.prefer }} --ignore-platform-reqs
 

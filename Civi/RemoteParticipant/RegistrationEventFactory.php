@@ -21,6 +21,7 @@ namespace Civi\RemoteParticipant;
 
 use Civi\RemoteParticipant\Event\RegistrationEvent;
 use Civi\RemoteTools\Helper\FilePersisterInterface;
+use CRM_Remoteevent_RegistrationProfile;
 
 final class RegistrationEventFactory {
 
@@ -98,8 +99,8 @@ final class RegistrationEventFactory {
     $additionalParticipantsData = [];
 
     $submissionData = $registrationEvent->getSubmission();
-    foreach ($profile->getAdditionalParticipantsFields($event) as $fieldKey => $fieldSpec) {
-      $participantNo = $this->getAdditionalParticipantNo($fieldKey);
+    foreach (CRM_Remoteevent_RegistrationProfile::getAdditionalParticipantsFields($event) as $fieldKey => $fieldSpec) {
+      $participantNo = self::getAdditionalParticipantNo($fieldKey);
       if (NULL !== $participantNo && array_key_exists($fieldKey, $submissionData)) {
         // @phpstan-ignore method.deprecated
         $entityNames = (array) ($fieldSpec['entity_name'] ?? $profile->getFieldEntities($fieldKey));
@@ -133,8 +134,8 @@ final class RegistrationEventFactory {
       $additionalParticipantCount++;
       $additionalParticipantsProfile->modifyContactData($contactData);
       $contactData['contact_type'] ??= 'Individual';
-      // phpcs:ignore Generic.Files.LineLength.TooLong
-      $contactData['xcm_profile'] = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
+      $contactData['xcm_profile']
+        = $event['event_remote_registration.remote_registration_additional_participants_xcm_profile'];
       $additionalParticipantsData[$participantNo]['role_id'] ??= $this->getDefaultRoleId($event);
       $additionalParticipantsData[$participantNo]['event_id'] = $submissionData['event_id'];
 
@@ -146,7 +147,8 @@ final class RegistrationEventFactory {
         && !empty($event['event_remote_registration.remote_registration_additional_participants_waitlist'])
         && \CRM_Remoteevent_Registration::getRegistrationCount($event['id'])
         // Primary participant has not yet been created or its status is not counted, thus add 1.
-        // phpcs:ignore Drupal.Formatting.SpaceUnaryOperator.PlusMinus
+        // TODO: This has to be dependent on price field participant counts, which might be more than 1 per participant.
+        // phpcs:ignore Drupal.Formatting.SpaceUnaryOperator.PlusMinus        
         + 1
         + $additionalParticipantCount
         - $event['max_participants'] > 0
@@ -163,12 +165,11 @@ final class RegistrationEventFactory {
     $registrationEvent->setAdditionalParticipantsData($additionalParticipantsData);
   }
 
-  private function getAdditionalParticipantNo(string $fieldKey): ?int {
+  public static function getAdditionalParticipantNo(string $fieldKey): ?int {
     $matches = [];
     if (1 === preg_match('#^additional_([0-9]+)_(.*?)$#', $fieldKey, $matches)) {
       return (int) $matches[1];
     }
-
     return NULL;
   }
 
