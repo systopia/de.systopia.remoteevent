@@ -72,7 +72,7 @@ class CRM_Remoteevent_BAO_Session extends CRM_Remoteevent_DAO_Session {
     $instance = new $className();
     $instance->copyValues($params);
     $instance->save();
-    CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
+    CRM_Utils_Hook::post($hook, $entityName, (int) $instance->id, $instance);
 
     return $instance;
   }
