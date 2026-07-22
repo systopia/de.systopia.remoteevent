@@ -30,6 +30,7 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
     'selfcancelxfer_time',
     'is_multiple_registrations',
     'max_additional_participants',
+    'is_confirm_enabled',
     'intro_text',
     'footer_text',
     'confirm_title',
@@ -150,6 +151,11 @@ class CRM_Remoteevent_Form_RegistrationConfig extends CRM_Event_Form_ManageEvent
         E::ts('External Identifier'),
         ['class' => 'huge'],
         FALSE
+    );
+    $this->add(
+      'checkbox',
+      'is_confirm_enabled',
+      E::ts('Use a confirmation screen?')
     );
     $this->add(
         'checkbox',
