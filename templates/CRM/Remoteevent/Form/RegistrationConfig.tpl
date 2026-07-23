@@ -30,25 +30,32 @@
     <fieldset id="remote-settings" class="crm-collapsible">
         {capture assign=title_text}{ts}CiviRemote Event settings{/ts}{/capture}
       <legend class="collapsible-title">{$title_text}</legend>
-      <div class="crm-section">
-        <div class="label">{$form.remote_invitation_enabled.label}</div>
-        <div class="content">{$form.remote_invitation_enabled.html}</div>
-        <div class="clear"></div>
-      </div>
-      <div class="crm-section">
-        <div class="label">{$form.remote_disable_civicrm_registration.label}</div>
-        <div class="content">{$form.remote_disable_civicrm_registration.html}</div>
-        <div class="clear"></div>
-      </div>
-      <div class="crm-section">
-        <div class="label">{$form.remote_use_custom_event_location.label}&nbsp;{help id="id-use-custom-event-location" title=$form.remote_use_custom_event_location.label}</div>
-        <div class="content">{$form.remote_use_custom_event_location.html}</div>
-        <div class="clear"></div>
-      </div>
-      <div class="crm-section">
-        <div class="label">{$form.remote_registration_external_identifier.label}&nbsp;{help id="id-external-identifier" title=$form.remote_registration_external_identifier.label}</div>
-        <div class="content">{$form.remote_registration_external_identifier.html}</div>
-        <div class="clear"></div>
+      <div>
+        <div class="crm-section">
+          <div class="label">{$form.remote_invitation_enabled.label}</div>
+          <div class="content">{$form.remote_invitation_enabled.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section">
+          <div class="label">{$form.remote_disable_civicrm_registration.label}</div>
+          <div class="content">{$form.remote_disable_civicrm_registration.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section">
+          <div class="label">{$form.remote_use_custom_event_location.label}&nbsp;{help id="id-use-custom-event-location" title=$form.remote_use_custom_event_location.label}</div>
+          <div class="content">{$form.remote_use_custom_event_location.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section">
+          <div class="label">{$form.remote_registration_external_identifier.label}&nbsp;{help id="id-external-identifier" title=$form.remote_registration_external_identifier.label}</div>
+          <div class="content">{$form.remote_registration_external_identifier.html}</div>
+          <div class="clear"></div>
+        </div>
+        <div class="crm-section">
+          <div class="label">{$form.is_confirm_enabled.label}</div>
+          <div class="content">{$form.is_confirm_enabled.html}</div>
+          <div class="clear"></div>
+        </div>
       </div>
     </fieldset>
 
@@ -95,6 +102,7 @@
           <div class="content">{$form.require_user_account.html}</div>
           <div class="clear"></div>
         </div>
+      </div>
     </fieldset>
 
     <fieldset id="registration-update" class="crm-collapsible">
@@ -125,6 +133,7 @@
           <div class="content">{$form.selfcancelxfer_time.html}</div>
           <div class="clear"></div>
         </div>
+      </div>
     </fieldset>
 
     <fieldset id="additional-participants" class="crm-collapsible">
