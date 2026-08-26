@@ -11,11 +11,11 @@ systems:
    registration form required for signing up/cancel/update
 + ``RemoteParticipant.create`` sign somebody up for an event by providing the
    necessary form data (as requested by ``RemoteParticipant``)
-+ ``RemoteRegistration.validate`` ask the system for validating the given
++ ``RemoteParticipant.validate`` ask the system for validating the given
    signup data before the actual registration
-+ ``RemoteRegistration.cancel`` cancel an existing registration, identified by
++ ``RemoteParticipant.cancel`` cancel an existing registration, identified by
    remote_contact_id or token
-+ ``RemoteRegistration.update`` update an existing registration, identified by
++ ``RemoteParticipant.update`` update an existing registration, identified by
    remote_contact_id or token
 
 Please note that all these API actions come with an independent set of
