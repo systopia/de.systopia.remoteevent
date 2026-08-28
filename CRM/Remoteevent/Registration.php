@@ -125,6 +125,13 @@ class CRM_Remoteevent_Registration {
 
   /**
    * Get a list of participant objects
+   *
+   * @param integer $contact_id
+   *   the contact
+   *
+   * @param integer $event_id
+   *   the event
+   *
    */
   public static function invalidateRegistrationCache($contact_id, $event_id) {
     // unset the registration data
@@ -132,7 +139,7 @@ class CRM_Remoteevent_Registration {
 
     // update the indicator
     $event_cached_key = array_search($event_id, self::$cached_registration_event_ids);
-    if ($event_cached_key !== FALSE) {
+    if (FALSE !== $event_cached_key) {
       unset(self::$cached_registration_event_ids[$event_cached_key]);
     }
   }
@@ -412,22 +419,22 @@ class CRM_Remoteevent_Registration {
   }
 
   /**
-   * Get the count of current registrations for the given event
+   * Retrieves the count of current registrations for the given event.
    *
-   * @param integer $event_id
-   *    event ID
+   * @param int $event_id
+   *   event ID
    *
-   * @param integer $contact_id
-   *    restrict to this contact
+   * @param int $contact_id
+   *   restrict to this contact
    *
    * @param array $class_list
-   *    list of participant status classes to be included - default is ony positive statuses
+   *   list of participant status classes to be included - default is ony positive statuses
    *
    * @param array $status_id_list
-   *    list of participant status ids to be included - default is <all>
+   *   list of participant status ids to be included - default is <all>
    *
-   * @param boolean $only_counted
-   *    only count registration where the status_type has is_counted = 1
+   * @param bool $only_counted
+   *   only count registration where the status_type has is_counted = 1
    *
    * @return int
    *   number of registrations (participant objects)
@@ -444,13 +451,13 @@ class CRM_Remoteevent_Registration {
 
     // compile query
     $class_list = array_intersect(['Positive', 'Pending', 'Negative', 'Waiting'], $class_list);
-    if (empty($class_list)) {
+    if ([] === $class_list) {
       $REGISTRATION_CLASSES = "('Positive', 'Pending', 'Negative', 'Waiting')";
     }
     else {
       $REGISTRATION_CLASSES = "('" . implode("','", $class_list) . "')";
     }
-    if (empty($status_id_list)) {
+    if ([] === $status_id_list) {
       $AND_STATUS_ID_IN_LIST = '';
     }
     else {
@@ -466,7 +473,7 @@ class CRM_Remoteevent_Registration {
     }
     if ($only_counted) {
       $AND_IS_COUNTED_CONDITION =
-                'AND status_type.is_counted = 1 AND option_value_participant_role.filter = 1';
+        'AND status_type.is_counted = 1 AND option_value_participant_role.filter = 1';
     }
     else {
       $AND_IS_COUNTED_CONDITION = '';
@@ -474,27 +481,50 @@ class CRM_Remoteevent_Registration {
 
     $value_separator = CRM_Core_DAO::VALUE_SEPARATOR;
     // phpcs:disable Generic.Files.LineLength.TooLong
-    $query = "
-            SELECT COUNT(participant.id)
-            FROM civicrm_participant participant
-            LEFT JOIN civicrm_event  event
-                   ON event.id = participant.event_id
-            LEFT JOIN civicrm_participant_status_type status_type
-                   ON status_type.id = participant.status_id
-            INNER JOIN civicrm_option_value option_value_participant_role
-                    ON
-                        participant.role_id = option_value_participant_role.value
-                        OR participant.role_id LIKE CONCAT('%', option_value_participant_role.value, '{$value_separator}%')
-                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '%')
-                        OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '{$value_separator}%')
-            INNER JOIN civicrm_option_group option_group_participant_role
-                    ON option_group_participant_role.id = option_value_participant_role.option_group_id
-                    AND option_group_participant_role.name = 'participant_role'
-            WHERE status_type.class IN {$REGISTRATION_CLASSES}
-                  {$AND_IS_COUNTED_CONDITION}
-                  AND participant.event_id = {$event_id}
-                  {$AND_STATUS_ID_IN_LIST}
-                  {$AND_CONTACT_RESTRICTION}";
+    $query = <<<SQL
+      SELECT
+        IF(
+          -- If the line item count * the line item quantity is not 0
+          SUM(price_field_value.`count` * lineItem.qty),
+
+          -- then use the count * the quantity, ensuring each
+          -- actual participant record gets a result
+          SUM(price_field_value.`count` * lineItem.qty)
+            + COUNT(DISTINCT participant.id)
+            - COUNT(DISTINCT IF (price_field_value.`count`, participant.id, NULL)),
+
+          -- if the line item count is NULL or 0 then count the participants
+          COUNT(DISTINCT participant.id)
+        )
+      FROM civicrm_participant participant
+      LEFT JOIN civicrm_event event
+        ON event.id = participant.event_id
+      LEFT JOIN civicrm_participant_status_type status_type
+        ON status_type.id = participant.status_id
+      LEFT JOIN civicrm_line_item lineItem
+        ON
+          lineItem.entity_id = participant.id
+          AND  lineItem.entity_table = 'civicrm_participant'
+      LEFT JOIN civicrm_price_field_value price_field_value
+        ON
+          price_field_value.id = lineItem.price_field_value_id
+          AND price_field_value.`count`
+      INNER JOIN civicrm_option_value option_value_participant_role
+        ON
+          participant.role_id = option_value_participant_role.value
+          OR participant.role_id LIKE CONCAT('%', option_value_participant_role.value, '{$value_separator}%')
+          OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '%')
+          OR participant.role_id LIKE CONCAT('%{$value_separator}', option_value_participant_role.value, '{$value_separator}%')
+      INNER JOIN civicrm_option_group option_group_participant_role
+        ON
+          option_group_participant_role.id = option_value_participant_role.option_group_id
+          AND option_group_participant_role.name = 'participant_role'
+      WHERE status_type.class IN {$REGISTRATION_CLASSES}
+        {$AND_IS_COUNTED_CONDITION}
+        AND participant.event_id = {$event_id}
+        {$AND_STATUS_ID_IN_LIST}
+        {$AND_CONTACT_RESTRICTION}
+      SQL;
     // phpcs:enable
     return (int) CRM_Core_DAO::singleValueQuery($query);
   }
@@ -531,8 +561,10 @@ class CRM_Remoteevent_Registration {
         if (empty($contact_identification['id'])) {
           // no contact ID given -> there must be some data missing
           throw new Exception(
-          E::ts("Couldn't find or create contact: ") . $ex->getMessage());
-
+            E::ts("Couldn't find or create contact: ") . $ex->getMessage(),
+            0,
+            $ex
+          );
         }
         else {
           // the contact ID ws passed, but it still failed.
@@ -773,7 +805,8 @@ class CRM_Remoteevent_Registration {
       }
 
       $additionalParticipantsData[$participantNo]['contact_id']
-        = $additionalContactsData[$participantNo]['id'] = $contactData['id'] = $match['id'];
+        = $additionalContactsData[$participantNo]['id']
+          = $contactData['id'] = $match['id'];
 
       // Check for existing participants for the identified contact.
       $cannotRegisterReason = CRM_Remoteevent_Registration::cannotRegister(
@@ -815,12 +848,109 @@ class CRM_Remoteevent_Registration {
     $registration->setAdditionalParticipantsData($additionalParticipantsData);
   }
 
+  public static function createOrder(RegistrationEvent $registration): void {
+    $event = $registration->getEvent();
+    if ((bool) $event['is_monetary']) {
+      $order = \Civi\Api4\Order::create(FALSE)
+        ->setContributionValues([
+          'contact_id' => $registration->getContactID(),
+          'financial_type_id' => (int) $event['financial_type_id'],
+          'payment_instrument_id' => static::getPaymentInstrumentForPaymentMethod(
+            $registration->getSubmittedValue('payment_method'),
+            $event
+          ),
+        ]);
+      foreach ($registration->getPriceFieldValues() as $value) {
+        $order->addLineItem([
+          'entity_table' => 'civicrm_participant',
+          'entity_id' => $value['participant_id'],
+          'price_field_id' => $value['price_field_id'],
+          'price_field_value_id' => $value['price_field_value_id'],
+          'qty' => $value['qty'],
+        ]);
+      }
+      try {
+        $orderResult = $order
+          ->execute()
+          ->single();
+        $registration->setOrderData($orderResult);
+      }
+      catch (CRM_Core_Exception $exception) {
+        $registration->addError(E::ts('Could not register order.'));
+      }
+    }
+  }
+
+  /**
+   * @phpstan-param array{
+   *   id: int,
+   *   currency: string,
+   *   fee_label: string,
+   *   is_monetary: int,
+   * } $event
+   */
+  public static function getPaymentInstrumentForPaymentMethod(string $paymentMethod, array $event): int {
+    switch ($paymentMethod) {
+      case 'pay_later':
+        // TODO: Make payment method for "Pay later" configurable per event.
+        return (int) \Civi\Api4\OptionValue::get(FALSE)
+          ->addSelect('value')
+          ->addWhere('option_group_id.name', '=', 'payment_instrument')
+          ->addWhere('name', '=', 'EFT')
+          ->execute()['value'];
+
+      case 'sepa':
+        // Use OOFF payment instrument from creditor.
+        // TODO: Make creditor configurable per event.
+        return (int) \CRM_Sepa_Logic_Settings::defaultCreditor()->pi_ooff;
+    }
+  }
+
+  public static function createPayment(RegistrationEvent $registration): void {
+    $event = $registration->getEvent();
+    if ((bool) $event['is_monetary']) {
+      $order = $registration->getOrderData();
+
+      switch ($registration->getSubmittedValue('payment_method')) {
+        case 'pay_later':
+          // Nothing to do here, there is already a pending contribution.
+          break;
+
+        case 'sepa':
+          $mandate = \Civi\Api4\SepaMandate::create(FALSE)
+            ->addValue('creditor_id', NULL)
+            ->addValue('type', 'OOFF')
+            ->addValue('iban', $registration->getSubmittedValue('payment_method_sepa_iban'))
+            ->addValue('bic', $registration->getSubmittedValue('payment_method_sepa_bic'))
+            ->addValue('status', 'OOFF')
+            // Reference is given a default when empty(), but is a required field, thus passing 0.
+            // TODO: Adjust CiviSEPA to not make the API parameter required if there is a default, and do not pass a
+            //       a value once that's done.
+            ->addValue('reference', 0)
+            ->addValue('entity_table', 'civicrm_contribution')
+            ->addValue('entity_id', $order['id'])
+            ->addValue('contact_id', $registration->getContactID())
+            ->addValue('currency', $event['currency'])
+            ->addValue('date', $order['receive_date'])
+            ->addValue('creation_date', $order['receive_date'])
+            ->addValue('validation_date', $order['receive_date'])
+            ->execute();
+          break;
+
+        default:
+          // TODO: Register submitted payment (API to be defined; must include the amount and the date, possibly a
+          //       transaction ID, etc.) using \Civi\Api4\Payment::create().
+          break;
+      }
+    }
+  }
+
   /**
    * Get a (cached version) of ParticipantStatusType.get
    */
   public static function getParticipantStatusList() {
     static $status_list = NULL;
-    if ($status_list === NULL) {
+    if (NULL === $status_list) {
       $status_list = [];
       $query = civicrm_api3('ParticipantStatusType', 'get', ['option.limit' => 0]);
       foreach ($query['values'] as $status) {
@@ -875,7 +1005,7 @@ class CRM_Remoteevent_Registration {
           'type'        => 'fieldset',
           'name'        => 'gtacs',
           'label'       => $l10n->ts('General Terms and Conditions'),
-      // this should be at the end
+        // this should be at the end
           'weight'      => 500,
         ],
         'gtac' => [
@@ -885,6 +1015,7 @@ class CRM_Remoteevent_Registration {
           'weight' => 100,
           'required' => 1,
           'label' => $l10n->ts('I accept the following terms and conditions'),
+          /** $l10n->ts("You have to accept the terms and conditions to participate in this event"), */
           'description' => '',
           'parent' => 'gtacs',
           'suffix' => $event['event_remote_registration.remote_registration_gtac'],

@@ -16,12 +16,14 @@ parameters:
 		- remoteevent.civix.php
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/src/Framework/TestCase.php
 	scanDirectories:
-		- ../action-provider/Civi
-		- ../de.systopia.xcm/CRM
-		- ../de.systopia.eventmessages/Civi
 		- ../de.systopia.remotetools/Civi
 		- ../de.systopia.remotetools/CRM
+		- ../de.systopia.eventmessages/Civi/EventMessages
+		- ../de.systopia.xcm/CRM
+		- ../action-provider/Civi
 		- ../de.systopia.xportx/CRM
+		- ../org.project60.sepa/CRM/Sepa/Logic
+		- ../org.project60.sepa/Civi/Api4
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/src/Framework
 		- mixin
 	bootstrapFiles:
@@ -38,7 +40,7 @@ parameters:
 			- civiExit
 			- redirect
 		CRM_Queue_Runner:
-			- runAllViaWeb
+		  - runAllViaWeb
 	checkTooWideReturnTypesInProtectedAndPublicMethods: true
 	checkUninitializedProperties: true
 	checkMissingCallableSignature: true
@@ -53,4 +55,5 @@ parameters:
 	ignoreErrors:
 		# Note paths are prefixed with "*/" to work with inspections in PHPStorm because of:
 		# https://youtrack.jetbrains.com/issue/WI-63891/PHPStan-ignoreErrors-configuration-isnt-working-with-inspections
+		- '#^Parameter \#3 \$bridge of method Civi\\Api4\\Generic\\DAOGetAction::addJoin\(\) expects string\|null, array<int, string> given.$#'
 	tmpDir: .phpstan
