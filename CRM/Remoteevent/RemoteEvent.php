@@ -16,7 +16,7 @@
 declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\EventMessages\MessageTokens as MessageTokens;
+use Civi\EventMessages\MessageTokens;
 use Civi\RemoteEvent;
 use Civi\Api4\Participant;
 use Civi\Api4\ParticipantStatusType;

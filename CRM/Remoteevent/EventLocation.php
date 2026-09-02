@@ -16,8 +16,8 @@
 declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
-use Civi\EventMessages\MessageTokens as MessageTokens;
+use Civi\RemoteEvent\Event\GetResultEvent;
+use Civi\EventMessages\MessageTokens;
 
 /**
  * Functionality around the EventLocation
