@@ -23,8 +23,10 @@
   <comments/>
   <requires>
     <php>^7.4 || ^8</php>
+    <ext>civi_event</ext>
     <ext>de.systopia.xcm</ext>
     <ext>de.systopia.remotetools</ext>
+    <ext>legacycustomsearches</ext>
   </requires>
   <classloader>
     <psr4 prefix="Civi\" path="Civi"/>

@@ -19,12 +19,6 @@ parameters:
 			path: CRM/Remoteevent/BAO/ParticipantSession.php
 
 		-
-			message: '#^Parameter \#3 \$objectId of static method CRM_Utils_Hook\:\:post\(\) expects int, int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/BAO/ParticipantSession.php
-
-		-
 			message: '#^Access to an undefined property object\:\:\$contact_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -129,12 +123,6 @@ parameters:
 		-
 			message: '#^PHPDoc tag @var with type string is not subtype of type array\|int\.$#'
 			identifier: varTag.type
-			count: 1
-			path: CRM/Remoteevent/BAO/Session.php
-
-		-
-			message: '#^Parameter \#3 \$objectId of static method CRM_Utils_Hook\:\:post\(\) expects int, int\|string\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: CRM/Remoteevent/BAO/Session.php
 
@@ -2520,18 +2508,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$event_id of static method CRM_Remoteevent_Registration\:\:getRegistrationCount\(\) expects int, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/RegistrationProfile.php
-
-		-
-			message: '#^Parameter \#1 \$field_spec of method CRM_Remoteevent_RegistrationProfile\:\:validateFieldLength\(\) expects array, null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/RegistrationProfile.php
-
-		-
-			message: '#^Parameter \#1 \$field_spec of method CRM_Remoteevent_RegistrationProfile\:\:validateFieldValue\(\) expects array\<string, array\<string, mixed\>\>, null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: CRM/Remoteevent/RegistrationProfile.php
