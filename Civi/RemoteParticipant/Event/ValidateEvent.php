@@ -18,6 +18,9 @@ declare(strict_types = 1);
 namespace Civi\RemoteParticipant\Event;
 
 use Civi\RemoteEvent;
+use Civi\RemoteParticipant\Event\Util\PriceFieldUtil;
+use Civi\RemoteParticipant\RegistrationEventFactory;
+use CRM_Remoteevent_RegistrationProfile;
 
 /**
  * Class ValidateEvent
@@ -32,58 +35,88 @@ class ValidateEvent extends RemoteEvent {
   public const NAME = 'civi.remoteevent.registration.validate';
 
   /**
-   * @var array holds the original RemoteParticipant.validate submission */
+   * @var array<string, mixed> holds the original RemoteParticipant.validate submission */
   protected $submission;
 
   public function __construct($submission_data, $error_list = []) {
-    $this->submission  = $submission_data;
+    $this->submission = $submission_data;
     $this->error_list = $error_list;
     $this->token_usages = ['invite', 'update'];
   }
 
   /**
-   * Add an error to the given field
-   *
-   * @param string $field_name
-   *   field name
-   *
-   * @param string $error
-   *   error message to be displayed to the user
+   * {@inheritDoc}
    */
-  public function addValidationError($field_name, $error) {
-    // just pass to the underlying error system
-    $this->addError($error, $field_name);
+  public function getQueryParameters(): array {
+    return $this->submission;
   }
 
   /**
-   * Modify Validation Errors
+   * @phpstan-return array<string, mixed>
+   */
+  public function getSubmission(): array {
+    return $this->submission;
+  }
+
+  /**
+   * Add an error to the given field
    *
-   * @return array
+   * @param string $fieldName
+   *   field name
+   *
+   * @param string $errorMessage
+   *   error message to be displayed to the user
+   */
+  public function addValidationError($fieldName, $errorMessage): void {
+    // just pass to the underlying error system
+    $this->addError($errorMessage, $fieldName);
+  }
+
+  /**
+   * @phpstan-return list<string>
    *   $validation error list (reference!)
    */
   public function &modifyValidationErrors() {
-    // just pass to the underlying error system
     return $this->error_list;
   }
 
-  /**
-   * Get the complete submission
-   *
-   * @return array
-   *   submission data
-   */
-  public function getSubmission() {
-    return $this->submission;
+  public function getAdditionalParticipantsCount(): int {
+    return array_reduce(
+      preg_grep('#^additional_([0-9]+)(_|$)#', array_keys($this->getSubmission())),
+      function(int $carry, string $item) {
+        $currentCount = (int) preg_filter('#^additional_([0-9]+)(.*?)$#', '$1', $item);
+        return max($carry, $currentCount);
+      },
+      0
+    );
   }
 
-  /**
-   * Get the parameters of the original query
-   *
-   * @return array
-   *   parameters of the query
-   */
-  public function getQueryParameters() {
-    return $this->submission;
+  public function getRequestedParticipantCount(int $additionalParticipantsCount): int {
+    $event = $this->getEvent();
+    $submission = $this->getSubmission();
+    $priceFields = PriceFieldUtil::getPriceFields($event);
+    $maxRequestedParticipantCounts = [];
+    foreach (CRM_Remoteevent_RegistrationProfile::getPriceFieldsToValidate(
+      $priceFields,
+      $additionalParticipantsCount
+    ) as $fieldName => $priceFieldId) {
+      /** @var int $participantNo 0 for the initial participant, 1-N for additional participants */
+      $participantNo = RegistrationEventFactory::getAdditionalParticipantNo($fieldName) ?? 0;
+      $priceField = $priceFields[$priceFieldId];
+      $priceFieldValues = PriceFieldUtil::getPriceFieldValues($priceField['price_field.id']);
+      $priceFieldValueId = $priceField['price_field.is_enter_qty']
+        ? array_key_first($priceFieldValues)
+        : (int) $submission[$fieldName];
+
+      // For each participant (initial and additional), use the maximum count of participants in price fields to be used
+      // for this registration.
+      $maxRequestedParticipantCounts[$participantNo] = max(
+        $priceFieldValues[$priceFieldValueId]['count'] ?? 1,
+        $maxRequestedParticipantCounts[$participantNo]
+      );
+    }
+
+    return array_sum($maxRequestedParticipantCounts);
   }
 
 }

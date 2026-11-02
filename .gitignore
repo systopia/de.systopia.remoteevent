@@ -1,3 +1,9 @@
+*.orig
+*.swp
+*BACKUP*
+*BASE*
+*LOCAL*
+*REMOTE*
 /.phpcs.cache
 /.phpunit.result.cache
 /.phpstan/

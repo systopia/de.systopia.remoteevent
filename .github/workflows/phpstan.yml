@@ -81,6 +81,13 @@ jobs:
               -e 's/"prefer-stable":[^,]*/"prefer-stable": false/'
           fi
 
+          git clone --depth=1 https://github.com/systopia/de.systopia.remotetools.git ../de.systopia.remotetools
+          git clone --depth=1 https://github.com/systopia/de.systopia.xcm.git ../de.systopia.xcm
+          git clone --depth=1 https://github.com/systopia/de.systopia.eventmessages ../de.systopia.eventmessages
+          git clone --depth=1 https://github.com/systopia/de.systopia.xportx ../de.systopia.xportx
+          git clone --depth=1 https://lab.civicrm.org/extensions/action-provider.git ../action-provider
+          git clone --depth=1 https://github.com/Project60/org.project60.sepa.git ../org.project60.sepa
+
           composer config --no-plugins allow-plugins.civicrm/composer-compile-plugin false
           composer config --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
           composer config --no-plugins allow-plugins.composer/installers true
@@ -93,9 +100,6 @@ jobs:
             composer require --no-update "civicrm/civicrm-core:${INPUTS_CIVICRM_VERSION}" \
               "civicrm/civicrm-packages:${INPUTS_CIVICRM_VERSION}"
           fi
-
-          git clone --depth=1 https://lab.civicrm.org/extensions/action-provider.git ../action-provider
-          git clone --depth=1 https://github.com/systopia/de.systopia.xportx.git ../de.systopia.xportx
 
           # Run with --no-scripts so ComposerHelper doesn't prevent installation
           # of civicrm packages.

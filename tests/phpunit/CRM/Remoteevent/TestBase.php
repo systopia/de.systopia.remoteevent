@@ -19,6 +19,7 @@ use Civi\Test\Api3TestTrait;
 use Civi\Test\HeadlessInterface;
 use Civi\Core\HookInterface;
 use Civi\Test\TransactionalInterface;
+
 use CRM_Remoteevent_ExtensionUtil as E;
 
 /**
@@ -52,6 +53,83 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
       ->apply();
   }
 
+  public function setUp(): void {
+    parent::setUp();
+    CRM_Xcm_Configuration::flushProfileCache();
+    $this->transaction = new CRM_Core_Transaction();
+    $this->setUpXCMProfile('default');
+
+    $profile = CRM_Xcm_Configuration::getConfigProfile('default');
+
+    // jumble the participant status labels so we're sure we only using the names
+    CRM_Core_DAO::executeQuery('UPDATE civicrm_participant_status_type SET label = MD5(name);');
+
+    /** Civi::settings()->set('remote_event_get_performance_enhancement', true); */
+  }
+
+  protected function tearDown(): void {
+    $this->transaction->rollback();
+    $this->transaction = NULL;
+    CRM_Remoteevent_CustomData::flushCashes();
+    parent::tearDown();
+  }
+
+  /**
+   * Create a new remote event. All of the
+   *  vital fields will have default values, that can be overwritten by
+   *  the array passed
+   *
+   * @param array $event_details
+   *   list of event parameters
+   *
+   * @param boolean $use_remote_api
+   *   use the exposed RemoteEvent.create API instead of the internal (Event.create)
+   */
+  public function createRemoteEvent($event_details = [], $use_remote_api = FALSE) {
+    // prepare event
+    $event_data = [
+      'title' => 'Event ' . microtime(),
+      'event_type_id' => 1,
+      'start_date' => date('Y-m-d', strtotime('tomorrow')),
+      'default_role_id' => 1,
+      'is_active' => 1,
+      'event_remote_registration.remote_registration_enabled' => 1,
+      'event_remote_registration.remote_disable_civicrm_registration' => 1,
+      'event_remote_registration.remote_registration_default_profile' => 'Standard1',
+      'event_remote_registration.remote_registration_profiles' => ['Standard1'],
+      'event_remote_registration.remote_registration_default_update_profile' => 'Standard1',
+      'event_remote_registration.remote_registration_update_profiles' => ['Standard1'],
+    ];
+    foreach ($event_details as $key => $value) {
+      if (NULL === $value) {
+        unset($event_data[$key]);
+      }
+      else {
+        $event_data[$key] = $value;
+      }
+    }
+    // sanity check: default profile should be enabled
+    $default_profile = $event_data['event_remote_registration.remote_registration_default_profile'];
+    if (!in_array($default_profile, $event_data['event_remote_registration.remote_registration_profiles'], TRUE)) {
+      $event_data['event_remote_registration.remote_registration_profiles'][] = $default_profile;
+    }
+    // resolve custom fields
+    CRM_Remoteevent_CustomData::resolveCustomFields($event_data);
+
+    // create event and reload
+    if ($use_remote_api) {
+      $result = $this->traitCallAPISuccess('RemoteEvent', 'spawn', $event_data);
+      $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
+    }
+    else {
+      $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
+      $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
+      CRM_Remoteevent_CustomData::labelCustomFields($event);
+    }
+
+    return $event;
+  }
+
   /**
    * Create a new remote event TEMPLATE
    *
@@ -83,59 +161,74 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
   }
 
   /**
-   * Create a new remote event. All of the
-   *  vital fields will have default values, that can be overwritten by
-   *  the array passed
-   *
-   * @param array $event_details
-   *   list of event parameters
-   *
-   * @param boolean $use_remote_api
-   *   use the exposed RemoteEvent.create API instead of the internal (Event.create)
+   * @phpstan-return list<array<string, mixed>>
+   *   A list of price fields added to the event.
    */
-  public function createRemoteEvent($event_details = [], $use_remote_api = FALSE) {
-    // prepare event
-    $event_data = [
-      'title' => 'Event ' . microtime(),
-      'event_type_id' => 1,
-      'start_date' => date('Y-m-d', strtotime('tomorrow')),
-      'default_role_id' => 1,
-      'is_active' => 1,
-      'event_remote_registration.remote_registration_enabled' => 1,
-      'event_remote_registration.remote_disable_civicrm_registration' => 1,
-      'event_remote_registration.remote_registration_default_profile' => 'Standard1',
-      'event_remote_registration.remote_registration_profiles' => ['Standard1'],
-      'event_remote_registration.remote_registration_default_update_profile' => 'Standard1',
-      'event_remote_registration.remote_registration_update_profiles' => ['Standard1'],
-    ];
-    foreach ($event_details as $key => $value) {
-      if ($value === NULL) {
-        unset($event_data[$key]);
-      }
-      else {
-        $event_data[$key] = $value;
-      }
-    }
-    // sanity check: default profile should be enabled
-    $default_profile = $event_data['event_remote_registration.remote_registration_default_profile'];
-    if (!in_array($default_profile, $event_data['event_remote_registration.remote_registration_profiles'], TRUE)) {
-      $event_data['event_remote_registration.remote_registration_profiles'][] = $default_profile;
-    }
-    // resolve custom fields
-    CRM_Remoteevent_CustomData::resolveCustomFields($event_data);
+  public function addPriceFields(int $eventId): array {
+    $priceFields = [];
 
-    // create event and reload
-    if ($use_remote_api) {
-      $result = $this->traitCallAPISuccess('RemoteEvent', 'spawn', $event_data);
-      $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
-    }
-    else {
-      $result = $this->traitCallAPISuccess('Event', 'create', $event_data);
-      $event = $this->traitCallAPISuccess('RemoteEvent', 'getsingle', ['id' => $result['id']]);
-      CRM_Remoteevent_CustomData::labelCustomFields($event);
-    }
+    $priceSet = \Civi\Api4\PriceSet::create(TRUE)
+      ->addValue('title', 'Test Price Set')
+      ->addValue('extends:name', ['CiviEvent'])
+      ->addValue('name', 'test_price_set')
+      ->execute()
+      ->single();
 
-    return $event;
+    $optionsPriceField = \Civi\Api4\PriceField::create(TRUE)
+      ->addValue('price_set_id', $priceSet['id'])
+      ->addValue('name', 'test_price_options_field')
+      ->addValue('label', 'Test Price Options Field')
+      ->addValue('html_type', 'Select')
+      ->execute()
+      ->single();
+    $priceFields[] = $optionsPriceField;
+    $priceFieldValueRegular = \Civi\Api4\PriceFieldValue::create(TRUE)
+      ->addValue('label', 'Regular Fee')
+      ->addValue('amount', 20)
+        // price_field_id.name does not seem to be accepted, so use the actual ID.
+      ->addValue('price_field_id', $optionsPriceField['id'])
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->execute();
+    $priceFieldValueDiscount = \Civi\Api4\PriceFieldValue::create(TRUE)
+      ->addValue('label', 'Discount Fee')
+      ->addValue('amount', 10)
+      ->addValue('price_field_id', $optionsPriceField['id'])
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->execute();
+
+    $amountPriceField = \Civi\Api4\PriceField::create(TRUE)
+      ->addValue('price_set_id', $priceSet['id'])
+      ->addValue('name', 'test_price_amount_field')
+      ->addValue('label', 'Test Price Amount Field')
+      ->addValue('html_type', 'Text')
+      ->addValue('is_enter_qty', TRUE)
+      ->execute()
+      ->single();
+    $priceFieldValueAmount = \Civi\Api4\PriceFieldValue::create(TRUE)
+      ->addValue('label', 'Amount of Stuff')
+      ->addValue('amount', 25)
+      ->addValue('price_field_id', $amountPriceField['id'])
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->execute();
+    $priceFields[] = $amountPriceField;
+
+    // Make the event monetary and assign a financial type.
+    \Civi\Api4\Event::update(TRUE)
+      ->addValue('is_monetary', TRUE)
+      ->addValue('financial_type_id:name', 'Event Fee')
+      ->addValue('fee_label', 'Test Fee Label')
+      ->addValue('currency', 'EUR')
+      ->addWhere('id', '=', $eventId)
+      ->execute();
+
+    // Assign the price set to the event.
+    \Civi\Api4\PriceSetEntity::create(TRUE)
+      ->addValue('entity_table', 'civicrm_event')
+      ->addValue('entity_id', $eventId)
+      ->addValue('price_set_id', $priceSet['id'])
+      ->execute();
+
+    return $priceFields;
   }
 
   /**
@@ -169,45 +262,6 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     $result = $this->traitCallAPISuccess('Session', 'create', $session_data);
     $session = $this->traitCallAPISuccess('Session', 'getsingle', ['id' => $result['id']]);
     return $session;
-  }
-
-  /**
-   * Generate a random string, and make sure we don't collide
-   *
-   * @param int $length
-   *   length of the string
-   *
-   * @return string
-   *   random string
-   */
-  public function randomString($length = 32) {
-    static $generated_strings = [];
-    $candidate = substr(sha1(random_bytes(32)), 0, $length);
-    if (isset($generated_strings[$candidate])) {
-      // simply try again (recursively). Is this dangerous? Yes, but veeeery unlikely... :)
-      return $this->randomString($length);
-    }
-    // Mark generated:
-    $generated_strings[$candidate] = 1;
-    return $candidate;
-  }
-
-  /**
-   * Get a (within this test) unique
-   *  timestamp. It starts with now+1h and
-   *  increments in 5 minute interval
-   *
-   * @return string timestamp
-   */
-  public function getUniqueDateTime() {
-    static $last_timestamp = NULL;
-    if ($last_timestamp === NULL) {
-      $last_timestamp = strtotime('now + 1 hour');
-    }
-    else {
-      $last_timestamp = strtotime('+5 minutes', $last_timestamp);
-    }
-    return date('YmdHis', $last_timestamp);
   }
 
   /**
@@ -324,24 +378,6 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
   }
 
   /**
-   * Create a number of new contacts
-   *  using the createContact function above
-   *
-   * @param integer $count
-   * @param array $contact_details
-   *
-   * @return array [event_id => $event_data]
-   */
-  public function createContacts($count, $contact_details = []) {
-    $result = [];
-    for ($i = 0; $i < $count; $i++) {
-      $contact = $this->createContact($contact_details);
-      $result[$contact['id']] = $contact;
-    }
-    return $result;
-  }
-
-  /**
    * Create a new contact
    *
    * @param array $contact_details
@@ -372,12 +408,79 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
   }
 
   /**
+   * Create a number of new contacts
+   *  using the createContact function above
+   *
+   * @param integer $count
+   * @param array $contact_details
+   *
+   * @return array [event_id => $event_data]
+   */
+  public function createContacts($count, $contact_details = []) {
+    $result = [];
+    for ($i = 0; $i < $count; $i++) {
+      $contact = $this->createContact($contact_details);
+      $result[$contact['id']] = $contact;
+    }
+    return $result;
+  }
+
+  /**
+   * Generate a random string, and make sure we don't collide
+   *
+   * @param int $length
+   *   length of the string
+   *
+   * @return string
+   *   random string
+   */
+  public function randomString($length = 32) {
+    static $generated_strings = [];
+    $candidate = substr(sha1(random_bytes(32)), 0, $length);
+    if (isset($generated_strings[$candidate])) {
+      // simply try again (recursively). Is this dangerous? Yes, but veeeery unlikely... :)
+      return $this->randomString($length);
+    }
+    /** mark as 'generated' */
+    $generated_strings[$candidate] = 1;
+    return $candidate;
+  }
+
+  /**
+   * Make sure the given profile exists, and has
+   *   a basic amount of matching options
+   *
+   * @param string $profile_name
+   *   name of the profile
+   * @param array $profile_data_override
+   *   XCM profile spec that differs from the default
+   */
+  public function setUpXCMProfile($profile_name, $profile_data_override = NULL) {
+    // set profile
+    /** @phpstan-var array<string, array<string, mixed>> $profiles */
+    $profiles = Civi::settings()->get('xcm_config_profiles');
+    if (NULL !== $profile_data_override && [] !== $profile_data_override) {
+      $profiles[$profile_name] = $profile_data_override;
+    }
+    else {
+      $profileJson = file_get_contents(E::path('tests/resources/xcm_profile_testing.json'));
+      if (FALSE !== $profileJson) {
+        $profiles[$profile_name] = json_decode(
+          $profileJson,
+          TRUE
+        );
+      }
+    }
+    Civi::settings()->set('xcm_config_profiles', $profiles);
+  }
+
+  /**
    * Set a value for the speaker roles
    *
    * @param array $value
    *   a list of role_ids or empty for disabled
    */
-  public function setSpeakerRoles($value) {
+  public function setSpeakerRoles($value): void {
     Civi::settings()->set('remote_registration_speaker_roles', $value);
   }
 
@@ -458,23 +561,19 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
    */
   public function getRemoteContactKey($contact_id) {
     $contact_id = (int) $contact_id;
-    $key = CRM_Core_DAO::singleValueQuery(
-      "
-            SELECT identifier
-            FROM civicrm_value_contact_id_history
-            WHERE identifier_type = 'remote_contact'
-              AND entity_id = {$contact_id}
-            LIMIT 1
-        "
-    );
+    $key = CRM_Core_DAO::singleValueQuery("
+      SELECT identifier
+      FROM civicrm_value_contact_id_history
+      WHERE identifier_type = 'remote_contact'
+        AND entity_id = {$contact_id}
+      LIMIT 1
+    ");
     if (!$key) {
       $key = $this->randomString();
-      CRM_Core_DAO::executeQuery(
-        "
-                INSERT INTO civicrm_value_contact_id_history (entity_id, identifier, identifier_type, used_since)
-                VALUES ({$contact_id}, '{$key}', 'remote_contact', NOW())
-            "
-      );
+      CRM_Core_DAO::executeQuery("
+        INSERT INTO civicrm_value_contact_id_history (entity_id, identifier, identifier_type, used_since)
+        VALUES ({$contact_id}, '{$key}', 'remote_contact', NOW())
+      ");
     }
 
     $verify_contact_id = CRM_Remotetools_Contact::getByKey($key);
@@ -527,7 +626,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
    * @param string $failure_msg
    *   message to log in case of failure
    */
-  public function assertParticipantStatus($participant_id, $participant_status, $failure_msg) {
+  public function assertParticipantStatus($participant_id, $participant_status, $failure_msg): void {
     $participant = $this->traitCallAPISuccess('Participant', 'get', ['id' => $participant_id]);
     self::assertGreaterThan(0, $participant['count'], $failure_msg . " (doesn't exist)");
     self::assertLessThan(2, $participant['count'], $failure_msg . ' (ambiguous)');
@@ -553,7 +652,7 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     if ($reset_cache) {
       $participant_statuses = NULL;
     }
-    if ($participant_statuses === NULL) {
+    if (NULL === $participant_statuses) {
       $participant_statuses = [];
       $query = civicrm_api3(
         'ParticipantStatusType',
@@ -599,6 +698,17 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
     }
   }
 
+  public function assertGetFormPriceFields(&$fields, $priceFields): void {
+    foreach ($priceFields as $priceField) {
+      $formFieldName = 'price_' . $priceField['name'];
+      self::assertArrayHasKey(
+        $formFieldName,
+        $fields,
+        sprintf("RemoteContact.get_form should contain '%s' field", $formFieldName)
+      );
+    }
+  }
+
   /**
    * Create a new, unique campaign
    */
@@ -615,6 +725,24 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
       ]
     );
     return $this->traitCallAPISuccess('Campaign', 'getsingle', ['id' => $campaign['id']]);
+  }
+
+  /**
+   * Get a (within this test) unique
+   *  timestamp. It starts with now+1h and
+   *  increments in 5 minute interval
+   *
+   * @return string timestamp
+   */
+  public function getUniqueDateTime() {
+    static $last_timestamp = NULL;
+    if (NULL === $last_timestamp) {
+      $last_timestamp = strtotime('now + 1 hour');
+    }
+    else {
+      $last_timestamp = strtotime('+5 minutes', $last_timestamp);
+    }
+    return date('YmdHis', $last_timestamp);
   }
 
   /**
@@ -652,53 +780,6 @@ abstract class CRM_Remoteevent_TestBase extends \PHPUnit\Framework\TestCase impl
       $result[$field_spec[$key_field]] = $field_spec[$value_field];
     }
     return $result;
-  }
-
-  protected function setUp(): void {
-    parent::setUp();
-    CRM_Xcm_Configuration::flushProfileCache();
-    $this->transaction = new CRM_Core_Transaction();
-    $this->setUpXCMProfile('default');
-
-    $profile = CRM_Xcm_Configuration::getConfigProfile('default');
-
-    // jumble the participant status labels so we're sure we only using the names
-    CRM_Core_DAO::executeQuery('UPDATE civicrm_participant_status_type SET label = MD5(name);');
-  }
-
-  /**
-   * Make sure the given profile exists, and has
-   *   a basic amount of matching options
-   *
-   * @param string $profile_name
-   *   name of the profile
-   * @param array $profile_data_override
-   *   XCM profile spec that differs from the default
-   */
-  public function setUpXCMProfile($profile_name, $profile_data_override = NULL) {
-    // set profile
-    /** @phpstan-var array<string, array<string, mixed>> $profiles */
-    $profiles = Civi::settings()->get('xcm_config_profiles');
-    if (NULL !== $profile_data_override && [] !== $profile_data_override) {
-      $profiles[$profile_name] = $profile_data_override;
-    }
-    else {
-      $profileJson = file_get_contents(E::path('tests/resources/xcm_profile_testing.json'));
-      if (FALSE !== $profileJson) {
-        $profiles[$profile_name] = json_decode(
-          $profileJson,
-          TRUE
-        );
-      }
-    }
-    Civi::settings()->set('xcm_config_profiles', $profiles);
-  }
-
-  protected function tearDown(): void {
-    $this->transaction->rollback();
-    $this->transaction = NULL;
-    CRM_Remoteevent_CustomData::flushCashes();
-    parent::tearDown();
   }
 
 }
