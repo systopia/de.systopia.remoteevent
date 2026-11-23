@@ -17,9 +17,9 @@ declare(strict_types = 1);
 
 use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\RemoteEvent;
-use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent as GetCreateParticipantFormEvent;
-use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent as GetUpdateParticipantFormEvent;
-use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent as GetCancelParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetCreateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetUpdateParticipantFormEvent;
+use Civi\RemoteParticipant\Event\GetCancelParticipantFormEvent;
 
 /**
  * RemoteEvent.get_form specification
@@ -186,8 +186,10 @@ function civicrm_api3_remote_participant_get_form($params) {
         break;
     }
   }
-  catch (Exception $error) {
-    $fields->addError($error->getMessage());
+  catch (Exception $e) {
+    // @ignoreException
+    \Civi::log()->error($e->getMessage(), ['exception' => $e]);
+    $fields?->addError($e->getMessage());
   }
 
   // return the result

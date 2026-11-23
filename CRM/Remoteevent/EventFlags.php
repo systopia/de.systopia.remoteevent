@@ -15,7 +15,6 @@
 
 declare(strict_types = 1);
 
-use CRM_Remoteevent_ExtensionUtil as E;
 use Civi\RemoteEvent\Event\GetResultEvent;
 
 /**
@@ -36,7 +35,7 @@ class CRM_Remoteevent_EventFlags {
   ];
 
   /**
-   * @phpstan-var list<string>
+   * @phpstan-var array<string, string>
    *   list of flags in the event configuration relevant for the UI (full name => internal name)
    */
   public const EVENT_CONFIG_FLAGS = [
@@ -148,8 +147,10 @@ class CRM_Remoteevent_EventFlags {
       $requested_event_ids = $get_parameters->getRequestedEventIDs();
 
       // apply performance enhancements if there isn't already a restriction on event _IDs_ (<=25)
-      if ($performance_enhancement_enabled && ($requested_event_ids != 'fail' || count($requested_event_ids) > 25)) {
-
+      if (
+        $performance_enhancement_enabled && 'fail' !== $requested_event_ids
+        && (!is_array($requested_event_ids) || count($requested_event_ids) > 25)
+      ) {
         // if it's about registration modalities...
         if (!empty($get_parameters->getParameter('can_register'))
         || !empty($get_parameters->getParameter('can_instant_register'))) {

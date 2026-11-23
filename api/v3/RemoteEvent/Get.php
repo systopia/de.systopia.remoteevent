@@ -15,9 +15,8 @@
 
 declare(strict_types = 1);
 
-use CRM_Remoteevent_ExtensionUtil as E;
-use Civi\RemoteEvent\Event\GetParamsEvent as GetParamsEvent;
-use Civi\RemoteEvent\Event\GetResultEvent as GetResultEvent;
+use Civi\RemoteEvent\Event\GetParamsEvent;
+use Civi\RemoteEvent\Event\GetResultEvent;
 
 /**
  * RemoteEvent.get specification

@@ -686,10 +686,11 @@ class CRM_Remoteevent_Registration {
         $participant_data['participant_status_id'] = 'On waitlist';
 
         if (!empty($event_data['waitlist_text'])) {
-          $registration->addStatus($event_data['waitlist_text']);
+          // @phpstan-ignore argument.type
+          $registration->addInfo($event_data['waitlist_text']);
         }
         else {
-          $registration->addStatus(E::ts('You have been added to the waitlist.'));
+          $registration->addInfo(E::ts('You have been added to the waitlist.'));
         }
       }
     }

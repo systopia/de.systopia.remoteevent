@@ -53,15 +53,6 @@ class RegistrationEvent extends ChangingEvent {
   protected array $additional_participants_data = [];
 
   /**
-   * Check if the submission has errors
-   * @return bool
-   *   true if there is errors
-   */
-  public function hasErrors() {
-    return !empty($this->error_list);
-  }
-
-  /**
    * {@inheritDoc}
    */
   public function getParticipantID(): ?int {
