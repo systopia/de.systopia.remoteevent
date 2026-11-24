@@ -113,6 +113,10 @@ jobs:
           composer config --json 'extra.installer-paths.ext/{$name}' '["type:civicrm-ext"]'
           composer config repositories.test path $EXT_DIR
 
+          # Uplang 1.4.2 (used below) is incompatible with guzzlehttp/guzzle 8
+          # https://lab.civicrm.org/extensions/uplang/-/work_items/18
+          composer require --no-update 'guzzlehttp/guzzle:<8'
+
           # Use civicrm-core and civicrm-packages defined in extension's composer.json.
           composer remove --no-update civicrm/civicrm-core civicrm/civicrm-packages
           composer require --no-progress composer/installers civicrm/cli-tools
@@ -156,6 +160,8 @@ jobs:
           cd ../civicrm-standalone
           export PATH="$(realpath vendor/bin):$PATH"
           export CV_CONFIG="$HOME/.cv.json"
+          # Note: When updating uplang the restriction on guzzlehttp/guzzle
+          # above might not be necessary anymore.
           cv ext:download "uplang@https://lab.civicrm.org/extensions/uplang/-/archive/1.4.2/uplang-1.4.2.zip"
           cv ext:en uplang
           cv api Uplang.Fetch locales="de_DE"
