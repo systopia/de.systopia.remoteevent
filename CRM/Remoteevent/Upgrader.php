@@ -15,33 +15,12 @@
 
 declare(strict_types = 1);
 
-use CRM_Remoteevent_ExtensionUtil as E;
-
 /**
  * Collection of upgrade steps.
  */
 class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
 
-  /**
-   * Create the required custom data
-   */
-  public function install() {
-    // install remote event stuff
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_remote_registration_profiles.json'));
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-    $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
-
-    // install sessions
-    $customData->syncOptionGroup(E::path('resources/option_group_session_slot.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_session_type.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_session_category.json'));
-
-    // add participant status
-    $this->addParticipantStatus('Invited', E::ts('Invited'), 'Waiting');
-
-    // add constraints
+  public function postInstall(): void {
     $this->makeExternalIdentifierUnique();
   }
 
@@ -51,13 +30,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0004() {
-    $this->ctx->log->info('Updating data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_remote_registration_profiles.json'));
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-    $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
+  public function upgrade_0004(): bool {
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -67,9 +41,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0005() {
-    $this->ctx->log->info('Updating data structures');
-    $this->addParticipantStatus('Invited', E::ts('Invited'), 'Waiting');
+  public function upgrade_0005(): bool {
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -79,10 +52,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0006() {
-    $this->ctx->log->info('Updating data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+  public function upgrade_0006(): bool {
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -92,13 +63,9 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0007() {
+  public function upgrade_0007(): bool {
     $this->ctx->log->info('Installing Sessions');
     $this->executeSqlFile('sql/session.sql');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_session_slot.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_session_type.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_session_category.json'));
     return TRUE;
   }
 
@@ -108,10 +75,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0008() {
-    $this->ctx->log->info('Adding Update Profiles');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+  public function upgrade_0008(): bool {
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -121,10 +86,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0010() {
+  public function upgrade_0010(): bool {
     $this->ctx->log->info('Adding event external_identifier');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
     $this->makeExternalIdentifierUnique();
     return TRUE;
   }
@@ -135,10 +98,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0011() {
-    $this->ctx->log->info('Updating data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+  public function upgrade_0011(): bool {
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -149,15 +110,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0013() {
-    $this->ctx->log->info('Updating data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-
-    // clean template cache
-    $config = CRM_Core_Config::singleton();
-    $config->cleanup(1, FALSE);
-
+  public function upgrade_0013(): bool {
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -167,18 +121,8 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @return TRUE on success
    * @throws Exception
    */
-  public function upgrade_0015() {
+  public function upgrade_0015(): bool {
     $this->ctx->log->info('Updating RegistrationProfile data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-    // Attribute "text_length" is dropped by CRM_Remoteevent_CustomData.
-    // It only updates fields that are set in the current field API get
-    // result. NULL values are dropped by APIv3.
-    \Civi\Api4\CustomField::update(FALSE)
-      ->addValue('text_length', 1024)
-      ->addWhere('custom_group_id:name', '=', 'event_remote_registration')
-      ->addWhere('name', 'IN', ['remote_registration_profiles', 'remote_registration_update_profiles'])
-      ->execute();
     $this->migrate_profile_option_values_to_option_names();
     return TRUE;
   }
@@ -193,9 +137,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @throws \Exception
    */
   public function upgrade_0016(): bool {
-    $this->ctx->log->info('Updating RegistrationProfile data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -219,9 +161,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @throws \Exception
    */
   public function upgrade_0018(): bool {
-    $this->ctx->log->info('Updating RegistrationProfile data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -230,10 +170,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * adding a new field to require a user account for registration.
    */
   public function upgrade_0019(): bool {
-    $this->ctx->log->info('Updating RegistrationProfile data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -245,11 +182,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @throws \Exception
    */
   public function upgrade_0020(): bool {
-    $this->ctx->log->info('Updating data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-    $customData->syncCustomGroup(E::path('resources/custom_group_alternative_location.json'));
-
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -259,10 +192,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @throws \Exception
    */
   public function upgrade_0021(): bool {
-    $this->ctx->log->info('Updating data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-
+    // Replaced by managed entities.
     return TRUE;
   }
 
@@ -273,17 +203,14 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    * @throws \Exception
    */
   public function upgrade_0022(): bool {
-    $this->ctx->log->info('Updating data structures');
-    $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_remote_registration.json'));
-
+    // Replaced by managed entities.
     return TRUE;
   }
 
   /**
    * Migrate previous profile option values to profile option names.
    */
-  protected function migrate_profile_option_values_to_option_names(): void {
+  private function migrate_profile_option_values_to_option_names(): void {
     // Mapping of option value to option name of profiles.
     $profile_names = \Civi\Api4\OptionValue::get(FALSE)
       ->addSelect('value', 'name')
@@ -328,7 +255,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
    *
    * @return string Padded option names.
    */
-  protected function convertOptionValuesToNames(?string $values, array $mapping): string {
+  private function convertOptionValuesToNames(?string $values, array $mapping): string {
     $names = [];
     foreach (\CRM_Utils_Array::explodePadded($values) ?? [] as $value) {
       if (isset($mapping[$value])) {
@@ -341,7 +268,7 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
   /**
    * Add a unique index on the event external identifiers
    */
-  protected function makeExternalIdentifierUnique() {
+  private function makeExternalIdentifierUnique(): void {
     // gather field / group info
     $external_identifier_field = CRM_Remoteevent_CustomData::getCustomField(
         'event_remote_registration',
@@ -366,42 +293,6 @@ class CRM_Remoteevent_Upgrader extends CRM_Extension_Upgrader_Base {
         "
                 ALTER TABLE `{$external_identifier_group['table_name']}`
                 ADD UNIQUE KEY `UI_external_identifier` (`{$external_identifier_field['column_name']}`)"
-      );
-    }
-  }
-
-  /**
-   * Make sure the given participant status exists
-   *
-   * @param string $name
-   *   the name of the status
-   * @param string $label
-   *   localised name/label of the status
-   * @param string $class
-   *   status class
-   *
-   * @throws \CRM_Core_Exception
-   */
-  protected function addParticipantStatus($name, $label, $class) {
-    // check if it's already there
-    $apiResult = civicrm_api3('ParticipantStatusType', 'get', ['name' => $name]);
-    if ($apiResult['count'] == 0) {
-      $max_weight = (int) CRM_Core_DAO::singleValueQuery(
-        'SELECT MAX(weight) FROM civicrm_participant_status_type'
-      );
-      civicrm_api3(
-        'ParticipantStatusType',
-        'create',
-        [
-          'name' => $name,
-          'label' => $label,
-          'visibility_id' => 'public',
-          'class' => $class,
-          'is_active' => 1,
-          'weight' => $max_weight + 1,
-          'is_reserved' => 1,
-          'is_counted' => 0,
-        ]
       );
     }
   }
