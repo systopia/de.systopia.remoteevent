@@ -19,7 +19,7 @@
 declare(strict_types = 1);
 
 class CRM_Remoteevent_CustomData {
-  public const CUSTOM_DATA_HELPER_VERSION   = '0.13.0';
+  public const CUSTOM_DATA_HELPER_VERSION   = '0.13.1';
   public const CUSTOM_DATA_HELPER_LOG_LEVEL = 0;
   public const CUSTOM_DATA_HELPER_LOG_DEBUG = 1;
   public const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
@@ -80,6 +80,8 @@ class CRM_Remoteevent_CustomData {
     if (!is_array($data['_entities'])) {
       throw new InvalidArgumentException('syncOptionGroup::syncOptionGroup: Invalid specs');
     }
+
+    assert(is_string($data['entity']));
 
     /** @var array<string, mixed> $entity_data */
     foreach ($data['_entities'] as $entity_data) {

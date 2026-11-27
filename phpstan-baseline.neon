@@ -253,30 +253,6 @@ parameters:
 			path: CRM/Remoteevent/ChangeActivity.php
 
 		-
-			message: '#^Parameter \#1 \$entity_type of method CRM_Remoteevent_CustomData\:\:createEntity\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/CustomData.php
-
-		-
-			message: '#^Parameter \#1 \$entity_type of method CRM_Remoteevent_CustomData\:\:identifyEntity\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/CustomData.php
-
-		-
-			message: '#^Parameter \#1 \$entity_type of method CRM_Remoteevent_CustomData\:\:updateEntity\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Remoteevent/CustomData.php
-
-		-
-			message: '#^Part \$data\[''entity''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: CRM/Remoteevent/CustomData.php
-
-		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -535,7 +511,7 @@ parameters:
 			path: CRM/Remoteevent/EventFlags.php
 
 		-
-			message: '#^Parameter \#1 \$value of function count expects array\|Countable, array\|string\|null given\.$#'
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: CRM/Remoteevent/EventFlags.php
@@ -1102,12 +1078,6 @@ parameters:
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 14
-			path: CRM/Remoteevent/Form/EventSessions.php
-
-		-
-			message: '#^Foreach overwrites \$sessions with its value variable\.$#'
-			identifier: foreach.valueOverwrite
-			count: 1
 			path: CRM/Remoteevent/Form/EventSessions.php
 
 		-
@@ -2967,12 +2937,6 @@ parameters:
 			path: CRM/Remoteevent/Upgrader.php
 
 		-
-			message: '#^Cannot access offset ''count'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Remoteevent/Upgrader.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 1
@@ -2980,18 +2944,6 @@ parameters:
 
 		-
 			message: '#^Do not throw the \\Exception base class\.$#'
-			count: 1
-			path: CRM/Remoteevent/Upgrader.php
-
-		-
-			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
-			identifier: equal.notAllowed
-			count: 1
-			path: CRM/Remoteevent/Upgrader.php
-
-		-
-			message: '#^Method CRM_Remoteevent_Upgrader\:\:addParticipantStatus\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: CRM/Remoteevent/Upgrader.php
 
@@ -3004,18 +2956,6 @@ parameters:
 		-
 			message: '#^Method CRM_Remoteevent_Upgrader\:\:convertOptionValuesToNames\(\) should return string but returns string\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: CRM/Remoteevent/Upgrader.php
-
-		-
-			message: '#^Method CRM_Remoteevent_Upgrader\:\:install\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Remoteevent/Upgrader.php
-
-		-
-			message: '#^Method CRM_Remoteevent_Upgrader\:\:makeExternalIdentifierUnique\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: CRM/Remoteevent/Upgrader.php
 
@@ -5934,7 +5874,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''count'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 2
 			path: tests/phpunit/CRM/Remoteevent/TestBase.php
 
 		-
@@ -5952,7 +5892,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: tests/phpunit/CRM/Remoteevent/TestBase.php
 
 		-
