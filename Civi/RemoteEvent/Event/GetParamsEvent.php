@@ -43,10 +43,10 @@ class GetParamsEvent extends RemoteParamsEvent {
    *   fail  if couldn't be parsed
    *   array with a list of event IDs, if everything's fine
    *
-   * @return array|null|string
+   * @return array<int>|null|'fail'
    *   list of requested IDs
    */
-  public function getRequestedEventIDs() {
+  public function getRequestedEventIDs(): array|null|string {
     return $this->getRequestedEntityIDs();
   }
 

@@ -75,9 +75,17 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
   }
 
   /**
+   * @param array<string, array<string, mixed>> $result
+   *   Mapping of field name to field spec.
+   */
+  public function setResult(array $result): void {
+    $this->result = $result;
+  }
+
+  /**
    * Add a number of field specs to the result
    *
-   * @param array $field_list
+   * @param array<string, array<string, mixed>> $field_list
    *   fields to add
    */
   public function addFields($field_list) {
@@ -175,7 +183,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
         $event = $this->getEvent();
 
         $l10n = $this->getLocalisation();
-        $this->addStatus($l10n->ts("Welcome %1. You are modifying your registration for event '%2'", [
+        $this->addInfo($l10n->ts("Welcome %1. You are modifying your registration for event '%2'", [
           1 => $contact_name,
           2 => $event['title'],
         ]));
@@ -199,7 +207,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
             $event = $this->getEvent();
 
             $l10n = $this->getLocalisation();
-            $this->addStatus($l10n->ts("Welcome %1. You may now confirm or decline your invitation to event '%2'", [
+            $this->addInfo($l10n->ts("Welcome %1. You may now confirm or decline your invitation to event '%2'", [
               1 => $contact_name,
               2 => $event['title'],
             ]));
@@ -220,7 +228,7 @@ abstract class GetParticipantFormEventBase extends RemoteEvent {
         $event = $this->getEvent();
 
         $l10n = $this->getLocalisation();
-        $this->addStatus($l10n->ts("Welcome %1. You are about to cancel your registration for the event '%2'", [
+        $this->addInfo($l10n->ts("Welcome %1. You are about to cancel your registration for the event '%2'", [
           1 => $contact_name,
           2 => $event['title'],
         ]));

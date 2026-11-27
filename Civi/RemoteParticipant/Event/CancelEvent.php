@@ -42,10 +42,6 @@ class CancelEvent extends ChangingEvent {
    * @var array holds the participants that will be cancelled  */
   protected $cancellation_calls;
 
-  /**
-   * @var array holds a list of (minor) errors */
-  protected $error_list;
-
   public function __construct($submission_data, $participants, ?array $event = NULL) {
     parent::__construct($submission_data, $event);
     $this->token_usages = ['cancel'];
@@ -127,25 +123,6 @@ class CancelEvent extends ChangingEvent {
    */
   public function &getParticipantCancellations() {
     return $this->cancellation_calls;
-  }
-
-  /**
-   * Check if the submission has errors
-   * @return bool
-   *   true if there is errors
-   */
-  public function hasErrors() {
-    return !empty($this->error_list);
-  }
-
-  /**
-   * Get a list of all errors
-   *
-   * @return array
-   *   complete error list
-   */
-  public function getErrors() {
-    return $this->error_list;
   }
 
   /**
